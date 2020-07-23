@@ -15,31 +15,14 @@
 #
 #
 #
-#   21 July 2020
+#   23 July 2020
 #   Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 
 cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
-project(ble-provision VERSION 0.1.0 LANGUAGES C)
+project(ble-provision-service VERSION 0.1.0 LANGUAGES C)
 
 #
-#	CMake Helpers
+#	Linux BLE provisioning service
 #
-set (IOTKIT_PATH "${CMAKE_CURRENT_LIST_DIR}/ext/iotkit")
-set (CMAKE_MODULE_PATH "${IOTKIT_PATH}/sdk/cmake" ${CMAKE_MODULE_PATH})
-include(helpers)
-
-#
-#	BLE provisioning service
-#
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/service)
-
-#
-#	ISO packer for BLE provisioning Service
-#
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/iso-packer)
-
-#
-#	Linux BLE provisioning Application (Desktop and mobile)
-#
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/app)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/linux)

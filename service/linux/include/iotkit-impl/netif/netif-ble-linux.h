@@ -15,50 +15,10 @@
 //
 //
 //
-//   21 July 2020
+//   23 July 2020
 //   Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 
-#include <unistd.h>
-#include <virgil/iot/logger/logger.h>
-#include <virgil/iot/macros/macros.h>
+#ifndef PROVISION_NETIF_BLE_LINUX_H
+#define PROVISION_NETIF_BLE_LINUX_H
 
-/******************************************************************************/
-int
-main(int argc, char *argv[]) {
-    int res = -1;
-
-    // Implementation variables
-
-    // Initialize Logger module
-    vs_logger_init(VS_LOGLEV_DEBUG);
-
-    //
-    // ---------- Create implementations ----------
-    //
-
-    // ---------- Initialize IoTKit internals ----------
-    //
-
-    // Initialize IoTKit
-
-    //
-    // ---------- Application work ----------
-    //
-
-    // Sleep until CTRL_C
-
-    //
-    // ---------- Terminate application ----------
-    //
-
-    res = 0;
-
-    // terminate:
-
-    VS_LOG_INFO("\n\n\n");
-    VS_LOG_INFO("Terminating application ...");
-
-    return res;
-}
-
-/******************************************************************************/
+#endif // PROVISION_NETIF_BLE_LINUX_H
