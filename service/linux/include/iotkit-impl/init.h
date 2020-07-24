@@ -35,26 +35,21 @@
 #include <virgil/iot/protocols/snap/snap-structs.h>
 #include <virgil/iot/protocols/snap/cfg/cfg-server.h>
 
-// Types
-typedef void (*vs_reboot_request_cb_t)(void);
-
-// Structures
-typedef struct {
-    vs_reboot_request_cb_t reboot_request_cb;
-} vs_iotkit_events_t;
-
 // Functions
 vs_status_e
 iotkit_init(vs_device_manufacture_id_t manufacture_id,
-                   vs_device_type_t device_type,
-                   vs_device_serial_t serial,
-                   uint32_t device_roles,
-                   vs_secmodule_impl_t *secmodule_impl,
-                   vs_storage_op_ctx_t *tl_storage_impl,
-                   vs_netif_t *netif_impl[],
-                   vs_snap_cfg_server_service_t cfg_server_cb,
-                   vs_netif_process_cb_t packet_preprocessor_cb,
-                   vs_iotkit_events_t iotkit_events);
+            vs_device_type_t device_type,
+            vs_device_serial_t serial,
+            uint32_t device_roles,
+            vs_netif_t *netif_impl[],
+            vs_snap_cfg_server_service_t cfg_server_cb,
+            vs_netif_process_cb_t packet_preprocessor_cb
+#if SECURE_PROVISION
+            ,
+            vs_secmodule_impl_t *secmodule_impl,
+            vs_storage_op_ctx_t *tl_storage_impl
+#endif
+);
 
 vs_status_e
 iotkit_deinit(void);

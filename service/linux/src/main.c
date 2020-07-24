@@ -24,16 +24,21 @@
 #include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/vs-soft-secmodule/vs-soft-secmodule.h>
 #include <virgil/iot/protocols/snap/info/info-server.h>
-#include <trust_list-config.h>
-#include <update-config.h>
 
 #include "helpers/app-helpers.h"
-#include "helpers/app-storage.h"
-#include "helpers/file-cache.h"
 
 #include "sdk-impl/firmware/firmware-nix-impl.h"
 #include "sdk-impl/netif/netif-udp-broadcast.h"
 #include "sdk-impl/netif/packets-queue.h"
+
+#include "iotkit-impl/init.h"
+
+#if SECURE_PROVISION
+#include <trust_list-config.h>
+#include <update-config.h>
+#include "helpers/app-storage.h"
+#include "helpers/file-cache.h"
+#endif
 
 /******************************************************************************/
 int
@@ -46,7 +51,7 @@ main(int argc, char *argv[]) {
     vs_storage_op_ctx_t tl_storage_impl;
     vs_storage_op_ctx_t slots_storage_impl;
     vs_storage_op_ctx_t fw_storage_impl;
-//    vs_snap_cfg_server_service_t cfg_server_cb = {NULL, NULL, NULL, NULL};
+    vs_snap_cfg_server_service_t cfg_server_cb = {NULL, NULL, NULL, NULL};
 
     // Device parameters
 
@@ -69,8 +74,10 @@ main(int argc, char *argv[]) {
 
     // Network interface
     vs_packets_queue_init(vs_snap_default_processor);
-//    netifs_impl[0] = vs_hal_netif_udp_bcast(forced_mac_addr);
+    vs_mac_addr_t mac_addr;
+    netifs_impl[0] = vs_hal_netif_udp_bcast(mac_addr);
 
+#if SECURE_PROVISION
     // TrustList storage
     STATUS_CHECK(vs_app_storage_init_impl(&tl_storage_impl, vs_app_trustlist_dir(), VS_TL_STORAGE_MAX_PART_SIZE),
                  "Cannot create TrustList storage");
@@ -79,23 +86,39 @@ main(int argc, char *argv[]) {
     STATUS_CHECK(vs_app_storage_init_impl(&slots_storage_impl, vs_app_slots_dir(), VS_SLOTS_STORAGE_MAX_SIZE),
                  "Cannot create TrustList storage");
 
-    // Firmware storage
-    STATUS_CHECK(vs_app_storage_init_impl(&fw_storage_impl, vs_app_firmware_dir(), VS_MAX_FIRMWARE_UPDATE_SIZE),
-                 "Cannot create TrustList storage");
-
     // Soft Security Module
     secmodule_impl = vs_soft_secmodule_impl(&slots_storage_impl);
+#endif // SECURE_PROVISION
 
+    //
     // ---------- Initialize IoTKit internals ----------
     //
 
     // Initialize IoTKit
+    STATUS_CHECK(iotkit_init(manufacture_id,
+                             device_type,
+                             serial,
+                             VS_SNAP_DEV_THING,
+                             netifs_impl,
+                             cfg_server_cb,
+                             vs_packets_queue_add
+#if SECURE_PROVISION
+                             ,
+                             secmodule_impl,
+                             &tl_storage_impl
+#endif
+                             ),
+                 "Cannot initialize IoTKit");
 
     //
     // ---------- Application work ----------
     //
 
+    // Send broadcast notification about self start
+    vs_snap_info_start_notification(vs_snap_netif_routing());
+
     // Sleep until CTRL_C
+    vs_app_sleep_until_stop();
 
     //
     // ---------- Terminate application ----------
@@ -103,10 +126,20 @@ main(int argc, char *argv[]) {
 
     res = 0;
 
-     terminate:
+terminate:
 
     VS_LOG_INFO("\n\n\n");
     VS_LOG_INFO("Terminating application ...");
+
+    // De-initialize IoTKit internals
+    iotkit_deinit();
+
+#if SECURE_PROVISION
+    // Deinit Soft Security Module
+    vs_soft_secmodule_deinit();
+#endif
+
+    vs_packets_queue_deinit();
 
     return res;
 }

@@ -23,6 +23,11 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 project(ble-provision-service VERSION 0.1.0 LANGUAGES C)
 
 #
+#   Options
+#
+option(SECURE_PROVISION "Enable secure provision" OFF)
+
+#
 #	Add Virgil IoTKit
 #
 
@@ -36,11 +41,11 @@ set (ENABLE_TESTING OFF)
 set (ENABLE_HEAVY_TESTS OFF)
 set (VIRGIL_IOT_PROTOCOLS ON)
 set (VIRGIL_IOT_CLOUD OFF)
-set (VIRGIL_IOT_PROVISION OFF)
-set (VIRGIL_IOT_SECBOX OFF)
+set (VIRGIL_IOT_PROVISION ON)
+set (VIRGIL_IOT_SECBOX ON)
 set (VIRGIL_IOT_DEFAULT_IMPL ON)
 set (VIRGIL_IOT_UPDATE OFF)
-set (VIRGIL_IOT_HIGH_LEVEL ON)
+set (VIRGIL_IOT_HIGH_LEVEL OFF)
 set (VIRGIL_IOT_THREADSAFE ON)
 set (VIRGIL_IOT_DEFAULT_CRYPTO_VS_SOFT_SECMODULE ON)
 set (VIRGIL_IOT_DEFAULT_CLOUD_CURL_HTTP OFF)
@@ -77,6 +82,7 @@ target_sources(ble-provision-service
 
 target_compile_definitions(ble-provision-service
         PRIVATE
+		$<$<BOOL:${SECURE_PROVISION}>:SECURE_PROVISION=1>
         )
 
 #
@@ -101,10 +107,10 @@ target_link_libraries(ble-provision-service
         PRIVATE
 
 		nix-common
-		vs-high-level
+		vs-module-snap-thing
 
 		enable_sanitizers
-        enable_pedantic_mode
+#       enable_pedantic_mode
         )
 
 if(COMMAND add_clangformat)
