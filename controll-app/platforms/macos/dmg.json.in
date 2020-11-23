@@ -1,0 +1,13 @@
+{       "title": "@PROJECT_NAME@ @MACOSX_BUNDLE_SHORT_VERSION_STRING@",
+        "icon": "@PROJECT_SOURCE_DIR@/qt/platforms/macos/pkg_resources/@MACOSX_DMG_ICON_FILE@",
+        "background": "@PROJECT_SOURCE_DIR@/qt/platforms/macos/pkg_resources/@MACOSX_BUNDLE_BACKGROUND_FILE@",
+        "icon-size": 90,
+        "code-sign": {
+                "signing-identity": "@VS_MACOS_IDENT@",
+                "identifier": "@VS_BUNDLE_PREFIX@.@PROJECT_NAME@"
+        },
+        "contents": [
+                { "x": 180, "y": 180, "type": "file", "path": "@CMAKE_CURRENT_BINARY_DIR@/@PROJECT_NAME@.app"},
+                { "x": 460, "y": 180, "type": "link", "path": "/Applications" }
+        ]
+}

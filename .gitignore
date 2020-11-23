@@ -54,6 +54,17 @@ dkms.conf
 # IDE
 .idea
 cmake-build-*
+*.txt.user
 
 # Cache
 .depends_cache
+
+# Generated
+app/qt/platform/macos/macos-info.plist
+build/*
+artifacts/*
+
+#
+#   Do not ignore
+#
+!service/linux/include/config
