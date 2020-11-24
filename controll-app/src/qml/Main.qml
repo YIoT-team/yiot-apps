@@ -23,9 +23,9 @@ import QtQuick.Window 2.2
 import QtQuick.Layouts 1.5
 
 import "./pages"
-import "./pages/devices/lamp/mono"
 import "./pages/settings"
 import "./components"
+import "./components/devices"
 import "./components/Popups"
 import "./theme"
 
@@ -54,15 +54,8 @@ ApplicationWindow {
     CredLoadPage { id: credLoad }
 
     // Devices
-    SwipeView {
-        readonly property int lampMonoPageIdx: 0
-
+    DeviceViewSelector {
         id: devicesSwipeView
-        anchors.fill: parent
-        interactive: false
-        currentIndex: lampMonoPageIdx
-
-        LampMonoControl { id: lampMonoPage }
     }
 
     // Main pages
@@ -152,6 +145,18 @@ ApplicationWindow {
         ]
     }
 
+    function swipeShow(idx) {
+        w.state = "main"
+        swipeView.currentIndex = idx
+        for (var i = 0; i < swipeView.count; ++i) {
+            var item = swipeView.itemAt(i)
+            item.visible = i == swipeView.currentIndex
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    //      Top level Views
+    // ------------------------------------------------------------------------
     function showLeftMenu() {
         leftSideMenu.open()
     }
@@ -164,25 +169,8 @@ ApplicationWindow {
         w.state = "credLoad"
     }
 
-    function showLampMono() {
-        w.state = "deviceControl"
-    }
-
-    function showPC() {
-        w.state = "deviceControl"
-    }
-
     function showMain() {
         w.state = "main"
-    }
-
-    function swipeShow(idx) {
-        w.state = "main"
-        swipeView.currentIndex = idx
-        for (var i = 0; i < swipeView.count; ++i) {
-            var item = swipeView.itemAt(i)
-            item.visible = i == swipeView.currentIndex
-        }
     }
 
     function showDevices() {
@@ -201,6 +189,9 @@ ApplicationWindow {
         swipeShow(swipeView.settingsPageIdx)
     }
 
+    // ------------------------------------------------------------------------
+    //      Settings elements
+    // ------------------------------------------------------------------------
     function showSettingsElement(idx) {
         swipeShow(swipeView.settingsPageIdx)
         settingsPage.swipeSettingsShow(idx)
@@ -210,7 +201,9 @@ ApplicationWindow {
         showSettingsElement(settingsPage.wifiNetworksIdx)
     }
 
-    // Show Popup message
+    // ------------------------------------------------------------------------
+    //      Popup messages
+    // ------------------------------------------------------------------------
     function showPopup(message, color, textColor, isOnTop, isModal, action) {
         inform.popupColor = color
         inform.popupColorText = textColor
@@ -227,5 +220,22 @@ ApplicationWindow {
 
     function showPopupInform(message) {
         // TODO: Add
+    }
+
+    // ------------------------------------------------------------------------
+    //      Show Per device Views
+    // ------------------------------------------------------------------------
+    function showLampMono(deviceName, deviceController) {
+        w.state = "deviceControl"
+        devicesSwipeView.show(devicesSwipeView.lampMonoPageIdx,
+                              deviceName,
+                              deviceController)
+    }
+
+    function showPC(deviceName, deviceController) {
+        w.state = "deviceControl"
+        devicesSwipeView.show(devicesSwipeView.pcPageIdx,
+                              deviceName,
+                              deviceController)
     }
 }
