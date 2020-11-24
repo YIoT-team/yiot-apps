@@ -99,6 +99,7 @@
         <file>qml/pages/QRReaderPage.qml</file>
         <file>qml/pages/SharePage.qml</file>
         <file>qml/pages/CredLoadPage.qml</file>
+        <file>qml/pages/devices/CmdProcessingPage.qml</file>
         <file>qml/pages/devices/lamp/mono/LampMonoControl.qml</file>
         <file>qml/pages/devices/pc/PCRPiControl.qml</file>
 

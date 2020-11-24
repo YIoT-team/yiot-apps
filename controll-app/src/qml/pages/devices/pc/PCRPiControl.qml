@@ -95,7 +95,8 @@ Page {
                 text: qsTr("Init RPi")
                 onClicked: {
                     if (validateInputs()) {
-                        controller.initDevice(userName.text, pass1.text, staticIP.text);
+                        showCmdProcessing()
+                        controller.initDevice(userName.text, pass1.text, staticIP.text)
                     }
                 }
             }
