@@ -84,6 +84,29 @@ _init_pc_request_processor(const uint8_t *request,
 }
 
 //-----------------------------------------------------------------------------
+vs_status_e
+vs_snap_pc_start_notification(const vs_netif_t *netif) {
+
+    vs_snap_pc_state_t state_data;
+    vs_status_e ret_code;
+
+    uint16_t request_sz = 0;
+    STATUS_CHECK_RET(_fill_current_state((uint8_t *)&state_data, sizeof(state_data), &request_sz),
+                     "Cannot fill PC state data");
+
+    // Send request
+    STATUS_CHECK_RET(vs_snap_send_request(netif,
+                                          vs_snap_broadcast_mac(),
+                                          VS_PC_SERVICE_ID,
+                                          VS_PC_IPST,
+                                          (uint8_t *)&state_data,
+                                          sizeof(state_data)),
+                     "Cannot send data");
+
+    return VS_CODE_OK;
+}
+
+//-----------------------------------------------------------------------------
 static vs_status_e
 _pc_request_processor(const struct vs_netif_t *netif,
                       vs_snap_element_t element_id,

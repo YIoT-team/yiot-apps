@@ -117,11 +117,48 @@ _pc_client_response_processor(const struct vs_netif_t *netif,
 }
 
 //-----------------------------------------------------------------------------
+static vs_status_e
+_ipst_request_processor(const uint8_t *request,
+                        const uint16_t request_sz,
+                        uint8_t *response,
+                        const uint16_t response_buf_sz,
+                        uint16_t *response_sz) {
+
+    *response_sz = 0;
+    return _pc_response_processor(VS_PC_GPST, true, request, request_sz);
+}
+
+//-----------------------------------------------------------------------------
+static vs_status_e
+_pc_client_request_processor(const struct vs_netif_t *netif,
+                             vs_snap_element_t element_id,
+                             const uint8_t *request,
+                             const uint16_t request_sz,
+                             uint8_t *response,
+                             const uint16_t response_buf_sz,
+                             uint16_t *response_sz) {
+    (void)netif;
+
+    *response_sz = 0;
+
+    switch (element_id) {
+
+    case VS_PC_IPST:
+        return _ipst_request_processor(request, request_sz, response, response_buf_sz, response_sz);
+
+    default:
+        VS_LOG_ERROR("Unsupported PC command");
+        VS_IOT_ASSERT(false);
+        return VS_CODE_COMMAND_NO_RESPONSE;
+    }
+}
+
+//-----------------------------------------------------------------------------
 const vs_snap_service_t *
 vs_snap_pc_client(vs_snap_pc_client_service_t impl) {
     _pc_client.user_data = 0;
     _pc_client.id = VS_PC_SERVICE_ID;
-    _pc_client.request_process = NULL;
+    _pc_client.request_process = _pc_client_request_processor;
     _pc_client.response_process = _pc_client_response_processor;
     _pc_client.periodical_process = NULL;
 

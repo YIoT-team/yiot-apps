@@ -58,7 +58,7 @@ main(int argc, char *argv[]) {
     // Implementation variables
     vs_netif_t *netifs_impl[3] = {0};
     vs_snap_cfg_server_service_t cfg_server_cb = {ks_snap_cfg_wifi_cb, NULL, NULL, NULL};
-    vs_snap_pc_server_service_t pc_server_cb = {ks_snap_pc_init_cb, ks_snap_pc_get_info_cb};
+    vs_snap_pc_server_service_t pc_server_cb = {ks_snap_pc_get_info_cb, ks_snap_pc_init_cb};
 
 #if SECURE_PROVISION
     vs_secmodule_impl_t *secmodule_impl = NULL;
@@ -131,7 +131,9 @@ main(int argc, char *argv[]) {
     //
 
     // Send broadcast notification about self start
-    vs_snap_info_start_notification(vs_snap_default_netif());
+    const vs_netif_t *n = vs_snap_default_netif();
+    vs_snap_pc_start_notification(n);
+    vs_snap_info_start_notification(n);
 
     // Sleep until CTRL_C
     vs_app_sleep_until_stop();

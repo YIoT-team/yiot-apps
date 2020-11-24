@@ -29,10 +29,10 @@ extern "C" {
 #endif
 
 vs_status_e
-ks_snap_pc_init_cb(vs_snap_pc_state_t *state);
+ks_snap_pc_get_info_cb(vs_snap_pc_state_t *state);
 
 vs_status_e
-ks_snap_pc_get_info_cb(vs_snap_pc_init_t *init);
+ks_snap_pc_init_cb(vs_snap_pc_init_t *init);
 
 #ifdef __cplusplus
 }

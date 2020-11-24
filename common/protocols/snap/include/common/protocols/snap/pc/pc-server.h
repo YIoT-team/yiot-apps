@@ -55,6 +55,9 @@ typedef struct {
 const vs_snap_service_t *
 vs_snap_pc_server(vs_snap_pc_server_service_t impl);
 
+vs_status_e
+vs_snap_pc_start_notification(const vs_netif_t *netif);
+
 #ifdef __cplusplus
 } // extern "C"
 } // namespace VirgilIoTKit

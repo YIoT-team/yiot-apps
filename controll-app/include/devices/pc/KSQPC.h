@@ -21,7 +21,7 @@
 #define YIOT_PC_H
 
 #include <QtCore>
-//#include <virgil/iot/protocols/snap/lamp/lamp-structs.h>
+#include <common/protocols/snap/pc/pc-structs.h>
 
 #include <devices/KSQDeviceBase.h>
 
