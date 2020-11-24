@@ -23,15 +23,20 @@
 #include <virgil/iot/protocols/snap/info/info-server.h>
 #include <virgil/iot/protocols/snap/cfg/cfg-server.h>
 
+#include <common/protocols/snap/pc/pc-server.h>
+
 #include "helpers/app-helpers.h"
 
 #include "sdk-impl/netif/packets-queue.h"
+#include "sdk-impl/netif/netif-udp-broadcast.h"
 
 #include "iotkit-impl/init.h"
 #include "iotkit-impl/netif/netif-ble-linux.h"
 
+
 #include "commands/device-info.h"
 #include "commands/wifi-cred.h"
+#include "commands/pc.h"
 
 #if SECURE_PROVISION
 #include <virgil/iot/vs-soft-secmodule/vs-soft-secmodule.h>
@@ -48,10 +53,12 @@ _print_title(void);
 int
 main(int argc, char *argv[]) {
     int res = -1;
+    vs_mac_addr_t forced_mac_addr;
 
     // Implementation variables
-    vs_netif_t *netifs_impl[2] = {NULL, NULL};
+    vs_netif_t *netifs_impl[3] = {0};
     vs_snap_cfg_server_service_t cfg_server_cb = {ks_snap_cfg_wifi_cb, NULL, NULL, NULL};
+    vs_snap_pc_server_service_t pc_server_cb = {ks_snap_pc_get_info_cb, ks_snap_pc_init_cb};
 
 #if SECURE_PROVISION
     vs_secmodule_impl_t *secmodule_impl = NULL;
@@ -80,8 +87,10 @@ main(int argc, char *argv[]) {
     //
 
     // Network interface
+    memset(forced_mac_addr.bytes, 0xAB, ETH_ADDR_LEN);
     vs_packets_queue_init(vs_snap_default_processor);
-    netifs_impl[0] = ks_netif_ble();
+    netifs_impl[0] = vs_hal_netif_udp_bcast(forced_mac_addr);
+    netifs_impl[1] = ks_netif_ble();
 
 #if SECURE_PROVISION
     // TrustList storage
@@ -107,6 +116,7 @@ main(int argc, char *argv[]) {
                                 VS_SNAP_DEV_THING,
                                 netifs_impl,
                                 cfg_server_cb,
+                                pc_server_cb,
                                 vs_packets_queue_add
 #if SECURE_PROVISION
                                 ,
@@ -121,14 +131,9 @@ main(int argc, char *argv[]) {
     //
 
     // Send broadcast notification about self start
-    vs_snap_info_start_notification(vs_snap_default_netif());
-
-    //-----------------------
-    vs_cfg_wifi_configuration_t c;
-    strcpy(c.ssid, "SSID");
-    strcpy(c.pass, "PASSWORD");
-    ks_snap_cfg_wifi_cb(&c);
-    //-----------------------
+    const vs_netif_t *n = vs_snap_default_netif();
+    vs_snap_pc_start_notification(n);
+    vs_snap_info_start_notification(n);
 
     // Sleep until CTRL_C
     vs_app_sleep_until_stop();

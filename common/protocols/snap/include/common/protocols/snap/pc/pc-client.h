@@ -30,8 +30,8 @@ namespace VirgilIoTKit {
 extern "C" {
 #endif
 
-//typedef vs_status_e (*vs_snap_lamp_set_state_cb_t)(vs_snap_lamp_state_t *);
-//typedef vs_status_e (*vs_snap_lamp_get_state_cb_t)(void);
+// typedef vs_status_e (*vs_snap_lamp_set_state_cb_t)(vs_snap_lamp_state_t *);
+// typedef vs_status_e (*vs_snap_lamp_get_state_cb_t)(void);
 
 typedef vs_status_e (*vs_snap_pc_state_notif_cb_t)(vs_status_e res,
                                                    const vs_mac_addr_t *mac,

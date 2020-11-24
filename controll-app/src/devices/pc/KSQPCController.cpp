@@ -39,6 +39,19 @@ KSQPCController::KSQPCController() {
             &KSQPCController::onDeviceInfoUpdate,
             Qt::QueuedConnection);
 
+    // SNAP::PC service
+    connect(&KSQSnapPCClient::instance(),
+            &KSQSnapPCClient::fireStateUpdate,
+            this,
+            &KSQPCController::onPCStateUpdate,
+            Qt::QueuedConnection);
+
+    connect(&KSQSnapPCClient::instance(),
+            &KSQSnapPCClient::fireStateError,
+            this,
+            &KSQPCController::onPCError,
+            Qt::QueuedConnection);
+
     // Test data
 #if 1
     auto t = new QTimer();
@@ -80,30 +93,6 @@ void
 KSQPCController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
     auto res = findPC(deviceInfo.m_mac);
     auto pc = res.second;
-    if (!pc) {
-        // Add PC
-
-        bool activating = !m_pcs.size();
-
-        if (activating) {
-            emit fireAboutToActivate();
-        }
-
-        beginInsertRows(QModelIndex(), m_pcs.size(), m_pcs.size());
-
-        auto newPC = QSharedPointer<KSQPC>::create(VSQMac(deviceInfo.m_mac), QString("test-%1").arg(m_pcs.size()));
-        connect(newPC.get(), &KSQPC::fireInitDevice, this, &KSQPCController::onInitDevice);
-        m_pcs.push_back(newPC);
-
-        endInsertRows();
-
-        if (activating) {
-            emit fireActivated();
-        }
-    }
-
-    res = findPC(deviceInfo.m_mac);
-    pc = res.second;
     if (pc) {
         if (deviceInfo.m_hasGeneralInfo) {
             pc->setDeviceID(deviceInfo.m_deviceRoles);
@@ -125,14 +114,72 @@ KSQPCController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
 
 //-----------------------------------------------------------------------------
 void
+KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state) {
+    auto res = findPC(mac);
+    auto pc = res.second;
+    if (!pc) {
+        // Add PC
+
+        bool activating = !m_pcs.size();
+
+        if (activating) {
+            emit fireAboutToActivate();
+        }
+
+        beginInsertRows(QModelIndex(), m_pcs.size(), m_pcs.size());
+
+        auto newPC = QSharedPointer<KSQPC>::create(VSQMac(mac), QString("test-%1").arg(m_pcs.size()));
+        connect(newPC.get(), &KSQPC::fireInitDevice, this, &KSQPCController::onInitDevice);
+        m_pcs.push_back(newPC);
+
+        endInsertRows();
+
+        if (activating) {
+            emit fireActivated();
+        }
+    }
+
+    res = findPC(mac);
+    pc = res.second;
+    if (pc) {
+#if 0
+        if (deviceInfo.m_hasGeneralInfo) {
+            pc->setDeviceID(deviceInfo.m_deviceRoles);
+            pc->setManufacture(deviceInfo.m_manufactureId);
+            pc->setDeviceID(deviceInfo.m_deviceType);
+            pc->setFwVersion(deviceInfo.m_fwVer);
+            pc->setTlVersion(deviceInfo.m_tlVer);
+        }
+
+        if (deviceInfo.m_hasStatistics) {
+            pc->setSentBytes(QString("%1").arg(deviceInfo.m_sent));
+            pc->setReceivedBytes(QString("%1").arg(deviceInfo.m_received));
+        }
+#endif
+        const auto _idx = createIndex(res.first, 0);
+        emit dataChanged(_idx, _idx);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQPCController::onPCError(const vs_mac_addr_t mac) {
+    auto res = findPC(mac);
+    auto pc = res.second;
+    if (pc) {
+        qDebug() << "PC error: " << VSQMac(mac).description();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
 KSQPCController::onInitDevice(const KSQPC &pc) {
     vs_snap_pc_init_t init;
 
     memset(&init, 0, sizeof(init));
 
     bool isOk = true;
-    if ((pc.m_user.length() + 1) >= USER_NAME_SZ_MAX
-        || (pc.m_password.length() + 1) >= USER_PASS_SZ_MAX) {
+    if ((pc.m_user.length() + 1) >= USER_NAME_SZ_MAX || (pc.m_password.length() + 1) >= USER_PASS_SZ_MAX) {
         isOk = false;
     }
 

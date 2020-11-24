@@ -41,10 +41,8 @@ KSQApplication::run() {
     m_netifUdp = QSharedPointer<KSQUdp>::create();
 
     // Prepare IoTKit data
-    auto features = KSQFeatures()
-                    << KSQFeatures::SNAP_CFG_CLIENT
-                    << KSQFeatures::SNAP_LAMP_CLIENT
-                    << KSQFeatures::SNAP_PC_CLIENT;
+    auto features = KSQFeatures() << KSQFeatures::SNAP_CFG_CLIENT << KSQFeatures::SNAP_LAMP_CLIENT
+                                  << KSQFeatures::SNAP_PC_CLIENT;
     auto impl = VSQImplementations() << m_netifUdp << m_bleController.netif();
     auto roles = VSQDeviceRoles() << VirgilIoTKit::VS_SNAP_DEV_CONTROL;
     auto appConfig = VSQAppConfig() << VSQManufactureId() << VSQDeviceType() << VSQDeviceSerial()

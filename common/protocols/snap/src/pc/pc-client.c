@@ -64,9 +64,9 @@ vs_snap_pc_init(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap
     // TODO: Normalize structure
 
     // Send request
-    STATUS_CHECK_RET(
-            vs_snap_send_request(netif, dst_mac, VS_PC_SERVICE_ID, VS_PC_INPC, (uint8_t *)init_data, sizeof(*init_data)),
-            "Cannot send request");
+    STATUS_CHECK_RET(vs_snap_send_request(
+                             netif, dst_mac, VS_PC_SERVICE_ID, VS_PC_INPC, (uint8_t *)init_data, sizeof(*init_data)),
+                     "Cannot send request");
 
     VS_LOG_DEBUG(">>> vs_snap_pc_init");
 
@@ -75,10 +75,7 @@ vs_snap_pc_init(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap
 
 //-----------------------------------------------------------------------------
 static vs_status_e
-_pc_response_processor(vs_snap_element_t element_id,
-                         bool is_ack,
-                         const uint8_t *response,
-                         const uint16_t response_sz) {
+_pc_response_processor(vs_snap_element_t element_id, bool is_ack, const uint8_t *response, const uint16_t response_sz) {
 
     vs_status_e res = is_ack ? VS_CODE_OK : VS_CODE_ERR_SNAP_UNKNOWN;
     vs_snap_pc_state_t *state = NULL;
@@ -100,10 +97,10 @@ _pc_response_processor(vs_snap_element_t element_id,
 //-----------------------------------------------------------------------------
 static vs_status_e
 _pc_client_response_processor(const struct vs_netif_t *netif,
-                                vs_snap_element_t element_id,
-                                bool is_ack,
-                                const uint8_t *response,
-                                const uint16_t response_sz) {
+                              vs_snap_element_t element_id,
+                              bool is_ack,
+                              const uint8_t *response,
+                              const uint16_t response_sz) {
     (void)netif;
 
     switch (element_id) {
@@ -120,11 +117,48 @@ _pc_client_response_processor(const struct vs_netif_t *netif,
 }
 
 //-----------------------------------------------------------------------------
+static vs_status_e
+_ipst_request_processor(const uint8_t *request,
+                        const uint16_t request_sz,
+                        uint8_t *response,
+                        const uint16_t response_buf_sz,
+                        uint16_t *response_sz) {
+
+    *response_sz = 0;
+    return _pc_response_processor(VS_PC_GPST, true, request, request_sz);
+}
+
+//-----------------------------------------------------------------------------
+static vs_status_e
+_pc_client_request_processor(const struct vs_netif_t *netif,
+                             vs_snap_element_t element_id,
+                             const uint8_t *request,
+                             const uint16_t request_sz,
+                             uint8_t *response,
+                             const uint16_t response_buf_sz,
+                             uint16_t *response_sz) {
+    (void)netif;
+
+    *response_sz = 0;
+
+    switch (element_id) {
+
+    case VS_PC_IPST:
+        return _ipst_request_processor(request, request_sz, response, response_buf_sz, response_sz);
+
+    default:
+        VS_LOG_ERROR("Unsupported PC command");
+        VS_IOT_ASSERT(false);
+        return VS_CODE_COMMAND_NO_RESPONSE;
+    }
+}
+
+//-----------------------------------------------------------------------------
 const vs_snap_service_t *
 vs_snap_pc_client(vs_snap_pc_client_service_t impl) {
     _pc_client.user_data = 0;
     _pc_client.id = VS_PC_SERVICE_ID;
-    _pc_client.request_process = NULL;
+    _pc_client.request_process = _pc_client_request_processor;
     _pc_client.response_process = _pc_client_response_processor;
     _pc_client.periodical_process = NULL;
 

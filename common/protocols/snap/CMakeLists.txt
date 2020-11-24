@@ -105,9 +105,14 @@ function(add_snap _targetname _definitions)
 endfunction()
 
 #
-#   SNAP For Thing
+#   SNAP For Thing Lamp
 #
-add_snap("yiot-snap-thing" "LAMP_SERVER=1 PC_SERVER=1")
+add_snap("yiot-snap-thing-lamp" "LAMP_SERVER=1")
+
+#
+#   SNAP For Thing PC
+#
+add_snap("yiot-snap-thing-pc" "PC_SERVER=1")
 
 #
 #   SNAP For Control
