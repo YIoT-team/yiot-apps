@@ -4,25 +4,44 @@ import QtQuick.Layouts 1.5
 
 import "../theme"
 
-TextField {
-    id: password
-    Layout.preferredWidth: parent.width - 20
-    Layout.alignment: Qt.AlignHCenter
-    color: Theme.primaryTextColor
-    font.pointSize: UiHelper.fixFontSz(14)
-    leftPadding: 30
-    background: Rectangle {
-        implicitWidth: 200
-        implicitHeight: 50
-        radius: implicitHeight / 2
-        color: "transparent"
+ColumnLayout {
+    property alias label: formLabel.text
+    property alias text: formField.text
+    property alias placeholderText: formField.placeholderText
+    property alias validator: formField.validator
+    property alias echoMode: formField.echoMode
 
-        Rectangle {
-            width: parent.width - 10
-            height: 1
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            color: Theme.brandColor
+    Layout.preferredHeight: 30
+    Layout.maximumWidth: parent.width - 60
+    Layout.alignment: Qt.AlignHCenter
+
+    spacing: 0
+
+    FormLabel {
+        id: formLabel
+    }
+
+    TextField {
+        id: formField
+        Layout.preferredWidth: parent.width
+        Layout.alignment: Qt.AlignHCenter
+        color: Theme.primaryTextColor
+        font.pointSize: UiHelper.fixFontSz(14)
+        leftPadding: 30
+        background: Rectangle {
+            implicitWidth: 200
+            implicitHeight: 30
+            radius: implicitHeight / 2
+            color: "transparent"
+
+            Rectangle {
+                width: parent.width - 10
+                height: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                color: Theme.brandColor
+            }
         }
     }
+
 }

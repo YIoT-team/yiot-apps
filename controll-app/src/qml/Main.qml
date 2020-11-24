@@ -34,7 +34,7 @@ ApplicationWindow {
     id: applicationWindow
     visible: true
     width: 400
-    height: 600
+    height: 700
     title: app.applicationDisplayName
 
     background: Rectangle {

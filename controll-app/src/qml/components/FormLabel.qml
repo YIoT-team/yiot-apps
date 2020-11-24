@@ -6,7 +6,6 @@ import "../theme"
 
 Text {
     Layout.fillWidth: true
-    Layout.maximumWidth: Theme.formMaximumWidth
     Layout.alignment: Qt.AlignHCenter
 
     color: Theme.labelColor
@@ -14,7 +13,6 @@ Text {
     font.bold: false
     font.family: Theme.mainFont
     font.pointSize: UiHelper.fixFontSz(12)
-    wrapMode: Text.WordWrap
     textFormat: Text.RichText
     linkColor: Theme.buttonPrimaryColor
     onLinkActivated: Qt.openUrlExternally(link)

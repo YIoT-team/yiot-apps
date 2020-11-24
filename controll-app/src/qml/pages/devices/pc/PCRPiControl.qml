@@ -23,6 +23,7 @@ import QtQuick.Layouts 1.12
 
 import "../../../theme"
 import "../../../components"
+import "../../../components/validators"
 
 Page {
     property var controller
@@ -55,7 +56,7 @@ Page {
             Image {
                 id: stateImage
 
-                Layout.preferredHeight: 128
+                Layout.preferredHeight: 96
                 Layout.fillWidth: true
 
                 fillMode: Image.PreserveAspectFit
@@ -64,17 +65,28 @@ Page {
 
             InputTextField {
                 id: userName
-                placeholderText: qsTr("User name")
+                label: qsTr("User name")
+                placeholderText: qsTr("Enter new User name")
+                validator: ValidatorUserName {}
             }
 
             Password {
                 id: pass1
-                placeholderText: qsTr("Enter Password")
+                label: qsTr("Password")
+                placeholderText: qsTr("Enter new User password")
             }
 
             Password {
                 id: pass2
-                placeholderText: qsTr("Repeat Password")
+                label: qsTr("Password check")
+                placeholderText: qsTr("Enter new User password to check")
+            }
+
+            InputTextField {
+                id: staticIP
+                label: qsTr("Static IP")
+                placeholderText: qsTr("Enter Static IP for RPi")
+                validator: ValidatorIPv4 {}
             }
 
             FormSecondaryButton {
@@ -82,7 +94,9 @@ Page {
                 Layout.bottomMargin: 10
                 text: qsTr("Init RPi")
                 onClicked: {
-                    console.log(">>> Init RPi")
+                    if (validateInputs()) {
+                        console.log(">>> Init RPi")
+                    }
                 }
             }
 
@@ -98,6 +112,34 @@ Page {
                 }
             }
         }
+    }
+
+    function errorPopupClick() {
+
+    }
+
+    function validateInputs() {
+        if (userName.text == "") {
+            showPopupError(qsTr("Set new User name"), errorPopupClick)
+            return false
+        }
+
+        if (pass1.text == "") {
+            showPopupError(qsTr("Set new User password"), errorPopupClick)
+            return false
+        }
+
+        if (pass1.text != pass2.text) {
+            showPopupError(qsTr("Passwords are not equal"), errorPopupClick)
+            return false
+        }
+
+        if (staticIP.text == "") {
+            showPopupError(qsTr("Static IP address isn't valid"), errorPopupClick)
+            return false
+        }
+
+        return true
     }
 
 }
