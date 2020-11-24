@@ -17,49 +17,41 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_H
-#define YIOT_PC_H
+#ifndef YIOT_SNAP_SERVICES_PC_STRUCTS_H
+#define YIOT_SNAP_SERVICES_PC_STRUCTS_H
 
-#include <QtCore>
-//#include <virgil/iot/protocols/snap/lamp/lamp-structs.h>
+#include <stdint.h>
 
-#include <devices/KSQDeviceBase.h>
+#ifdef __cplusplus
+namespace VirgilIoTKit {
+extern "C" {
+#endif
 
-class KSQPCController;
+#define USER_NAME_SZ_MAX 64
+#define USER_PASS_SZ_MAX 64
 
-class KSQPC : public KSQDeviceBase {
-    Q_OBJECT
-    friend KSQPCController;
-public:
-    KSQPC() : KSQDeviceBase() {
-    }
+typedef struct __attribute__((__packed__)) {
+    uint8_t user[USER_NAME_SZ_MAX];
+    uint8_t pass[USER_PASS_SZ_MAX];
+    uint32_t ipv4;
+} vs_snap_pc_init_t;
 
-    KSQPC(VSQMac mac, QString name, QString img = "");
+typedef enum {
+    KS_PC_WIFI_UNKNOWN = 0,
+    KS_PC_WIFI_STA,
+    KS_PC_WIFI_AP
+} vs_snap_pc_wifi_mode_e;
 
-    KSQPC(const KSQPC &l);
+typedef struct __attribute__((__packed__)) {
+    uint8_t internet_present;
+    uint8_t wifi_mode;
+    uint32_t wifi_ipv4;
+    uint32_t ethernet_ipv4;
+} vs_snap_pc_state_t;
 
-    virtual ~KSQPC() = default;
+#ifdef __cplusplus
+} // extern "C"
+} // namespace VirgilIoTKit
+#endif
 
-    virtual QString
-    _deviceType() const final {
-        return "pc";
-    }
-
-signals:
-    void
-    fireInitDevice(const KSQPC &pc);
-
-public slots:
-    Q_INVOKABLE void
-    initDevice(QString user, QString password, QString staticIP);
-
-private:
-    QString m_user;
-    QString m_password;
-    QString m_staticIP;
-};
-
-Q_DECLARE_METATYPE(KSQPC)
-Q_DECLARE_METATYPE(KSQPC *)
-
-#endif // YIOT_PC_H
+#endif // YIOT_SNAP_SERVICES_PC_STRUCTS_H

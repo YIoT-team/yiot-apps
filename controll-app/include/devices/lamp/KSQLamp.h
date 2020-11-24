@@ -51,6 +51,7 @@ public:
 
 signals:
     void fireStateChanged(QString);
+
     void
     fireSetDeviceParams(const KSQLamp &lamp);
 

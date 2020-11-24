@@ -17,9 +17,12 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
+#include <arpa/inet.h>
+
 #include <devices/pc/KSQPCController.h>
 
 #include <virgil/iot/qt/protocols/snap/VSQSnapINFOClient.h>
+#include <yiot-iotkit/snap/KSQSnapPCClient.h>
 
 //-----------------------------------------------------------------------------
 KSQPCController::KSQPCController() {
@@ -88,8 +91,9 @@ KSQPCController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
 
         beginInsertRows(QModelIndex(), m_pcs.size(), m_pcs.size());
 
-        auto newLamp = QSharedPointer<KSQPC>::create(VSQMac(deviceInfo.m_mac), QString("test-%1").arg(m_pcs.size()));
-        m_pcs.push_back(newLamp);
+        auto newPC = QSharedPointer<KSQPC>::create(VSQMac(deviceInfo.m_mac), QString("test-%1").arg(m_pcs.size()));
+        connect(newPC.get(), &KSQPC::fireInitDevice, this, &KSQPCController::onInitDevice);
+        m_pcs.push_back(newPC);
 
         endInsertRows();
 
@@ -121,7 +125,31 @@ KSQPCController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
 
 //-----------------------------------------------------------------------------
 void
-KSQPCController::onSetDeviceParams(const KSQPC &pc) {
+KSQPCController::onInitDevice(const KSQPC &pc) {
+    vs_snap_pc_init_t init;
+
+    memset(&init, 0, sizeof(init));
+
+    bool isOk = true;
+    if ((pc.m_user.length() + 1) >= USER_NAME_SZ_MAX
+        || (pc.m_password.length() + 1) >= USER_PASS_SZ_MAX) {
+        isOk = false;
+    }
+
+    if (isOk) {
+        strcpy(reinterpret_cast<char *>(init.user), pc.m_user.toStdString().c_str());
+        strcpy(reinterpret_cast<char *>(init.pass), pc.m_password.toStdString().c_str());
+        if (0 >= inet_pton(AF_INET, pc.m_staticIP.toStdString().c_str(), &init.ipv4)) {
+            isOk = false;
+        }
+    }
+
+    if (!isOk) {
+        VS_LOG_ERROR("Wrong parameters");
+        return;
+    }
+
+    KSQSnapPCClient::instance().initPC(pc.qMacAddr(), init);
 }
 
 //-----------------------------------------------------------------------------

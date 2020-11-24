@@ -17,49 +17,43 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_H
-#define YIOT_PC_H
+#ifndef YIOT_SNAP_SERVICES_PC_CLIENT_H
+#define YIOT_SNAP_SERVICES_PC_CLIENT_H
 
-#include <QtCore>
-//#include <virgil/iot/protocols/snap/lamp/lamp-structs.h>
+#if PC_CLIENT
 
-#include <devices/KSQDeviceBase.h>
+#include <virgil/iot/protocols/snap/snap-structs.h>
+#include <common/protocols/snap/pc/pc-structs.h>
 
-class KSQPCController;
+#ifdef __cplusplus
+namespace VirgilIoTKit {
+extern "C" {
+#endif
 
-class KSQPC : public KSQDeviceBase {
-    Q_OBJECT
-    friend KSQPCController;
-public:
-    KSQPC() : KSQDeviceBase() {
-    }
+//typedef vs_status_e (*vs_snap_lamp_set_state_cb_t)(vs_snap_lamp_state_t *);
+//typedef vs_status_e (*vs_snap_lamp_get_state_cb_t)(void);
 
-    KSQPC(VSQMac mac, QString name, QString img = "");
+typedef vs_status_e (*vs_snap_pc_state_notif_cb_t)(vs_status_e res,
+                                                   const vs_mac_addr_t *mac,
+                                                   const vs_snap_pc_state_t *data);
 
-    KSQPC(const KSQPC &l);
+typedef struct {
+    vs_snap_pc_state_notif_cb_t device_state_update; /**< Current state notification */
+} vs_snap_pc_client_service_t;
 
-    virtual ~KSQPC() = default;
+vs_status_e
+vs_snap_pc_get_state(const vs_netif_t *netif, const vs_mac_addr_t *mac);
 
-    virtual QString
-    _deviceType() const final {
-        return "pc";
-    }
+vs_status_e
+vs_snap_pc_init(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap_pc_init_t *init_data);
 
-signals:
-    void
-    fireInitDevice(const KSQPC &pc);
+const vs_snap_service_t *
+vs_snap_pc_client(vs_snap_pc_client_service_t impl);
 
-public slots:
-    Q_INVOKABLE void
-    initDevice(QString user, QString password, QString staticIP);
+#ifdef __cplusplus
+} // extern "C"
+} // namespace VirgilIoTKit
+#endif
 
-private:
-    QString m_user;
-    QString m_password;
-    QString m_staticIP;
-};
-
-Q_DECLARE_METATYPE(KSQPC)
-Q_DECLARE_METATYPE(KSQPC *)
-
-#endif // YIOT_PC_H
+#endif // PC_CLIENT
+#endif // YIOT_SNAP_SERVICES_PC_CLIENT_H

@@ -17,49 +17,43 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_H
-#define YIOT_PC_H
+#include <virgil/iot/qt/VSQIoTKit.h>
+#include <cstring>
 
-#include <QtCore>
-//#include <virgil/iot/protocols/snap/lamp/lamp-structs.h>
+#include <yiot-iotkit/snap/KSQSnapPCClient.h>
 
-#include <devices/KSQDeviceBase.h>
+using namespace VirgilIoTKit;
 
-class KSQPCController;
+/******************************************************************************/
+KSQSnapPCClient::KSQSnapPCClient() {
+    vs_snap_pc_client_service_t impl;
+    memset(&impl, 0, sizeof(impl));
+    impl.device_state_update = &KSQSnapPCClient::onUpdateState;
+    m_snapService = vs_snap_pc_client(impl);
+}
 
-class KSQPC : public KSQDeviceBase {
-    Q_OBJECT
-    friend KSQPCController;
-public:
-    KSQPC() : KSQDeviceBase() {
+/******************************************************************************/
+vs_status_e
+KSQSnapPCClient::onUpdateState(vs_status_e res, const vs_mac_addr_t *mac, const vs_snap_pc_state_t *data) {
+    if (VS_CODE_OK == res) {
+        emit KSQSnapPCClient::instance().fireStateUpdate(*mac, *data);
+    } else {
+        emit KSQSnapPCClient::instance().fireStateError(*mac);
     }
 
-    KSQPC(VSQMac mac, QString name, QString img = "");
+    return VS_CODE_OK;
+}
 
-    KSQPC(const KSQPC &l);
+/******************************************************************************/
+void
+KSQSnapPCClient::requestState(const vs_mac_addr_t &mac) {
+    vs_snap_pc_get_state(vs_snap_netif_routing(), &mac);
+}
 
-    virtual ~KSQPC() = default;
+/******************************************************************************/
+void
+KSQSnapPCClient::initPC(const vs_mac_addr_t &mac, const vs_snap_pc_init_t &initData) {
+    vs_snap_pc_init(vs_snap_netif_routing(), &mac, &initData);
+}
 
-    virtual QString
-    _deviceType() const final {
-        return "pc";
-    }
-
-signals:
-    void
-    fireInitDevice(const KSQPC &pc);
-
-public slots:
-    Q_INVOKABLE void
-    initDevice(QString user, QString password, QString staticIP);
-
-private:
-    QString m_user;
-    QString m_password;
-    QString m_staticIP;
-};
-
-Q_DECLARE_METATYPE(KSQPC)
-Q_DECLARE_METATYPE(KSQPC *)
-
-#endif // YIOT_PC_H
+/******************************************************************************/

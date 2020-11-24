@@ -222,6 +222,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/KSQIoTKitFacade.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQUdp.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapLampClient.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapPCClient.h
 
         $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
         $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
@@ -245,6 +246,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/KSQIoTKitFacade.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQUdp.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapLampClient.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapPCClient.cpp
 
         $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/macos/KSMacWiFi.mm>
         $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/src/win/KSWinWiFi.cpp>

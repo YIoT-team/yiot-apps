@@ -17,49 +17,48 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_H
-#define YIOT_PC_H
+#ifndef YIOT_SNAP_SERVICES_PC_SERVER_H
+#define YIOT_SNAP_SERVICES_PC_SERVER_H
 
-#include <QtCore>
-//#include <virgil/iot/protocols/snap/lamp/lamp-structs.h>
+#if PC_SERVER
 
-#include <devices/KSQDeviceBase.h>
+#include <virgil/iot/protocols/snap/snap-structs.h>
 
-class KSQPCController;
+#ifdef __cplusplus
+namespace VirgilIoTKit {
+extern "C" {
+#endif
 
-class KSQPC : public KSQDeviceBase {
-    Q_OBJECT
-    friend KSQPCController;
-public:
-    KSQPC() : KSQDeviceBase() {
-    }
+typedef vs_status_e (*vs_snap_pc_get_state_server_cb_t)(vs_snap_pc_state_t *state);
 
-    KSQPC(VSQMac mac, QString name, QString img = "");
+typedef vs_status_e (*vs_snap_pc_init_server_cb_t)(uint8_t *data, uint32_t data_sz);
 
-    KSQPC(const KSQPC &l);
+/** PC server implementations
+ *
+ * \note Any callback can be NULL. In this case, there will be no actions with requests.
+ *
+ */
+typedef struct {
+    vs_snap_pc_get_state_server_cb_t get_data; /**< Get data to send it over snap */
+    vs_snap_pc_init_server_cb_t init_pc;       /**< Init PC using data received from snap */
+} vs_snap_pc_server_service_t;
 
-    virtual ~KSQPC() = default;
+/** PC Server SNAP Service implementation
+ *
+ * This call returns PC server implementation. It must be called before any PC call.
+ *
+ * \param[in] impl Snap PC Server functions implementation.
+ *
+ * \return #vs_snap_service_t PC service description. Use this pointer to call #vs_snap_register_service.
+ */
+const vs_snap_service_t *
+vs_snap_pc_server(vs_snap_pc_server_service_t impl);
 
-    virtual QString
-    _deviceType() const final {
-        return "pc";
-    }
+#ifdef __cplusplus
+} // extern "C"
+} // namespace VirgilIoTKit
+#endif
 
-signals:
-    void
-    fireInitDevice(const KSQPC &pc);
+#endif // PC_SERVER
 
-public slots:
-    Q_INVOKABLE void
-    initDevice(QString user, QString password, QString staticIP);
-
-private:
-    QString m_user;
-    QString m_password;
-    QString m_staticIP;
-};
-
-Q_DECLARE_METATYPE(KSQPC)
-Q_DECLARE_METATYPE(KSQPC *)
-
-#endif // YIOT_PC_H
+#endif // YIOT_SNAP_SERVICES_PC_SERVER_H

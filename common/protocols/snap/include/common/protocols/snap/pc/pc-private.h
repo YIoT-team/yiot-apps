@@ -17,49 +17,24 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_H
-#define YIOT_PC_H
+#ifndef YIOT_SNAP_SERVICES_PC_PRIVATE_H
+#define YIOT_SNAP_SERVICES_PC_PRIVATE_H
 
-#include <QtCore>
-//#include <virgil/iot/protocols/snap/lamp/lamp-structs.h>
+#include <common/protocols/snap/lamp/lamp-server.h>
+#include <common/protocols/snap/lamp/lamp-structs.h>
+#include <virgil/iot/protocols/snap.h>
+#include <virgil/iot/status_code/status_code.h>
+#include <virgil/iot/protocols/snap/snap-structs.h>
 
-#include <devices/KSQDeviceBase.h>
+// mute "error: multi-character character constant" message
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmultichar"
+typedef enum { VS_PC_SERVICE_ID = HTONL_IN_COMPILE_TIME('_PC_') } vs_pc_t;
 
-class KSQPCController;
+typedef enum {
+    VS_PC_INPC = HTONL_IN_COMPILE_TIME('INPC'), /* INit PC */
+    VS_PC_GPST = HTONL_IN_COMPILE_TIME('GPST'), /* Get Pc STate */
+} vs_snap_pc_element_e;
+#pragma GCC diagnostic pop
 
-class KSQPC : public KSQDeviceBase {
-    Q_OBJECT
-    friend KSQPCController;
-public:
-    KSQPC() : KSQDeviceBase() {
-    }
-
-    KSQPC(VSQMac mac, QString name, QString img = "");
-
-    KSQPC(const KSQPC &l);
-
-    virtual ~KSQPC() = default;
-
-    virtual QString
-    _deviceType() const final {
-        return "pc";
-    }
-
-signals:
-    void
-    fireInitDevice(const KSQPC &pc);
-
-public slots:
-    Q_INVOKABLE void
-    initDevice(QString user, QString password, QString staticIP);
-
-private:
-    QString m_user;
-    QString m_password;
-    QString m_staticIP;
-};
-
-Q_DECLARE_METATYPE(KSQPC)
-Q_DECLARE_METATYPE(KSQPC *)
-
-#endif // YIOT_PC_H
+#endif // YIOT_SNAP_SERVICES_PC_PRIVATE_H

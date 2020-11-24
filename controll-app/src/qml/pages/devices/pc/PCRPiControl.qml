@@ -95,7 +95,7 @@ Page {
                 text: qsTr("Init RPi")
                 onClicked: {
                     if (validateInputs()) {
-                        console.log(">>> Init RPi")
+                        controller.initDevice(userName.text, pass1.text, staticIP.text);
                     }
                 }
             }
@@ -115,7 +115,6 @@ Page {
     }
 
     function errorPopupClick() {
-
     }
 
     function validateInputs() {

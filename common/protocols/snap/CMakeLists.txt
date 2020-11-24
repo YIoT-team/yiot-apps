@@ -36,9 +36,13 @@ function(add_snap _targetname _definitions)
 
             ${CMAKE_CURRENT_LIST_DIR}/include/common/protocols/snap/lamp/lamp-server.h
             ${CMAKE_CURRENT_LIST_DIR}/include/common/protocols/snap/lamp/lamp-client.h
+            ${CMAKE_CURRENT_LIST_DIR}/include/common/protocols/snap/pc/pc-server.h
+            ${CMAKE_CURRENT_LIST_DIR}/include/common/protocols/snap/pc/pc-client.h
 
             ${CMAKE_CURRENT_LIST_DIR}/src/lamp/lamp-server.c
             ${CMAKE_CURRENT_LIST_DIR}/src/lamp/lamp-client.c
+            ${CMAKE_CURRENT_LIST_DIR}/src/pc/pc-server.c
+            ${CMAKE_CURRENT_LIST_DIR}/src/pc/pc-client.c
             )
 
     #
@@ -103,9 +107,9 @@ endfunction()
 #
 #   SNAP For Thing
 #
-add_snap("yiot-snap-thing" "LAMP_SERVER=1")
+add_snap("yiot-snap-thing" "LAMP_SERVER=1 PC_SERVER=1")
 
 #
 #   SNAP For Control
 #
-add_snap("yiot-snap-control" "LAMP_CLIENT=1")
+add_snap("yiot-snap-control" "LAMP_CLIENT=1 PC_CLIENT=1")

@@ -39,6 +39,7 @@
 
 #include <yiot-iotkit/KSQIoTKitFacade.h>
 #include <yiot-iotkit/snap/KSQSnapLampClient.h>
+#include <yiot-iotkit/snap/KSQSnapPCClient.h>
 
 using namespace VirgilIoTKit;
 
@@ -126,6 +127,10 @@ KSQIoTKitFacade::initSnap() {
 
     if (m_features.hasFeature(KSQFeatures::SNAP_LAMP_CLIENT)) {
         registerService(KSQSnapLampClient::instance());
+    }
+
+    if (m_features.hasFeature(KSQFeatures::SNAP_PC_CLIENT)) {
+        registerService(KSQSnapPCClient::instance());
     }
 }
 

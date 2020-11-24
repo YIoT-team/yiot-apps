@@ -17,49 +17,65 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_H
-#define YIOT_PC_H
+#ifndef _YIOT_QT_SNAP_PC_CLIENT_SERVICE_H_
+#define _YIOT_QT_SNAP_PC_CLIENT_SERVICE_H_
 
 #include <QtCore>
-//#include <virgil/iot/protocols/snap/lamp/lamp-structs.h>
 
-#include <devices/KSQDeviceBase.h>
+#include <common/protocols/snap/pc/pc-structs.h>
+#include <common/protocols/snap/pc/pc-client.h>
+#include <virgil/iot/qt/helpers/VSQSingleton.h>
+#include <virgil/iot/qt/protocols/snap/VSQSnapServiceBase.h>
+#include <yiot-iotkit/KSQFeatures.h>
 
-class KSQPCController;
+using namespace VirgilIoTKit;
 
-class KSQPC : public KSQDeviceBase {
+class KSQSnapPCClient final : public QObject, public VSQSingleton<KSQSnapPCClient>, public VSQSnapServiceBase {
+
     Q_OBJECT
-    friend KSQPCController;
+
+    friend VSQSingleton<KSQSnapPCClient>;
+
 public:
-    KSQPC() : KSQDeviceBase() {
+    const VirgilIoTKit::vs_snap_service_t *
+    serviceInterface() override {
+        return m_snapService;
     }
 
-    KSQPC(VSQMac mac, QString name, QString img = "");
+    // TODO: remove it
+    VSQFeatures::EFeature
+    serviceFeature() const override {
+        return VSQFeatures::SNAP_SNIFFER;
+    }
 
-    KSQPC(const KSQPC &l);
-
-    virtual ~KSQPC() = default;
-
-    virtual QString
-    _deviceType() const final {
-        return "pc";
+    const QString &
+    serviceName() const override {
+        static QString name{"LAMP Client"};
+        return name;
     }
 
 signals:
     void
-    fireInitDevice(const KSQPC &pc);
+    fireStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state);
+
+    void
+    fireStateError(const vs_mac_addr_t mac);
 
 public slots:
-    Q_INVOKABLE void
-    initDevice(QString user, QString password, QString staticIP);
+    void
+    requestState(const vs_mac_addr_t &mac);
+
+    void
+    initPC(const vs_mac_addr_t &mac, const vs_snap_pc_init_t &initData);
 
 private:
-    QString m_user;
-    QString m_password;
-    QString m_staticIP;
+    const VirgilIoTKit::vs_snap_service_t *m_snapService;
+
+    KSQSnapPCClient();
+    virtual ~KSQSnapPCClient() = default;
+
+    static vs_status_e
+    onUpdateState(vs_status_e res, const vs_mac_addr_t *mac, const vs_snap_pc_state_t *data);
 };
 
-Q_DECLARE_METATYPE(KSQPC)
-Q_DECLARE_METATYPE(KSQPC *)
-
-#endif // YIOT_PC_H
+#endif // _YIOT_QT_SNAP_PC_CLIENT_SERVICE_H_

@@ -79,7 +79,7 @@ private slots:
 
     // UI
     void
-    onSetDeviceParams(const KSQPC &pc);
+    onInitDevice(const KSQPC &pc);
 
 protected:
     std::pair<int, QSharedPointer<KSQPC>>
