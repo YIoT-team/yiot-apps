@@ -131,8 +131,7 @@ KSQPCController::onInitDevice(const KSQPC &pc) {
     memset(&init, 0, sizeof(init));
 
     bool isOk = true;
-    if ((pc.m_user.length() + 1) >= USER_NAME_SZ_MAX
-        || (pc.m_password.length() + 1) >= USER_PASS_SZ_MAX) {
+    if ((pc.m_user.length() + 1) >= USER_NAME_SZ_MAX || (pc.m_password.length() + 1) >= USER_PASS_SZ_MAX) {
         isOk = false;
     }
 

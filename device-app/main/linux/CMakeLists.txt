@@ -68,9 +68,12 @@ target_sources(yiot-device-app-linux
         PRIVATE
         # Headers
         ${CMAKE_CURRENT_LIST_DIR}/include/iotkit-impl/init.h
+        # ${CMAKE_CURRENT_LIST_DIR}/include/iotkit-impl/packets-queue.h
         ${CMAKE_CURRENT_LIST_DIR}/include/iotkit-impl/netif/netif-ble-linux.h
+        # ${CMAKE_CURRENT_LIST_DIR}/include/iotkit-impl/netif/netif-udp-broadcast.h
         ${CMAKE_CURRENT_LIST_DIR}/include/commands/device-info.h
         ${CMAKE_CURRENT_LIST_DIR}/include/commands/wifi-cred.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/commands/pc.h
         ${CMAKE_CURRENT_LIST_DIR}/include/helpers/timer.h
         ${CMAKE_CURRENT_LIST_DIR}/include/helpers/command.h
 
@@ -78,10 +81,13 @@ target_sources(yiot-device-app-linux
         ${CMAKE_CURRENT_LIST_DIR}/src/main.c
         ${CMAKE_CURRENT_LIST_DIR}/src/commands/device-info.c
         ${CMAKE_CURRENT_LIST_DIR}/src/commands/wifi-cred.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/commands/pc.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/helpers/timer.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/helpers.c
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/init.c
+        # ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/packets-queue.c
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/netif/netif-ble-linux.cpp
+        # ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/netif/netif-udp-broadcast.c
         )
 
 
@@ -118,14 +124,17 @@ target_compile_options(yiot-device-app-linux
 target_link_libraries(yiot-device-app-linux
         PRIVATE
 
-        # IoTKit
+        #   IoTKit
         nix-common
         vs-module-snap-thing
 
-        # Bluez DBus
+        #   IoTKit extensions
+        yiot-snap-thing-pc
+
+        #   Bluez DBus
         bluez-dbus-cpp
 
-        # Helpers
+        #   Helpers
         enable_sanitizers
         #       enable_pedantic_mode
         )

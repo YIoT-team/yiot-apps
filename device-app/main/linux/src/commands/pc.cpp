@@ -17,41 +17,28 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
+#include <iostream>
+
 #include "helpers/timer.h"
-#include <thread>
+#include "helpers/command.h"
+
+#include "commands/pc.h"
+
+static KSTimer _processingDelayer;
+static const auto kDelayMs = std::chrono::milliseconds(200);
 
 //-----------------------------------------------------------------------------
-KSTimer::KSTimer() : m_running(false) {
-    std::thread([=]() {
-        while (true) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            std::lock_guard<std::mutex> lock(m_changingMutex);
-            if (m_running && std::chrono::high_resolution_clock::now() - m_start > m_delay) {
-                m_callback();
-
-                std::lock_guard<std::mutex> lockState(m_stateMutex);
-                m_running = false;
-            }
-        }
-    })
-            .detach();
+vs_status_e
+ks_snap_pc_init_cb(vs_snap_pc_state_t *state) {
+    printf(">>> ks_snap_pc_init_cb\n");
+    return VS_CODE_ERR_NOT_IMPLEMENTED;
 }
 
 //-----------------------------------------------------------------------------
-bool
-KSTimer::add(std::chrono::milliseconds delay, std::function<void()> callback) {
-    std::lock_guard<std::mutex> lockState(m_stateMutex);
-    if (m_running) {
-        return false;
-    }
-
-    std::lock_guard<std::mutex> lock(m_changingMutex);
-    m_callback = callback;
-    m_start = std::chrono::high_resolution_clock::now();
-    m_delay = delay;
-    m_running = true;
-
-    return true;
+vs_status_e
+ks_snap_pc_get_info_cb(vs_snap_pc_init_t *init) {
+    printf(">>> ks_snap_pc_get_info_cb\n");
+    return VS_CODE_ERR_NOT_IMPLEMENTED;
 }
 
 //-----------------------------------------------------------------------------

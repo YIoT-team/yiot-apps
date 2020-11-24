@@ -30,6 +30,7 @@ class KSQPCController;
 class KSQPC : public KSQDeviceBase {
     Q_OBJECT
     friend KSQPCController;
+
 public:
     KSQPC() : KSQDeviceBase() {
     }

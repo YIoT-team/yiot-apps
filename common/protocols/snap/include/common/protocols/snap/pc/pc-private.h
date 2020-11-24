@@ -20,8 +20,8 @@
 #ifndef YIOT_SNAP_SERVICES_PC_PRIVATE_H
 #define YIOT_SNAP_SERVICES_PC_PRIVATE_H
 
-#include <common/protocols/snap/lamp/lamp-server.h>
-#include <common/protocols/snap/lamp/lamp-structs.h>
+#include <common/protocols/snap/pc/pc-server.h>
+#include <common/protocols/snap/pc/pc-structs.h>
 #include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/status_code/status_code.h>
 #include <virgil/iot/protocols/snap/snap-structs.h>

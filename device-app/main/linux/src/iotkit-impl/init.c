@@ -22,6 +22,8 @@
 #include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/provision/provision.h>
 
+#include <common/protocols/snap/pc/pc-server.h>
+
 #include "iotkit-impl/init.h"
 
 static void
@@ -35,6 +37,7 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
                uint32_t device_roles,
                vs_netif_t *netif_impl[],
                vs_snap_cfg_server_service_t cfg_server_cb,
+               vs_snap_pc_server_service_t pc_server_cb,
                vs_netif_process_cb_t packet_preprocessor_cb
 #if SECURE_PROVISION
                ,
@@ -82,9 +85,15 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     snap_info_server = vs_snap_info_server(NULL);
     STATUS_CHECK(vs_snap_register_service(snap_info_server), "Cannot register INFO server service");
 
+    // CFG server service
     const vs_snap_service_t *snap_cfg_server;
     snap_cfg_server = vs_snap_cfg_server(cfg_server_cb);
     STATUS_CHECK(vs_snap_register_service(snap_cfg_server), "Cannot register CFG server service");
+
+    // PC server service
+    const vs_snap_service_t *snap_pc_server;
+    snap_pc_server = vs_snap_pc_server(pc_server_cb);
+    STATUS_CHECK(vs_snap_register_service(snap_pc_server), "Cannot register PC server service");
 
     res = VS_CODE_OK;
 

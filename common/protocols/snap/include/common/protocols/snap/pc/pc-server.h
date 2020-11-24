@@ -23,6 +23,7 @@
 #if PC_SERVER
 
 #include <virgil/iot/protocols/snap/snap-structs.h>
+#include <common/protocols/snap/pc/pc-structs.h>
 
 #ifdef __cplusplus
 namespace VirgilIoTKit {
@@ -31,7 +32,7 @@ extern "C" {
 
 typedef vs_status_e (*vs_snap_pc_get_state_server_cb_t)(vs_snap_pc_state_t *state);
 
-typedef vs_status_e (*vs_snap_pc_init_server_cb_t)(uint8_t *data, uint32_t data_sz);
+typedef vs_status_e (*vs_snap_pc_init_server_cb_t)(vs_snap_pc_init_t *init);
 
 /** PC server implementations
  *

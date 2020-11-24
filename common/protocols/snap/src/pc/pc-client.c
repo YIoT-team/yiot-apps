@@ -64,9 +64,9 @@ vs_snap_pc_init(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap
     // TODO: Normalize structure
 
     // Send request
-    STATUS_CHECK_RET(
-            vs_snap_send_request(netif, dst_mac, VS_PC_SERVICE_ID, VS_PC_INPC, (uint8_t *)init_data, sizeof(*init_data)),
-            "Cannot send request");
+    STATUS_CHECK_RET(vs_snap_send_request(
+                             netif, dst_mac, VS_PC_SERVICE_ID, VS_PC_INPC, (uint8_t *)init_data, sizeof(*init_data)),
+                     "Cannot send request");
 
     VS_LOG_DEBUG(">>> vs_snap_pc_init");
 
@@ -75,10 +75,7 @@ vs_snap_pc_init(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap
 
 //-----------------------------------------------------------------------------
 static vs_status_e
-_pc_response_processor(vs_snap_element_t element_id,
-                         bool is_ack,
-                         const uint8_t *response,
-                         const uint16_t response_sz) {
+_pc_response_processor(vs_snap_element_t element_id, bool is_ack, const uint8_t *response, const uint16_t response_sz) {
 
     vs_status_e res = is_ack ? VS_CODE_OK : VS_CODE_ERR_SNAP_UNKNOWN;
     vs_snap_pc_state_t *state = NULL;
@@ -100,10 +97,10 @@ _pc_response_processor(vs_snap_element_t element_id,
 //-----------------------------------------------------------------------------
 static vs_status_e
 _pc_client_response_processor(const struct vs_netif_t *netif,
-                                vs_snap_element_t element_id,
-                                bool is_ack,
-                                const uint8_t *response,
-                                const uint16_t response_sz) {
+                              vs_snap_element_t element_id,
+                              bool is_ack,
+                              const uint8_t *response,
+                              const uint16_t response_sz) {
     (void)netif;
 
     switch (element_id) {
