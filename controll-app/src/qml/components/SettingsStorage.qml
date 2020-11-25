@@ -23,9 +23,12 @@ import QtKeychain 1.0
 import Qt.labs.settings 1.0
 
 Item {
+    signal loaded()
+
     property alias defaultWiFi: s.defaultWiFi
 
     property var wifiCache
+
 
     // Settings storage
     Settings {
@@ -120,6 +123,7 @@ Item {
         // Load default creds
         loadWiFiCred(s.defaultWiFi, function(s, p) {
             console.log("Loaded default WiFi creds: ", s)
+            loaded()
         })
     }
 }

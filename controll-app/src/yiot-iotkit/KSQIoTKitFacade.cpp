@@ -58,6 +58,8 @@ KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &imp
     qRegisterMetaType<VirgilIoTKit::vs_netif_t *>("VirgilIoTKit::vs_netif_t*");
     qRegisterMetaType<VSQDeviceInfo>("VSQDeviceInfo");
     qRegisterMetaType<QAbstractSocket::SocketState>();
+    qRegisterMetaType<vs_mac_addr_t>("vs_mac_addr_t");
+    qRegisterMetaType<vs_snap_pc_state_t>("vs_snap_pc_state_t");
 
     // Process events in separate thread
     m_snapProcessorThread = new QThread();
@@ -131,6 +133,15 @@ KSQIoTKitFacade::initSnap() {
 
     if (m_features.hasFeature(KSQFeatures::SNAP_PC_CLIENT)) {
         registerService(KSQSnapPCClient::instance());
+    }
+}
+
+/******************************************************************************/
+void
+KSQIoTKitFacade::updateAll() {
+    qDebug() << "Get information about connected devices";
+    if (m_features.hasFeature(KSQFeatures::SNAP_PC_CLIENT)) {
+        KSQSnapPCClient::instance().requestState(broadcastMac);
     }
 }
 

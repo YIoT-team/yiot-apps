@@ -103,6 +103,9 @@ ApplicationWindow {
     SettingsStorage { id: settings }
 
     Component.onCompleted: {
+        settings.loaded.connect(function() {
+            app.updateDevices()
+        })
         showDevicesSetup()
     }
 

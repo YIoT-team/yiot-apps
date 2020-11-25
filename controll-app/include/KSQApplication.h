@@ -48,6 +48,9 @@ public:
     QString
     applicationDisplayName() const;
 
+    Q_INVOKABLE void
+    updateDevices();
+
 private:
     KSQWiFiEnumerator m_wifiEnumerator;
     KSQBLEController m_bleController;
