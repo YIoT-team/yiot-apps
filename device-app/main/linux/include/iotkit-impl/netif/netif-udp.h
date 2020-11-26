@@ -32,8 +32,8 @@
 //
 //  Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 
-#ifndef VS_IOT_NETIF_UDP_BCAST_IMPL_H
-#define VS_IOT_NETIF_UDP_BCAST_IMPL_H
+#ifndef VS_IOT_NETIF_UDP_IMPL_H
+#define VS_IOT_NETIF_UDP_IMPL_H
 
 
 #include <virgil/iot/protocols/snap/snap-structs.h>
@@ -43,10 +43,10 @@ extern "C" {
 #endif
 
 vs_netif_t *
-vs_hal_netif_udp_bcast(vs_mac_addr_t mac_addr);
+vs_hal_netif_udp(vs_mac_addr_t mac_addr);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // VS_IOT_NETIF_UDP_BCAST_IMPL_H
+#endif // VS_IOT_NETIF_UDP_IMPL_H

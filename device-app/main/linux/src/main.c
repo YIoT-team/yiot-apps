@@ -28,11 +28,10 @@
 #include "helpers/app-helpers.h"
 
 #include "sdk-impl/netif/packets-queue.h"
-#include "sdk-impl/netif/netif-udp-broadcast.h"
 
 #include "iotkit-impl/init.h"
 #include "iotkit-impl/netif/netif-ble-linux.h"
-
+#include "iotkit-impl/netif/netif-udp.h"
 
 #include "commands/device-info.h"
 #include "commands/wifi-cred.h"
@@ -89,7 +88,7 @@ main(int argc, char *argv[]) {
     // Network interface
     memset(forced_mac_addr.bytes, 0xAB, ETH_ADDR_LEN);
     vs_packets_queue_init(vs_snap_default_processor);
-    netifs_impl[0] = vs_hal_netif_udp_bcast(forced_mac_addr);
+    netifs_impl[0] = vs_hal_netif_udp(forced_mac_addr);
     netifs_impl[1] = ks_netif_ble();
 
 #if SECURE_PROVISION
