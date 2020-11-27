@@ -145,7 +145,7 @@ KSQIoTKitFacade::updateAll() {
     }
 
     if (m_features.hasFeature(KSQFeatures::SNAP_INFO_CLIENT)) {
-//        VSQSnapInfoClient::instance().onStartFullPolling();
+        VSQSnapInfoClient::instance().onStartFullPolling();
     }
 }
 
