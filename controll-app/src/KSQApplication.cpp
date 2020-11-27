@@ -82,7 +82,9 @@ KSQApplication::run() {
 //-----------------------------------------------------------------------------
 void
 KSQApplication::updateDevices() {
-    QTimer::singleShot(1000, []() { KSQIoTKitFacade::instance().updateAll(); });
+    KSQIoTKitFacade::instance().updateAll();
+    QTimer::singleShot(3000, []() { KSQIoTKitFacade::instance().updateAll(); });
+    QTimer::singleShot(5000, []() { KSQIoTKitFacade::instance().updateAll(); });
 }
 
 //-----------------------------------------------------------------------------
