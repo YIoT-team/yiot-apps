@@ -191,7 +191,8 @@ ApplicationWindow {
         w.state = "credLoad"
     }
 
-    function showCmdProcessing() {
+    function showCmdProcessing(device) {
+        cmdProcessingPage.device = device
         w.state = "cmdProcessing"
     }
 

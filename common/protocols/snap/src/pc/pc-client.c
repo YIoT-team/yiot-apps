@@ -68,8 +68,6 @@ vs_snap_pc_init(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap
                              netif, dst_mac, VS_PC_SERVICE_ID, VS_PC_INPC, (uint8_t *)init_data, sizeof(*init_data)),
                      "Cannot send request");
 
-    VS_LOG_DEBUG(">>> vs_snap_pc_init");
-
     return VS_CODE_OK;
 }
 

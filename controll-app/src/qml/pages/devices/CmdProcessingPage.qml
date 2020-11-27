@@ -25,9 +25,10 @@ import "../../theme"
 import "../../components"
 
 Page {
+    property var device: null
+
     id: p
     anchors.fill: parent
-    state: "connect"
 
     background: Rectangle {
         color: "transparent"
@@ -76,12 +77,13 @@ Page {
                 id: actionButton
                 Layout.bottomMargin: 10
                 onClicked: {
-                    devicesSetupPage.terminateProvision()
+                    showDevices()
                 }
             }
         }
     }
 
+    state: device == null ? "connect" : device.commandState
     states: [
         State {
             name: "connect"
@@ -126,34 +128,4 @@ Page {
             PropertyChanges { target: actionButton; text: qsTr("Ok") }
         }
     ]
-
-    onVisibleChanged: {
-        state = "connect"
-    }
-
-//    Connections {
-//        target: bleController
-//
-//        function onFireConnected() {
-//            state = "send"
-//        }
-//
-//        function onFireDataSent() {
-//            state = "receive"
-//        }
-//
-//        function onFireDataReceived() {
-//            state = "disconnect"
-//        }
-//
-//        function onFireDisconnected() {
-//            if (state === "disconnect") {
-//                state = "done"
-//            }
-//        }
-//
-//        function onFireError() {
-//            state = "error"
-//        }
-//    }
 }

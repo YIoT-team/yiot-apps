@@ -31,6 +31,7 @@ KSQPC::KSQPC(const KSQPC &l) : KSQDeviceBase(l) {
 //-----------------------------------------------------------------------------
 void
 KSQPC::initDevice(QString user, QString password, QString staticIP) {
+    commandStart();
     m_user = user;
     m_password = password;
     m_staticIP = staticIP;

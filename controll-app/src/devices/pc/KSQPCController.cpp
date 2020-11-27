@@ -51,41 +51,6 @@ KSQPCController::KSQPCController() {
             this,
             &KSQPCController::onPCError,
             Qt::QueuedConnection);
-
-    // Test data
-#if 1
-    auto t = new QTimer();
-    connect(t, &QTimer::timeout, [t, this]() {
-        static int n = 0;
-        if (n++ >= 10) {
-            t->deleteLater();
-            return;
-        }
-
-        vs_mac_addr_t mac;
-        mac.bytes[0] = 32;
-        mac.bytes[1] = 1;
-        mac.bytes[2] = 2;
-        mac.bytes[3] = 3;
-        mac.bytes[4] = 4;
-        mac.bytes[5] = n;
-
-        VSQDeviceInfo deviceInfo;
-        deviceInfo.m_mac = mac;
-        deviceInfo.m_hasGeneralInfo = true;
-        deviceInfo.m_deviceType = VSQDeviceType();
-        deviceInfo.m_deviceRoles = VSQDeviceRoles() << VS_SNAP_DEV_THING;
-        deviceInfo.m_tlVer = VSQFileVersion();
-        deviceInfo.m_fwVer = VSQFileVersion();
-        deviceInfo.m_manufactureId = VSQManufactureId();
-        deviceInfo.m_hasStatistics = true;
-        deviceInfo.m_sent = 123134;
-        deviceInfo.m_received = 456234;
-        onDeviceInfoUpdate(deviceInfo);
-    });
-    t->start(1000);
-#endif
-    // ~Test data
 }
 
 //-----------------------------------------------------------------------------
@@ -156,6 +121,9 @@ KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state
             pc->setReceivedBytes(QString("%1").arg(deviceInfo.m_received));
         }
 #endif
+
+        pc->commandDone();
+
         const auto _idx = createIndex(res.first, 0);
         emit dataChanged(_idx, _idx);
     }
@@ -168,12 +136,13 @@ KSQPCController::onPCError(const vs_mac_addr_t mac) {
     auto pc = res.second;
     if (pc) {
         qDebug() << "PC error: " << VSQMac(mac).description();
+        pc->commandError();
     }
 }
 
 //-----------------------------------------------------------------------------
 void
-KSQPCController::onInitDevice(const KSQPC &pc) {
+KSQPCController::onInitDevice(KSQPC &pc) {
     vs_snap_pc_init_t init;
 
     memset(&init, 0, sizeof(init));
@@ -193,6 +162,7 @@ KSQPCController::onInitDevice(const KSQPC &pc) {
 
     if (!isOk) {
         VS_LOG_ERROR("Wrong parameters");
+        pc.commandError();
         return;
     }
 

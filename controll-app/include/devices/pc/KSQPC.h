@@ -48,7 +48,7 @@ public:
 
 signals:
     void
-    fireInitDevice(const KSQPC &pc);
+    fireInitDevice(KSQPC &pc);
 
 public slots:
     Q_INVOKABLE void
