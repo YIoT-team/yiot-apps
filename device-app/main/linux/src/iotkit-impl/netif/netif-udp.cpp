@@ -179,7 +179,7 @@ _udp_receive_processor(void *sock_desc) {
             if (0 == _netif_udp_rx_cb(&_netif_udp_, received_data, recv_sz, &packet_data, &packet_data_sz)) {
                 // Ready to process packet
                 if (_netif_udp_process_cb) {
-                    VS_LOG_HEX(VS_LOGLEV_DEBUG, "RECV DUMP:", packet_data, packet_data_sz);
+                    // VS_LOG_HEX(VS_LOGLEV_DEBUG, "RECV DUMP:", packet_data, packet_data_sz);
                     _netif_udp_process_cb(&_netif_udp_, packet_data, packet_data_sz);
                 }
             }
