@@ -298,6 +298,7 @@ target_link_libraries(${KS_TARGET_NAME}
 
         #   IoTKit Qt
         iotkit-qt-lib
+        yiot-qos1-helper
 
         #   Qt keychain
         qtkeychain

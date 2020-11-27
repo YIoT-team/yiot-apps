@@ -50,4 +50,5 @@ add_subdirectory(${IOTKIT_PATH}/demo/nix/common iotkit-nix-common)
 #	IoTKit extensions
 # ---------------------------------------------------------------------------
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/protocols/snap")
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/qos1")
 

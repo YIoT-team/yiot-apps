@@ -20,7 +20,7 @@
 #include <algorithm>
 #include <thread>
 
-#include "iotkit-impl/netif/helpers/resend-container.h"
+#include "qos1/resend-container.h"
 
 //-----------------------------------------------------------------------------
 KSResendContainer::KSResendContainer(std::function<vs_status_e(const uint8_t *, const uint16_t)> senderFunc,

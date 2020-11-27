@@ -17,7 +17,7 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#if 1 // PC_SERVER
+#if PC_SERVER
 
 #include <common/protocols/snap/pc/pc-server.h>
 #include <common/protocols/snap/pc/pc-private.h>

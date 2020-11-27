@@ -46,7 +46,7 @@
 #include <virgil/iot/protocols/snap/snap-structs.h>
 #include <virgil/iot/logger/logger.h>
 
-#include "iotkit-impl/netif/helpers/resend-container.h"
+#include "qos1/resend-container.h"
 
 static vs_status_e
 _udp_init(struct vs_netif_t *netif, const vs_netif_rx_cb_t rx_cb, const vs_netif_process_cb_t process_cb);

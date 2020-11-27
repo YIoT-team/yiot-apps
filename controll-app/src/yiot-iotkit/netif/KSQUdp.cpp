@@ -37,6 +37,12 @@
 
 //-----------------------------------------------------------------------------
 KSQUdp::KSQUdp(quint16 port) : m_port(port) {
+    using std::placeholders::_1;
+    using std::placeholders::_2;
+    std::function<vs_status_e(const uint8_t *, const uint16_t)> _resend =
+            std::bind(&KSQUdp::_internal_tx, this, _1, _2);
+    m_resendContainer = new KSResendContainer(_resend);
+
     connect(&m_socket, &QUdpSocket::stateChanged, this, &VSQNetifBase::fireStateChanged);
     connect(&m_socket, &QUdpSocket::readyRead, this, &KSQUdp::onHasInputData);
 }
@@ -78,20 +84,55 @@ KSQUdp::deinit() {
 }
 
 //-----------------------------------------------------------------------------
-bool
-KSQUdp::tx(const QByteArray &data) {
-    auto dataSz = data.size();
-    auto sentBytes = m_socket.writeDatagram(data, QHostAddress::Broadcast, m_port);
+vs_status_e
+KSQUdp::_internal_tx(const uint8_t *data, const uint16_t data_sz) {
+    auto sentBytes = m_socket.writeDatagram(
+            QByteArray::fromRawData(reinterpret_cast<const char *>(data), data_sz), QHostAddress::Broadcast, m_port);
 
-    if (sentBytes != dataSz) {
+    if (sentBytes != data_sz) {
         VS_LOG_ERROR("Sent bytes : %d, data bytes to send : %d. Last error : %s",
                      sentBytes,
-                     data.size(),
+                     data_sz,
                      VSQCString(m_socket.errorString()));
-        return false;
+        return VS_CODE_ERR_TX_SNAP;
     }
 
-    return true;
+    return VS_CODE_OK;
+}
+
+//-----------------------------------------------------------------------------
+////--------------------------------------------
+////  QoS 1
+////--------------------------------------------
+//if (_if_ack_packet(received_data, recv_sz)) {
+//continue;
+//}
+//_send_ack(received_data, recv_sz);
+////--------------------------------------------
+////  ~QoS 1
+////--------------------------------------------
+bool
+KSQUdp::tx(const QByteArray &data) {
+    if (VS_CODE_OK == _internal_tx(reinterpret_cast<const uint8_t *>(data.data()), data.size())) {
+
+        //--------------------------------------------
+        //  QoS 1
+        //--------------------------------------------
+        vs_snap_packet_t *p = (vs_snap_packet_t *)data.data();
+        if (0 != memcmp(p->eth_header.dest.bytes, vs_snap_broadcast_mac()->bytes, ETH_ADDR_LEN)) {
+            m_resendContainer->addPacket(&p->eth_header.dest,
+                                         p->header.transaction_id,
+                                         reinterpret_cast<const uint8_t *>(data.data()),
+                                         data.size());
+        }
+        //--------------------------------------------
+        //  ~QoS 1
+        //--------------------------------------------
+
+        return true;
+    }
+
+    return false;
 }
 
 //-----------------------------------------------------------------------------

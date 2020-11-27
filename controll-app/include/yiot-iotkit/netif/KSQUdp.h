@@ -39,6 +39,7 @@
 #include <QtNetwork>
 
 #include <virgil/iot/qt/protocols/snap/VSQNetifBase.h>
+#include "qos1/resend-container.h"
 
 class KSQUdp final : public VSQNetifBase {
     Q_OBJECT
@@ -81,6 +82,11 @@ private:
     quint16 m_port;
     QUdpSocket m_socket;
     VSQMac m_mac;
+    KSResendContainer *m_resendContainer;
+
+public:
+    vs_status_e
+    _internal_tx(const uint8_t *data, const uint16_t data_sz);
 };
 
 #endif // YIOT_IOTKIT_QT_UDP_H_
