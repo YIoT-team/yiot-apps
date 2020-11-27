@@ -41,6 +41,9 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
+#include <netinet/in.h>
 
 #include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/protocols/snap/snap-structs.h>
@@ -75,7 +78,7 @@ static vs_netif_process_cb_t _netif_udp_process_cb = 0;
 
 static int _udp_sock = -1;
 static pthread_t receive_thread;
-static uint8_t _sim_mac_addr[6] = {2, 2, 2, 2, 2, 2};
+static uint8_t _mac_addr[6] = {2, 2, 2, 2, 2, 2};
 
 static in_addr_t _dst_addr = INADDR_BROADCAST;
 
@@ -101,7 +104,7 @@ _if_ack_packet(const uint8_t *data, size_t data_sz) {
     }
 
     // Destination MAC is my MAC address
-    if (0 != memcmp(p->eth_header.dest.bytes, _sim_mac_addr, ETH_ADDR_LEN)) {
+    if (0 != memcmp(p->eth_header.dest.bytes, _mac_addr, ETH_ADDR_LEN)) {
         return false;
     }
 
@@ -122,7 +125,7 @@ _send_ack(const uint8_t *data, size_t data_sz) {
     vs_snap_packet_t *p = (vs_snap_packet_t *)data;
 
     // Destination MAC is my MAC address
-    if (0 != memcmp(p->eth_header.dest.bytes, _sim_mac_addr, ETH_ADDR_LEN)) {
+    if (0 != memcmp(p->eth_header.dest.bytes, _mac_addr, ETH_ADDR_LEN)) {
         return false;
     }
 
@@ -179,7 +182,7 @@ _udp_receive_processor(void *sock_desc) {
             if (0 == _netif_udp_rx_cb(&_netif_udp_, received_data, recv_sz, &packet_data, &packet_data_sz)) {
                 // Ready to process packet
                 if (_netif_udp_process_cb) {
-                    // VS_LOG_HEX(VS_LOGLEV_DEBUG, "RECV DUMP:", packet_data, packet_data_sz);
+                    vs_snap_packet_dump("IN ", (vs_snap_packet_t *)packet_data);
                     _netif_udp_process_cb(&_netif_udp_, packet_data, packet_data_sz);
                 }
             }
@@ -276,6 +279,7 @@ _udp_tx(struct vs_netif_t *netif, const uint8_t *data, const uint16_t data_sz) {
     (void)netif;
 
     if (VS_CODE_OK == _internal_udp_tx(data, data_sz)) {
+        vs_snap_packet_dump("OUT", (vs_snap_packet_t *)data);
         //--------------------------------------------
         //  QoS 1
         //--------------------------------------------
@@ -345,7 +349,7 @@ _udp_mac(const struct vs_netif_t *netif, struct vs_mac_addr_t *mac_addr) {
     (void)netif;
 
     if (mac_addr) {
-        memcpy(mac_addr->bytes, _sim_mac_addr, sizeof(vs_mac_addr_t));
+        memcpy(mac_addr->bytes, _mac_addr, sizeof(vs_mac_addr_t));
         return VS_CODE_OK;
     }
 
@@ -354,8 +358,51 @@ _udp_mac(const struct vs_netif_t *netif, struct vs_mac_addr_t *mac_addr) {
 
 //-----------------------------------------------------------------------------
 extern "C" vs_netif_t *
-vs_hal_netif_udp(vs_mac_addr_t mac_addr) {
-    memcpy(_sim_mac_addr, mac_addr.bytes, 6);
+vs_hal_netif_udp(void) {
+
+    // Get MAC address
+    struct ifreq ifr;
+    struct ifconf ifc;
+    char buf[1024];
+    bool success = false;
+
+    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
+    if (sock == -1) {
+        VS_LOG_ERROR("Cannot init UDP netif. Socket error, AF_INET::SOCK_DGRAM::IPPROTO_IP");
+        return NULL;
+    };
+
+    ifc.ifc_len = sizeof(buf);
+    ifc.ifc_buf = buf;
+    if (ioctl(sock, SIOCGIFCONF, &ifc) == -1) {
+        VS_LOG_ERROR("Cannot init UDP netif. SIOCGIFCONF error");
+        return NULL;
+    }
+
+    struct ifreq *it = ifc.ifc_req;
+    const struct ifreq *const end = it + (ifc.ifc_len / sizeof(struct ifreq));
+
+    for (; it != end; ++it) {
+        strcpy(ifr.ifr_name, it->ifr_name);
+        if (ioctl(sock, SIOCGIFFLAGS, &ifr) == 0) {
+            if (!(ifr.ifr_flags & IFF_LOOPBACK)) { // don't count loopback
+                if (ioctl(sock, SIOCGIFHWADDR, &ifr) == 0) {
+                    success = true;
+                    break;
+                }
+            }
+        } else {
+            VS_LOG_ERROR("Cannot init UDP netif. SIOCGIFFLAGS error");
+            return NULL;
+        }
+    }
+
+    if (!success) {
+        VS_LOG_ERROR("Cannot init UDP netif. Cannot get MAC address.");
+        return NULL;
+    }
+
+    memcpy(_mac_addr, ifr.ifr_hwaddr.sa_data, ETH_ADDR_LEN);
     return &_netif_udp_;
 }
 

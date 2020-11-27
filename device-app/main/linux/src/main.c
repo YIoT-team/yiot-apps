@@ -52,7 +52,6 @@ _print_title(void);
 int
 main(int argc, char *argv[]) {
     int res = -1;
-    vs_mac_addr_t forced_mac_addr;
 
     // Implementation variables
     vs_netif_t *netifs_impl[3] = {0};
@@ -86,9 +85,8 @@ main(int argc, char *argv[]) {
     //
 
     // Network interface
-    memset(forced_mac_addr.bytes, 0xAB, ETH_ADDR_LEN);
     vs_packets_queue_init(vs_snap_default_processor);
-    netifs_impl[0] = vs_hal_netif_udp(forced_mac_addr);
+    netifs_impl[0] = vs_hal_netif_udp();
     netifs_impl[1] = ks_netif_ble();
 
 #if SECURE_PROVISION

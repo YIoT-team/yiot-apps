@@ -73,7 +73,11 @@ vs_snap_pc_init(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap
 
 //-----------------------------------------------------------------------------
 static vs_status_e
-_pc_response_processor(const vs_mac_addr_t *dev_mac, vs_snap_element_t element_id, bool is_ack, const uint8_t *response, const uint16_t response_sz) {
+_pc_response_processor(const vs_mac_addr_t *dev_mac,
+                       vs_snap_element_t element_id,
+                       bool is_ack,
+                       const uint8_t *response,
+                       const uint16_t response_sz) {
 
     vs_status_e res = is_ack ? VS_CODE_OK : VS_CODE_ERR_SNAP_UNKNOWN;
     vs_snap_pc_state_t *state = NULL;

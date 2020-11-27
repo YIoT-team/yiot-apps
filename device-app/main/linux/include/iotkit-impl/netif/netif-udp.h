@@ -43,7 +43,7 @@ extern "C" {
 #endif
 
 vs_netif_t *
-vs_hal_netif_udp(vs_mac_addr_t mac_addr);
+vs_hal_netif_udp(void);
 
 #ifdef __cplusplus
 }

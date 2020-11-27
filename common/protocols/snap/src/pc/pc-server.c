@@ -109,6 +109,7 @@ vs_snap_pc_start_notification(const vs_netif_t *netif) {
 //-----------------------------------------------------------------------------
 static vs_status_e
 _pc_request_processor(const struct vs_netif_t *netif,
+                      const vs_ethernet_header_t *eth_header,
                       vs_snap_element_t element_id,
                       const uint8_t *request,
                       const uint16_t request_sz,
