@@ -78,6 +78,12 @@ private slots:
     void
     onHasInputData();
 
+    bool
+    sendAck(const QByteArray &data);
+
+    bool
+    ifAckPacket(const QByteArray &data);
+
 private:
     quint16 m_port;
     QUdpSocket m_socket;

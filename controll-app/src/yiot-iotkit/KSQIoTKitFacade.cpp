@@ -143,6 +143,10 @@ KSQIoTKitFacade::updateAll() {
     if (m_features.hasFeature(KSQFeatures::SNAP_PC_CLIENT)) {
         KSQSnapPCClient::instance().requestState(broadcastMac);
     }
+
+    if (m_features.hasFeature(KSQFeatures::SNAP_INFO_CLIENT)) {
+//        VSQSnapInfoClient::instance().onStartFullPolling();
+    }
 }
 
 /******************************************************************************/
@@ -162,6 +166,8 @@ KSQIoTKitFacade::onNetifProcess(struct VirgilIoTKit::vs_netif_t *netif, QByteArr
 /******************************************************************************/
 vs_status_e
 KSQIoTKitFacade::netifProcessCb(struct vs_netif_t *netif, const uint8_t *data, const uint16_t data_sz) {
+    vs_snap_packet_dump("IN ",  (vs_snap_packet_t *)data);
+
     QMetaObject::invokeMethod(
             &instance(),
             "onNetifProcess",

@@ -86,6 +86,11 @@ KSQUdp::deinit() {
 //-----------------------------------------------------------------------------
 vs_status_e
 KSQUdp::_internal_tx(const uint8_t *data, const uint16_t data_sz) {
+    vs_snap_packet_t *packet = (vs_snap_packet_t *)data;
+    if (packet->header.service_id && packet->header.element_id) {
+        vs_snap_packet_dump("OUT", packet);
+    }
+
     auto sentBytes = m_socket.writeDatagram(
             QByteArray::fromRawData(reinterpret_cast<const char *>(data), data_sz), QHostAddress::Broadcast, m_port);
 
@@ -101,16 +106,6 @@ KSQUdp::_internal_tx(const uint8_t *data, const uint16_t data_sz) {
 }
 
 //-----------------------------------------------------------------------------
-////--------------------------------------------
-////  QoS 1
-////--------------------------------------------
-//if (_if_ack_packet(received_data, recv_sz)) {
-//continue;
-//}
-//_send_ack(received_data, recv_sz);
-////--------------------------------------------
-////  ~QoS 1
-////--------------------------------------------
 bool
 KSQUdp::tx(const QByteArray &data) {
     if (VS_CODE_OK == _internal_tx(reinterpret_cast<const uint8_t *>(data.data()), data.size())) {
@@ -143,11 +138,77 @@ KSQUdp::macAddr() const {
 }
 
 //-----------------------------------------------------------------------------
+bool
+KSQUdp::ifAckPacket(const QByteArray &data) {
+    // It's a packet with empty content
+    if (data.size() != sizeof(vs_snap_packet_t)) {
+        return false;
+    }
+
+    auto *p = reinterpret_cast<const vs_snap_packet_t *>(data.data());
+
+    // Element ID and Service ID should be zero
+    if (p->header.element_id || p->header.service_id) {
+        return false;
+    }
+
+    // Destination MAC is my MAC address
+    if (0 != memcmp(p->eth_header.dest.bytes, m_mac.operator vs_mac_addr_t().bytes, ETH_ADDR_LEN)) {
+        return false;
+    }
+
+    // Process ACK
+    m_resendContainer->processResponse(&p->eth_header.src, p->header.transaction_id);
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQUdp::sendAck(const QByteArray &data) {
+    // Packet should be correct
+    if (data.size() < sizeof(vs_snap_packet_t)) {
+        return false;
+    }
+
+    auto p = reinterpret_cast<const vs_snap_packet_t *>(data.data());
+
+    // Destination MAC is my MAC address
+    if (0 != memcmp(p->eth_header.dest.bytes, m_mac.operator vs_mac_addr_t().bytes, ETH_ADDR_LEN)) {
+        return false;
+    }
+
+    // Send ACK
+    vs_snap_packet_t ack;
+    memset(&ack, 0, sizeof(ack));
+    memcpy(ack.eth_header.src.bytes, p->eth_header.dest.bytes, ETH_ADDR_LEN);
+    memcpy(ack.eth_header.dest.bytes, p->eth_header.src.bytes, ETH_ADDR_LEN);
+    ack.header.transaction_id = p->header.transaction_id;
+
+    _internal_tx((const uint8_t *)&ack, sizeof(ack));
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------
 void
 KSQUdp::onHasInputData() {
 
     while (m_socket.hasPendingDatagrams()) {
-        processData(m_socket.receiveDatagram().data());
+        const auto data = m_socket.receiveDatagram().data();
+
+        //--------------------------------------------
+        //  QoS 1
+        //--------------------------------------------
+        if (ifAckPacket(data)) {
+            continue;
+        }
+        sendAck(data);
+        //--------------------------------------------
+        //  ~QoS 1
+        //--------------------------------------------
+
+        processData(data);
     }
 }
 
