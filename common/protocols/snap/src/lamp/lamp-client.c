@@ -98,6 +98,7 @@ _lamp_response_processor(vs_snap_element_t element_id,
 //-----------------------------------------------------------------------------
 static vs_status_e
 _lamp_client_response_processor(const struct vs_netif_t *netif,
+                                const vs_ethernet_header_t *eth_header,
                                 vs_snap_element_t element_id,
                                 bool is_ack,
                                 const uint8_t *response,

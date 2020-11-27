@@ -75,10 +75,14 @@ vs_snap_pc_init(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap
 
 //-----------------------------------------------------------------------------
 static vs_status_e
-_pc_response_processor(vs_snap_element_t element_id, bool is_ack, const uint8_t *response, const uint16_t response_sz) {
+_pc_response_processor(const vs_mac_addr_t *dev_mac, vs_snap_element_t element_id, bool is_ack, const uint8_t *response, const uint16_t response_sz) {
 
     vs_status_e res = is_ack ? VS_CODE_OK : VS_CODE_ERR_SNAP_UNKNOWN;
     vs_snap_pc_state_t *state = NULL;
+
+    // Check input parameters
+    CHECK_NOT_ZERO_RET(dev_mac, VS_CODE_ERR_INCORRECT_ARGUMENT);
+    CHECK_NOT_ZERO_RET(response, VS_CODE_ERR_INCORRECT_ARGUMENT);
 
     if (is_ack) {
         state = (vs_snap_pc_state_t *)response;
@@ -87,8 +91,7 @@ _pc_response_processor(vs_snap_element_t element_id, bool is_ack, const uint8_t 
     // TODO: Normalize structure
 
     if (_impl.device_state_update) {
-        // TODO: Use real mac addr
-        _impl.device_state_update(res, vs_snap_broadcast_mac(), state);
+        _impl.device_state_update(res, dev_mac, state);
     }
 
     return VS_CODE_OK;
@@ -97,17 +100,22 @@ _pc_response_processor(vs_snap_element_t element_id, bool is_ack, const uint8_t 
 //-----------------------------------------------------------------------------
 static vs_status_e
 _pc_client_response_processor(const struct vs_netif_t *netif,
+                              const vs_ethernet_header_t *eth_header,
                               vs_snap_element_t element_id,
                               bool is_ack,
                               const uint8_t *response,
                               const uint16_t response_sz) {
     (void)netif;
 
+    // Check input parameters
+    CHECK_NOT_ZERO_RET(eth_header, VS_CODE_ERR_ZERO_ARGUMENT);
+    CHECK_NOT_ZERO_RET(response, VS_CODE_ERR_ZERO_ARGUMENT);
+
     switch (element_id) {
 
     case VS_PC_INPC:
     case VS_PC_GPST:
-        return _pc_response_processor(element_id, is_ack, response, response_sz);
+        return _pc_response_processor(&eth_header->src, element_id, is_ack, response, response_sz);
 
     default:
         VS_LOG_ERROR("Unsupported PC command");
@@ -118,19 +126,21 @@ _pc_client_response_processor(const struct vs_netif_t *netif,
 
 //-----------------------------------------------------------------------------
 static vs_status_e
-_ipst_request_processor(const uint8_t *request,
+_ipst_request_processor(const vs_mac_addr_t *dev_mac,
+                        const uint8_t *request,
                         const uint16_t request_sz,
                         uint8_t *response,
                         const uint16_t response_buf_sz,
                         uint16_t *response_sz) {
 
     *response_sz = 0;
-    return _pc_response_processor(VS_PC_GPST, true, request, request_sz);
+    return _pc_response_processor(dev_mac, VS_PC_GPST, true, request, request_sz);
 }
 
 //-----------------------------------------------------------------------------
 static vs_status_e
 _pc_client_request_processor(const struct vs_netif_t *netif,
+                             const vs_ethernet_header_t *eth_header,
                              vs_snap_element_t element_id,
                              const uint8_t *request,
                              const uint16_t request_sz,
@@ -139,12 +149,18 @@ _pc_client_request_processor(const struct vs_netif_t *netif,
                              uint16_t *response_sz) {
     (void)netif;
 
+    // Check input parameters
+    CHECK_NOT_ZERO_RET(eth_header, VS_CODE_ERR_ZERO_ARGUMENT);
+    CHECK_NOT_ZERO_RET(request, VS_CODE_ERR_ZERO_ARGUMENT);
+    CHECK_NOT_ZERO_RET(response, VS_CODE_ERR_ZERO_ARGUMENT);
+    CHECK_NOT_ZERO_RET(response_sz, VS_CODE_ERR_ZERO_ARGUMENT);
+
     *response_sz = 0;
 
     switch (element_id) {
 
     case VS_PC_IPST:
-        return _ipst_request_processor(request, request_sz, response, response_buf_sz, response_sz);
+        return _ipst_request_processor(&eth_header->src, request, request_sz, response, response_buf_sz, response_sz);
 
     default:
         VS_LOG_ERROR("Unsupported PC command");

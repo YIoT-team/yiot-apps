@@ -21,6 +21,7 @@
 
 //-----------------------------------------------------------------------------
 KSQPC::KSQPC(VSQMac mac, QString name, QString img) : KSQDeviceBase(mac, name, img) {
+    qDebug() << "New PC: " << mac.description();
 }
 
 //-----------------------------------------------------------------------------
