@@ -71,20 +71,45 @@ _get_pc_state_request_processor(const struct vs_netif_t *netif,
 
 //-----------------------------------------------------------------------------
 static vs_status_e
-_init_pc_request_processor(const struct vs_netif_t *netif,
-                           const vs_ethernet_header_t *eth_header,
-                           const uint8_t *request,
-                           const uint16_t request_sz,
-                           uint8_t *response,
-                           const uint16_t response_buf_sz,
-                           uint16_t *response_sz) {
+_init_pc_ssh_request_processor(const struct vs_netif_t *netif,
+                               const vs_ethernet_header_t *eth_header,
+                               const uint8_t *request,
+                               const uint16_t request_sz,
+                               uint8_t *response,
+                               const uint16_t response_buf_sz,
+                               uint16_t *response_sz) {
     CHECK_NOT_ZERO_RET(eth_header, VS_CODE_ERR_ZERO_ARGUMENT);
     CHECK_NOT_ZERO_RET(request, VS_CODE_ERR_ZERO_ARGUMENT);
 
-    if (_impl.init_pc) {
-        vs_snap_pc_init_t *init = (vs_snap_pc_init_t *)request;
+    if (_impl.init_pc_ssh) {
+        vs_snap_pc_init_ssh_t *init = (vs_snap_pc_init_ssh_t *)request;
 
-        if (VS_CODE_OK != _impl.init_pc(netif, eth_header->src, init)) {
+        if (VS_CODE_OK != _impl.init_pc_ssh(netif, eth_header->src, init)) {
+            return VS_CODE_ERR_UNSUPPORTED;
+        }
+
+        return _fill_current_state(netif, eth_header, response, response_buf_sz, response_sz);
+    }
+
+    return VS_CODE_ERR_NOT_IMPLEMENTED;
+}
+
+//-----------------------------------------------------------------------------
+static vs_status_e
+_init_pc_vpn_request_processor(const struct vs_netif_t *netif,
+                               const vs_ethernet_header_t *eth_header,
+                               const uint8_t *request,
+                               const uint16_t request_sz,
+                               uint8_t *response,
+                               const uint16_t response_buf_sz,
+                               uint16_t *response_sz) {
+    CHECK_NOT_ZERO_RET(eth_header, VS_CODE_ERR_ZERO_ARGUMENT);
+    CHECK_NOT_ZERO_RET(request, VS_CODE_ERR_ZERO_ARGUMENT);
+
+    if (_impl.init_pc_vpn) {
+        vs_snap_pc_init_vpn_t *init = (vs_snap_pc_init_vpn_t *)request;
+
+        if (VS_CODE_OK != _impl.init_pc_vpn(netif, eth_header->src, init)) {
             return VS_CODE_ERR_UNSUPPORTED;
         }
 
@@ -139,8 +164,12 @@ _pc_request_processor(const struct vs_netif_t *netif,
         return _get_pc_state_request_processor(
                 netif, eth_header, request, request_sz, response, response_buf_sz, response_sz);
 
-    case VS_PC_INPC:
-        return _init_pc_request_processor(
+    case VS_PC_ISSH:
+        return _init_pc_ssh_request_processor(
+                netif, eth_header, request, request_sz, response, response_buf_sz, response_sz);
+
+    case VS_PC_IVPN:
+        return _init_pc_vpn_request_processor(
                 netif, eth_header, request, request_sz, response, response_buf_sz, response_sz);
 
     default:

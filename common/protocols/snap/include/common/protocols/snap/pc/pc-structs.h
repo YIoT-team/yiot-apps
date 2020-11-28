@@ -27,6 +27,7 @@ namespace VirgilIoTKit {
 extern "C" {
 #endif
 
+#define PROVIDER_SZ_MAX  64
 #define USER_NAME_SZ_MAX 64
 #define USER_PASS_SZ_MAX 64
 
@@ -34,7 +35,13 @@ typedef struct __attribute__((__packed__)) {
     uint8_t user[USER_NAME_SZ_MAX];
     uint8_t pass[USER_PASS_SZ_MAX];
     uint32_t ipv4;
-} vs_snap_pc_init_t;
+} vs_snap_pc_init_ssh_t;
+
+typedef struct __attribute__((__packed__)) {
+    uint8_t provider[PROVIDER_SZ_MAX];
+    uint8_t user[USER_NAME_SZ_MAX];
+    uint8_t pass[USER_PASS_SZ_MAX];
+} vs_snap_pc_init_vpn_t;
 
 typedef enum {
     KS_PC_WIFI_UNKNOWN = 0,

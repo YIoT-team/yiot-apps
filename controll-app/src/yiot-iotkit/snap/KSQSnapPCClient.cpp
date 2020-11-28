@@ -52,8 +52,11 @@ KSQSnapPCClient::requestState(const vs_mac_addr_t &mac) {
 
 /******************************************************************************/
 void
-KSQSnapPCClient::initPC(const vs_mac_addr_t &mac, const vs_snap_pc_init_t &initData) {
-    vs_snap_pc_init(vs_snap_netif_routing(), &mac, &initData);
+KSQSnapPCClient::initPC(const vs_mac_addr_t &mac, const vs_snap_pc_init_ssh_t &initData) {
+    vs_snap_pc_init_ssh(vs_snap_netif_routing(), &mac, &initData);
 }
+
+/******************************************************************************/
+
 
 /******************************************************************************/

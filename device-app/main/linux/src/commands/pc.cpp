@@ -47,7 +47,7 @@ ks_snap_pc_get_info_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, vs_sna
 
 //-----------------------------------------------------------------------------
 vs_status_e
-ks_snap_pc_init_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, vs_snap_pc_init_t *init) {
+ks_snap_pc_init_ssh_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, vs_snap_pc_init_ssh_t *init) {
     CHECK_NOT_ZERO_RET(init, VS_CODE_ERR_NULLPTR_ARGUMENT);
 
     // Get string representation of IP address
@@ -93,7 +93,58 @@ ks_snap_pc_init_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, vs_snap_pc
                                                 &sender_mac,
                                                 0, // TODO: Fill transaction ID
                                                 VS_PC_SERVICE_ID,
-                                                VS_PC_INPC,
+                                                VS_PC_ISSH,
+                                                is_ok,
+                                                reinterpret_cast<uint8_t *>(&state),
+                                                sizeof(state))) {
+            VS_LOG_WARNING("Cannot initialize RPi.");
+        }
+    });
+
+    return res ? VS_CODE_COMMAND_NO_RESPONSE : VS_CODE_ERR_QUEUE;
+}
+
+//-----------------------------------------------------------------------------
+vs_status_e
+ks_snap_pc_init_vpn_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, vs_snap_pc_init_vpn_t *init) {
+    CHECK_NOT_ZERO_RET(init, VS_CODE_ERR_NULLPTR_ARGUMENT);
+
+    VS_LOG_DEBUG("Provider: %s", init->provider);
+    VS_LOG_DEBUG("User    : %s", init->user);
+    VS_LOG_DEBUG("pass    : *******");
+
+    auto provider = std::string(reinterpret_cast<const char *>(init->provider));
+    auto user = std::string(reinterpret_cast<const char *>(init->user));
+    auto pass = std::string(reinterpret_cast<const char *>(init->pass));
+    auto command =
+            std::string(ks_settings_scripts_dir()) + "/yiot-vpn-router-rpi.sh " + provider + " " + user + " " + pass;
+
+    bool res = _processingDelayer.add(kDelayMs, [netif, sender_mac, command]() -> void {
+        Command cmd;
+        cmd.Command = "bash -c \"" + command + "\"";
+        cmd.execute();
+
+        // TODO: Remove it
+        std::cout << cmd.StdOut;
+        std::cerr << cmd.StdErr;
+        std::cout << "Exit Status: " << cmd.ExitStatus << "\n";
+        // ~TODO: Remove it
+
+        bool is_ok = 0 == cmd.ExitStatus;
+
+        // Prepare information about current state
+        vs_snap_pc_state_t state;
+        if (VS_CODE_OK != ks_snap_pc_get_info_cb(netif, sender_mac, &state)) {
+            VS_LOG_WARNING("Cannot get PC status");
+            is_ok = false;
+        }
+
+        // Send response after complete processing
+        if (VS_CODE_OK != vs_snap_send_response(netif,
+                                                &sender_mac,
+                                                0, // TODO: Fill transaction ID
+                                                VS_PC_SERVICE_ID,
+                                                VS_PC_IVPN,
                                                 is_ok,
                                                 reinterpret_cast<uint8_t *>(&state),
                                                 sizeof(state))) {

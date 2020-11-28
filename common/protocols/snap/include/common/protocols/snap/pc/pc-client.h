@@ -30,9 +30,6 @@ namespace VirgilIoTKit {
 extern "C" {
 #endif
 
-// typedef vs_status_e (*vs_snap_lamp_set_state_cb_t)(vs_snap_lamp_state_t *);
-// typedef vs_status_e (*vs_snap_lamp_get_state_cb_t)(void);
-
 typedef vs_status_e (*vs_snap_pc_state_notif_cb_t)(vs_status_e res,
                                                    const vs_mac_addr_t *mac,
                                                    const vs_snap_pc_state_t *data);
@@ -45,7 +42,10 @@ vs_status_e
 vs_snap_pc_get_state(const vs_netif_t *netif, const vs_mac_addr_t *mac);
 
 vs_status_e
-vs_snap_pc_init(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap_pc_init_t *init_data);
+vs_snap_pc_init_ssh(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap_pc_init_ssh_t *init_data);
+
+vs_status_e
+vs_snap_pc_init_vpn(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap_pc_init_vpn_t *vpn_data);
 
 const vs_snap_service_t *
 vs_snap_pc_client(vs_snap_pc_client_service_t impl);

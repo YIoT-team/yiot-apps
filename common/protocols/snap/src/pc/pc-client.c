@@ -51,7 +51,7 @@ vs_snap_pc_get_state(const vs_netif_t *netif, const vs_mac_addr_t *mac) {
 
 //-----------------------------------------------------------------------------
 vs_status_e
-vs_snap_pc_init(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap_pc_init_t *init_data) {
+vs_snap_pc_init_ssh(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap_pc_init_ssh_t *init_data) {
     const vs_mac_addr_t *dst_mac;
     vs_status_e ret_code;
 
@@ -65,8 +65,28 @@ vs_snap_pc_init(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap
 
     // Send request
     STATUS_CHECK_RET(vs_snap_send_request(
-                             netif, dst_mac, VS_PC_SERVICE_ID, VS_PC_INPC, (uint8_t *)init_data, sizeof(*init_data)),
+                             netif, dst_mac, VS_PC_SERVICE_ID, VS_PC_ISSH, (uint8_t *)init_data, sizeof(*init_data)),
                      "Cannot send request");
+
+    return VS_CODE_OK;
+}
+
+//-----------------------------------------------------------------------------
+vs_status_e
+vs_snap_pc_init_vpn(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap_pc_init_vpn_t *vpn_data) {
+    vs_status_e ret_code;
+
+    // Check input parameters
+    CHECK_NOT_ZERO_RET(vpn_data, VS_CODE_ERR_INCORRECT_ARGUMENT);
+    CHECK_NOT_ZERO_RET(mac, VS_CODE_ERR_INCORRECT_ARGUMENT);
+    CHECK_NOT_ZERO_RET(!vs_snap_is_broadcast(mac), VS_CODE_ERR_INCORRECT_ARGUMENT);
+
+    // TODO: Normalize structure
+
+    // Send request
+    STATUS_CHECK_RET(
+            vs_snap_send_request(netif, mac, VS_PC_SERVICE_ID, VS_PC_IVPN, (uint8_t *)vpn_data, sizeof(*vpn_data)),
+            "Cannot send request");
 
     return VS_CODE_OK;
 }
@@ -115,8 +135,9 @@ _pc_client_response_processor(const struct vs_netif_t *netif,
 
     switch (element_id) {
 
-    case VS_PC_INPC:
+    case VS_PC_ISSH:
     case VS_PC_GPST:
+    case VS_PC_IVPN:
         return _pc_response_processor(&eth_header->src, element_id, is_ack, response, response_sz);
 
     default:

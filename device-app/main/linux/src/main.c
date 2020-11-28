@@ -56,7 +56,7 @@ main(int argc, char *argv[]) {
     // Implementation variables
     vs_netif_t *netifs_impl[3] = {0};
     vs_snap_cfg_server_service_t cfg_server_cb = {ks_snap_cfg_wifi_cb, NULL, NULL, NULL};
-    vs_snap_pc_server_service_t pc_server_cb = {ks_snap_pc_get_info_cb, ks_snap_pc_init_cb};
+    vs_snap_pc_server_service_t pc_server_cb = {ks_snap_pc_get_info_cb, ks_snap_pc_init_ssh_cb, ks_snap_pc_init_vpn_cb};
 
 #if SECURE_PROVISION
     vs_secmodule_impl_t *secmodule_impl = NULL;

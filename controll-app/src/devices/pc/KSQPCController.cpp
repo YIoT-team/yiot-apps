@@ -143,7 +143,7 @@ KSQPCController::onPCError(const vs_mac_addr_t mac) {
 //-----------------------------------------------------------------------------
 void
 KSQPCController::onInitDevice(KSQPC &pc) {
-    vs_snap_pc_init_t init;
+    vs_snap_pc_init_ssh_t init;
 
     memset(&init, 0, sizeof(init));
 

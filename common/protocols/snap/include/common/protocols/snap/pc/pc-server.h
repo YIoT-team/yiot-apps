@@ -34,9 +34,13 @@ typedef vs_status_e (*vs_snap_pc_get_state_server_cb_t)(const vs_netif_t *netif,
                                                         vs_mac_addr_t sender_mac,
                                                         vs_snap_pc_state_t *state);
 
-typedef vs_status_e (*vs_snap_pc_init_server_cb_t)(const vs_netif_t *netif,
-                                                   vs_mac_addr_t sender_mac,
-                                                   vs_snap_pc_init_t *init);
+typedef vs_status_e (*vs_snap_pc_init_ssh_server_cb_t)(const vs_netif_t *netif,
+                                                       vs_mac_addr_t sender_mac,
+                                                       vs_snap_pc_init_ssh_t *init);
+
+typedef vs_status_e (*vs_snap_pc_init_vpn_server_cb_t)(const vs_netif_t *netif,
+                                                       vs_mac_addr_t sender_mac,
+                                                       vs_snap_pc_init_vpn_t *init);
 
 /** PC server implementations
  *
@@ -44,8 +48,9 @@ typedef vs_status_e (*vs_snap_pc_init_server_cb_t)(const vs_netif_t *netif,
  *
  */
 typedef struct {
-    vs_snap_pc_get_state_server_cb_t get_data; /**< Get data to send it over snap */
-    vs_snap_pc_init_server_cb_t init_pc;       /**< Init PC using data received from snap */
+    vs_snap_pc_get_state_server_cb_t get_data;   /**< Get data to send it over snap */
+    vs_snap_pc_init_ssh_server_cb_t init_pc_ssh; /**< Init PC as SSH server */
+    vs_snap_pc_init_vpn_server_cb_t init_pc_vpn; /**< Init PC as VPN router */
 } vs_snap_pc_server_service_t;
 
 /** PC Server SNAP Service implementation

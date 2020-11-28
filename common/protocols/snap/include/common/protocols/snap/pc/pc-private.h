@@ -32,7 +32,8 @@
 typedef enum { VS_PC_SERVICE_ID = HTONL_IN_COMPILE_TIME('_PC_') } vs_pc_t;
 
 typedef enum {
-    VS_PC_INPC = HTONL_IN_COMPILE_TIME('INPC'), /* INit PC */
+    VS_PC_ISSH = HTONL_IN_COMPILE_TIME('ISSH'), /* Init PC as SSH server */
+    VS_PC_IVPN = HTONL_IN_COMPILE_TIME('IVPN'), /* Init PC as VPN router */
     VS_PC_GPST = HTONL_IN_COMPILE_TIME('GPST'), /* Get Pc STate */
     VS_PC_IPST = HTONL_IN_COMPILE_TIME('IPST'), /* Inform Pc STate */
 } vs_snap_pc_element_e;
