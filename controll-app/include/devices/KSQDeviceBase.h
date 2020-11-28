@@ -208,7 +208,6 @@ public:
     static const QString kCmdStateError;
 
 protected:
-
     void
     setCommandState(QString val) {
         if (val != m_commandState) {

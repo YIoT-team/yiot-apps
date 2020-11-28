@@ -75,6 +75,7 @@ target_sources(yiot-device-app-linux
         ${CMAKE_CURRENT_LIST_DIR}/include/commands/pc.h
         ${CMAKE_CURRENT_LIST_DIR}/include/helpers/timer.h
         ${CMAKE_CURRENT_LIST_DIR}/include/helpers/command.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/helpers/settings.h
 
         # Sources
         ${CMAKE_CURRENT_LIST_DIR}/src/main.c
@@ -82,6 +83,7 @@ target_sources(yiot-device-app-linux
         ${CMAKE_CURRENT_LIST_DIR}/src/commands/wifi-cred.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/commands/pc.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/helpers/timer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/helpers/settings.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/helpers.c
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/init.c
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/netif/netif-ble-linux.cpp

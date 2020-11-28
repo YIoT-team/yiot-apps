@@ -166,15 +166,14 @@ KSQIoTKitFacade::onNetifProcess(struct VirgilIoTKit::vs_netif_t *netif, QByteArr
 /******************************************************************************/
 vs_status_e
 KSQIoTKitFacade::netifProcessCb(struct vs_netif_t *netif, const uint8_t *data, const uint16_t data_sz) {
-    vs_snap_packet_dump("IN ",  (vs_snap_packet_t *)data);
+    vs_snap_packet_dump("IN ", (vs_snap_packet_t *)data);
 
     auto ba = QByteArray(reinterpret_cast<const char *>(data), data_sz);
-    if (!QMetaObject::invokeMethod(
-            &instance(),
-            "onNetifProcess",
-            Qt::QueuedConnection,
-            Q_ARG(VirgilIoTKit::vs_netif_t *, netif),
-            Q_ARG(QByteArray, ba))) {
+    if (!QMetaObject::invokeMethod(&instance(),
+                                   "onNetifProcess",
+                                   Qt::QueuedConnection,
+                                   Q_ARG(VirgilIoTKit::vs_netif_t *, netif),
+                                   Q_ARG(QByteArray, ba))) {
         VS_LOG_ERROR("PACKET CANNOT BE PROCESSED !!!");
     }
     return VS_CODE_OK;

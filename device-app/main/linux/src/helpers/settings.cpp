@@ -17,26 +17,24 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_H
-#define YIOT_PC_H
+#include <iostream>
 
-#include <virgil/iot/status_code/status_code.h>
-#include <virgil/iot/protocols/snap.h>
-#include <common/protocols/snap/pc/pc-structs.h>
+#include "helpers/settings.h"
 
-#ifdef __cplusplus
-using namespace VirgilIoTKit;
-extern "C" {
-#endif
+#define BASE_DIR "/opt/yiot/pc"
+#define SCRIPTS_DIR "/opt/yiot/pc/scripts"
 
-vs_status_e
-ks_snap_pc_get_info_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, vs_snap_pc_state_t *state);
+//-----------------------------------------------------------------------------
 
-vs_status_e
-ks_snap_pc_init_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, vs_snap_pc_init_t *init);
-
-#ifdef __cplusplus
+const char *
+ks_settings_installation_dir(void) {
+    return BASE_DIR;
 }
-#endif
 
-#endif // YIOT_PC_H
+//-----------------------------------------------------------------------------
+extern "C" const char *
+ks_settings_scripts_dir(void) {
+    return SCRIPTS_DIR;
+}
+
+//-----------------------------------------------------------------------------

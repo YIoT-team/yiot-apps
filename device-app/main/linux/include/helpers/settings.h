@@ -17,26 +17,21 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_H
-#define YIOT_PC_H
-
-#include <virgil/iot/status_code/status_code.h>
-#include <virgil/iot/protocols/snap.h>
-#include <common/protocols/snap/pc/pc-structs.h>
+#ifndef YIOT_SETTINGS_H
+#define YIOT_SETTINGS_H
 
 #ifdef __cplusplus
-using namespace VirgilIoTKit;
 extern "C" {
 #endif
 
-vs_status_e
-ks_snap_pc_get_info_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, vs_snap_pc_state_t *state);
+const char *
+ks_settings_installation_dir(void);
 
-vs_status_e
-ks_snap_pc_init_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, vs_snap_pc_init_t *init);
+const char *
+ks_settings_scripts_dir(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // YIOT_PC_H
+#endif // YIOT_SETTINGS_H

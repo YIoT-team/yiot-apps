@@ -28,7 +28,9 @@ extern "C" {
 #endif
 
 vs_status_e
-ks_snap_cfg_wifi_cb(const vs_cfg_wifi_configuration_t *configuration);
+ks_snap_cfg_wifi_cb(const vs_netif_t *netif,
+                    vs_mac_addr_t sender_mac,
+                    const vs_cfg_wifi_configuration_t *configuration);
 
 #ifdef __cplusplus
 }

@@ -169,7 +169,7 @@ KSQUdp::ifAckPacket(const QByteArray &data) {
 bool
 KSQUdp::sendAck(const QByteArray &data) {
     // Packet should be correct
-    if (data.size() < sizeof(vs_snap_packet_t)) {
+    if (static_cast<size_t>(data.size()) < sizeof(vs_snap_packet_t)) {
         return false;
     }
 

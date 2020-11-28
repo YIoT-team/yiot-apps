@@ -34,12 +34,18 @@ static vs_snap_pc_server_service_t _impl = {0};
 
 //-----------------------------------------------------------------------------
 static vs_status_e
-_fill_current_state(uint8_t *response, const uint16_t response_buf_sz, uint16_t *response_sz) {
+_fill_current_state(const struct vs_netif_t *netif,
+                    const vs_ethernet_header_t *eth_header,
+                    uint8_t *response,
+                    const uint16_t response_buf_sz,
+                    uint16_t *response_sz) {
     vs_status_e res;
+    CHECK_NOT_ZERO_RET(eth_header, VS_CODE_ERR_ZERO_ARGUMENT);
     CHECK_RET(response_buf_sz >= sizeof(vs_snap_pc_state_t), VS_CODE_ERR_TOO_SMALL_BUFFER, "Small buffer");
+
     if (_impl.get_data) {
         vs_snap_pc_state_t *state = (vs_snap_pc_state_t *)response;
-        res = _impl.get_data(state);
+        res = _impl.get_data(netif, eth_header->src, state);
 
         if (VS_CODE_OK == res) {
             // TODO: Normalize byte order
@@ -53,31 +59,36 @@ _fill_current_state(uint8_t *response, const uint16_t response_buf_sz, uint16_t 
 
 //-----------------------------------------------------------------------------
 static vs_status_e
-_get_pc_state_request_processor(const uint8_t *request,
+_get_pc_state_request_processor(const struct vs_netif_t *netif,
+                                const vs_ethernet_header_t *eth_header,
+                                const uint8_t *request,
                                 const uint16_t request_sz,
                                 uint8_t *response,
                                 const uint16_t response_buf_sz,
                                 uint16_t *response_sz) {
-    return _fill_current_state(response, response_buf_sz, response_sz);
+    return _fill_current_state(netif, eth_header, response, response_buf_sz, response_sz);
 }
 
 //-----------------------------------------------------------------------------
 static vs_status_e
-_init_pc_request_processor(const uint8_t *request,
+_init_pc_request_processor(const struct vs_netif_t *netif,
+                           const vs_ethernet_header_t *eth_header,
+                           const uint8_t *request,
                            const uint16_t request_sz,
                            uint8_t *response,
                            const uint16_t response_buf_sz,
                            uint16_t *response_sz) {
+    CHECK_NOT_ZERO_RET(eth_header, VS_CODE_ERR_ZERO_ARGUMENT);
     CHECK_NOT_ZERO_RET(request, VS_CODE_ERR_ZERO_ARGUMENT);
 
     if (_impl.init_pc) {
         vs_snap_pc_init_t *init = (vs_snap_pc_init_t *)request;
 
-        if (VS_CODE_OK != _impl.init_pc(init)) {
+        if (VS_CODE_OK != _impl.init_pc(netif, eth_header->src, init)) {
             return VS_CODE_ERR_UNSUPPORTED;
         }
 
-        return _fill_current_state(response, response_buf_sz, response_sz);
+        return _fill_current_state(netif, eth_header, response, response_buf_sz, response_sz);
     }
 
     return VS_CODE_ERR_NOT_IMPLEMENTED;
@@ -90,8 +101,11 @@ vs_snap_pc_start_notification(const vs_netif_t *netif) {
     vs_snap_pc_state_t state_data;
     vs_status_e ret_code;
 
+
     uint16_t request_sz = 0;
-    STATUS_CHECK_RET(_fill_current_state((uint8_t *)&state_data, sizeof(state_data), &request_sz),
+    vs_ethernet_header_t eth_header;
+    memset(&eth_header, 0xFF, sizeof(eth_header));
+    STATUS_CHECK_RET(_fill_current_state(netif, &eth_header, (uint8_t *)&state_data, sizeof(state_data), &request_sz),
                      "Cannot fill PC state data");
 
     // Send request
@@ -122,10 +136,12 @@ _pc_request_processor(const struct vs_netif_t *netif,
 
     switch (element_id) {
     case VS_PC_GPST:
-        return _get_pc_state_request_processor(request, request_sz, response, response_buf_sz, response_sz);
+        return _get_pc_state_request_processor(
+                netif, eth_header, request, request_sz, response, response_buf_sz, response_sz);
 
     case VS_PC_INPC:
-        return _init_pc_request_processor(request, request_sz, response, response_buf_sz, response_sz);
+        return _init_pc_request_processor(
+                netif, eth_header, request, request_sz, response, response_buf_sz, response_sz);
 
     default:
         VS_LOG_ERROR("Unsupported PC command");
