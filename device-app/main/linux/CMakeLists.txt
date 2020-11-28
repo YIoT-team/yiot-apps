@@ -73,6 +73,7 @@ target_sources(yiot-device-app-linux
         ${CMAKE_CURRENT_LIST_DIR}/include/commands/device-info.h
         ${CMAKE_CURRENT_LIST_DIR}/include/commands/wifi-cred.h
         ${CMAKE_CURRENT_LIST_DIR}/include/commands/pc.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/commands/reset.h
         ${CMAKE_CURRENT_LIST_DIR}/include/helpers/timer.h
         ${CMAKE_CURRENT_LIST_DIR}/include/helpers/command.h
         ${CMAKE_CURRENT_LIST_DIR}/include/helpers/settings.h
@@ -82,6 +83,7 @@ target_sources(yiot-device-app-linux
         ${CMAKE_CURRENT_LIST_DIR}/src/commands/device-info.c
         ${CMAKE_CURRENT_LIST_DIR}/src/commands/wifi-cred.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/commands/pc.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/commands/reset.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/helpers/timer.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/helpers/settings.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/helpers.c
@@ -149,7 +151,7 @@ if (COMMAND add_clangformat)
 endif ()
 
 
-#------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 #   Install
 # ---------------------------------------------------------------------------
 install(TARGETS yiot-device-app-linux
