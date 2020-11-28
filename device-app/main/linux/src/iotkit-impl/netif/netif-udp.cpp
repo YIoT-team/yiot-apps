@@ -261,6 +261,8 @@ terminate:
 //-----------------------------------------------------------------------------
 static vs_status_e
 _internal_udp_tx(const uint8_t *data, const uint16_t data_sz) {
+    // TODO: ARP request by DST mac address
+
     struct sockaddr_in broadcast_addr;
 
     memset((void *)&broadcast_addr, 0, sizeof(struct sockaddr_in));

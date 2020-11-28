@@ -86,6 +86,8 @@ KSQUdp::deinit() {
 //-----------------------------------------------------------------------------
 vs_status_e
 KSQUdp::_internal_tx(const uint8_t *data, const uint16_t data_sz) {
+    // TODO: ARP request by DST mac address
+
     vs_snap_packet_t *packet = (vs_snap_packet_t *)data;
     if (packet->header.service_id && packet->header.element_id) {
         vs_snap_packet_dump("OUT", packet);
