@@ -237,7 +237,7 @@ _udp_connect() {
     // Bind to port
     memset((void *)&server, 0, sizeof(struct sockaddr_in));
     server.sin_family = AF_INET;
-    server.sin_addr.s_addr = htons(INADDR_ANY);
+    server.sin_addr.s_addr = htonl(INADDR_ANY);
     server.sin_port = htons(UDP_BCAST_PORT);
     if (bind(_udp_sock, (struct sockaddr *)&server, sizeof(struct sockaddr_in)) < 0) {
         VS_LOG_ERROR("UDP Broadcast: UDP Broadcast: Bind error. %s\n", strerror(errno));
