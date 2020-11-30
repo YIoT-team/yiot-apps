@@ -29,6 +29,8 @@
 #include <devices/lamp/KSQLampController.h>
 #include <devices/pc/KSQPCController.h>
 
+#include "keychain.h"
+
 #ifdef Q_OS_ANDROID
 #include "android/KSQAndroid.h"
 #endif // Q_OS_ANDROID

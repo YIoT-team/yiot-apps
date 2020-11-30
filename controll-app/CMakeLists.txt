@@ -195,7 +195,6 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/cmake/iotkit-qt)
 # ---------------------------------------------------------------------------
 set(BUILD_TEST_APPLICATION CACHE BOOL OFF FORCE)
 set(BUILD_TRANSLATIONS CACHE BOOL OFF FORCE)
-set(QTKEYCHAIN_STATIC CACHE BOOL ON FORCE)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../ext/qtkeychain qtkeychain)
 
 # ---------------------------------------------------------------------------
@@ -263,6 +262,7 @@ target_sources(${KS_TARGET_NAME}
 # ---------------------------------------------------------------------------
 target_compile_definitions(${KS_TARGET_NAME}
         PRIVATE
+        -DQKEYCHAIN_STATICLIB
         )
 
 
@@ -272,6 +272,7 @@ target_compile_definitions(${KS_TARGET_NAME}
 target_include_directories(${KS_TARGET_NAME}
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/../ext/qtkeychain>
         )
 
 
