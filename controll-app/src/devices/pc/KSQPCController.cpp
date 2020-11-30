@@ -31,19 +31,19 @@
 
 //-----------------------------------------------------------------------------
 #if defined(Q_OS_WIN32)
-static int inet_pton(int af, const char *src, void *dst)
-{
+static int
+inet_pton(int af, const char *src, void *dst) {
     struct sockaddr_storage ss;
     int size = sizeof(ss);
-    char src_copy[INET6_ADDRSTRLEN+1];
+    char src_copy[INET6_ADDRSTRLEN + 1];
 
     ZeroMemory(&ss, sizeof(ss));
     /* stupid non-const API */
-    strncpy (src_copy, src, INET6_ADDRSTRLEN+1);
+    strncpy(src_copy, src, INET6_ADDRSTRLEN + 1);
     src_copy[INET6_ADDRSTRLEN] = 0;
 
     if (WSAStringToAddress(src_copy, af, NULL, (struct sockaddr *)&ss, &size) == 0) {
-        switch(af) {
+        switch (af) {
         case AF_INET:
             *(struct in_addr *)dst = ((struct sockaddr_in *)&ss)->sin_addr;
             return 1;
@@ -178,7 +178,7 @@ KSQPCController::onInitDevice(KSQPC &pc) {
     struct in_addr addr;
 
     memset(&init, 0, sizeof(init));
-    memset(&addr, 0, sizeof (addr));
+    memset(&addr, 0, sizeof(addr));
 
     bool isOk = true;
     if ((pc.m_user.length() + 1) >= USER_NAME_SZ_MAX || (pc.m_password.length() + 1) >= USER_PASS_SZ_MAX) {
@@ -191,7 +191,7 @@ KSQPCController::onInitDevice(KSQPC &pc) {
         if (0 >= inet_pton(AF_INET, pc.m_staticIP.toStdString().c_str(), &addr)) {
             isOk = false;
         } else {
-#if defined (Q_OS_WIN32)
+#if defined(Q_OS_WIN32)
             init.ipv4 = addr.S_un.S_addr;
 #else
             init.ipv4 = addr.s_addr;
