@@ -84,8 +84,9 @@ _init_pc_ssh_request_processor(const struct vs_netif_t *netif,
     if (_impl.init_pc_ssh) {
         vs_snap_pc_init_ssh_t *init = (vs_snap_pc_init_ssh_t *)request;
 
-        if (VS_CODE_OK != _impl.init_pc_ssh(netif, eth_header->src, init)) {
-            return VS_CODE_ERR_UNSUPPORTED;
+        vs_status_e res = _impl.init_pc_ssh(netif, eth_header->src, init);
+        if (VS_CODE_OK != res) {
+            return res;
         }
 
         return _fill_current_state(netif, eth_header, response, response_buf_sz, response_sz);
@@ -109,8 +110,9 @@ _init_pc_vpn_request_processor(const struct vs_netif_t *netif,
     if (_impl.init_pc_vpn) {
         vs_snap_pc_init_vpn_t *init = (vs_snap_pc_init_vpn_t *)request;
 
-        if (VS_CODE_OK != _impl.init_pc_vpn(netif, eth_header->src, init)) {
-            return VS_CODE_ERR_UNSUPPORTED;
+        vs_status_e res = _impl.init_pc_vpn(netif, eth_header->src, init);
+        if (VS_CODE_OK != res) {
+            return res;
         }
 
         return _fill_current_state(netif, eth_header, response, response_buf_sz, response_sz);
