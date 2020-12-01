@@ -17,13 +17,44 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include <arpa/inet.h>
-
 #include <devices/pc/KSQPCController.h>
 
 #include <virgil/iot/qt/protocols/snap/VSQSnapINFOClient.h>
 #include <yiot-iotkit/snap/KSQSnapPCClient.h>
 
+#if defined(Q_OS_WIN32)
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
+#include <arpa/inet.h>
+#endif
+
+//-----------------------------------------------------------------------------
+#if defined(Q_OS_WIN32)
+static int
+inet_pton(int af, const char *src, void *dst) {
+    struct sockaddr_storage ss;
+    int size = sizeof(ss);
+    char src_copy[INET6_ADDRSTRLEN + 1];
+
+    ZeroMemory(&ss, sizeof(ss));
+    /* stupid non-const API */
+    strncpy(src_copy, src, INET6_ADDRSTRLEN + 1);
+    src_copy[INET6_ADDRSTRLEN] = 0;
+
+    if (WSAStringToAddress(src_copy, af, NULL, (struct sockaddr *)&ss, &size) == 0) {
+        switch (af) {
+        case AF_INET:
+            *(struct in_addr *)dst = ((struct sockaddr_in *)&ss)->sin_addr;
+            return 1;
+        case AF_INET6:
+            *(struct in6_addr *)dst = ((struct sockaddr_in6 *)&ss)->sin6_addr;
+            return 1;
+        }
+    }
+    return 0;
+}
+#endif // Q_OS_WIN32
 //-----------------------------------------------------------------------------
 KSQPCController::KSQPCController() {
     // SNAP::INFO service
@@ -144,8 +175,10 @@ KSQPCController::onPCError(const vs_mac_addr_t mac) {
 void
 KSQPCController::onInitDevice(KSQPC &pc) {
     vs_snap_pc_init_ssh_t init;
+    struct in_addr addr;
 
     memset(&init, 0, sizeof(init));
+    memset(&addr, 0, sizeof(addr));
 
     bool isOk = true;
     if ((pc.m_user.length() + 1) >= USER_NAME_SZ_MAX || (pc.m_password.length() + 1) >= USER_PASS_SZ_MAX) {
@@ -155,8 +188,14 @@ KSQPCController::onInitDevice(KSQPC &pc) {
     if (isOk) {
         strcpy(reinterpret_cast<char *>(init.user), pc.m_user.toStdString().c_str());
         strcpy(reinterpret_cast<char *>(init.pass), pc.m_password.toStdString().c_str());
-        if (0 >= inet_pton(AF_INET, pc.m_staticIP.toStdString().c_str(), &init.ipv4)) {
+        if (0 >= inet_pton(AF_INET, pc.m_staticIP.toStdString().c_str(), &addr)) {
             isOk = false;
+        } else {
+#if defined(Q_OS_WIN32)
+            init.ipv4 = addr.S_un.S_addr;
+#else
+            init.ipv4 = addr.s_addr;
+#endif
         }
     }
 
