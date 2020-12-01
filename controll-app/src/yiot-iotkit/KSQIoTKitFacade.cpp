@@ -39,6 +39,7 @@
 
 #include <yiot-iotkit/KSQIoTKitFacade.h>
 #include <yiot-iotkit/snap/KSQSnapLampClient.h>
+#include <yiot-iotkit/snap/KSQSnapPCClient.h>
 
 using namespace VirgilIoTKit;
 
@@ -57,6 +58,8 @@ KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &imp
     qRegisterMetaType<VirgilIoTKit::vs_netif_t *>("VirgilIoTKit::vs_netif_t*");
     qRegisterMetaType<VSQDeviceInfo>("VSQDeviceInfo");
     qRegisterMetaType<QAbstractSocket::SocketState>();
+    qRegisterMetaType<vs_mac_addr_t>("vs_mac_addr_t");
+    qRegisterMetaType<vs_snap_pc_state_t>("vs_snap_pc_state_t");
 
     // Process events in separate thread
     m_snapProcessorThread = new QThread();
@@ -127,6 +130,23 @@ KSQIoTKitFacade::initSnap() {
     if (m_features.hasFeature(KSQFeatures::SNAP_LAMP_CLIENT)) {
         registerService(KSQSnapLampClient::instance());
     }
+
+    if (m_features.hasFeature(KSQFeatures::SNAP_PC_CLIENT)) {
+        registerService(KSQSnapPCClient::instance());
+    }
+}
+
+/******************************************************************************/
+void
+KSQIoTKitFacade::updateAll() {
+    qDebug() << "Get information about connected devices";
+    if (m_features.hasFeature(KSQFeatures::SNAP_PC_CLIENT)) {
+        KSQSnapPCClient::instance().requestState(broadcastMac);
+    }
+
+    if (m_features.hasFeature(KSQFeatures::SNAP_INFO_CLIENT)) {
+        VSQSnapInfoClient::instance().onStartFullPolling();
+    }
 }
 
 /******************************************************************************/
@@ -146,12 +166,16 @@ KSQIoTKitFacade::onNetifProcess(struct VirgilIoTKit::vs_netif_t *netif, QByteArr
 /******************************************************************************/
 vs_status_e
 KSQIoTKitFacade::netifProcessCb(struct vs_netif_t *netif, const uint8_t *data, const uint16_t data_sz) {
-    QMetaObject::invokeMethod(
-            &instance(),
-            "onNetifProcess",
-            Qt::QueuedConnection,
-            Q_ARG(VirgilIoTKit::vs_netif_t *, netif),
-            Q_ARG(QByteArray, QByteArray::fromRawData(reinterpret_cast<const char *>(data), data_sz)));
+    vs_snap_packet_dump("IN ", (vs_snap_packet_t *)data);
+
+    auto ba = QByteArray(reinterpret_cast<const char *>(data), data_sz);
+    if (!QMetaObject::invokeMethod(&instance(),
+                                   "onNetifProcess",
+                                   Qt::QueuedConnection,
+                                   Q_ARG(VirgilIoTKit::vs_netif_t *, netif),
+                                   Q_ARG(QByteArray, ba))) {
+        VS_LOG_ERROR("PACKET CANNOT BE PROCESSED !!!");
+    }
     return VS_CODE_OK;
 }
 

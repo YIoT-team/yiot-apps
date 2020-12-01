@@ -77,9 +77,16 @@ private slots:
     void
     onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo);
 
+    // SNAP::PC
+    void
+    onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state);
+
+    void
+    onPCError(const vs_mac_addr_t mac);
+
     // UI
     void
-    onSetDeviceParams(const KSQPC &pc);
+    onInitDevice(KSQPC &pc);
 
 protected:
     std::pair<int, QSharedPointer<KSQPC>>

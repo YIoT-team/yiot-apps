@@ -76,6 +76,7 @@ Item {
     ListView {
         id: list
         anchors.fill: parent
+        highlightFollowsCurrentItem: false
         delegate: categoryDelegate
     }
 }

@@ -17,6 +17,6 @@
 #    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 #  ────────────────────────────────────────────────────────────
 
-cmake_minimum_required(VERSION 3.16.0)
+cmake_minimum_required(VERSION 3.13.0)
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(idf)

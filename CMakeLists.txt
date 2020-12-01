@@ -17,7 +17,7 @@
 #    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 #  ────────────────────────────────────────────────────────────
 
-cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
 # ---------------------------------------------------------------------------
 # Project version
@@ -54,7 +54,7 @@ if(NOT KS_PLATFORM)
     elseif(IOS)
         message(STATUS "Detected target platform: [IOS]")
         set(KS_PLATFORM "ios")
-    elseif(MINGW32)
+    elseif(WIN32)
         message(STATUS "Detected target platform: [Windows]")
         set(KS_PLATFORM "windows")
     endif()

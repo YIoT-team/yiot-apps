@@ -75,6 +75,9 @@ public:
     VSQSnapInfoClient *
     snapInfoClient();
 
+    void
+    updateAll();
+
 private slots:
 
     void

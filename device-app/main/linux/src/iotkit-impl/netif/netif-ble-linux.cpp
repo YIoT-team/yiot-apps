@@ -284,7 +284,7 @@ _ble_tx(struct vs_netif_t *netif, const uint8_t *data, const uint16_t data_sz) {
         return VS_CODE_ERR_NOINIT;
     }
 
-    VS_LOG_HEX(VS_LOGLEV_DEBUG, "SEND DUMP:", data, data_sz);
+    // VS_LOG_HEX(VS_LOGLEV_DEBUG, "SEND DUMP:", data, data_sz);
     std::vector<uint8_t> data_vect(data, data + data_sz);
     _tx_char->tx(data_vect);
 

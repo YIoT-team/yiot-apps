@@ -31,6 +31,10 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
+#if !defined(WIFI_ENUM_DEBUG)
+#define WIFI_ENUM_DEBUG 0
+#endif
+
 //-----------------------------------------------------------------------------
 KSQWiFiEnumerator::KSQWiFiEnumerator() {
 #if defined(Q_OS_MACOS) || defined(Q_OS_ANDROID)
@@ -119,7 +123,9 @@ KSQWiFiEnumerator::updateList(KSQWiFiNetworks &list) {
     auto bottomRight = createIndex(m_wifiList.count(), 0);
     emit dataChanged(topLeft, bottomRight, roles);
 
+#if WIFI_ENUM_DEBUG
     qDebug() << m_wifiList.keys();
+#endif
 }
 
 //-----------------------------------------------------------------------------

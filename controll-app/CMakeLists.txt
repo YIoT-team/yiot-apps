@@ -195,7 +195,6 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/cmake/iotkit-qt)
 # ---------------------------------------------------------------------------
 set(BUILD_TEST_APPLICATION CACHE BOOL OFF FORCE)
 set(BUILD_TRANSLATIONS CACHE BOOL OFF FORCE)
-set(QTKEYCHAIN_STATIC CACHE BOOL ON FORCE)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../ext/qtkeychain qtkeychain)
 
 # ---------------------------------------------------------------------------
@@ -222,6 +221,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/KSQIoTKitFacade.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQUdp.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapLampClient.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapPCClient.h
 
         $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
         $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
@@ -236,6 +236,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-hal.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQDevices.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQDeviceBase.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/lamp/KSQLamp.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/lamp/KSQLampController.cpp
@@ -245,6 +246,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/KSQIoTKitFacade.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQUdp.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapLampClient.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapPCClient.cpp
 
         $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/macos/KSMacWiFi.mm>
         $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/src/win/KSWinWiFi.cpp>
@@ -260,6 +262,7 @@ target_sources(${KS_TARGET_NAME}
 # ---------------------------------------------------------------------------
 target_compile_definitions(${KS_TARGET_NAME}
         PRIVATE
+        -DQKEYCHAIN_STATICLIB
         )
 
 
@@ -269,6 +272,7 @@ target_compile_definitions(${KS_TARGET_NAME}
 target_include_directories(${KS_TARGET_NAME}
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/../ext/qtkeychain>
         )
 
 
@@ -296,6 +300,7 @@ target_link_libraries(${KS_TARGET_NAME}
 
         #   IoTKit Qt
         iotkit-qt-lib
+        yiot-qos1-helper
 
         #   Qt keychain
         qtkeychain

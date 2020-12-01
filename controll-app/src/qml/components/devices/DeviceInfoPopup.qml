@@ -83,10 +83,10 @@ Popup {
         InfoText { text: qsTr("TrustList version :"); horizontalAlignment: Text.AlignRight }
         InfoText { text: mTlVer }
 
-        InfoText { text: qsTr("Sent bytes :"); horizontalAlignment: Text.AlignRight }
+        InfoText { text: qsTr("Sent packets :"); horizontalAlignment: Text.AlignRight }
         InfoText { text: mSent }
 
-        InfoText { text: qsTr("Received bytes :"); horizontalAlignment: Text.AlignRight }
+        InfoText { text: qsTr("Received packets :"); horizontalAlignment: Text.AlignRight }
         InfoText { text: mReceived }
     }
 

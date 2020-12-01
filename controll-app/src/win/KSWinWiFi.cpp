@@ -17,7 +17,7 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include <win/KSWinWiFi.h>
+#include <KSWiFi.h>
 
 #include <stdio.h>
 #include <windows.h>
@@ -61,9 +61,9 @@ _isVistaOrHigher() {
 }
 
 //-----------------------------------------------------------------------------
-QStringList
-wifi_enum_win() {
-    QStringList res;
+KSQWiFiNetworks
+wifi_enum() {
+    KSQWiFiNetworks res;
 
     HANDLE hWlan = NULL;
 
@@ -153,10 +153,11 @@ wifi_enum_win() {
 
         for (unsigned int i = 0; i < wlanNetworkList->dwNumberOfItems; i++) {
             const char *ssid = (const char *)wlanNetworkList->Network[i].dot11Ssid.ucSSID;
-            res << QString::fromLocal8Bit(ssid);
+            auto ssidStr = QString::fromLocal8Bit(ssid);
+            int signal = wlanNetworkList->Network[i].wlanSignalQuality;
+            res[ssidStr] = KSWiFiInfo(signal);
 
 #if KS_DEBUG_WIFI_SCANNER_WIN
-            int signal = wlanNetworkList->Network[i].wlanSignalQuality;
             const char *security = "";
 
             switch (wlanNetworkList->Network[i].dot11DefaultAuthAlgorithm) {

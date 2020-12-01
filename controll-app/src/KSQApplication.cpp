@@ -29,6 +29,8 @@
 #include <devices/lamp/KSQLampController.h>
 #include <devices/pc/KSQPCController.h>
 
+#include "keychain.h"
+
 #ifdef Q_OS_ANDROID
 #include "android/KSQAndroid.h"
 #endif // Q_OS_ANDROID
@@ -41,7 +43,8 @@ KSQApplication::run() {
     m_netifUdp = QSharedPointer<KSQUdp>::create();
 
     // Prepare IoTKit data
-    auto features = KSQFeatures() << KSQFeatures::SNAP_CFG_CLIENT << KSQFeatures::SNAP_LAMP_CLIENT;
+    auto features = KSQFeatures() << KSQFeatures::SNAP_INFO_CLIENT << KSQFeatures::SNAP_CFG_CLIENT
+                                  << KSQFeatures::SNAP_LAMP_CLIENT << KSQFeatures::SNAP_PC_CLIENT;
     auto impl = VSQImplementations() << m_netifUdp << m_bleController.netif();
     auto roles = VSQDeviceRoles() << VirgilIoTKit::VS_SNAP_DEV_CONTROL;
     auto appConfig = VSQAppConfig() << VSQManufactureId() << VSQDeviceType() << VSQDeviceSerial()
@@ -76,6 +79,14 @@ KSQApplication::run() {
     });
 
     return QGuiApplication::instance()->exec();
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQApplication::updateDevices() {
+    KSQIoTKitFacade::instance().updateAll();
+    QTimer::singleShot(3000, []() { KSQIoTKitFacade::instance().updateAll(); });
+    QTimer::singleShot(5000, []() { KSQIoTKitFacade::instance().updateAll(); });
 }
 
 //-----------------------------------------------------------------------------

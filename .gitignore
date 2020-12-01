@@ -63,6 +63,7 @@ cmake-build-*
 app/qt/platform/macos/macos-info.plist
 build/*
 artifacts/*
+transitive-args.cmake
 
 #
 #   Do not ignore

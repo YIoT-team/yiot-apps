@@ -37,6 +37,7 @@ class KSQDeviceBase : public QObject {
     Q_PROPERTY(QString tlVersion READ tlVersion WRITE setTlVersion NOTIFY fireTlVerChanged)
     Q_PROPERTY(QString sentBytes READ sentBytes WRITE setSentBytes NOTIFY fireSentBytesChanged)
     Q_PROPERTY(QString receivedBytes READ receivedBytes WRITE setReceivedBytes NOTIFY fireReceivedBytesChanged)
+    Q_PROPERTY(QString commandState READ commandState WRITE setCommandState NOTIFY fireCommandStateChanged)
     Q_PROPERTY(bool active READ active NOTIFY fireActiveChanged)
 
 public:
@@ -138,6 +139,21 @@ public:
         }
     }
 
+    void
+    commandStart() {
+        setCommandState(kCmdStateReceive);
+    }
+
+    void
+    commandError() {
+        setCommandState(kCmdStateError);
+    }
+
+    void
+    commandDone() {
+        setCommandState(kCmdStateDone);
+    }
+
     QString
     name() const {
         return m_name;
@@ -170,6 +186,10 @@ public:
     receivedBytes() const {
         return m_receivedBytes;
     }
+    QString
+    commandState() const {
+        return m_commandState;
+    }
     bool
     active() const {
         return m_active;
@@ -180,7 +200,22 @@ public:
         return m_name < rhs.m_name;
     }
 
+    static const QString kCmdStateConnect;
+    static const QString kCmdStateSend;
+    static const QString kCmdStateReceive;
+    static const QString kCmdStateDisconnect;
+    static const QString kCmdStateDone;
+    static const QString kCmdStateError;
+
 protected:
+    void
+    setCommandState(QString val) {
+        if (val != m_commandState) {
+            m_commandState = val;
+            emit fireCommandStateChanged();
+        }
+    }
+
     void
     _setRecivedName(QString name) {
         if (name != m_name) {
@@ -225,6 +260,8 @@ signals:
 
     void
     fireDeviceStateChanged();
+    void
+    fireCommandStateChanged();
 
 private:
     bool m_active;
@@ -240,6 +277,7 @@ private:
     QString m_tlVer;
     QString m_sentBytes;
     QString m_receivedBytes;
+    QString m_commandState;
 };
 
 #endif // YIOT_DEVICE_BASE_H

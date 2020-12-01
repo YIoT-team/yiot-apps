@@ -20,7 +20,41 @@
 #include <devices/pc/KSQPCController.h>
 
 #include <virgil/iot/qt/protocols/snap/VSQSnapINFOClient.h>
+#include <yiot-iotkit/snap/KSQSnapPCClient.h>
 
+#if defined(Q_OS_WIN32)
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
+#include <arpa/inet.h>
+#endif
+
+//-----------------------------------------------------------------------------
+#if defined(Q_OS_WIN32)
+static int
+inet_pton(int af, const char *src, void *dst) {
+    struct sockaddr_storage ss;
+    int size = sizeof(ss);
+    char src_copy[INET6_ADDRSTRLEN + 1];
+
+    ZeroMemory(&ss, sizeof(ss));
+    /* stupid non-const API */
+    strncpy(src_copy, src, INET6_ADDRSTRLEN + 1);
+    src_copy[INET6_ADDRSTRLEN] = 0;
+
+    if (WSAStringToAddress(src_copy, af, NULL, (struct sockaddr *)&ss, &size) == 0) {
+        switch (af) {
+        case AF_INET:
+            *(struct in_addr *)dst = ((struct sockaddr_in *)&ss)->sin_addr;
+            return 1;
+        case AF_INET6:
+            *(struct in6_addr *)dst = ((struct sockaddr_in6 *)&ss)->sin6_addr;
+            return 1;
+        }
+    }
+    return 0;
+}
+#endif // Q_OS_WIN32
 //-----------------------------------------------------------------------------
 KSQPCController::KSQPCController() {
     // SNAP::INFO service
@@ -36,40 +70,18 @@ KSQPCController::KSQPCController() {
             &KSQPCController::onDeviceInfoUpdate,
             Qt::QueuedConnection);
 
-    // Test data
-#if 1
-    auto t = new QTimer();
-    connect(t, &QTimer::timeout, [t, this]() {
-        static int n = 0;
-        if (n++ >= 10) {
-            t->deleteLater();
-            return;
-        }
+    // SNAP::PC service
+    connect(&KSQSnapPCClient::instance(),
+            &KSQSnapPCClient::fireStateUpdate,
+            this,
+            &KSQPCController::onPCStateUpdate,
+            Qt::QueuedConnection);
 
-        vs_mac_addr_t mac;
-        mac.bytes[0] = 32;
-        mac.bytes[1] = 1;
-        mac.bytes[2] = 2;
-        mac.bytes[3] = 3;
-        mac.bytes[4] = 4;
-        mac.bytes[5] = n;
-
-        VSQDeviceInfo deviceInfo;
-        deviceInfo.m_mac = mac;
-        deviceInfo.m_hasGeneralInfo = true;
-        deviceInfo.m_deviceType = VSQDeviceType();
-        deviceInfo.m_deviceRoles = VSQDeviceRoles() << VS_SNAP_DEV_THING;
-        deviceInfo.m_tlVer = VSQFileVersion();
-        deviceInfo.m_fwVer = VSQFileVersion();
-        deviceInfo.m_manufactureId = VSQManufactureId();
-        deviceInfo.m_hasStatistics = true;
-        deviceInfo.m_sent = 123134;
-        deviceInfo.m_received = 456234;
-        onDeviceInfoUpdate(deviceInfo);
-    });
-    t->start(1000);
-#endif
-    // ~Test data
+    connect(&KSQSnapPCClient::instance(),
+            &KSQSnapPCClient::fireStateError,
+            this,
+            &KSQPCController::onPCError,
+            Qt::QueuedConnection);
 }
 
 //-----------------------------------------------------------------------------
@@ -77,29 +89,6 @@ void
 KSQPCController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
     auto res = findPC(deviceInfo.m_mac);
     auto pc = res.second;
-    if (!pc) {
-        // Add PC
-
-        bool activating = !m_pcs.size();
-
-        if (activating) {
-            emit fireAboutToActivate();
-        }
-
-        beginInsertRows(QModelIndex(), m_pcs.size(), m_pcs.size());
-
-        auto newLamp = QSharedPointer<KSQPC>::create(VSQMac(deviceInfo.m_mac), QString("test-%1").arg(m_pcs.size()));
-        m_pcs.push_back(newLamp);
-
-        endInsertRows();
-
-        if (activating) {
-            emit fireActivated();
-        }
-    }
-
-    res = findPC(deviceInfo.m_mac);
-    pc = res.second;
     if (pc) {
         if (deviceInfo.m_hasGeneralInfo) {
             pc->setDeviceID(deviceInfo.m_deviceRoles);
@@ -121,7 +110,102 @@ KSQPCController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
 
 //-----------------------------------------------------------------------------
 void
-KSQPCController::onSetDeviceParams(const KSQPC &pc) {
+KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state) {
+    auto res = findPC(mac);
+    auto pc = res.second;
+    if (!pc) {
+        // Add PC
+
+        bool activating = !m_pcs.size();
+
+        if (activating) {
+            emit fireAboutToActivate();
+        }
+
+        beginInsertRows(QModelIndex(), m_pcs.size(), m_pcs.size());
+
+        auto newPC = QSharedPointer<KSQPC>::create(VSQMac(mac), QString("test-%1").arg(m_pcs.size()));
+        connect(newPC.get(), &KSQPC::fireInitDevice, this, &KSQPCController::onInitDevice);
+        m_pcs.push_back(newPC);
+
+        endInsertRows();
+
+        if (activating) {
+            emit fireActivated();
+        }
+    }
+
+    res = findPC(mac);
+    pc = res.second;
+    if (pc) {
+#if 0
+        if (deviceInfo.m_hasGeneralInfo) {
+            pc->setDeviceID(deviceInfo.m_deviceRoles);
+            pc->setManufacture(deviceInfo.m_manufactureId);
+            pc->setDeviceID(deviceInfo.m_deviceType);
+            pc->setFwVersion(deviceInfo.m_fwVer);
+            pc->setTlVersion(deviceInfo.m_tlVer);
+        }
+
+        if (deviceInfo.m_hasStatistics) {
+            pc->setSentBytes(QString("%1").arg(deviceInfo.m_sent));
+            pc->setReceivedBytes(QString("%1").arg(deviceInfo.m_received));
+        }
+#endif
+
+        pc->commandDone();
+
+        const auto _idx = createIndex(res.first, 0);
+        emit dataChanged(_idx, _idx);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQPCController::onPCError(const vs_mac_addr_t mac) {
+    auto res = findPC(mac);
+    auto pc = res.second;
+    if (pc) {
+        qDebug() << "PC error: " << VSQMac(mac).description();
+        pc->commandError();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQPCController::onInitDevice(KSQPC &pc) {
+    vs_snap_pc_init_ssh_t init;
+    struct in_addr addr;
+
+    memset(&init, 0, sizeof(init));
+    memset(&addr, 0, sizeof(addr));
+
+    bool isOk = true;
+    if ((pc.m_user.length() + 1) >= USER_NAME_SZ_MAX || (pc.m_password.length() + 1) >= USER_PASS_SZ_MAX) {
+        isOk = false;
+    }
+
+    if (isOk) {
+        strcpy(reinterpret_cast<char *>(init.user), pc.m_user.toStdString().c_str());
+        strcpy(reinterpret_cast<char *>(init.pass), pc.m_password.toStdString().c_str());
+        if (0 >= inet_pton(AF_INET, pc.m_staticIP.toStdString().c_str(), &addr)) {
+            isOk = false;
+        } else {
+#if defined(Q_OS_WIN32)
+            init.ipv4 = addr.S_un.S_addr;
+#else
+            init.ipv4 = addr.s_addr;
+#endif
+        }
+    }
+
+    if (!isOk) {
+        VS_LOG_ERROR("Wrong parameters");
+        pc.commandError();
+        return;
+    }
+
+    KSQSnapPCClient::instance().initPC(pc.qMacAddr(), init);
 }
 
 //-----------------------------------------------------------------------------

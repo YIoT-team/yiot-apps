@@ -70,12 +70,21 @@
         <file>qml/components/MainTabButton.qml</file>
         <file>qml/components/SettingsStorage.qml</file>
         <file>qml/components/InfoText.qml</file>
+        <file>qml/components/InputTextField.qml</file>
+        <file>qml/components/Password.qml</file>
+
         <file>qml/components/devices/DeviceInfoPopup.qml</file>
         <file>qml/components/devices/AllDevicesList.qml</file>
         <file>qml/components/devices/DevicesListItem.qml</file>
         <file>qml/components/devices/GeneralCategoryControls.qml</file>
         <file>qml/components/devices/GeneralDeviceControls.qml</file>
+        <file>qml/components/devices/DeviceViewSelector.qml</file>
         <file>qml/components/devices/lamp/LampControls.qml</file>
+
+        <file>qml/components/validators/ValidatorIPv4.qml</file>
+        <file>qml/components/validators/ValidatorUserName.qml</file>
+        <file>qml/components/validators/ValidatorPassword.qml</file>
+
 
         <file>qml/pages/LeftSideMenu.qml</file>
         <file>qml/pages/settings/SettingsMenuPage.qml</file>
@@ -90,7 +99,9 @@
         <file>qml/pages/QRReaderPage.qml</file>
         <file>qml/pages/SharePage.qml</file>
         <file>qml/pages/CredLoadPage.qml</file>
+        <file>qml/pages/devices/CmdProcessingPage.qml</file>
         <file>qml/pages/devices/lamp/mono/LampMonoControl.qml</file>
+        <file>qml/pages/devices/pc/PCRPiControl.qml</file>
 
         <file>qml/theme/Theme.qml</file>
 

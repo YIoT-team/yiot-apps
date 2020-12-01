@@ -23,9 +23,10 @@ import QtQuick.Window 2.2
 import QtQuick.Layouts 1.5
 
 import "./pages"
-import "./pages/devices/lamp/mono"
+import "./pages/devices"
 import "./pages/settings"
 import "./components"
+import "./components/devices"
 import "./components/Popups"
 import "./theme"
 
@@ -34,7 +35,7 @@ ApplicationWindow {
     id: applicationWindow
     visible: true
     width: 400
-    height: 600
+    height: 700
     title: app.applicationDisplayName
 
     background: Rectangle {
@@ -50,19 +51,16 @@ ApplicationWindow {
     // About application page
     AboutPage { id: aboutPage }
 
+    // TODO: Remove after complete adding of `CmdProcessingPage`
     // Page with Credentials upload information
     CredLoadPage { id: credLoad }
 
+    // Page shows command processing process
+    CmdProcessingPage { id: cmdProcessingPage }
+
     // Devices
-    SwipeView {
-        readonly property int lampMonoPageIdx: 0
-
+    DeviceViewSelector {
         id: devicesSwipeView
-        anchors.fill: parent
-        interactive: false
-        currentIndex: lampMonoPageIdx
-
-        LampMonoControl { id: lampMonoPage }
     }
 
     // Main pages
@@ -105,6 +103,9 @@ ApplicationWindow {
     SettingsStorage { id: settings }
 
     Component.onCompleted: {
+        settings.loaded.connect(function() {
+            app.updateDevices()
+        })
         showDevicesSetup()
     }
 
@@ -117,6 +118,7 @@ ApplicationWindow {
                 name: "about"
                 PropertyChanges { target: aboutPage; visible: true }
                 PropertyChanges { target: credLoad; visible: false }
+                PropertyChanges { target: cmdProcessingPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: false }
                 PropertyChanges { target: tabBar; visible: false }
@@ -126,6 +128,7 @@ ApplicationWindow {
                 name: "main"
                 PropertyChanges { target: aboutPage; visible: false }
                 PropertyChanges { target: credLoad; visible: false }
+                PropertyChanges { target: cmdProcessingPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: true }
                 PropertyChanges { target: tabBar; visible: true }
@@ -135,6 +138,17 @@ ApplicationWindow {
                 name: "credLoad"
                 PropertyChanges { target: aboutPage; visible: false }
                 PropertyChanges { target: credLoad; visible: true }
+                PropertyChanges { target: cmdProcessingPage; visible: false }
+                PropertyChanges { target: devicesSwipeView; visible: false }
+                PropertyChanges { target: swipeView; visible: false }
+                PropertyChanges { target: tabBar; visible: false }
+                PropertyChanges { target: leftSideMenu; enabled: false }
+            },
+            State {
+                name: "cmdProcessing"
+                PropertyChanges { target: aboutPage; visible: false }
+                PropertyChanges { target: credLoad; visible: false }
+                PropertyChanges { target: cmdProcessingPage; visible: true }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: false }
                 PropertyChanges { target: tabBar; visible: false }
@@ -144,6 +158,7 @@ ApplicationWindow {
                 name: "deviceControl"
                 PropertyChanges { target: aboutPage; visible: false }
                 PropertyChanges { target: credLoad; visible: false }
+                PropertyChanges { target: cmdProcessingPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: true }
                 PropertyChanges { target: swipeView; visible: false }
                 PropertyChanges { target: tabBar; visible: false }
@@ -152,6 +167,18 @@ ApplicationWindow {
         ]
     }
 
+    function swipeShow(idx) {
+        w.state = "main"
+        swipeView.currentIndex = idx
+        for (var i = 0; i < swipeView.count; ++i) {
+            var item = swipeView.itemAt(i)
+            item.visible = i == swipeView.currentIndex
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    //      Top level Views
+    // ------------------------------------------------------------------------
     function showLeftMenu() {
         leftSideMenu.open()
     }
@@ -164,25 +191,13 @@ ApplicationWindow {
         w.state = "credLoad"
     }
 
-    function showLampMono() {
-        w.state = "deviceControl"
-    }
-
-    function showPC() {
-        w.state = "deviceControl"
+    function showCmdProcessing(device) {
+        cmdProcessingPage.device = device
+        w.state = "cmdProcessing"
     }
 
     function showMain() {
         w.state = "main"
-    }
-
-    function swipeShow(idx) {
-        w.state = "main"
-        swipeView.currentIndex = idx
-        for (var i = 0; i < swipeView.count; ++i) {
-            var item = swipeView.itemAt(i)
-            item.visible = i == swipeView.currentIndex
-        }
     }
 
     function showDevices() {
@@ -201,6 +216,9 @@ ApplicationWindow {
         swipeShow(swipeView.settingsPageIdx)
     }
 
+    // ------------------------------------------------------------------------
+    //      Settings elements
+    // ------------------------------------------------------------------------
     function showSettingsElement(idx) {
         swipeShow(swipeView.settingsPageIdx)
         settingsPage.swipeSettingsShow(idx)
@@ -210,7 +228,9 @@ ApplicationWindow {
         showSettingsElement(settingsPage.wifiNetworksIdx)
     }
 
-    // Show Popup message
+    // ------------------------------------------------------------------------
+    //      Popup messages
+    // ------------------------------------------------------------------------
     function showPopup(message, color, textColor, isOnTop, isModal, action) {
         inform.popupColor = color
         inform.popupColorText = textColor
@@ -227,5 +247,22 @@ ApplicationWindow {
 
     function showPopupInform(message) {
         // TODO: Add
+    }
+
+    // ------------------------------------------------------------------------
+    //      Show Per device Views
+    // ------------------------------------------------------------------------
+    function showLampMono(deviceName, deviceController) {
+        w.state = "deviceControl"
+        devicesSwipeView.show(devicesSwipeView.lampMonoPageIdx,
+                              deviceName,
+                              deviceController)
+    }
+
+    function showPC(deviceName, deviceController) {
+        w.state = "deviceControl"
+        devicesSwipeView.show(devicesSwipeView.pcPageIdx,
+                              deviceName,
+                              deviceController)
     }
 }

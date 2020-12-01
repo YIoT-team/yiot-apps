@@ -33,7 +33,6 @@ include(helpers)
 
 #   Configure
 set (VIRGIL_IOT_CONFIG_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/config/pc")
-#set(GO_DISABLE CACHE BOOL ON FORCE)
 option(ENABLE_TESTING OFF)
 option(ENABLE_HEAVY_TESTS OFF)
 option(VIRGIL_IOT_CLOUD OFF)
@@ -50,4 +49,5 @@ add_subdirectory(${IOTKIT_PATH}/demo/nix/common iotkit-nix-common)
 #	IoTKit extensions
 # ---------------------------------------------------------------------------
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/protocols/snap")
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/qos1")
 

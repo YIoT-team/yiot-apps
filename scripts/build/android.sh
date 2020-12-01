@@ -40,7 +40,6 @@ pushd "${SCRIPT_FOLDER}/../../"
     mkdir "${BUILD_DIR}/armv7"
     pushd "${BUILD_DIR}/armv7"
         cmake -DKS_PLATFORM="android" \
-            -DGO_DISABLE=ON \
             -DCMAKE_PREFIX_PATH="/home/roman/soft/Qt5/5.15.1/android" \
             -DCMAKE_TOOLCHAIN_FILE=/home/roman/Android/Sdk/ndk/21.1.6352462/build/cmake/android.toolchain.cmake \
             -DANDROID_PLATFORM=29 \
@@ -58,7 +57,6 @@ pushd "${SCRIPT_FOLDER}/../../"
     mkdir "${BUILD_DIR}/armv8"
     pushd "${BUILD_DIR}/armv8"
         cmake -DKS_PLATFORM="android" \
-            -DGO_DISABLE=ON \
             -DCMAKE_PREFIX_PATH="/home/roman/soft/Qt5/5.15.1/android" \
             -DANDROID_PLATFORM=29 \
             -DANDROID_QT=ON \
@@ -75,7 +73,6 @@ pushd "${SCRIPT_FOLDER}/../../"
     mkdir "${BUILD_DIR}/x86"
     pushd "${BUILD_DIR}/x86"
         cmake -DKS_PLATFORM="android" \
-            -DGO_DISABLE=ON \
             -DCMAKE_PREFIX_PATH="/home/roman/soft/Qt5/5.15.1/android" \
             -DCMAKE_TOOLCHAIN_FILE=/home/roman/Android/Sdk/ndk/21.1.6352462/build/cmake/android.toolchain.cmake \
             -DANDROID_PLATFORM=29 \
@@ -92,7 +89,6 @@ pushd "${SCRIPT_FOLDER}/../../"
     mkdir "${BUILD_DIR}/x86_64"
     pushd "${BUILD_DIR}/x86_64"
         cmake -DKS_PLATFORM="android" \
-            -DGO_DISABLE=ON \
             -DCMAKE_PREFIX_PATH="/home/roman/soft/Qt5/5.15.1/android" \
             -DCMAKE_TOOLCHAIN_FILE=/home/roman/Android/Sdk/ndk/21.1.6352462/build/cmake/android.toolchain.cmake \
             -DANDROID_PLATFORM=29 \
@@ -113,7 +109,6 @@ pushd "${SCRIPT_FOLDER}/../../"
     mkdir "${BUILD_DIR}/all"
     pushd "${BUILD_DIR}/all"
         cmake -DKS_PLATFORM="android" \
-            -DGO_DISABLE=ON \
             -DCMAKE_PREFIX_PATH="/home/roman/soft/Qt5/5.15.1/android" \
             -DCMAKE_TOOLCHAIN_FILE=/home/roman/Android/Sdk/ndk/21.1.6352462/build/cmake/android.toolchain.cmake \
             -DANDROID_PLATFORM=29 \

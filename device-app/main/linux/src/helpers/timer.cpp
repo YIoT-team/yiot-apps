@@ -50,6 +50,8 @@ KSTimer::add(std::chrono::milliseconds delay, std::function<void()> callback) {
     m_start = std::chrono::high_resolution_clock::now();
     m_delay = delay;
     m_running = true;
+
+    return true;
 }
 
 //-----------------------------------------------------------------------------
