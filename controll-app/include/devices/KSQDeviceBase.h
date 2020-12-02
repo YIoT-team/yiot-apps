@@ -43,6 +43,7 @@ class KSQDeviceBase : public QObject {
 public:
     KSQDeviceBase() {
     }
+
     KSQDeviceBase(VSQMac mac, QString name, QString img = "") {
         m_lastUpdate = QDateTime::currentDateTime();
         m_image = img;
@@ -81,6 +82,12 @@ public:
             emit fireNameChanged();
         }
         emit fireSendNameUpdate();
+    }
+
+    Q_INVOKABLE void
+    setNameToHardware(QString name) {
+        setName(name);
+        emit fireSetNameToHardware(qMacAddr(), name);
     }
 
     void
@@ -240,6 +247,8 @@ signals:
     fireNameChanged();
     void
     fireSendNameUpdate();
+    void
+    fireSetNameToHardware(VSQMac mac, QString name);
     void
     fireActiveChanged();
 

@@ -66,6 +66,9 @@ public slots:
     void
     setState(const vs_mac_addr_t &mac, const vs_snap_lamp_state_t &state);
 
+    void
+    setName(const vs_mac_addr_t &mac, const char *name);
+
 
 private:
     const VirgilIoTKit::vs_snap_service_t *m_snapService;

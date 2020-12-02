@@ -68,6 +68,9 @@ public slots:
     void
     initPC(const vs_mac_addr_t &mac, const vs_snap_pc_init_ssh_t &initData);
 
+    void
+    setName(const vs_mac_addr_t &mac, const char *name);
+
 private:
     const VirgilIoTKit::vs_snap_service_t *m_snapService;
 

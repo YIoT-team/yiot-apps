@@ -88,6 +88,9 @@ private slots:
     void
     onSetDeviceParams(const KSQLamp &lamp);
 
+    void
+    onSetDeviceName(VSQMac mac, QString name);
+
 protected:
     std::pair<int, QSharedPointer<KSQLamp>>
     findLamp(const vs_mac_addr_t &mac);

@@ -88,6 +88,9 @@ private slots:
     void
     onInitDevice(KSQPC &pc);
 
+    void
+    onSetDeviceName(VSQMac mac, QString name);
+
 protected:
     std::pair<int, QSharedPointer<KSQPC>>
     findPC(const vs_mac_addr_t &mac);

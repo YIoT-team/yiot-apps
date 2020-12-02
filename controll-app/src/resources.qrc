@@ -79,11 +79,13 @@
         <file>qml/components/devices/GeneralCategoryControls.qml</file>
         <file>qml/components/devices/GeneralDeviceControls.qml</file>
         <file>qml/components/devices/DeviceViewSelector.qml</file>
+        <file>qml/components/devices/DeviceNameDialog.qml</file>
         <file>qml/components/devices/lamp/LampControls.qml</file>
 
         <file>qml/components/validators/ValidatorIPv4.qml</file>
         <file>qml/components/validators/ValidatorUserName.qml</file>
         <file>qml/components/validators/ValidatorPassword.qml</file>
+        <file>qml/components/validators/ValidatorDeviceName.qml</file>
 
 
         <file>qml/pages/LeftSideMenu.qml</file>

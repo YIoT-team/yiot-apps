@@ -43,14 +43,14 @@
 
 using namespace VirgilIoTKit;
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 KSQIoTKitFacade::~KSQIoTKitFacade() {
     m_snapProcessorThread->terminate();
     m_snapProcessorThread->wait();
     delete m_snapProcessorThread;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 bool
 KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &impl, const VSQAppConfig &appConfig) {
 
@@ -85,7 +85,7 @@ KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &imp
     }
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 void
 KSQIoTKitFacade::initSnap() {
 
@@ -136,7 +136,7 @@ KSQIoTKitFacade::initSnap() {
     }
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 void
 KSQIoTKitFacade::updateAll() {
     qDebug() << "Get information about connected devices";
@@ -149,7 +149,7 @@ KSQIoTKitFacade::updateAll() {
     }
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 void
 KSQIoTKitFacade::registerService(VSQSnapServiceBase &service) {
     if (vs_snap_register_service(service.serviceInterface()) != VirgilIoTKit::VS_CODE_OK) {
@@ -157,13 +157,13 @@ KSQIoTKitFacade::registerService(VSQSnapServiceBase &service) {
     }
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 void
 KSQIoTKitFacade::onNetifProcess(struct VirgilIoTKit::vs_netif_t *netif, QByteArray data) {
     vs_snap_default_processor(netif, reinterpret_cast<const uint8_t *>(data.data()), data.length());
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 vs_status_e
 KSQIoTKitFacade::netifProcessCb(struct vs_netif_t *netif, const uint8_t *data, const uint16_t data_sz) {
     vs_snap_packet_dump("IN ", (vs_snap_packet_t *)data);
@@ -179,4 +179,4 @@ KSQIoTKitFacade::netifProcessCb(struct vs_netif_t *netif, const uint8_t *data, c
     return VS_CODE_OK;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------

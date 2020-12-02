@@ -24,7 +24,7 @@
 
 using namespace VirgilIoTKit;
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 KSQSnapPCClient::KSQSnapPCClient() {
     vs_snap_pc_client_service_t impl;
     memset(&impl, 0, sizeof(impl));
@@ -32,7 +32,7 @@ KSQSnapPCClient::KSQSnapPCClient() {
     m_snapService = vs_snap_pc_client(impl);
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 vs_status_e
 KSQSnapPCClient::onUpdateState(vs_status_e res, const vs_mac_addr_t *mac, const vs_snap_pc_state_t *data) {
     if (VS_CODE_OK == res) {
@@ -44,19 +44,27 @@ KSQSnapPCClient::onUpdateState(vs_status_e res, const vs_mac_addr_t *mac, const 
     return VS_CODE_OK;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 void
 KSQSnapPCClient::requestState(const vs_mac_addr_t &mac) {
     vs_snap_pc_get_state(vs_snap_netif_routing(), &mac);
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 void
 KSQSnapPCClient::initPC(const vs_mac_addr_t &mac, const vs_snap_pc_init_ssh_t &initData) {
     vs_snap_pc_init_ssh(vs_snap_netif_routing(), &mac, &initData);
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
+void
+KSQSnapPCClient::setName(const vs_mac_addr_t &mac, const char *name) {
+    if (!name) {
+        VS_LOG_WARNING("ERROR: setName: empty name");
+        return;
+    }
+    qDebug() << ">>> setName: " << QString::fromLocal8Bit(name);
+//    vs_snap_lamp_set_state(vs_snap_netif_routing(), &mac, &state);
+}
 
-
-/******************************************************************************/
+//-----------------------------------------------------------------------------
