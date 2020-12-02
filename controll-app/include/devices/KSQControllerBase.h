@@ -55,6 +55,10 @@ public:
         return m_collapsed;
     }
 
+public slots:
+    void
+    onSetDeviceName(VSQMac mac, QString name);
+
 signals:
     void
     fireCollapsedChanged(bool);

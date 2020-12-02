@@ -133,7 +133,7 @@ KSQLampController::onLampStateUpdate(const vs_mac_addr_t mac, const vs_snap_lamp
 
         auto newLamp = QSharedPointer<KSQLamp>::create(VSQMac(mac), QString("test-%1").arg(m_lamps.size()));
         connect(newLamp.get(), &KSQLamp::fireSetDeviceParams, this, &KSQLampController::onSetDeviceParams);
-        connect(newLamp.get(), &KSQLamp::fireSetNameToHardware, this, &KSQLampController::onSetDeviceName);
+        connect(newLamp.get(), &KSQLamp::fireSetNameToHardware, this, &KSQControllerBase::onSetDeviceName);
         m_lamps.push_back(newLamp);
 
         endInsertRows();
@@ -176,12 +176,6 @@ KSQLampController::onSetDeviceParams(const KSQLamp &lamp) {
     state.is_on = lamp.state() == KSQLamp::kStateOn;
 
     KSQSnapLampClient::instance().setState(lamp.qMacAddr(), state);
-}
-
-//-----------------------------------------------------------------------------
-void
-KSQLampController::onSetDeviceName(VSQMac mac, QString name) {
-    KSQSnapLampClient::instance().setName(mac, name.toStdString().c_str());
 }
 
 //-----------------------------------------------------------------------------

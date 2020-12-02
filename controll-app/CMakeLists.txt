@@ -236,6 +236,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-hal.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQDevices.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQControllerBase.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQDeviceBase.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/lamp/KSQLamp.cpp

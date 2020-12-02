@@ -126,7 +126,7 @@ KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state
 
         auto newPC = QSharedPointer<KSQPC>::create(VSQMac(mac), QString("test-%1").arg(m_pcs.size()));
         connect(newPC.get(), &KSQPC::fireInitDevice, this, &KSQPCController::onInitDevice);
-        connect(newPC.get(), &KSQPC::fireSetNameToHardware, this, &KSQPCController::onSetDeviceName);
+        connect(newPC.get(), &KSQPC::fireSetNameToHardware, this, &KSQControllerBase::onSetDeviceName);
         m_pcs.push_back(newPC);
 
         endInsertRows();
@@ -207,12 +207,6 @@ KSQPCController::onInitDevice(KSQPC &pc) {
     }
 
     KSQSnapPCClient::instance().initPC(pc.qMacAddr(), init);
-}
-
-//-----------------------------------------------------------------------------
-void
-KSQPCController::onSetDeviceName(VSQMac mac, QString name) {
-    KSQSnapPCClient::instance().setName(mac, name.toStdString().c_str());
 }
 
 //-----------------------------------------------------------------------------

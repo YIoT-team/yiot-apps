@@ -58,14 +58,3 @@ KSQSnapLampClient::setState(const vs_mac_addr_t &mac, const vs_snap_lamp_state_t
 }
 
 //-----------------------------------------------------------------------------
-void
-KSQSnapLampClient::setName(const vs_mac_addr_t &mac, const char *name) {
-    if (!name) {
-        VS_LOG_WARNING("ERROR: setName: empty name");
-        return;
-    }
-    qDebug() << ">>> setName: " << QString::fromLocal8Bit(name);
-//    vs_snap_lamp_set_state(vs_snap_netif_routing(), &mac, &state);
-}
-
-//-----------------------------------------------------------------------------
