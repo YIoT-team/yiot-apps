@@ -45,6 +45,12 @@ KSResendContainer::KSResendContainer(std::function<vs_status_e(const uint8_t *, 
             std::lock_guard<std::mutex> lock(m_guard);
             for (auto &m : m_container) {
                 // if (m.time - std::chrono::system_clock::now() >= timeQuant) {
+
+                // Removed old packets
+                auto end = std::remove_if(m_container.begin(), m_container.end(), [this](const KSMessage &m) {
+                  return m.attempts > m_resendMax;
+                });
+
                 // Resend if required
                 if (m.attempts < m_resendMax) {
                     if (m_senderFunc) {
@@ -52,12 +58,9 @@ KSResendContainer::KSResendContainer(std::function<vs_status_e(const uint8_t *, 
                         m_senderFunc(m.data.data(), m.data.size());
                     }
                 }
+
                 ++m.attempts;
 
-                // Removed old packets
-                auto end = std::remove_if(m_container.begin(), m_container.end(), [this](const KSMessage &m) {
-                    return m.attempts > m_resendMax;
-                });
                 //}
             }
         }
