@@ -45,13 +45,9 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
                vs_netif_t *netif_impl[],
                vs_snap_cfg_server_service_t cfg_server_cb,
                vs_snap_pc_server_service_t pc_server_cb,
-               vs_netif_process_cb_t packet_preprocessor_cb
-#if SECURE_PROVISION
-               ,
+               vs_netif_process_cb_t packet_preprocessor_cb,
                vs_secmodule_impl_t *secmodule_impl,
-               vs_storage_op_ctx_t *tl_storage_impl
-#endif
-);
+               vs_storage_op_ctx_t *tl_storage_impl);
 
 vs_status_e
 ks_iotkit_deinit(void);

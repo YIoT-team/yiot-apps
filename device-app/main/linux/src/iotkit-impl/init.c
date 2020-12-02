@@ -29,6 +29,8 @@
 static void
 _file_ver_info_cb(vs_file_version_t ver);
 
+static vs_provision_events_t _provision_event = {_file_ver_info_cb};
+
 //-----------------------------------------------------------------------------
 vs_status_e
 ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
@@ -38,13 +40,9 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
                vs_netif_t *netif_impl[],
                vs_snap_cfg_server_service_t cfg_server_cb,
                vs_snap_pc_server_service_t pc_server_cb,
-               vs_netif_process_cb_t packet_preprocessor_cb
-#if SECURE_PROVISION
-               ,
+               vs_netif_process_cb_t packet_preprocessor_cb,
                vs_secmodule_impl_t *secmodule_impl,
-               vs_storage_op_ctx_t *tl_storage_impl
-#endif
-) {
+               vs_storage_op_ctx_t *tl_storage_impl) {
     vs_status_e res = VS_CODE_ERR_INIT_SNAP;
     vs_status_e ret_code;
     uint8_t i = 1;
@@ -55,7 +53,6 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     // ---------- Initialize Virgil SDK modules ----------
     //
 
-#if SECURE_PROVISION
     // Provision module
     VS_IOT_ASSERT(secmodule_impl);
     VS_IOT_ASSERT(tl_storage_impl);
@@ -64,7 +61,6 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
         VS_LOG_ERROR("Cannot initialize Provision module");
         goto terminate;
     }
-#endif // SECURE_PROVISION
 
     // SNAP module
     STATUS_CHECK(vs_snap_init(netif_impl[0], packet_preprocessor_cb, manufacture_id, device_type, serial, device_roles),
@@ -109,10 +105,8 @@ ks_iotkit_deinit(void) {
     // Deinit Virgil SDK modules
     vs_snap_deinit();
 
-#if SECURE_PROVISION
     // Deinit provision
     vs_provision_deinit();
-#endif
 
     return VS_CODE_OK;
 }

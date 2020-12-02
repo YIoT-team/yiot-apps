@@ -29,11 +29,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # ---------------------------------------------------------------------------
-#   Options
-# ---------------------------------------------------------------------------
-option(SECURE_PROVISION "Enable secure provision" OFF)
-
-# ---------------------------------------------------------------------------
 #	Add dependencies
 # ---------------------------------------------------------------------------
 
@@ -98,7 +93,6 @@ target_sources(yiot-device-app-linux
 # ---------------------------------------------------------------------------
 target_compile_definitions(yiot-device-app-linux
         PRIVATE
-        $<$<BOOL:${SECURE_PROVISION}>:SECURE_PROVISION=1>
         )
 
 

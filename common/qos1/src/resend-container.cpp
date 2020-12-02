@@ -48,7 +48,7 @@ KSResendContainer::KSResendContainer(std::function<vs_status_e(const uint8_t *, 
 
                 // Removed old packets
                 auto end = std::remove_if(m_container.begin(), m_container.end(), [this](const KSMessage &m) {
-                  return m.attempts > m_resendMax;
+                    return m.attempts > m_resendMax;
                 });
 
                 // Resend if required
