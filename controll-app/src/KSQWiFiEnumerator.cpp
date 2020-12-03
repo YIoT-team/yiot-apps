@@ -82,7 +82,7 @@ KSQWiFiEnumerator::wifi_enum() {
     KSQWiFiNetworks wifiList;
     auto netcfgList = m_ncm.allConfigurations();
     for (auto &x : netcfgList) {
-        qDebug() << x.name() << " : " << x.bearerTypeName() << " : " << x.identifier();
+        // qDebug() << x.name() << " : " << x.bearerTypeName() << " : " << x.identifier();
         if (x.bearerType() == QNetworkConfiguration::BearerWLAN) {
             if (x.name() != "") {
                 wifiList[x.name()] = KSWiFiInfo();
