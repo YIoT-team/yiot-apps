@@ -97,10 +97,3 @@ if (COMMAND add_clangformat)
     add_clangformat(yiot-qos1-helper)
 endif ()
 
-
-#------------------------------------------------------------------------------
-#   Install
-# ---------------------------------------------------------------------------
-install(TARGETS yiot-qos1-helper
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        )

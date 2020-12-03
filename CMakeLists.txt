@@ -30,11 +30,19 @@ set(KS_TARGET_VERSION "0.0.2")
 project(yiot VERSION ${KS_TARGET_VERSION} LANGUAGES C CXX)
 
 # ---------------------------------------------------------------------------
+#   Options
+# ---------------------------------------------------------------------------
+option(BUILD_DEVICE_ENABLE "Enable building of Device app" ON)
+option(BUILD_APP_ENABLE "Enable building of Application" ON)
+
+# ---------------------------------------------------------------------------
 # Include Cmake helpers
 # ---------------------------------------------------------------------------
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-include(vsplatforms)
+if (BUILD_APP_ENABLE)
+    include(vsplatforms)
+endif()
 include(varpadding)
 #include(clangformat)
 
@@ -69,12 +77,6 @@ endif()
 
 message(STATUS "KS_PLATFORM: ${KS_PLATFORM}")
 message(STATUS "KS_PLATFORM_DESKTOP: ${KS_PLATFORM_DESKTOP}")
-
-# ---------------------------------------------------------------------------
-#   Options
-# ---------------------------------------------------------------------------
-option(BUILD_DEVICE_ENABLE "Enable building of Device app" ON)
-option(BUILD_APP_ENABLE "Enable building of Application" ON)
 
 
 # ---------------------------------------------------------------------------
