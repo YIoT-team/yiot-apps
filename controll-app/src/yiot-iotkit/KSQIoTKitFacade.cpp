@@ -40,6 +40,8 @@
 #include <yiot-iotkit/KSQIoTKitFacade.h>
 #include <yiot-iotkit/snap/KSQSnapLampClient.h>
 #include <yiot-iotkit/snap/KSQSnapPCClient.h>
+#include <yiot-iotkit/snap/KSQSnapPRVSClient.h>
+#include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
 
 using namespace VirgilIoTKit;
 
@@ -113,6 +115,14 @@ KSQIoTKitFacade::initSnap() {
         if (VirgilIoTKit::VS_CODE_OK != vs_snap_netif_add(netif.get()->lowLevelNetif())) {
             throw QString("Unable to add SNAP network interface");
         }
+    }
+
+    if (m_features.hasFeature(KSQFeatures::SNAP_PRVS_CLIENT)) {
+        registerService(KSQSnapPRVSClient::instance());
+    }
+
+    if (m_features.hasFeature(KSQFeatures::SNAP_SCRT_CLIENT)) {
+        registerService(KSQSnapSCRTClient::instance());
     }
 
     if (m_features.hasFeature(KSQFeatures::SNAP_INFO_CLIENT)) {

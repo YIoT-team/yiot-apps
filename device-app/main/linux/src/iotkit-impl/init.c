@@ -19,10 +19,11 @@
 
 #include <virgil/iot/protocols/snap/info/info-server.h>
 #include <virgil/iot/protocols/snap/cfg/cfg-server.h>
+#include <virgil/iot/protocols/snap/prvs/prvs-server.h>
+#include <common/protocols/snap/pc/pc-server.h>
+
 #include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/provision/provision.h>
-
-#include <common/protocols/snap/pc/pc-server.h>
 
 #include "iotkit-impl/init.h"
 
@@ -76,6 +77,13 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     // ---------- Register SNAP services ----------
     //
 
+    //  PRVS service
+    if (device_roles & VS_SNAP_DEV_INITIALIZER) {
+        const vs_snap_service_t *snap_prvs_server;
+        snap_prvs_server = vs_snap_prvs_server(secmodule_impl);
+        STATUS_CHECK(vs_snap_register_service(snap_prvs_server), "Cannot register PRVS service");
+    }
+
     //  INFO server service
     const vs_snap_service_t *snap_info_server;
     snap_info_server = vs_snap_info_server(NULL);
@@ -86,10 +94,12 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     snap_cfg_server = vs_snap_cfg_server(cfg_server_cb);
     STATUS_CHECK(vs_snap_register_service(snap_cfg_server), "Cannot register CFG server service");
 
-    // PC server service
-    const vs_snap_service_t *snap_pc_server;
-    snap_pc_server = vs_snap_pc_server(pc_server_cb);
-    STATUS_CHECK(vs_snap_register_service(snap_pc_server), "Cannot register PC server service");
+    if (!(device_roles & VS_SNAP_DEV_INITIALIZER)) {
+        // PC server service
+        const vs_snap_service_t *snap_pc_server;
+        snap_pc_server = vs_snap_pc_server(pc_server_cb);
+        STATUS_CHECK(vs_snap_register_service(snap_pc_server), "Cannot register PC server service");
+    }
 
     res = VS_CODE_OK;
 

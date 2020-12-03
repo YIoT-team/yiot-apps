@@ -123,6 +123,7 @@ target_link_libraries(yiot-device-app-linux
         #   IoTKit
         nix-common
         vs-module-snap-thing
+        vs-module-snap-initializer
 
         #   IoTKit extensions
         yiot-snap-thing-pc
