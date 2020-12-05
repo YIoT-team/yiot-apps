@@ -17,54 +17,55 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#include <QtCore>
-#include <QGuiApplication>
+import "../../components"
+import "../../components/devices"
+import "../../components/RoT"
 
-#include <KSQWiFiEnumerator.h>
-#include <KSQBLEController.h>
+Page {
+    id: eventsSettingsPage
 
-#include <devices/KSQDevices.h>
+    background: Rectangle {
+        color: "transparent"
+    }
 
-#include <virgil/iot/qt/VSQIoTKit.h>
-#include <yiot-iotkit/netif/KSQUdp.h>
+    header: Header {
+        title: qsTr("Root of trust")
+        backAction: function() { showMenuSettings() }
+    }
 
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
+    RoTInfoPopup {
+        id: rotInfo
+    }
 
-class KSQApplication : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
-public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
+    Form {
+        RoTList {}
+    }
 
-    int
-    run();
+    ColumnLayout {
+        anchors.topMargin: 1
+        anchors.fill: parent
+        RoTList {
+            id: rotList
+            Layout.fillHeight: true
+            model: rotModel
+        }
 
-    QString
-    organizationDisplayName() const;
+        FormPrimaryButton {
+            Layout.bottomMargin: 10
+            text: qsTr("Add new Root of trust")
+            onClicked: {
+                console.log("Add root of trust")
+            }
+        }
+    }
 
-    QString
-    applicationVersion() const;
-
-    QString
-    applicationDisplayName() const;
-
-    Q_INVOKABLE void
-    updateDevices();
-
-private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    KSQBLEController m_bleController;
-    QSharedPointer<KSQUdp> m_netifUdp;
-
-    KSQDevices m_deviceControllers;
-
-    KSQRoTController m_rot;
-};
-
-#endif // PROVISION_QT_APP_H
+    // Fill data and show device info.
+    function showRoTInfo(model) {
+        rotInfo.model = model
+        rotInfo.open()
+    }
+}

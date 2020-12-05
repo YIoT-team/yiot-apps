@@ -17,54 +17,59 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
+#ifndef YIOT_ROOT_OF_TRUST_LIST_H
+#define YIOT_ROOT_OF_TRUST_LIST_H
 
 #include <QtCore>
-#include <QGuiApplication>
-
-#include <KSQWiFiEnumerator.h>
-#include <KSQBLEController.h>
-
-#include <devices/KSQDevices.h>
+#include <QHash>
+#include <QAbstractTableModel>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
-#include <yiot-iotkit/netif/KSQUdp.h>
+#include <yiot-iotkit/root-of-trust/KSQRoT.h>
 
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
-
-class KSQApplication : public QObject {
+class KSQRoTController : public QAbstractTableModel {
     Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
+    enum Element { ID = Qt::UserRole,
+                   Name,
+                   Image,
+                   TrustList,
+                   ECType,
+                   Recovery1, Recovery2,
+                   Auth1, Auth2,
+                   TL1, TL2,
+                   Firmware1, Firmware2,
+                   ElementMax };
 public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
+    KSQRoTController();
+    virtual ~KSQRoTController() = default;
+
+    /**
+     * QAbstractTableModel implementation
+     */
+    int
+    rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     int
-    run();
+    columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
-    QString
-    organizationDisplayName() const;
+    QVariant
+    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    QString
-    applicationVersion() const;
+    QHash<int, QByteArray>
+    roleNames() const override;
 
-    QString
-    applicationDisplayName() const;
+public slots:
 
-    Q_INVOKABLE void
-    updateDevices();
+signals:
+
+    void
+    fireAboutToActivate();
+
+    void
+    fireActivated();
 
 private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    KSQBLEController m_bleController;
-    QSharedPointer<KSQUdp> m_netifUdp;
-
-    KSQDevices m_deviceControllers;
-
-    KSQRoTController m_rot;
+    std::list<QSharedPointer<KSQRoT>> m_rots;
 };
 
-#endif // PROVISION_QT_APP_H
+#endif // YIOT_ROOT_OF_TRUST_LIST_H

@@ -39,6 +39,8 @@
         <file>qml/resources/icons/dark/info.png</file>
         <file>qml/resources/icons/dark/up.png</file>
         <file>qml/resources/icons/dark/down.png</file>
+        <file>qml/resources/icons/dark/export.png</file>
+        <file>qml/resources/icons/dark/delete.png</file>
         <file>qml/resources/icons/dark/devices/lamp/mono/unknown.png</file>
         <file>qml/resources/icons/dark/devices/lamp/mono/on.png</file>
         <file>qml/resources/icons/dark/devices/lamp/mono/off.png</file>
@@ -75,6 +77,9 @@
         <file>qml/components/Password.qml</file>
         <file>qml/components/Title.qml</file>
         <file>qml/components/DoersTypeList.qml</file>
+        <file>qml/components/RoT/RoTList.qml</file>
+        <file>qml/components/RoT/RoTControls.qml</file>
+        <file>qml/components/RoT/RoTInfoPopup.qml</file>
 
         <file>qml/components/devices/DeviceInfoPopup.qml</file>
         <file>qml/components/devices/AllDevicesList.qml</file>
@@ -97,6 +102,7 @@
         <file>qml/pages/settings/WiFiSettingsPage.qml</file>
         <file>qml/pages/settings/WiFiPasswordPage.qml</file>
         <file>qml/pages/settings/EventsSettingsPage.qml</file>
+        <file>qml/pages/settings/RoTSettingsPage.qml</file>
         <file>qml/pages/AboutPage.qml</file>
         <file>qml/pages/SettingsPage.qml</file>
         <file>qml/pages/DevicesPage.qml</file>

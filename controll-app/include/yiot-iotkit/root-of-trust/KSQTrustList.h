@@ -17,54 +17,37 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
+#ifndef YIOT_ROT_TRUSTLIST_H
+#define YIOT_ROT_TRUSTLIST_H
 
 #include <QtCore>
-#include <QGuiApplication>
 
-#include <KSQWiFiEnumerator.h>
-#include <KSQBLEController.h>
-
-#include <devices/KSQDevices.h>
-
-#include <virgil/iot/qt/VSQIoTKit.h>
-#include <yiot-iotkit/netif/KSQUdp.h>
-
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
-
-class KSQApplication : public QObject {
+class KSQTrustList : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
+
+    Q_PROPERTY(QString version READ version)
+    Q_PROPERTY(int keysCount READ keysCount)
 public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
+    KSQTrustList() : QObject() {
+    }
+
+    KSQTrustList(const KSQTrustList &tl);
+
+    virtual ~KSQTrustList() = default;
+
+    QString
+    version() const;
 
     int
-    run();
+    keysCount() const;
+signals:
 
-    QString
-    organizationDisplayName() const;
-
-    QString
-    applicationVersion() const;
-
-    QString
-    applicationDisplayName() const;
-
-    Q_INVOKABLE void
-    updateDevices();
+public slots:
 
 private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    KSQBLEController m_bleController;
-    QSharedPointer<KSQUdp> m_netifUdp;
-
-    KSQDevices m_deviceControllers;
-
-    KSQRoTController m_rot;
 };
 
-#endif // PROVISION_QT_APP_H
+Q_DECLARE_METATYPE(KSQTrustList)
+Q_DECLARE_METATYPE(KSQTrustList *)
+
+#endif // YIOT_ROT_TRUSTLIST_H

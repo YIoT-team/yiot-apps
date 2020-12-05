@@ -46,6 +46,14 @@ Page {
 
         model: ListModel {
             ListElement {
+                name: qsTr("Root of trust")
+                image: "secure-enclave"
+                property var action: function() {
+                    showRoTSettings()
+                }
+            }
+
+            ListElement {
                 name: qsTr("WiFi credentials")
                 image: "creds"
                 property var action: function() {

@@ -17,54 +17,28 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
+#ifndef YIOT_ROT_PUBLIC_KEY_H
+#define YIOT_ROT_PUBLIC_KEY_H
 
 #include <QtCore>
-#include <QGuiApplication>
 
-#include <KSQWiFiEnumerator.h>
-#include <KSQBLEController.h>
-
-#include <devices/KSQDevices.h>
-
-#include <virgil/iot/qt/VSQIoTKit.h>
-#include <yiot-iotkit/netif/KSQUdp.h>
-
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
-
-class KSQApplication : public QObject {
+class KSQPublicKey : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
+
 public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
+    KSQPublicKey() : QObject() {
+    }
 
-    int
-    run();
-
-    QString
-    organizationDisplayName() const;
+    virtual ~KSQPublicKey() = default;
 
     QString
-    applicationVersion() const;
+    description() const;
 
-    QString
-    applicationDisplayName() const;
+signals:
 
-    Q_INVOKABLE void
-    updateDevices();
+public slots:
 
 private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    KSQBLEController m_bleController;
-    QSharedPointer<KSQUdp> m_netifUdp;
-
-    KSQDevices m_deviceControllers;
-
-    KSQRoTController m_rot;
 };
 
-#endif // PROVISION_QT_APP_H
+#endif // YIOT_ROT_PUBLIC_KEY_H

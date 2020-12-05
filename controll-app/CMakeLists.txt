@@ -226,6 +226,13 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapPRVSClient.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapSCRTClient.h
 
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQRoT.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQRoTController.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQPublicKey.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQPrivateKey.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQSignature.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQTrustList.h
+
         $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
         $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
         $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/include/android/KSQAndroid.h>
@@ -253,6 +260,13 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapPCClient.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapPRVSClient.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapSCRTClient.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQRoT.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQRoTController.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQPublicKey.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQPrivateKey.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQSignature.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQTrustList.cpp
 
         $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/macos/KSMacWiFi.mm>
         $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/src/win/KSWinWiFi.cpp>

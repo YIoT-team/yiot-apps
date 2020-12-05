@@ -17,54 +17,64 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#include <QtCore>
-#include <QGuiApplication>
+import "../../theme"
+import "../../components"
 
-#include <KSQWiFiEnumerator.h>
-#include <KSQBLEController.h>
+RowLayout {
+    property variant modelData: none
+    property bool containsMouse: btnInfo.containsMouse || btnExport.containsMouse || btnDelete.containsMouse
+    property int wSz: 150
 
-#include <devices/KSQDevices.h>
+    signal showInfo()
 
-#include <virgil/iot/qt/VSQIoTKit.h>
-#include <yiot-iotkit/netif/KSQUdp.h>
+    id: actionsBlock
+    visible: false
+    anchors.right: parent.right
+    width: 0
 
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
+    ImageButton {
+        id: btnExport
+        image: "dark/export"
+        onClicked: {
+            console.log("Export root of trust")
+        }
+    }
 
-class KSQApplication : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
-public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
+    ImageButton {
+        id: btnDelete
+        image: "dark/delete"
+        onClicked: {
+            console.log("Delete root of trust")
+        }
+    }
 
-    int
-    run();
+    ImageButton {
+        id: btnInfo
+        image: "dark/info"
+        onClicked: { showRoTInfo(model) }
+    }
 
-    QString
-    organizationDisplayName() const;
+    Item {
+        Layout.fillWidth: true
+    }
 
-    QString
-    applicationVersion() const;
+    states: [
+        State {
+            name: "visible"
+            PropertyChanges { target: actionsBlock; width: wSz    }
+            PropertyChanges { target: actionsBlock; visible: true }
+        },
+        State {
+            name: "hidden"
+            PropertyChanges { target: actionsBlock; width: 0       }
+            PropertyChanges { target: actionsBlock; visible: false }
+        }]
 
-    QString
-    applicationDisplayName() const;
-
-    Q_INVOKABLE void
-    updateDevices();
-
-private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    KSQBLEController m_bleController;
-    QSharedPointer<KSQUdp> m_netifUdp;
-
-    KSQDevices m_deviceControllers;
-
-    KSQRoTController m_rot;
-};
-
-#endif // PROVISION_QT_APP_H
+    transitions: Transition {
+        NumberAnimation { property: "width"; duration: 100 }
+    }
+}

@@ -17,54 +17,69 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#include <QtCore>
-#include <QGuiApplication>
+import "../../theme"
+import "../../components"
 
-#include <KSQWiFiEnumerator.h>
-#include <KSQBLEController.h>
+Popup {
+    property variant model: none
 
-#include <devices/KSQDevices.h>
+    id: popup
 
-#include <virgil/iot/qt/VSQIoTKit.h>
-#include <yiot-iotkit/netif/KSQUdp.h>
+    anchors.centerIn: parent
+    width: parent.width * 0.9
+    height: parent.height * 0.9
+    modal: true
+    focus: true
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
+    background: Rectangle {
+        border.color: Theme.primaryTextColor
+        border.width: 1
+        radius: 10
+        color: Theme.mainBackgroundColor
+    }
 
-class KSQApplication : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
-public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
+    GridLayout {
+        id: grid
+        anchors.fill: parent
+        columns: 1
 
-    int
-    run();
+        InfoText { text: qsTr("Name: ") + model.name }
+        InfoText { text: qsTr("ID: ") + model.id }
 
-    QString
-    organizationDisplayName() const;
+        InfoText { text: qsTr("Default EC: ") + model.ecType }
 
-    QString
-    applicationVersion() const;
+        InfoText { text: qsTr("Recovery main: ") + model.recovery1 }
+        InfoText { text: qsTr("Recovery reserv: ") + model.recovery2 }
 
-    QString
-    applicationDisplayName() const;
+        InfoText { text: qsTr("Auth main: ") + model.auth1 }
+        InfoText { text: qsTr("Auth reserv: ") + model.auth2 }
 
-    Q_INVOKABLE void
-    updateDevices();
+        InfoText { text: qsTr("Tl main: ") + model.tl1 }
+        InfoText { text: qsTr("Tl reserv: ") + model.tl2 }
 
-private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    KSQBLEController m_bleController;
-    QSharedPointer<KSQUdp> m_netifUdp;
+        InfoText { text: qsTr("TrustList version: ") + model.trustList.version }
+        InfoText { text: qsTr("TrustList keys count: ") + model.trustList.keysCount }
+    }
 
-    KSQDevices m_deviceControllers;
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            popup.close()
+        }
+    }
 
-    KSQRoTController m_rot;
-};
+    enter: Transition {
+        NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
+    }
 
-#endif // PROVISION_QT_APP_H
+    exit: Transition {
+        NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
+    }
+}
+
+

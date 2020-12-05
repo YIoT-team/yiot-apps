@@ -17,54 +17,110 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
+#ifndef YIOT_ROOT_OF_TRUST_H
+#define YIOT_ROOT_OF_TRUST_H
 
 #include <QtCore>
-#include <QGuiApplication>
 
-#include <KSQWiFiEnumerator.h>
-#include <KSQBLEController.h>
+#include <yiot-iotkit/root-of-trust/KSQPublicKey.h>
+#include <yiot-iotkit/root-of-trust/KSQTrustList.h>
 
-#include <devices/KSQDevices.h>
+class KSQRoTController;
 
-#include <virgil/iot/qt/VSQIoTKit.h>
-#include <yiot-iotkit/netif/KSQUdp.h>
-
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
-
-class KSQApplication : public QObject {
+class KSQRoT : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
+    friend KSQRoTController;
+
 public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
+    KSQRoT() : QObject() {
+    }
 
-    int
-    run();
+    KSQRoT(const QString &id, const QString &name, const QString &image = "");
 
-    QString
-    organizationDisplayName() const;
+    KSQRoT(const KSQRoT &r);
 
-    QString
-    applicationVersion() const;
+    virtual ~KSQRoT() = default;
 
     QString
-    applicationDisplayName() const;
+    id() const;
 
-    Q_INVOKABLE void
-    updateDevices();
+    QString
+    name() const;
+
+    QString
+    image() const;
+
+    QString
+    ecType() const {
+        return "NIST256";
+    }
+
+    const KSQPublicKey &
+    recovery1() const {
+        return m_recovery1;
+    }
+    const KSQPublicKey &
+    recovery2() const {
+        return m_recovery2;
+    }
+
+    const KSQPublicKey &
+    auth1() const {
+        return m_auth1;
+    }
+    const KSQPublicKey &
+    auth2() const {
+        return m_auth2;
+    }
+
+    const KSQPublicKey &
+    tl1() const {
+        return m_tl1;
+    }
+    const KSQPublicKey &
+    tl2() const {
+        return m_tl2;
+    }
+
+    const KSQPublicKey &
+    firmware1() const {
+        return m_firmware1;
+    }
+    const KSQPublicKey &
+    firmware2() const {
+        return m_firmware2;
+    }
+
+    const KSQTrustList &
+    trustList() const {
+        return m_trustList;
+    }
+
+signals:
+
+public slots:
 
 private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    KSQBLEController m_bleController;
-    QSharedPointer<KSQUdp> m_netifUdp;
+    QString m_id;
+    QString m_name;
+    QString m_image;
 
-    KSQDevices m_deviceControllers;
+    KSQPublicKey m_recovery1;
+    KSQPublicKey m_recovery2;
 
-    KSQRoTController m_rot;
+    KSQPublicKey m_auth1;
+    KSQPublicKey m_auth2;
+
+    KSQPublicKey m_tl1;
+    KSQPublicKey m_tl2;
+
+    KSQPublicKey m_firmware1;
+    KSQPublicKey m_firmware2;
+
+    KSQTrustList m_trustList;
 };
 
-#endif // PROVISION_QT_APP_H
+Q_DECLARE_METATYPE(KSQRoT)
+Q_DECLARE_METATYPE(KSQRoT *)
+
+#endif // YIOT_ROOT_OF_TRUST_H
