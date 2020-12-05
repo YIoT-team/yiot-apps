@@ -17,70 +17,39 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_ROOT_OF_TRUST_LIST_H
-#define YIOT_ROOT_OF_TRUST_LIST_H
+#ifndef _YIOT_QT_SECURITY_BOX_H_
+#define _YIOT_QT_SECURITY_BOX_H_
 
 #include <QtCore>
-#include <QHash>
-#include <QAbstractTableModel>
 
-#include <virgil/iot/qt/VSQIoTKit.h>
-#include <yiot-iotkit/root-of-trust/KSQRoT.h>
+#include <virgil/iot/qt/helpers/VSQSingleton.h>
+#include <virgil/iot/secbox/secbox.h>
 
-class KSQRoTController : public QAbstractTableModel {
+using namespace VirgilIoTKit;
+
+class KSQSecBox : public QObject, public VSQSingleton<KSQSecBox> {
+
     Q_OBJECT
-    enum Element { ID = Qt::UserRole,
-                   Name,
-                   Image,
-                   TrustList,
-                   ECType,
-                   Recovery1, Recovery2,
-                   Auth1, Auth2,
-                   TL1, TL2,
-                   Firmware1, Firmware2,
-                   ElementMax };
+
+    friend VSQSingleton<KSQSecBox>;
+
 public:
-    KSQRoTController();
-    virtual ~KSQRoTController() = default;
+    bool
+    saveData(vs_secbox_type_t type, vs_storage_element_id_t id, const QByteArray &data);
 
     bool
-    isValid() const {
-        return m_isValid;
-    }
+    loadData(vs_storage_element_id_t id, QByteArray &data);
 
-    /**
-     * QAbstractTableModel implementation
-     */
-    int
-    rowCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    int
-    columnCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    QVariant
-    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-
-    QHash<int, QByteArray>
-    roleNames() const override;
-
-public slots:
+    bool
+    delData(vs_storage_element_id_t id);
 
 signals:
 
+public slots:
+
 private:
-    std::list<QSharedPointer<KSQRoT>> m_rots;
-    bool m_isValid;
-
-    bool
-    prepare();
-
-    QStringList
-    loadRoTList();
-
-    bool
-    saveRoTList(const QStringList& list);
-
-    vs_storage_element_id_t m_listId;
+    KSQSecBox();
+    virtual ~KSQSecBox() = default;
 };
 
-#endif // YIOT_ROOT_OF_TRUST_LIST_H
+#endif // _YIOT_QT_SECURITY_BOX_H_

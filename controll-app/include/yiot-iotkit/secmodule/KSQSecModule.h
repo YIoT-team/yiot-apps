@@ -17,68 +17,43 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include <QUuid>
+#ifndef _YIOT_QT_SECURITY_MODULE_H_
+#define _YIOT_QT_SECURITY_MODULE_H_
 
-#include <yiot-iotkit/root-of-trust/KSQRoT.h>
+#include <QtCore>
+
+#include <virgil/iot/qt/helpers/VSQSingleton.h>
+#include <virgil/iot/secmodule/secmodule.h>
+
 #include <yiot-iotkit/secmodule/KSQSecModule.h>
+#include <yiot-iotkit/secmodule/KSQKeyPair.h>
 
-const QString KSQRoT::kLocalID = "local_rot";
+using namespace VirgilIoTKit;
 
-//-----------------------------------------------------------------------------
-KSQRoT::KSQRoT(const QString &id, const QString &name, const QString &image) : QObject() {
-    m_isValid = false;
-    qDebug() << "New Root of trust: " << id << "  :  " << name;
-    m_id = id;
-    m_name = name;
-    m_image = image;
-}
+class KSQSecModule : public QObject, public VSQSingleton<KSQSecModule> {
 
-//-----------------------------------------------------------------------------
-KSQRoT::KSQRoT(const KSQRoT &r) {
-}
+    Q_OBJECT
 
-//-----------------------------------------------------------------------------
-QString
-KSQRoT::id() const {
-    return m_id;
-}
+    friend VSQSingleton<KSQSecModule>;
 
-//-----------------------------------------------------------------------------
-QString
-KSQRoT::name() const {
-    return m_name;
-}
-
-//-----------------------------------------------------------------------------
-QString
-KSQRoT::image() const {
-    return m_image;
-}
-
-//-----------------------------------------------------------------------------
-QString
-KSQRoT::generate(const QString &name) {
-    static const size_t _keysCnt = 9;
-    KSQKeyPair keyPairs[_keysCnt];
-
-    // Generate required amount of keys
-    for (int i = 0; i < _keysCnt; i++) {
-        auto keyPair = KSQSecModule::instance().generateKeypair(VS_KEYPAIR_EC_SECP256R1);
-        if (keyPair.first.isNull() || keyPair.second.isNull()) {
-            VS_LOG_ERROR("Cannot generate key pair for a new root of trust");
-            return "";
-        }
-        keyPairs[i] = keyPair;
+public:
+    const VirgilIoTKit::vs_secmodule_impl_t *
+    secmoduleImpl() {
+        return m_secmoduleImpl;
     }
 
-    // Store generated keys for SecBox
+    KSQKeyPair
+    generateKeypair(vs_secmodule_keypair_type_e keypair_type) const;
 
-    // Generate TrustList
+signals:
 
-    m_name = name;
-    m_id = kLocalID;
+public slots:
 
-    return m_id;
-}
+private:
+    const VirgilIoTKit::vs_secmodule_impl_t *m_secmoduleImpl;
 
-//-----------------------------------------------------------------------------
+    KSQSecModule();
+    virtual ~KSQSecModule() = default;
+};
+
+#endif // _YIOT_QT_SECURITY_MODULE_H_

@@ -22,7 +22,7 @@
 
 #include <QtCore>
 
-#include <yiot-iotkit/root-of-trust/KSQPublicKey.h>
+#include <yiot-iotkit/secmodule/KSQPublicKey.h>
 #include <yiot-iotkit/root-of-trust/KSQTrustList.h>
 
 class KSQRoTController;
@@ -96,11 +96,22 @@ public:
         return m_trustList;
     }
 
+    bool
+    isValid() const {
+        return m_isValid;
+    }
+
+    static const QString kLocalID;
+
+    QString
+    generate(const QString &name);
+
 signals:
 
 public slots:
 
 private:
+    bool m_isValid;
     QString m_id;
     QString m_name;
     QString m_image;
@@ -118,6 +129,12 @@ private:
     KSQPublicKey m_firmware2;
 
     KSQTrustList m_trustList;
+
+    bool
+    save() const;
+
+    bool
+    load(const QString &id);
 };
 
 Q_DECLARE_METATYPE(KSQRoT)

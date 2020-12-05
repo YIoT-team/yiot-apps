@@ -17,14 +17,33 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include <QtCore>
+#include <virgil/iot/qt/VSQIoTKit.h>
+#include <yiot-iotkit/secbox/KSQSecBox.h>
 
-#include <yiot-iotkit/root-of-trust/KSQPublicKey.h>
+#include <yiot-iotkit/storages/KSQStorageFS.h>
+
+using namespace VirgilIoTKit;
 
 //-----------------------------------------------------------------------------
-QString
-KSQPublicKey::description() const {
-    return "dG90YWwgNTYKZHJ3eHIteHIteCAgIDgga3V0YXNoZW5rbyAgc3RhZmYgICA0NDJCIERlYyAgMyAxNDo0OCAuCmRyd3hyLXhyLXg";
+KSQSecBox::KSQSecBox() {
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQSecBox::saveData(vs_secbox_type_t type, vs_storage_element_id_t id, const QByteArray &data) {
+    return false;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQSecBox::loadData(vs_storage_element_id_t id, QByteArray &data) {
+    return false;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQSecBox::delData(vs_storage_element_id_t id) {
+    return false;
 }
 
 //-----------------------------------------------------------------------------

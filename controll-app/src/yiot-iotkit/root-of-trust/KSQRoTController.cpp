@@ -19,15 +19,21 @@
 
 #include <QtCore>
 #include <yiot-iotkit/root-of-trust/KSQRoTController.h>
+#include <yiot-iotkit/secbox/KSQSecBox.h>
 
 //-----------------------------------------------------------------------------
 KSQRoTController::KSQRoTController() {
+
+    memset(&m_listId, 0, sizeof(m_listId));
+    strcpy(reinterpret_cast<char *>(m_listId), "rot_list");
 
     // Add test data
 #if 1
     auto newRoT = QSharedPointer<KSQRoT>::create("some id", "Local Root of trust", "secure-enclave");
     m_rots.push_back(newRoT);
 #endif
+
+    m_isValid = prepare();
 }
 
 //-----------------------------------------------------------------------------
@@ -105,6 +111,46 @@ KSQRoTController::roleNames() const {
     roles[Firmware2] = "firmware2";
 
     return roles;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQRoTController::prepare() {
+    auto idsList = loadRoTList();
+
+    if (!idsList.contains(KSQRoT::kLocalID)) {
+        auto localRoT = QSharedPointer<KSQRoT>::create(KSQRoT::kLocalID, "Local Root of trust");
+        if (!localRoT->isValid()) {
+            return false;
+        }
+        idsList << KSQRoT::kLocalID;
+
+        m_isValid = saveRoTList(idsList);
+        return m_isValid;
+    }
+
+    m_isValid = true;
+
+    return m_isValid;
+}
+
+//-----------------------------------------------------------------------------
+QStringList
+KSQRoTController::loadRoTList() {
+    return QStringList();
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQRoTController::saveRoTList(const QStringList& list) {
+    QByteArray data;
+    foreach (const auto &str, list) {
+        data += str.toUtf8();
+    }
+
+    return KSQSecBox::instance().saveData(VS_SECBOX_SIGNED,
+                                          m_listId,
+                                          data);
 }
 
 //-----------------------------------------------------------------------------

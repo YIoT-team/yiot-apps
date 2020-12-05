@@ -228,10 +228,17 @@ target_sources(${KS_TARGET_NAME}
 
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQRoT.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQRoTController.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQPublicKey.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQPrivateKey.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQSignature.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQTrustList.h
+
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQSecModule.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQPublicKey.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQPrivateKey.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQSignature.h
+
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/storages/KSQStorageKeychain.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/storages/KSQStorageFS.h
+
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secbox/KSQSecBox.h
 
         $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
         $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
@@ -263,10 +270,17 @@ target_sources(${KS_TARGET_NAME}
 
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQRoT.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQRoTController.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQPublicKey.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQPrivateKey.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQSignature.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQTrustList.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQSecModule.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQPublicKey.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQPrivateKey.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQSignature.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/storages/KSQStorageKeychain.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/storages/KSQStorageFS.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secbox/KSQSecBox.cpp
 
         $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/macos/KSMacWiFi.mm>
         $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/src/win/KSWinWiFi.cpp>
@@ -323,6 +337,8 @@ target_link_libraries(${KS_TARGET_NAME}
         #   IoTKit Qt
         iotkit-qt-lib
         yiot-qos1-helper
+        vs-default-soft-secmodule
+        vs-module-secbox
 
         #   Qt keychain
         qtkeychain
