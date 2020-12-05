@@ -34,6 +34,7 @@
 class KSQApplication : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
+    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
     Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
 public:
     KSQApplication() = default;
@@ -44,6 +45,9 @@ public:
 
     QString
     organizationDisplayName() const;
+
+    QString
+    applicationVersion() const;
 
     QString
     applicationDisplayName() const;

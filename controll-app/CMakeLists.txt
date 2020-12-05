@@ -56,6 +56,13 @@ message("-- Build type: [${CMAKE_BUILD_TYPE}]")
 # ---------------------------------------------------------------------------
 set(KS_QT_EXTRA "")
 
+# Get build number
+if (DEFINED ENV{BUILD_NUMBER})
+    set(KS_BUILD_NUMBER "$ENV{BUILD_NUMBER}")
+else()
+    set(KS_BUILD_NUMBER "1000")
+endif()
+
 # IOS, IOS_SIM
 if(KS_PLATFORM STREQUAL "ios")
     # Android
@@ -80,12 +87,6 @@ elseif(KS_PLATFORM STREQUAL "android")
     PAD_STRING(TMP_VERS 2 "0" "${TMP_VERS}")
     string(APPEND ANDROID_VERSION_CODE "${TMP_VERS}")
 
-    # Get build number ( or zero)
-    if (DEFINED ENV{BUILD_NUMBER})
-        set(KS_BUILD_NUMBER "$ENV{BUILD_NUMBER}")
-    else()
-        set(KS_BUILD_NUMBER "0")
-    endif()
     PAD_STRING(TMP_VERS 3 "0" "${KS_BUILD_NUMBER}")
     string(APPEND ANDROID_VERSION_CODE "${TMP_VERS}")
     message(STATUS "Android version name: [${ANDROID_VERSION_NAME}]")
@@ -268,6 +269,8 @@ target_sources(${KS_TARGET_NAME}
 target_compile_definitions(${KS_TARGET_NAME}
         PRIVATE
         -DQKEYCHAIN_STATICLIB
+        -DKS_TARGET_VERSION=${KS_TARGET_VERSION}
+        -DKS_BUILD_NUMBER=${KS_BUILD_NUMBER}
         )
 
 

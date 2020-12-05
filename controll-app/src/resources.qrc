@@ -56,6 +56,7 @@
         <file>qml/components/ImageButton.qml</file>
         <file>qml/components/WiFiNetworksList.qml</file>
         <file>qml/components/FormVendor.qml</file>
+        <file>qml/components/FormDoers.qml</file>
         <file>qml/components/FormInput.qml</file>
         <file>qml/components/TextScrollView.qml</file>
         <file>qml/components/Popups/Popup.qml</file>
@@ -72,6 +73,8 @@
         <file>qml/components/InfoText.qml</file>
         <file>qml/components/InputTextField.qml</file>
         <file>qml/components/Password.qml</file>
+        <file>qml/components/Title.qml</file>
+        <file>qml/components/DoersTypeList.qml</file>
 
         <file>qml/components/devices/DeviceInfoPopup.qml</file>
         <file>qml/components/devices/AllDevicesList.qml</file>
@@ -104,6 +107,11 @@
         <file>qml/pages/devices/CmdProcessingPage.qml</file>
         <file>qml/pages/devices/lamp/mono/LampMonoControl.qml</file>
         <file>qml/pages/devices/pc/PCRPiControl.qml</file>
+
+<!--    Doers    -->
+        <file>qml/doers/Contributors.qml</file>
+        <file>qml/doers/Sponsors.qml</file>
+<!--   ~Doers    -->
 
         <file>qml/theme/Theme.qml</file>
 

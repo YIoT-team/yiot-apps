@@ -35,7 +35,7 @@ Column {
     Text {
         id: mainLogoDescription
         width: 180
-        text: app.applicationDisplayName
+        text: app.applicationVersion
         lineHeight: 1
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter

@@ -35,6 +35,9 @@
 #include "android/KSQAndroid.h"
 #endif // Q_OS_ANDROID
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
 //-----------------------------------------------------------------------------
 int
 KSQApplication::run() {
@@ -94,6 +97,14 @@ KSQApplication::updateDevices() {
 QString
 KSQApplication::organizationDisplayName() const {
     return tr("Your IoT");
+}
+
+//-----------------------------------------------------------------------------
+QString
+KSQApplication::applicationVersion() const {
+    return tr("version: ")
+           + QString(TOSTRING(KS_TARGET_VERSION)) + "."
+           + QString(TOSTRING(KS_BUILD_NUMBER));
 }
 
 //-----------------------------------------------------------------------------

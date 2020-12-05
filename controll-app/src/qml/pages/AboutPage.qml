@@ -24,16 +24,27 @@ import QtQuick.Layouts 1.12
 import "../theme"
 import "../components"
 
-Item {
+Page {
+    id: p
     anchors.fill: parent
+    state: "connect"
 
-    Form {
-        id: form
-        FormVendor {}
+    background: Rectangle {
+        color: "transparent"
     }
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: { showMain() }
+    header: Header {
+        title: qsTr("About YIoT")
+        showBackButton: true
+        showMenuButton: false
+        showSettingsButton: false
+        backAction: function() { hideAbout() }
+    }
+
+    Form {
+        stretched: true
+
+        FormVendor {}
+        FormDoers {}
     }
 }
