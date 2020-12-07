@@ -37,7 +37,6 @@ ColumnLayout {
                 Text {
                     id: nameText
                     text: name
-                    textFormat: TextEdit.StyledText
                     verticalAlignment: Text.AlignVCenter
                     font.pointSize: UiHelper.fixFontSz(14)
                     font.underline: ma.containsMouse

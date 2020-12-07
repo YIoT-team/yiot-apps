@@ -22,9 +22,21 @@
 #include <yiot-iotkit/secmodule/KSQPublicKey.h>
 
 //-----------------------------------------------------------------------------
+KSQPublicKey::KSQPublicKey() {
+    m_isValid = false;
+}
+
+//-----------------------------------------------------------------------------
+KSQPublicKey::KSQPublicKey(vs_secmodule_keypair_type_e keypair_type, const QByteArray &key) {
+    m_key = key;
+    m_keypair_type = keypair_type;
+    m_isValid = !m_key.isEmpty();
+}
+
+//-----------------------------------------------------------------------------
 QString
 KSQPublicKey::description() const {
-    return "dG90YWwgNTYKZHJ3eHIteHIteCAgIDgga3V0YXNoZW5rbyAgc3RhZmYgICA0NDJCIERlYyAgMyAxNDo0OCAuCmRyd3hyLXhyLXg";
+    return m_key.toBase64();
 }
 
 //-----------------------------------------------------------------------------

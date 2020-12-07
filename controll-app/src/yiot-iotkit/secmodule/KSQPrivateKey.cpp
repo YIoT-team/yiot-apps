@@ -17,3 +17,18 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
+#include <yiot-iotkit/secmodule/KSQPrivateKey.h>
+
+//-----------------------------------------------------------------------------
+KSQPrivateKey::KSQPrivateKey() {
+    m_isValid = false;
+}
+
+//-----------------------------------------------------------------------------
+KSQPrivateKey::KSQPrivateKey(vs_secmodule_keypair_type_e keypair_type, const QByteArray &key) {
+    m_key = key;
+    m_keypair_type = keypair_type;
+    m_isValid = !m_key.isEmpty();
+}
+
+//-----------------------------------------------------------------------------

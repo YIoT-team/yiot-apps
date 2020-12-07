@@ -35,13 +35,13 @@ class KSQSecBox : public QObject, public VSQSingleton<KSQSecBox> {
 
 public:
     bool
-    saveData(vs_secbox_type_t type, vs_storage_element_id_t id, const QByteArray &data);
+    save(vs_secbox_type_t type, vs_storage_element_id_t id, const QByteArray &data);
 
     bool
-    loadData(vs_storage_element_id_t id, QByteArray &data);
+    load(vs_storage_element_id_t id, QByteArray &data);
 
     bool
-    delData(vs_storage_element_id_t id);
+    del(vs_storage_element_id_t id);
 
 signals:
 

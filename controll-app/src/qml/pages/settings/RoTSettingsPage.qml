@@ -66,6 +66,7 @@ Page {
     // Fill data and show device info.
     function showRoTInfo(model) {
         rotInfo.model = model
+        rotInfo.enabled = true
         rotInfo.open()
     }
 }

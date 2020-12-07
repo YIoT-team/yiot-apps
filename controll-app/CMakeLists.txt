@@ -339,6 +339,7 @@ target_link_libraries(${KS_TARGET_NAME}
         yiot-qos1-helper
         vs-default-soft-secmodule
         vs-module-secbox
+        converters
 
         #   Qt keychain
         qtkeychain

@@ -25,7 +25,7 @@ import "../../theme"
 import "../../components"
 
 Popup {
-    property variant model: none
+    property variant model
 
     id: popup
 
@@ -48,22 +48,22 @@ Popup {
         anchors.fill: parent
         columns: 1
 
-        InfoText { text: qsTr("Name: ") + model.name }
-        InfoText { text: qsTr("ID: ") + model.id }
+        InfoText { text: qsTr("Name: ") + f("name") }
+        InfoText { text: qsTr("ID: ") + f("id") }
 
-        InfoText { text: qsTr("Default EC: ") + model.ecType }
+        InfoText { text: qsTr("Default EC: ") + f("ecType") }
 
-        InfoText { text: qsTr("Recovery main: ") + model.recovery1 }
-        InfoText { text: qsTr("Recovery reserv: ") + model.recovery2 }
+        InfoText { text: qsTr("Recovery main: ") + f("recovery1") }
+        InfoText { text: qsTr("Recovery reserv: ") + f("recovery2") }
 
-        InfoText { text: qsTr("Auth main: ") + model.auth1 }
-        InfoText { text: qsTr("Auth reserv: ") + model.auth2 }
+        InfoText { text: qsTr("Auth main: ") + f("auth1") }
+        InfoText { text: qsTr("Auth reserv: ") + f("auth2") }
 
-        InfoText { text: qsTr("Tl main: ") + model.tl1 }
-        InfoText { text: qsTr("Tl reserv: ") + model.tl2 }
+        InfoText { text: qsTr("Tl main: ") + f("tl1") }
+        InfoText { text: qsTr("Tl reserv: ") + f("tl2") }
 
-        InfoText { text: qsTr("TrustList version: ") + model.trustList.version }
-        InfoText { text: qsTr("TrustList keys count: ") + model.trustList.keysCount }
+        InfoText { text: qsTr("TrustList version: ") + fTl("version") }
+        InfoText { text: qsTr("TrustList keys count: ") + fTl("keysCount") }
     }
 
     MouseArea {
@@ -79,6 +79,20 @@ Popup {
 
     exit: Transition {
         NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
+    }
+
+    function f(n) {
+        if (typeof model !== 'undefined') {
+            return model[n]
+        }
+        return ""
+    }
+
+    function fTl(n) {
+        if (typeof model !== 'undefined') {
+            return model.trustList[n]
+        }
+        return ""
     }
 }
 

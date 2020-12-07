@@ -78,10 +78,10 @@ KSQApplication::run() {
     // Initialize QML
     QQmlContext *context = engine.rootContext();
     context->setContextProperty("UiHelper", &uiHelper);
-    context->setContextProperty("app", this);                           // Get app name, version, etc.
-    context->setContextProperty("bleController", &m_bleController);     // Connect/disconnect to BLE devices to communicate with
-    context->setContextProperty("bleEnum", m_bleController.model());    // BLE device enumeration // TODO: Use from `bleController`
-    context->setContextProperty("wifiEnum", &m_wifiEnumerator);         // WiFi networks enumeration
+    context->setContextProperty("app", this);                               // Get app name, version, etc.
+    context->setContextProperty("bleController", &m_bleController);         // Connect/disconnect to BLE devices to communicate with
+    context->setContextProperty("bleEnum", m_bleController.model());        // BLE device enumeration // TODO: Use from `bleController`
+    context->setContextProperty("wifiEnum", &m_wifiEnumerator);             // WiFi networks enumeration
     context->setContextProperty("deviceControllers", &m_deviceControllers); // Containers with controllers for all supported devices
     context->setContextProperty("rotModel", &m_rot);                    // Container for all Roots of trust
 

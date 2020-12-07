@@ -23,17 +23,9 @@
 
 //-----------------------------------------------------------------------------
 KSQRoTController::KSQRoTController() {
-
     memset(&m_listId, 0, sizeof(m_listId));
     strcpy(reinterpret_cast<char *>(m_listId), "rot_list");
-
-    // Add test data
-#if 1
-    auto newRoT = QSharedPointer<KSQRoT>::create("some id", "Local Root of trust", "secure-enclave");
-    m_rots.push_back(newRoT);
-#endif
-
-    m_isValid = prepare();
+    prepare();
 }
 
 //-----------------------------------------------------------------------------
@@ -119,7 +111,7 @@ KSQRoTController::prepare() {
     auto idsList = loadRoTList();
 
     if (!idsList.contains(KSQRoT::kLocalID)) {
-        auto localRoT = QSharedPointer<KSQRoT>::create(KSQRoT::kLocalID, "Local Root of trust");
+        auto localRoT = QSharedPointer<KSQRoT>::create(KSQRoT::kLocalID, "secure-enclave");
         if (!localRoT->isValid()) {
             return false;
         }

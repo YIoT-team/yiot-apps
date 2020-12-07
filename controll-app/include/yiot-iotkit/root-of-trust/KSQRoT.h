@@ -35,7 +35,7 @@ public:
     KSQRoT() : QObject() {
     }
 
-    KSQRoT(const QString &id, const QString &name, const QString &image = "");
+    KSQRoT(const QString &id, const QString &image = "");
 
     KSQRoT(const KSQRoT &r);
 
@@ -103,7 +103,7 @@ public:
 
     static const QString kLocalID;
 
-    QString
+    bool
     generate(const QString &name);
 
 signals:
