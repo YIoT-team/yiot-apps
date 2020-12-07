@@ -29,6 +29,8 @@
 #include <devices/lamp/KSQLampController.h>
 #include <devices/pc/KSQPCController.h>
 
+#include <virgil/iot/qt/protocols/snap/VSQSnapCFGClient.h>
+
 #include "keychain.h"
 
 #ifdef Q_OS_ANDROID
@@ -55,6 +57,8 @@ KSQApplication::run() {
         VS_LOG_CRITICAL("Unable to initialize IoTKIT");
         return -1;
     }
+
+    VSQSnapCfgClient::instance().setNetifRestriction(m_bleController.netif());
 
     // Initialize devices controllers
     m_deviceControllers << new KSQLampController() << new KSQPCController();
