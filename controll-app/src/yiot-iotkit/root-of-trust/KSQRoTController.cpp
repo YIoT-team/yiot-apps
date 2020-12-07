@@ -140,7 +140,7 @@ KSQRoTController::saveRoTList(const QStringList& list) {
         data += str.toUtf8();
     }
 
-    return KSQSecBox::instance().saveData(VS_SECBOX_SIGNED,
+    return KSQSecBox::instance().save(VS_SECBOX_SIGNED,
                                           m_listId,
                                           data);
 }

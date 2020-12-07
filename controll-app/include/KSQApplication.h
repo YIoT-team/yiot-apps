@@ -64,7 +64,7 @@ private:
 
     KSQDevices m_deviceControllers;
 
-    KSQRoTController m_rot;
+    QSharedPointer<KSQRoTController> m_rot;
 };
 
 #endif // PROVISION_QT_APP_H
