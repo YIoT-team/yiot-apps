@@ -22,6 +22,7 @@
 
 #include <virgil/iot/secmodule/secmodule.h>
 #include <virgil/iot/converters/crypto_format_converters.h>
+#include <virgil/iot/vs-soft-secmodule/vs-soft-secmodule.h>
 
 #include <yiot-iotkit/storages/KSQStorageKeychain.h>
 
@@ -35,6 +36,8 @@ extern "C" {
 
 //-----------------------------------------------------------------------------
 KSQSecModule::KSQSecModule() {
+    auto storage = KSQStorageKeychain::instance().storageImpl();
+    m_secmoduleImpl = vs_soft_secmodule_impl(storage);
 }
 
 //-----------------------------------------------------------------------------

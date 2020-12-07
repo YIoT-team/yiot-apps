@@ -25,6 +25,8 @@
 #include <virgil/iot/qt/helpers/VSQSingleton.h>
 #include <virgil/iot/secbox/secbox.h>
 
+#include <yiot-iotkit/storages/KSQStorageFS.h>
+
 using namespace VirgilIoTKit;
 
 class KSQSecBox : public QObject, public VSQSingleton<KSQSecBox> {
@@ -43,13 +45,22 @@ public:
     bool
     del(vs_storage_element_id_t id);
 
+    bool
+    isValid() const {
+        return m_valid;
+    }
+
 signals:
 
 public slots:
 
 private:
     KSQSecBox();
-    virtual ~KSQSecBox() = default;
+    virtual ~KSQSecBox();
+
+    bool m_valid;
+
+    KSQStorageFS *m_storage;
 };
 
 #endif // _YIOT_QT_SECURITY_BOX_H_

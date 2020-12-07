@@ -37,7 +37,7 @@ class KSQSecModule : public QObject, public VSQSingleton<KSQSecModule> {
     friend VSQSingleton<KSQSecModule>;
 
 public:
-    const VirgilIoTKit::vs_secmodule_impl_t *
+    VirgilIoTKit::vs_secmodule_impl_t *
     secmoduleImpl() {
         return m_secmoduleImpl;
     }
@@ -50,7 +50,7 @@ signals:
 public slots:
 
 private:
-    const VirgilIoTKit::vs_secmodule_impl_t *m_secmoduleImpl;
+    vs_secmodule_impl_t *m_secmoduleImpl;
 
     KSQSecModule();
     virtual ~KSQSecModule() = default;

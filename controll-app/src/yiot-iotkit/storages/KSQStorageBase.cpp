@@ -18,91 +18,37 @@
 //  ────────────────────────────────────────────────────────────
 
 #include <virgil/iot/qt/VSQIoTKit.h>
-#include <yiot-iotkit/storages/KSQStorageFS.h>
-
-typedef struct {
-    char *dir;
-
-} vs_nix_storage_ctx_t;
+#include <yiot-iotkit/storages/KSQStorageBase.h>
 
 //-----------------------------------------------------------------------------
-KSQStorageFS::KSQStorageFS() {
+KSQStorageBase::KSQStorageBase(size_t fileSizeMax) {
     memset(&m_storageImpl, 0, sizeof(m_storageImpl));
 
-    m_storageImpl.file_sz_limit = kFileSizeMax;
+    m_storageImpl.file_sz_limit = fileSizeMax;
     m_storageImpl.impl_func = _funcImpl();
-
-            vs_storage_impl_data_ctx_t
-    vs_nix_storage_impl_data_init(const char *dir);
+    m_storageImpl.impl_data = this;
 }
 
-/******************************************************************************/
-//static void
-//_data_to_hex(const uint8_t *_data, uint32_t _len, uint8_t *_out_data, uint32_t *_in_out_len) {
-//    const uint8_t hex_str[] = "0123456789abcdef";
-//
-//            VS_IOT_ASSERT(_in_out_len);
-//            VS_IOT_ASSERT(_data);
-//            VS_IOT_ASSERT(_out_data);
-//            VS_IOT_ASSERT(*_in_out_len >= _len * 2 + 1);
-//
-//    *_in_out_len = _len * 2 + 1;
-//    _out_data[*_in_out_len - 1] = 0;
-//    size_t i;
-//
-//    for (i = 0; i < _len; i++) {
-//        _out_data[i * 2 + 0] = hex_str[(_data[i] >> 4) & 0x0F];
-//        _out_data[i * 2 + 1] = hex_str[(_data[i]) & 0x0F];
-//    }
-//}
-
-/******************************************************************************/
-//vs_storage_impl_data_ctx_t
-//vs_nix_storage_impl_data_init(const char *relative_dir) {
-//    vs_nix_storage_ctx_t *ctx = NULL;
-//
-//    CHECK_NOT_ZERO_RET(relative_dir, NULL);
-//
-//    ctx = VS_IOT_CALLOC(1, sizeof(vs_nix_storage_ctx_t));
-//    CHECK_NOT_ZERO_RET(ctx, NULL);
-//
-//    ctx->dir = (char *)VS_IOT_CALLOC(1, strlen(relative_dir) + 1);
-//    if (NULL == ctx->dir) {
-//        VS_LOG_ERROR("Can't allocate memory");
-//        VS_IOT_FREE(ctx);
-//        return NULL;
-//    }
-//
-//    VS_IOT_STRCPY(ctx->dir, relative_dir);
-//
-//    // Create path
-//    vs_files_create_subdir(relative_dir);
-//
-//    return ctx;
-//}
-
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 vs_status_e
-KSQStorageFS::_deinit(vs_storage_impl_data_ctx_t storage_ctx) {
-    vs_nix_storage_ctx_t *ctx = (vs_nix_storage_ctx_t *)storage_ctx;
-
+KSQStorageBase::_deinit(vs_storage_impl_data_ctx_t storage_ctx) {
     CHECK_NOT_ZERO_RET(storage_ctx, VS_CODE_ERR_INCORRECT_PARAMETER);
-    CHECK_NOT_ZERO_RET(ctx->dir, VS_CODE_ERR_INCORRECT_PARAMETER);
-
-    VS_IOT_FREE(ctx->dir);
-    VS_IOT_FREE(ctx);
-
     return VS_CODE_OK;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
+QString
+KSQStorageBase::id2str(vs_storage_element_id_t id) {
+    return "";
+}
+
+//-----------------------------------------------------------------------------
 vs_storage_file_t
-KSQStorageFS::_open(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_element_id_t id) {
-    vs_nix_storage_ctx_t *ctx = (vs_nix_storage_ctx_t *)storage_ctx;
+KSQStorageBase::_open(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_element_id_t id) {
+    auto storage = (KSQStorageBase *)storage_ctx;
 
     CHECK_NOT_ZERO_RET(id, NULL);
     CHECK_NOT_ZERO_RET(storage_ctx, NULL);
-    CHECK_NOT_ZERO_RET(ctx->dir, NULL);
 
     uint32_t len = sizeof(vs_storage_element_id_t) * 2 + 1;
     uint8_t *file = (uint8_t *)VS_IOT_CALLOC(1, len);
@@ -113,9 +59,9 @@ KSQStorageFS::_open(const vs_storage_impl_data_ctx_t storage_ctx, const vs_stora
     return file;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 vs_status_e
-KSQStorageFS::_sync(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_file_t file) {
+KSQStorageBase::_sync(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_file_t file) {
     vs_status_e res = VS_CODE_ERR_FILE;
 
     CHECK_NOT_ZERO_RET(file, VS_CODE_ERR_NULLPTR_ARGUMENT);
@@ -128,9 +74,9 @@ KSQStorageFS::_sync(const vs_storage_impl_data_ctx_t storage_ctx, const vs_stora
     return res;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 vs_status_e
-KSQStorageFS::_close(const vs_storage_impl_data_ctx_t storage_ctx, vs_storage_file_t file) {
+KSQStorageBase::_close(const vs_storage_impl_data_ctx_t storage_ctx, vs_storage_file_t file) {
     CHECK_NOT_ZERO_RET(file, VS_CODE_ERR_INCORRECT_PARAMETER);
 
     VS_IOT_FREE(file);
@@ -138,9 +84,9 @@ KSQStorageFS::_close(const vs_storage_impl_data_ctx_t storage_ctx, vs_storage_fi
     return VS_CODE_OK;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 vs_status_e
-KSQStorageFS::_save(const vs_storage_impl_data_ctx_t storage_ctx,
+KSQStorageBase::_save(const vs_storage_impl_data_ctx_t storage_ctx,
                         const vs_storage_file_t file,
                         size_t offset,
                         const uint8_t *data,
@@ -158,9 +104,9 @@ KSQStorageFS::_save(const vs_storage_impl_data_ctx_t storage_ctx,
     return res;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 vs_status_e
-KSQStorageFS::_load(const vs_storage_impl_data_ctx_t storage_ctx,
+KSQStorageBase::_load(const vs_storage_impl_data_ctx_t storage_ctx,
                         const vs_storage_file_t file,
                         size_t offset,
                         uint8_t *out_data,
@@ -181,9 +127,9 @@ KSQStorageFS::_load(const vs_storage_impl_data_ctx_t storage_ctx,
     return res;
 }
 
-/*******************************************************************************/
+//-----------------------------------------------------------------------------
 ssize_t
-KSQStorageFS::_fileSize(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_element_id_t id) {
+KSQStorageBase::_fileSize(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_element_id_t id) {
     vs_nix_storage_ctx_t *ctx = (vs_nix_storage_ctx_t *)storage_ctx;
     ssize_t res;
     uint32_t len = sizeof(vs_storage_element_id_t) * 2 + 1;
@@ -198,9 +144,9 @@ KSQStorageFS::_fileSize(const vs_storage_impl_data_ctx_t storage_ctx, const vs_s
     return res;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 vs_status_e
-KSQStorageFS::_del(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_element_id_t id) {
+KSQStorageBase::_del(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_element_id_t id) {
     vs_nix_storage_ctx_t *ctx = (vs_nix_storage_ctx_t *)storage_ctx;
 
     CHECK_NOT_ZERO_RET(id, VS_CODE_ERR_INCORRECT_PARAMETER);
@@ -217,7 +163,7 @@ KSQStorageFS::_del(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storag
 
 //-----------------------------------------------------------------------------
 vs_storage_impl_func_t
-KSQStorageFS::_funcImpl() {
+KSQStorageBase::_funcImpl() {
     vs_storage_impl_func_t impl;
     memset(&impl, 0, sizeof(impl));
 

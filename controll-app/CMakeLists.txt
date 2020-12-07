@@ -235,6 +235,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQPrivateKey.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQSignature.h
 
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/storages/KSQStorageBase.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/storages/KSQStorageKeychain.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/storages/KSQStorageFS.h
 
@@ -277,6 +278,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQPrivateKey.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQSignature.cpp
 
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/storages/KSQStorageBase.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/storages/KSQStorageKeychain.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/storages/KSQStorageFS.cpp
 
