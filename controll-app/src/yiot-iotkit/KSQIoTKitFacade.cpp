@@ -42,6 +42,7 @@
 #include <yiot-iotkit/snap/KSQSnapPCClient.h>
 #include <yiot-iotkit/snap/KSQSnapPRVSClient.h>
 #include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
+#include <yiot-iotkit/provision/KSQProvision.h>
 
 using namespace VirgilIoTKit;
 
@@ -67,6 +68,9 @@ KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &imp
     m_snapProcessorThread = new QThread();
     m_snapProcessorThread->start();
     moveToThread(m_snapProcessorThread);
+
+    // Prepare provision
+    KSQProvision::instance();
 
     m_features = features;
     m_impl = impl;
