@@ -38,25 +38,35 @@ KSQStorageBase::_deinit(vs_storage_impl_data_ctx_t storage_ctx) {
 
 //-----------------------------------------------------------------------------
 QString
-KSQStorageBase::id2str(vs_storage_element_id_t id) {
+KSQStorageBase::id2str(const vs_storage_element_id_t id) {
     return "";
 }
 
 //-----------------------------------------------------------------------------
 vs_storage_file_t
 KSQStorageBase::_open(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_element_id_t id) {
-    auto storage = (KSQStorageBase *)storage_ctx;
-
     CHECK_NOT_ZERO_RET(id, NULL);
     CHECK_NOT_ZERO_RET(storage_ctx, NULL);
 
-    uint32_t len = sizeof(vs_storage_element_id_t) * 2 + 1;
-    uint8_t *file = (uint8_t *)VS_IOT_CALLOC(1, len);
-    CHECK_NOT_ZERO_RET(file, NULL);
+    auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
+    if (ctx->openImpl(id2str(id))) {
+        return new QString(id2str(id));
+    }
 
-    _data_to_hex(id, sizeof(vs_storage_element_id_t), file, &len);
+    return NULL;
+}
 
-    return file;
+//-----------------------------------------------------------------------------
+vs_status_e
+KSQStorageBase::_close(const vs_storage_impl_data_ctx_t storage_ctx, vs_storage_file_t file) {
+    CHECK_NOT_ZERO_RET(file, VS_CODE_ERR_INCORRECT_PARAMETER);
+
+    auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
+    auto f = reinterpret_cast<QString*>(file);
+    ctx->openImpl(*f);
+    delete f;
+
+    return VS_CODE_OK;
 }
 
 //-----------------------------------------------------------------------------
@@ -66,22 +76,13 @@ KSQStorageBase::_sync(const vs_storage_impl_data_ctx_t storage_ctx, const vs_sto
 
     CHECK_NOT_ZERO_RET(file, VS_CODE_ERR_NULLPTR_ARGUMENT);
     CHECK_NOT_ZERO_RET(storage_ctx, VS_CODE_ERR_NULLPTR_ARGUMENT);
-    vs_nix_storage_ctx_t *ctx = (vs_nix_storage_ctx_t *)storage_ctx;
+    auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
 
-    if (vs_files_sync(ctx->dir, (char *)file)) {
+    const auto &f = *reinterpret_cast<QString*>(file);
+    if (ctx->syncImpl(f)) {
         res = VS_CODE_OK;
     }
     return res;
-}
-
-//-----------------------------------------------------------------------------
-vs_status_e
-KSQStorageBase::_close(const vs_storage_impl_data_ctx_t storage_ctx, vs_storage_file_t file) {
-    CHECK_NOT_ZERO_RET(file, VS_CODE_ERR_INCORRECT_PARAMETER);
-
-    VS_IOT_FREE(file);
-
-    return VS_CODE_OK;
 }
 
 //-----------------------------------------------------------------------------
@@ -96,9 +97,12 @@ KSQStorageBase::_save(const vs_storage_impl_data_ctx_t storage_ctx,
     CHECK_NOT_ZERO_RET(data, VS_CODE_ERR_NULLPTR_ARGUMENT);
     CHECK_NOT_ZERO_RET(storage_ctx, VS_CODE_ERR_NULLPTR_ARGUMENT);
     CHECK_NOT_ZERO_RET(file, VS_CODE_ERR_NULLPTR_ARGUMENT);
-    vs_nix_storage_ctx_t *ctx = (vs_nix_storage_ctx_t *)storage_ctx;
 
-    if (vs_files_write(ctx->dir, (char *)file, offset, data, data_sz)) {
+    auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
+    const auto &f = *reinterpret_cast<QString*>(file);
+    auto baData = QByteArray(reinterpret_cast<const char *> (data), data_sz);
+
+    if (ctx->writeImpl(f, offset, baData)) {
         res = VS_CODE_OK;
     }
     return res;
@@ -111,16 +115,18 @@ KSQStorageBase::_load(const vs_storage_impl_data_ctx_t storage_ctx,
                         size_t offset,
                         uint8_t *out_data,
                         size_t data_sz) {
-    size_t read_sz;
     vs_status_e res = VS_CODE_ERR_FILE_READ;
-    vs_nix_storage_ctx_t *ctx = (vs_nix_storage_ctx_t *)storage_ctx;
 
     CHECK_NOT_ZERO_RET(out_data, VS_CODE_ERR_INCORRECT_PARAMETER);
     CHECK_NOT_ZERO_RET(storage_ctx, VS_CODE_ERR_INCORRECT_PARAMETER);
     CHECK_NOT_ZERO_RET(file, VS_CODE_ERR_INCORRECT_PARAMETER);
-    CHECK_NOT_ZERO_RET(ctx->dir, VS_CODE_ERR_INCORRECT_PARAMETER);
 
-    if (vs_files_read(ctx->dir, (char *)file, offset, out_data, data_sz, &read_sz) && read_sz == data_sz) {
+    auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
+    const auto &f = *reinterpret_cast<QString*>(file);
+    QByteArray baData;
+
+    if (ctx->readImpl(f, offset, data_sz, baData) && baData.size() == data_sz) {
+        memcpy(out_data, baData.data(), data_sz);
         res = VS_CODE_OK;
     }
 
@@ -130,35 +136,28 @@ KSQStorageBase::_load(const vs_storage_impl_data_ctx_t storage_ctx,
 //-----------------------------------------------------------------------------
 ssize_t
 KSQStorageBase::_fileSize(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_element_id_t id) {
-    vs_nix_storage_ctx_t *ctx = (vs_nix_storage_ctx_t *)storage_ctx;
-    ssize_t res;
-    uint32_t len = sizeof(vs_storage_element_id_t) * 2 + 1;
-    uint8_t file[len];
-
     CHECK_NOT_ZERO_RET(id, VS_CODE_ERR_INCORRECT_PARAMETER);
     CHECK_NOT_ZERO_RET(storage_ctx, VS_CODE_ERR_INCORRECT_PARAMETER);
-    CHECK_NOT_ZERO_RET(ctx->dir, VS_CODE_ERR_INCORRECT_PARAMETER);
 
-    _data_to_hex(id, sizeof(vs_storage_element_id_t), file, &len);
-    res = vs_files_get_len(ctx->dir, (char *)file);
-    return res;
+    auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
+    return ctx->fileSizeImpl(id2str(id));
 }
 
 //-----------------------------------------------------------------------------
 vs_status_e
 KSQStorageBase::_del(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_element_id_t id) {
-    vs_nix_storage_ctx_t *ctx = (vs_nix_storage_ctx_t *)storage_ctx;
+    vs_status_e res = VS_CODE_ERR_FILE_DELETE;
 
     CHECK_NOT_ZERO_RET(id, VS_CODE_ERR_INCORRECT_PARAMETER);
     CHECK_NOT_ZERO_RET(storage_ctx, VS_CODE_ERR_INCORRECT_PARAMETER);
-    CHECK_NOT_ZERO_RET(ctx->dir, VS_CODE_ERR_INCORRECT_PARAMETER);
 
-    uint32_t len = sizeof(vs_storage_element_id_t) * 2 + 1;
-    uint8_t file[len];
+    auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
 
-    _data_to_hex(id, sizeof(vs_storage_element_id_t), file, &len);
+    if (ctx->deleteImpl(id2str(id))) {
+        res = VS_CODE_OK;
+    }
 
-    return vs_files_remove(ctx->dir, (char *)file) ? VS_CODE_OK : VS_CODE_ERR_FILE_DELETE;
+    return res;
 }
 
 //-----------------------------------------------------------------------------

@@ -44,8 +44,26 @@ signals:
 public slots:
 
 protected:
-    virtual void
-    deleteContextImpl(vs_storage_impl_data_ctx_t storage_ctx) = 0;
+    virtual bool
+    openImpl(const QString & file) = 0;
+
+    virtual bool
+    closeImpl(const QString & file) = 0;
+
+    virtual bool
+    syncImpl(const QString & file) = 0;
+
+    virtual bool
+    writeImpl(const QString &file, size_t offset, const QByteArray &data) = 0;
+
+    virtual bool
+    readImpl(const QString &file, size_t offset, size_t readSz, QByteArray &data) = 0;
+
+    virtual bool
+    deleteImpl(const QString &file) = 0;
+
+    virtual ssize_t
+    fileSizeImpl(const QString &file) = 0;
 
 private:
     vs_storage_op_ctx_t m_storageImpl;
@@ -53,8 +71,8 @@ private:
     vs_storage_impl_func_t
     _funcImpl();
 
-    QString
-    id2str(vs_storage_element_id_t id);
+    static QString
+    id2str(const vs_storage_element_id_t id);
 
     static ssize_t
     _fileSize(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_element_id_t id);

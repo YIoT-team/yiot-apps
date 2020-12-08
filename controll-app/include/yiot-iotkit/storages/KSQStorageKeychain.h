@@ -25,26 +25,42 @@
 #include <virgil/iot/qt/helpers/VSQSingleton.h>
 #include <virgil/iot/storage_hal/storage_hal.h>
 
+#include <yiot-iotkit/storages/KSQStorageBase.h>
+
 using namespace VirgilIoTKit;
 
-class KSQStorageKeychain : public QObject, public VSQSingleton<KSQStorageKeychain> {
+class KSQStorageKeychain final : public KSQStorageBase, public VSQSingleton<KSQStorageKeychain> {
 
     Q_OBJECT
 
     friend VSQSingleton<KSQStorageKeychain>;
 
 public:
-    VirgilIoTKit::vs_storage_op_ctx_t *
-    storageImpl() {
-        return m_storageImpl;
-    }
 
-signals:
+protected:
+    virtual bool
+    openImpl(const QString & file);
 
-public slots:
+    virtual bool
+    closeImpl(const QString & file);
+
+    virtual bool
+    syncImpl(const QString & file);
+
+    virtual bool
+    writeImpl(const QString &file, size_t offset, const QByteArray &data);
+
+    virtual bool
+    readImpl(const QString &file, size_t offset, size_t readSz, QByteArray &data);
+
+    virtual bool
+    deleteImpl(const QString &file);
+
+    virtual ssize_t
+    fileSizeImpl(const QString &file);
 
 private:
-    VirgilIoTKit::vs_storage_op_ctx_t *m_storageImpl;
+    static const size_t kFileSizeMax = 100 * 1024;
 
     KSQStorageKeychain();
     virtual ~KSQStorageKeychain() = default;
