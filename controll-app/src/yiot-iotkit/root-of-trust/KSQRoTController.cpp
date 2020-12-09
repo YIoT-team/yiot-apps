@@ -23,8 +23,8 @@
 
 //-----------------------------------------------------------------------------
 KSQRoTController::KSQRoTController() {
-    memset(&m_listId, 0, sizeof(m_listId));
-    strcpy(reinterpret_cast<char *>(m_listId), "rot_list");
+    memset(&m_listStorageId, 0, sizeof(m_listStorageId));
+    strcpy(reinterpret_cast<char *>(m_listStorageId), "rot_list");
     prepare();
 }
 
@@ -110,6 +110,8 @@ bool
 KSQRoTController::prepare() {
     auto idsList = loadRoTList();
 
+    qDebug() << "RoT list: " << idsList;
+
     if (!idsList.contains(KSQRoT::kLocalID)) {
         auto localRoT = QSharedPointer<KSQRoT>::create(KSQRoT::kLocalID, "secure-enclave");
         if (!localRoT->isValid()) {
@@ -129,20 +131,26 @@ KSQRoTController::prepare() {
 //-----------------------------------------------------------------------------
 QStringList
 KSQRoTController::loadRoTList() {
-    return QStringList();
+    QStringList res;
+    QByteArray data;
+    if (!KSQSecBox::instance().load(m_listStorageId, data)) {
+        return res;
+    }
+
+    QDataStream dataStreamRead(data);
+    dataStreamRead >> res;
+
+    return res;
 }
 
 //-----------------------------------------------------------------------------
 bool
 KSQRoTController::saveRoTList(const QStringList& list) {
     QByteArray data;
-    foreach (const auto &str, list) {
-        data += str.toUtf8();
-    }
+    QDataStream dataStreamWrite(&data, QIODevice::WriteOnly);
+    dataStreamWrite << list;
 
-    return KSQSecBox::instance().save(VS_SECBOX_SIGNED,
-                                          m_listId,
-                                          data);
+    return KSQSecBox::instance().save(VS_SECBOX_SIGNED, m_listStorageId, data);
 }
 
 //-----------------------------------------------------------------------------

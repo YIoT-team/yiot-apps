@@ -33,6 +33,8 @@ class KSQStorageFS final: public KSQStorageBase {
     Q_OBJECT
 
 public:
+    static const size_t kFileSizeMax = 1 * 1024 * 1024;
+
     KSQStorageFS(const QString &baseDir);
     virtual ~KSQStorageFS() = default;
 
@@ -48,7 +50,6 @@ protected:
     deleteImpl(const QString &file);
 
 private:
-    static const size_t kFileSizeMax = 10 * 1024 * 1024;
     bool m_valid;
     QString m_baseDir;
 };

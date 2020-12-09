@@ -80,7 +80,7 @@ private:
     bool
     saveRoTList(const QStringList& list);
 
-    vs_storage_element_id_t m_listId;
+    vs_storage_element_id_t m_listStorageId;
 };
 
 #endif // YIOT_ROOT_OF_TRUST_LIST_H

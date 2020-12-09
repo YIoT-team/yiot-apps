@@ -59,14 +59,24 @@ KSQSecBox::save(vs_secbox_type_t type, vs_storage_element_id_t id, const QByteAr
 bool
 KSQSecBox::load(vs_storage_element_id_t id, QByteArray &data) {
     Q_ASSERT(m_valid);
-    return false;
+    data.resize(m_storage->kFileSizeMax);
+    size_t dataSz = 0;
+    if (VS_CODE_OK != vs_secbox_load(reinterpret_cast<uint8_t*>(id),
+                                        reinterpret_cast<uint8_t*>(data.data()),
+                                        m_storage->kFileSizeMax,
+                                        &dataSz)) {
+        return false;
+    }
+
+    data.resize(dataSz);
+    return true;
 }
 
 //-----------------------------------------------------------------------------
 bool
 KSQSecBox::del(vs_storage_element_id_t id) {
     Q_ASSERT(m_valid);
-    return false;
+    return VS_CODE_OK != vs_secbox_del(reinterpret_cast<uint8_t*>(id));
 }
 
 //-----------------------------------------------------------------------------

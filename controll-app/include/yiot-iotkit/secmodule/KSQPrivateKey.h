@@ -35,6 +35,11 @@ public:
 
     virtual ~KSQPrivateKey() = default;
 
+    const QByteArray &
+    val() const {
+        return m_key;
+    }
+
 signals:
 
 public slots:

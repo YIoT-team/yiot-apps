@@ -38,6 +38,11 @@ public:
     QString
     description() const;
 
+    const QByteArray &
+    val() const {
+        return m_key;
+    }
+
 signals:
 
 public slots:
