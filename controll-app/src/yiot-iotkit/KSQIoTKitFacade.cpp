@@ -43,6 +43,7 @@
 #include <yiot-iotkit/snap/KSQSnapPRVSClient.h>
 #include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
 #include <yiot-iotkit/provision/KSQProvision.h>
+#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
 
 using namespace VirgilIoTKit;
 
@@ -70,7 +71,14 @@ KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &imp
     moveToThread(m_snapProcessorThread);
 
     // Prepare provision
-    KSQProvision::instance();
+    auto &provision = KSQProvision::instance();
+    if (!provision.isValid()) {
+        auto &rotContloller = KSQRoTController::instance();
+        if (!provision.create(rotContloller.localRootOfTrust())) {
+            VS_LOG_CRITICAL("Cannot create provision");
+            return false;
+        }
+    }
 
     m_features = features;
     m_impl = impl;

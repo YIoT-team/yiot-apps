@@ -29,6 +29,17 @@ KSQRoTController::KSQRoTController() {
 }
 
 //-----------------------------------------------------------------------------
+QSharedPointer<KSQRoT>
+KSQRoTController::localRootOfTrust() const {
+    for (auto &rot: m_rots) {
+        if (rot->isLocal()) {
+            return rot;
+        }
+    }
+    return nullptr;
+}
+
+//-----------------------------------------------------------------------------
 int
 KSQRoTController::rowCount(const QModelIndex &parent) const {
     return m_rots.size();

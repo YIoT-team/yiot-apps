@@ -109,6 +109,11 @@ public:
     bool
     generate(const QString &name);
 
+    bool
+    isLocal() {
+        return isValid() && (m_id == kLocalID);
+    }
+
 signals:
 
 public slots:

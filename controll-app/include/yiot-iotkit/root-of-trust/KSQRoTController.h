@@ -27,8 +27,12 @@
 #include <virgil/iot/qt/VSQIoTKit.h>
 #include <yiot-iotkit/root-of-trust/KSQRoT.h>
 
-class KSQRoTController : public QAbstractTableModel {
+#include <virgil/iot/qt/helpers/VSQSingleton.h>
+
+class KSQRoTController : public QAbstractTableModel, public VSQSingleton<KSQRoTController> {
     Q_OBJECT
+
+    friend VSQSingleton<KSQRoTController>;
     enum Element { ID = Qt::UserRole,
                    Name,
                    Image,
@@ -40,13 +44,14 @@ class KSQRoTController : public QAbstractTableModel {
                    Firmware1, Firmware2,
                    ElementMax };
 public:
-    KSQRoTController();
-    virtual ~KSQRoTController() = default;
 
     bool
     isValid() const {
         return m_isValid;
     }
+
+    QSharedPointer<KSQRoT>
+    localRootOfTrust() const;
 
     /**
      * QAbstractTableModel implementation
@@ -68,6 +73,9 @@ public slots:
 signals:
 
 private:
+    KSQRoTController();
+    virtual ~KSQRoTController() = default;
+
     std::list<QSharedPointer<KSQRoT>> m_rots;
     bool m_isValid;
 

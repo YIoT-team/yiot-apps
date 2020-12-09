@@ -24,12 +24,21 @@
 
 #include <virgil/iot/qt/helpers/VSQSingleton.h>
 #include <yiot-iotkit/storages/KSQStorageFS.h>
+#include <yiot-iotkit/root-of-trust/KSQRoT.h>
 
 class KSQProvision : public QObject, public VSQSingleton<KSQProvision> {
     Q_OBJECT
 
     friend VSQSingleton<KSQProvision>;
 public:
+
+    bool
+    create(QSharedPointer<KSQRoT>);
+
+    bool
+    isValid() const {
+        return m_valid;
+    }
 
 signals:
 

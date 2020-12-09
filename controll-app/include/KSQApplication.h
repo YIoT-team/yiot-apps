@@ -63,8 +63,6 @@ private:
     QSharedPointer<KSQUdp> m_netifUdp;
 
     KSQDevices m_deviceControllers;
-
-    QSharedPointer<KSQRoTController> m_rot;
 };
 
 #endif // PROVISION_QT_APP_H

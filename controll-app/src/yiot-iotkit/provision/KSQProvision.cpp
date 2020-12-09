@@ -80,3 +80,10 @@ KSQProvision::~KSQProvision() {
 }
 
 //-----------------------------------------------------------------------------
+bool
+KSQProvision::create(QSharedPointer<KSQRoT> rot) {
+    VS_LOG_DEBUG("Creation of self-signed provision");
+    return true;
+}
+
+//-----------------------------------------------------------------------------

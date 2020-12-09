@@ -50,7 +50,6 @@ KSQApplication::run() {
     vs_logger_init(VirgilIoTKit::VS_LOGLEV_DEBUG);
 
     m_netifUdp = QSharedPointer<KSQUdp>::create();
-    m_rot = QSharedPointer<KSQRoTController>::create();
 
     // Prepare IoTKit data
     auto features = KSQFeatures() << KSQFeatures::SNAP_PRVS_CLIENT  // Required to provision devices
@@ -92,7 +91,7 @@ KSQApplication::run() {
     context->setContextProperty("bleEnum", m_bleController.model());        // BLE device enumeration // TODO: Use from `bleController`
     context->setContextProperty("wifiEnum", &m_wifiEnumerator);             // WiFi networks enumeration
     context->setContextProperty("deviceControllers", &m_deviceControllers); // Containers with controllers for all supported devices
-    context->setContextProperty("rotModel", m_rot.get());                   // Container for all Roots of trust
+    context->setContextProperty("rotModel", &KSQRoTController::instance()); // Container for all Roots of trust
 
     // Load UI theme
     qmlRegisterSingletonType(QUrl("qrc:/qml/theme/Theme.qml"), "Theme", 1, 0, "Theme");
