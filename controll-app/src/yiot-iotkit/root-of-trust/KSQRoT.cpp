@@ -25,6 +25,8 @@
 
 using namespace VirgilIoTKit;
 
+const vs_secmodule_keypair_type_e KSQRoT::kDefaultEC = VS_KEYPAIR_EC_SECP256R1;
+
 const QString KSQRoT::kLocalID = "local_rot";
 
 const QString KSQRoT::kNamePrivate = "_priv";
@@ -83,13 +85,13 @@ KSQRoT::generate(const QString &name) {
     static const size_t _keysCnt = 9;
     KSQKeyPair keyPairs[_keysCnt];
 
-    qDebug() << "Root of trust: generate " << name;
+    VS_LOG_DEBUG("Root of trust: generate %s", name.toStdString().c_str());
 
     // Generate required amount of keys
     for (int i = 0; i < _keysCnt; i++) {
-        auto keyPair = KSQSecModule::instance().generateKeypair(VS_KEYPAIR_EC_SECP256R1);
+        auto keyPair = KSQSecModule::instance().generateKeypair(kDefaultEC);
         if (keyPair.first.isNull() || keyPair.second.isNull()) {
-            qDebug() << "Cannot generate key pair for a new root of trust";
+            VS_LOG_ERROR("Cannot generate key pair for a new root of trust");
             return false;
         }
         keyPairs[i] = keyPair;
@@ -131,6 +133,34 @@ KSQRoT::saveKeyPair(const QString &name, const KSQKeyPair &keypair) const {
                                id_priv,
                                keypair.first.get()->val()), false);
 
+    CHECK_NOT_ZERO_RET(KSQSecBox::instance().save(
+            VS_SECBOX_SIGNED_AND_ENCRYPTED,
+            id_pub,
+            keypair.second.get()->val()), false);
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQRoT::loadKeyPair(const QString &name, KSQKeyPair &res) const {
+    vs_storage_element_id_t id_priv;
+    vs_storage_element_id_t id_pub;
+    QByteArray baPriv;
+    QByteArray baPub;
+
+    res = std::make_pair(nullptr, nullptr);
+
+    CHECK_RET(prepName(name + kNamePrivate, id_priv), false, "Cannot prepare name %s", kNamePrivate.toStdString().c_str());
+    CHECK_RET(prepName(name + kNamePublic, id_pub), false, "Cannot prepare name %s", kNamePublic.toStdString().c_str());
+
+    CHECK_RET(KSQSecBox::instance().load(id_priv, baPriv), false, "Cannot load %s", kNamePrivate.toStdString().c_str());
+    CHECK_RET(KSQSecBox::instance().load(id_pub, baPub), false, "Cannot load %s", kNamePublic.toStdString().c_str());
+
+    auto pubkey = QSharedPointer<KSQPublicKey>::create(kDefaultEC, baPub);
+    auto privkey = QSharedPointer<KSQPrivateKey>::create(kDefaultEC, baPriv);
+
+    res = std::make_pair(privkey, pubkey);
     return true;
 }
 
@@ -152,9 +182,7 @@ KSQRoT::prepName(const QString &name, vs_storage_element_id_t id) const {
 
 //-----------------------------------------------------------------------------
 bool
-KSQRoT::save() const {
-    qDebug() << "Root of trust: save " << m_id;
-
+KSQRoT::save() {
     CHECK_NOT_ZERO_RET(saveKeyPair(kNameRecovery1, m_recovery1), false);
     CHECK_NOT_ZERO_RET(saveKeyPair(kNameRecovery2, m_recovery2), false);
 
@@ -169,14 +197,31 @@ KSQRoT::save() const {
 
     CHECK_NOT_ZERO_RET(saveKeyPair(kNameFactory, m_factory), false);
 
+    VS_LOG_DEBUG("Root of trust: saved SUCCESSFULLY %s", m_id.toStdString().c_str());
+
     return true;
 }
 
 //-----------------------------------------------------------------------------
 bool
 KSQRoT::load(const QString &id) {
-    qDebug() << "Root of trust: load " << id;
-    return false;
+    CHECK_NOT_ZERO_RET(loadKeyPair(kNameRecovery1, m_recovery1), false);
+    CHECK_NOT_ZERO_RET(loadKeyPair(kNameRecovery2, m_recovery2), false);
+
+    CHECK_NOT_ZERO_RET(loadKeyPair(kNameAuth1, m_auth1), false);
+    CHECK_NOT_ZERO_RET(loadKeyPair(kNameAuth2, m_auth2), false);
+
+    CHECK_NOT_ZERO_RET(loadKeyPair(kNameTl1, m_tl1), false);
+    CHECK_NOT_ZERO_RET(loadKeyPair(kNameTl2, m_tl2), false);
+
+    CHECK_NOT_ZERO_RET(loadKeyPair(kNameFirmware1, m_firmware1), false);
+    CHECK_NOT_ZERO_RET(loadKeyPair(kNameFirmware2, m_firmware2), false);
+
+    CHECK_NOT_ZERO_RET(loadKeyPair(kNameFactory, m_factory), false);
+
+    VS_LOG_DEBUG("Root of trust: loaded SUCCESSFULLY %s", m_id.toStdString().c_str());
+
+    return true;
 }
 
 //-----------------------------------------------------------------------------

@@ -114,6 +114,7 @@ signals:
 public slots:
 
 private:
+    static const vs_secmodule_keypair_type_e kDefaultEC;
     static const QString kNamePrivate;
     static const QString kNamePublic;
 
@@ -158,13 +159,16 @@ private:
     prepName(const QString &name, vs_storage_element_id_t id) const;
 
     bool
-    save() const;
+    save();
 
     bool
     saveKeyPair(const QString &name, const KSQKeyPair &keypair) const;
 
     bool
     load(const QString &id);
+
+    bool
+    loadKeyPair(const QString &name, KSQKeyPair &keyPair) const;
 };
 
 Q_DECLARE_METATYPE(KSQRoT)

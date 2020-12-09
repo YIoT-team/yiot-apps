@@ -112,13 +112,13 @@ KSQRoTController::prepare() {
 
     qDebug() << "RoT list: " << idsList;
 
-    if (!idsList.contains(KSQRoT::kLocalID)) {
-        auto localRoT = QSharedPointer<KSQRoT>::create(KSQRoT::kLocalID, "secure-enclave");
-        if (!localRoT->isValid()) {
-            return false;
-        }
-        idsList << KSQRoT::kLocalID;
+    auto localRoT = QSharedPointer<KSQRoT>::create(KSQRoT::kLocalID, "secure-enclave");
+    if (!localRoT->isValid()) {
+        return false;
+    }
 
+    if (!idsList.contains(KSQRoT::kLocalID)) {
+        idsList << KSQRoT::kLocalID;
         m_isValid = saveRoTList(idsList);
         return m_isValid;
     }
