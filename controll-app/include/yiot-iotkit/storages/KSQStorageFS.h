@@ -37,26 +37,15 @@ public:
     virtual ~KSQStorageFS() = default;
 
 protected:
-    virtual bool
-    openImpl(const QString & file);
 
     virtual bool
-    closeImpl(const QString & file);
+    writeImpl(const QString &file, const QByteArray &data);
 
     virtual bool
-    syncImpl(const QString & file);
-
-    virtual bool
-    writeImpl(const QString &file, size_t offset, const QByteArray &data);
-
-    virtual bool
-    readImpl(const QString &file, size_t offset, size_t readSz, QByteArray &data);
+    readImpl(const QString &file, QByteArray &data);
 
     virtual bool
     deleteImpl(const QString &file);
-
-    virtual ssize_t
-    fileSizeImpl(const QString &file);
 
 private:
     static const size_t kFileSizeMax = 10 * 1024 * 1024;

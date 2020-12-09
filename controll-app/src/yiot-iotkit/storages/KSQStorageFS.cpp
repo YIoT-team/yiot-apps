@@ -22,48 +22,30 @@
 
 //-----------------------------------------------------------------------------
 KSQStorageFS::KSQStorageFS() : KSQStorageBase(kFileSizeMax) {
-
+    VS_LOG_DEBUG(">>> %s", __FUNCTION__);
 }
 
 //-----------------------------------------------------------------------------
 bool
-KSQStorageFS::openImpl(const QString & file) {
+KSQStorageFS::writeImpl(const QString &file, const QByteArray &data) {
+    VS_LOG_DEBUG(">>> %s  %s", __FUNCTION__, file.toStdString().c_str());
+    
     return false;
 }
 
 //-----------------------------------------------------------------------------
 bool
-KSQStorageFS::closeImpl(const QString & file) {
-    return false;
-}
-
-//-----------------------------------------------------------------------------
-bool
-KSQStorageFS::syncImpl(const QString & file) {
-    return false;
-}
-
-//-----------------------------------------------------------------------------
-bool
-KSQStorageFS::writeImpl(const QString &file, size_t offset, const QByteArray &data) {
-    return false;
-}
-
-//-----------------------------------------------------------------------------
-bool
-KSQStorageFS::readImpl(const QString &file, size_t offset, size_t readSz, QByteArray &data) {
+KSQStorageFS::readImpl(const QString &file, QByteArray &data) {
+    VS_LOG_DEBUG(">>> %s  %s", __FUNCTION__, file.toStdString().c_str());
+    
     return false;
 }
 
 //-----------------------------------------------------------------------------
 bool
 KSQStorageFS::deleteImpl(const QString &file) {
-    return false;
-}
-
-//-----------------------------------------------------------------------------
-ssize_t
-KSQStorageFS::fileSizeImpl(const QString &file) {
+    VS_LOG_DEBUG(">>> %s  %s", __FUNCTION__, file.toStdString().c_str());
+    
     return false;
 }
 

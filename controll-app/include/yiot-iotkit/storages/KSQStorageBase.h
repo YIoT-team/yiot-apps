@@ -45,28 +45,18 @@ public slots:
 
 protected:
     virtual bool
-    openImpl(const QString & file) = 0;
+    writeImpl(const QString &file, const QByteArray &data) = 0;
 
     virtual bool
-    closeImpl(const QString & file) = 0;
-
-    virtual bool
-    syncImpl(const QString & file) = 0;
-
-    virtual bool
-    writeImpl(const QString &file, size_t offset, const QByteArray &data) = 0;
-
-    virtual bool
-    readImpl(const QString &file, size_t offset, size_t readSz, QByteArray &data) = 0;
+    readImpl(const QString &file, QByteArray &data) = 0;
 
     virtual bool
     deleteImpl(const QString &file) = 0;
 
-    virtual ssize_t
-    fileSizeImpl(const QString &file) = 0;
-
 private:
     vs_storage_op_ctx_t m_storageImpl;
+
+    QMap<QString, QByteArray> m_cache;
 
     vs_storage_impl_func_t
     _funcImpl();
@@ -105,6 +95,9 @@ private:
 
     static vs_status_e
     _del(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_element_id_t id);
+
+    static bool
+    _inCache(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_file_t file);
 };
 
 #endif // _YIOT_QT_STORAGE_BASE_H_

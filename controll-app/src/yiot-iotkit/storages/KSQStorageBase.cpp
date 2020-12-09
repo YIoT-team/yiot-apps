@@ -39,7 +39,17 @@ KSQStorageBase::_deinit(vs_storage_impl_data_ctx_t storage_ctx) {
 //-----------------------------------------------------------------------------
 QString
 KSQStorageBase::id2str(const vs_storage_element_id_t id) {
-    return "";
+    QString res;
+    for (int i = 0; i < VS_STORAGE_ELEMENT_ID_MAX; i++) {
+        auto c = QChar(id[i]);
+        if (c.isLetterOrNumber() || c == "_" || c == "-") {
+            res += c;
+        } else {
+            auto baHex = QByteArray(reinterpret_cast<const char*>(&id[i]), 1).toHex();
+            res += QString(baHex);
+        }
+    }
+    return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -48,12 +58,25 @@ KSQStorageBase::_open(const vs_storage_impl_data_ctx_t storage_ctx, const vs_sto
     CHECK_NOT_ZERO_RET(id, NULL);
     CHECK_NOT_ZERO_RET(storage_ctx, NULL);
 
+    auto f = id2str(id);
     auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
-    if (ctx->openImpl(id2str(id))) {
-        return new QString(id2str(id));
+
+    QByteArray baData;
+    if (ctx->readImpl(f, baData)) {
+        ctx->m_cache[f] = baData;
+    } else {
+        ctx->m_cache[f] = QByteArray();
     }
 
-    return NULL;
+    return new QString(f);
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQStorageBase::_inCache(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_file_t file) {
+    const auto &f = *reinterpret_cast<QString*>(file);
+    auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
+    return ctx->m_cache.keys().contains(f);
 }
 
 //-----------------------------------------------------------------------------
@@ -63,7 +86,7 @@ KSQStorageBase::_close(const vs_storage_impl_data_ctx_t storage_ctx, vs_storage_
 
     auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
     auto f = reinterpret_cast<QString*>(file);
-    ctx->openImpl(*f);
+    ctx->m_cache.remove(*f);
     delete f;
 
     return VS_CODE_OK;
@@ -76,10 +99,12 @@ KSQStorageBase::_sync(const vs_storage_impl_data_ctx_t storage_ctx, const vs_sto
 
     CHECK_NOT_ZERO_RET(file, VS_CODE_ERR_NULLPTR_ARGUMENT);
     CHECK_NOT_ZERO_RET(storage_ctx, VS_CODE_ERR_NULLPTR_ARGUMENT);
-    auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
+    CHECK_NOT_ZERO_RET(_inCache(storage_ctx, file), VS_CODE_ERR_FILE);
 
+    auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
     const auto &f = *reinterpret_cast<QString*>(file);
-    if (ctx->syncImpl(f)) {
+
+    if (ctx->writeImpl(f, ctx->m_cache[f])) {
         res = VS_CODE_OK;
     }
     return res;
@@ -92,20 +117,23 @@ KSQStorageBase::_save(const vs_storage_impl_data_ctx_t storage_ctx,
                         size_t offset,
                         const uint8_t *data,
                         size_t data_sz) {
-    vs_status_e res = VS_CODE_ERR_FILE_WRITE;
-
     CHECK_NOT_ZERO_RET(data, VS_CODE_ERR_NULLPTR_ARGUMENT);
     CHECK_NOT_ZERO_RET(storage_ctx, VS_CODE_ERR_NULLPTR_ARGUMENT);
     CHECK_NOT_ZERO_RET(file, VS_CODE_ERR_NULLPTR_ARGUMENT);
+    CHECK_NOT_ZERO_RET(_inCache(storage_ctx, file), VS_CODE_ERR_FILE);
 
     auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
     const auto &f = *reinterpret_cast<QString*>(file);
-    auto baData = QByteArray(reinterpret_cast<const char *> (data), data_sz);
 
-    if (ctx->writeImpl(f, offset, baData)) {
-        res = VS_CODE_OK;
+    QByteArray &fileData = ctx->m_cache[f];
+
+    if (fileData.size() < (offset + data_sz)) {
+        fileData.resize(offset + data_sz);
     }
-    return res;
+
+    memcpy(fileData.data() + offset, data, data_sz);
+
+    return VS_CODE_OK;
 }
 
 //-----------------------------------------------------------------------------
@@ -120,17 +148,19 @@ KSQStorageBase::_load(const vs_storage_impl_data_ctx_t storage_ctx,
     CHECK_NOT_ZERO_RET(out_data, VS_CODE_ERR_INCORRECT_PARAMETER);
     CHECK_NOT_ZERO_RET(storage_ctx, VS_CODE_ERR_INCORRECT_PARAMETER);
     CHECK_NOT_ZERO_RET(file, VS_CODE_ERR_INCORRECT_PARAMETER);
+    CHECK_NOT_ZERO_RET(_inCache(storage_ctx, file), VS_CODE_ERR_FILE);
 
     auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
     const auto &f = *reinterpret_cast<QString*>(file);
-    QByteArray baData;
+    QByteArray &fileData = ctx->m_cache[f];
 
-    if (ctx->readImpl(f, offset, data_sz, baData) && baData.size() == data_sz) {
-        memcpy(out_data, baData.data(), data_sz);
-        res = VS_CODE_OK;
+    if (fileData.size() < (offset + data_sz)) {
+        return res;
     }
 
-    return res;
+    memcpy(out_data, fileData.data() + offset, data_sz);
+
+    return VS_CODE_OK;
 }
 
 //-----------------------------------------------------------------------------
@@ -139,8 +169,14 @@ KSQStorageBase::_fileSize(const vs_storage_impl_data_ctx_t storage_ctx, const vs
     CHECK_NOT_ZERO_RET(id, VS_CODE_ERR_INCORRECT_PARAMETER);
     CHECK_NOT_ZERO_RET(storage_ctx, VS_CODE_ERR_INCORRECT_PARAMETER);
 
+    auto f = id2str(id);
     auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
-    return ctx->fileSizeImpl(id2str(id));
+
+    if (ctx->m_cache.keys().contains(f)) {
+        return ctx->m_cache[f].size();
+    }
+
+    return 0;
 }
 
 //-----------------------------------------------------------------------------

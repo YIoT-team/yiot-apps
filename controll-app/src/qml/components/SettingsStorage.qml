@@ -39,7 +39,7 @@ Item {
     // KeyChain Writer
     WritePasswordJob {
         id: storeJobObject
-        service: "yiot"
+        service: "YIoT"
         autoDelete: false
         onFinished: {
             console.debug("Store password complete")
@@ -52,7 +52,7 @@ Item {
 
         id: readJobObject
         autoDelete: false
-        service: "yiot"
+        service: "YIoT"
 
         Component.onCompleted: {
             readJobObject.finished.connect(function (returnedPassword) {
