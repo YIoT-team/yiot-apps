@@ -29,7 +29,8 @@ using namespace VirgilIoTKit;
 //-----------------------------------------------------------------------------
 KSQSecBox::KSQSecBox() {
     m_valid = true;
-    m_storage = new KSQStorageFS();
+    auto base = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
+    m_storage = new KSQStorageFS(base + QDir::separator() + "secbox");
 
     auto storage = m_storage->storageImpl();
     auto secModule = KSQSecModule::instance().secmoduleImpl();

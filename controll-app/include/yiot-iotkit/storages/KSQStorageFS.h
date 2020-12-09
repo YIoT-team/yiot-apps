@@ -33,7 +33,7 @@ class KSQStorageFS final: public KSQStorageBase {
     Q_OBJECT
 
 public:
-    KSQStorageFS();
+    KSQStorageFS(const QString &baseDir);
     virtual ~KSQStorageFS() = default;
 
 protected:
@@ -49,6 +49,8 @@ protected:
 
 private:
     static const size_t kFileSizeMax = 10 * 1024 * 1024;
+    bool m_valid;
+    QString m_baseDir;
 };
 
 #endif // _YIOT_QT_FILE_SYSTEM_STORAGE_H_

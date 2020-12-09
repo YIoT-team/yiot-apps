@@ -30,7 +30,8 @@ using namespace VirgilIoTKit;
 
 KSQProvision::KSQProvision() {
     m_valid = false;
-    m_storage = new KSQStorageFS();
+    auto base = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
+    m_storage = new KSQStorageFS(base + QDir::separator() + "provision");
 
     auto storage = m_storage->storageImpl();
     auto secmodule = KSQSecModule::instance().secmoduleImpl();

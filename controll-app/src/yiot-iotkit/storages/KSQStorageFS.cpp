@@ -21,32 +21,62 @@
 #include <yiot-iotkit/storages/KSQStorageFS.h>
 
 //-----------------------------------------------------------------------------
-KSQStorageFS::KSQStorageFS() : KSQStorageBase(kFileSizeMax) {
-    VS_LOG_DEBUG(">>> %s", __FUNCTION__);
+KSQStorageFS::KSQStorageFS(const QString &baseDir) : KSQStorageBase(kFileSizeMax) {
+    m_baseDir = baseDir;
+    QDir dir(m_baseDir);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+    m_valid = dir.exists();
+
+    VS_LOG_DEBUG("KSQStorageFS: %s", baseDir.toStdString().c_str());
 }
 
 //-----------------------------------------------------------------------------
 bool
 KSQStorageFS::writeImpl(const QString &file, const QByteArray &data) {
-    VS_LOG_DEBUG(">>> %s  %s", __FUNCTION__, file.toStdString().c_str());
-    
-    return false;
+    CHECK_RET(m_valid, false, "Storage is not ready");
+
+    deleteImpl(file);
+
+    auto fn = m_baseDir + QDir::separator() + file;
+    QFile f(fn);
+    if (!f.open(QIODevice::WriteOnly)) {
+        VS_LOG_WARNING("Cannot open file %s", fn.toStdString().c_str());
+        return false;
+    }
+
+    bool res = data.size() == f.write(data);
+    f.close();
+
+    return res;
 }
 
 //-----------------------------------------------------------------------------
 bool
 KSQStorageFS::readImpl(const QString &file, QByteArray &data) {
-    VS_LOG_DEBUG(">>> %s  %s", __FUNCTION__, file.toStdString().c_str());
+    CHECK_RET(m_valid, false, "Storage is not ready");
+
+    auto fn = m_baseDir + QDir::separator() + file;
+    QFile f(fn);
+    if (!f.open(QIODevice::ReadOnly)) {
+        VS_LOG_WARNING("Cannot open file %s", fn.toStdString().c_str());
+        return false;
+    }
+
+    data = f.read(kFileSizeMax);
+    f.close();
     
-    return false;
+    return true;
 }
 
 //-----------------------------------------------------------------------------
 bool
 KSQStorageFS::deleteImpl(const QString &file) {
-    VS_LOG_DEBUG(">>> %s  %s", __FUNCTION__, file.toStdString().c_str());
-    
-    return false;
+    CHECK_RET(m_valid, false, "Storage is not ready");
+    auto fn = m_baseDir + QDir::separator() + file;
+    QFile::remove(fn);
+    return true;
 }
 
 //-----------------------------------------------------------------------------

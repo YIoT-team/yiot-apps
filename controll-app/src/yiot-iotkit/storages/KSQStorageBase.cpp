@@ -172,11 +172,14 @@ KSQStorageBase::_fileSize(const vs_storage_impl_data_ctx_t storage_ctx, const vs
     auto f = id2str(id);
     auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
 
-    if (ctx->m_cache.keys().contains(f)) {
-        return ctx->m_cache[f].size();
+    QByteArray baData;
+    if (ctx->readImpl(f, baData)) {
+        ctx->m_cache[f] = baData;
+    } else {
+        ctx->m_cache[f] = QByteArray();
     }
 
-    return 0;
+    return baData.size();
 }
 
 //-----------------------------------------------------------------------------
