@@ -49,11 +49,16 @@ const QString KSQRoT::kNameFactory = "factory";
 const QString KSQRoT::kNameTrustList = "trust_list";
 
 //-----------------------------------------------------------------------------
+KSQRoT::KSQRoT() : QObject(), m_trustList("") {
+
+}
+
+//-----------------------------------------------------------------------------
 KSQRoT::KSQRoT(const QString &id, const QString &image) : QObject() {
     m_image = image;
-    m_isValid = load(id);
-    if (!m_isValid && id == kLocalID) {
-        m_isValid = generate("Local Root of trust");
+    m_valid = load(id);
+    if (!m_valid && id == kLocalID) {
+        m_valid = generate("Local Root of trust");
     }
 }
 
@@ -87,6 +92,10 @@ KSQRoT::generate(const QString &name) {
 
     VS_LOG_DEBUG("Root of trust: generate %s", name.toStdString().c_str());
 
+    // Set information
+    m_name = name;
+    m_id = kLocalID;
+
     // Generate required amount of keys
     for (int i = 0; i < _keysCnt; i++) {
         auto keyPair = KSQSecModule::instance().generateKeypair(kDefaultEC);
@@ -112,8 +121,9 @@ KSQRoT::generate(const QString &name) {
     m_factory = keyPairs[8];
 
     // Generate TrustList
-    m_name = name;
-    m_id = kLocalID;
+    if (!m_trustList.create(m_id, *this)) {
+        return false;
+    }
 
     // Store generated keys for SecBox
     return save();
@@ -205,6 +215,8 @@ KSQRoT::save() {
 //-----------------------------------------------------------------------------
 bool
 KSQRoT::load(const QString &id) {
+    m_id = id;
+
     CHECK_NOT_ZERO_RET(loadKeyPair(kNameRecovery1, m_recovery1), false);
     CHECK_NOT_ZERO_RET(loadKeyPair(kNameRecovery2, m_recovery2), false);
 
@@ -221,7 +233,7 @@ KSQRoT::load(const QString &id) {
 
     VS_LOG_DEBUG("Root of trust: loaded SUCCESSFULLY %s", m_id.toStdString().c_str());
 
-    return true;
+    return m_trustList.load(id);
 }
 
 //-----------------------------------------------------------------------------

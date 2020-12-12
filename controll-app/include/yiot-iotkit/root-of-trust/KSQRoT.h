@@ -35,8 +35,7 @@ class KSQRoT : public QObject {
     friend KSQRoTController;
 
 public:
-    KSQRoT() : QObject() {
-    }
+    KSQRoT();
 
     KSQRoT(const QString &id, const QString &image = "");
 
@@ -104,9 +103,19 @@ public:
         return m_factory;
     }
 
+    const KSQKeyPair &
+    auth1Full() const {
+        return m_auth1;
+    }
+
+    const KSQKeyPair &
+    tl1Full() const {
+        return m_tl1;
+    }
+
     bool
     isValid() const {
-        return m_isValid;
+        return m_valid;
     }
 
     static const QString kLocalID;
@@ -144,7 +153,7 @@ private:
 
     static const QString kNameTrustList;
 
-    bool m_isValid;
+    bool m_valid;
     QString m_id;
     QString m_name;
     QString m_image;

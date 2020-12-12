@@ -135,6 +135,10 @@ KSQProvision::create(QSharedPointer<KSQRoT> rot) {
     // Save signature
     CHECK_RET(saveElement(VS_PROVISION_SGNP, signature), false, "Cannot save own signature");
 
+    // Set TrustList
+    //    vs_status_e
+//    vs_tl_save_part(vs_tl_element_info_t *element_info, const uint8_t *in_data, uint16_t data_sz);
+
     return true;
 }
 
