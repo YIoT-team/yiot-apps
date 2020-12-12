@@ -99,6 +99,11 @@ public:
         return m_trustList;
     }
 
+    const KSQKeyPair &
+    factory() const {
+        return m_factory;
+    }
+
     bool
     isValid() const {
         return m_isValid;

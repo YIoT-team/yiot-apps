@@ -21,6 +21,7 @@
 #include <yiot-iotkit/secmodule/KSQSecModule.h>
 
 #include <virgil/iot/secmodule/secmodule.h>
+#include <virgil/iot/secmodule/secmodule-helpers.h>
 #include <virgil/iot/converters/crypto_format_converters.h>
 #include <virgil/iot/vs-soft-secmodule/vs-soft-secmodule.h>
 
@@ -78,4 +79,55 @@ KSQSecModule::generateKeypair(vs_secmodule_keypair_type_e keypair_type) const {
     return std::make_pair(privkey, pubkey);
 }
 
+//-----------------------------------------------------------------------------
+QByteArray
+KSQSecModule::sign(const QByteArray &data,
+                   QSharedPointer<KSQPrivateKey> key,
+                   vs_secmodule_hash_type_e hashType) const {
+
+    QByteArray res;
+    const auto kFactoryKeySlot = VS_KEY_SLOT_STD_TMP_0;
+
+    // Check input parameters
+    CHECK_RET(!key.isNull(), res, "Wrong Private key for signature");
+
+    // Set Factory private key to TMP slot
+    CHECK_RET(VS_CODE_OK == m_secmoduleImpl->set_keypair(kFactoryKeySlot,
+                                                         key->ecType(),
+                                                         reinterpret_cast<const uint8_t*>(key->val().data()),
+                                                         key->val().size(),
+                                                         NULL,
+                                                         0),
+              res,
+              "Cannot save private key to TMP slot for data signature");
+
+    // Create HASH for data to be signed
+    int hashSzMax = vs_secmodule_get_hash_len(hashType);
+    uint8_t hash[hashSzMax];
+    uint16_t hashResSz;
+    CHECK_RET(VS_CODE_OK == m_secmoduleImpl->hash(hashType,
+                                                  reinterpret_cast<const uint8_t*>(data.data()),
+                                                  data.size(),
+                                                  hash,
+                                                  hashSzMax,
+                                                  &hashResSz),
+              res,
+              "ERROR while creating hash");
+
+    // Sign own public key by factory's private key
+    int signSzMax = vs_secmodule_get_signature_len(key->ecType());
+    uint8_t sign[signSzMax];
+    uint16_t signResSz;
+
+    CHECK_RET(VS_CODE_OK == m_secmoduleImpl->ecdsa_sign(kFactoryKeySlot,
+                                                        hashType,
+                                                        hash,
+                                                        sign,
+                                                        signSzMax,
+                                                        &signResSz),
+              res,
+              "Cannot sign data");
+
+    return QByteArray(reinterpret_cast<char*>(sign), signResSz);
+}
 //-----------------------------------------------------------------------------

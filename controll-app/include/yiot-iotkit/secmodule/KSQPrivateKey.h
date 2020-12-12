@@ -40,6 +40,11 @@ public:
         return m_key;
     }
 
+    const vs_secmodule_keypair_type_e
+    ecType() const {
+        return m_keypair_type;
+    }
+
 signals:
 
 public slots:

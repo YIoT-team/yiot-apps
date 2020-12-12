@@ -26,6 +26,8 @@
 #include <yiot-iotkit/storages/KSQStorageFS.h>
 #include <yiot-iotkit/root-of-trust/KSQRoT.h>
 
+#include <virgil/iot/provision/provision.h>
+
 class KSQProvision : public QObject, public VSQSingleton<KSQProvision> {
     Q_OBJECT
 
@@ -51,8 +53,25 @@ private:
     bool
     prepareOwnKeyPair();
 
+    bool
+    saveElement(vs_provision_element_id_e element, const QByteArray &data);
+
     bool m_valid;
     KSQStorageFS *m_storage;
+
+    KSQPublicKey m_ownPubic;
+
+    KSQPublicKey m_recovery1;
+    KSQPublicKey m_recovery2;
+
+    KSQPublicKey m_auth1;
+    KSQPublicKey m_auth2;
+
+    KSQPublicKey m_tl1;
+    KSQPublicKey m_tl2;
+
+    KSQPublicKey m_firmware1;
+    KSQPublicKey m_firmware2;
 };
 
 #endif // YIOT_PROVISION_H

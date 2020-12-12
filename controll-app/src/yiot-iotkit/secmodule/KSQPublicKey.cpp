@@ -34,6 +34,20 @@ KSQPublicKey::KSQPublicKey(vs_secmodule_keypair_type_e keypair_type, const QByte
 }
 
 //-----------------------------------------------------------------------------
+KSQPublicKey &
+KSQPublicKey::operator=(const KSQPublicKey &k) {
+    if (this == &k) {
+        return *this;
+    }
+
+    m_keypair_type = k.m_keypair_type;
+    m_key = k.m_key;
+    m_isValid = k.m_isValid;
+
+    return *this;
+}
+
+//-----------------------------------------------------------------------------
 QString
 KSQPublicKey::description() const {
     return m_key.toBase64();

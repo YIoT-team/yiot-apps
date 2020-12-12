@@ -33,6 +33,9 @@ public:
     KSQPublicKey();
     KSQPublicKey(vs_secmodule_keypair_type_e keypair_type, const QByteArray &key);
 
+    KSQPublicKey &
+    operator=(const KSQPublicKey &k);
+
     virtual ~KSQPublicKey() = default;
 
     QString

@@ -47,6 +47,7 @@ KSQProvision::KSQProvision() {
 bool
 KSQProvision::prepareOwnKeyPair() {
 
+    bool res = false;
     uint8_t public_key[256] = {0};
     uint16_t public_key_sz = 0;
     vs_secmodule_keypair_type_e keypair_type = VS_KEYPAIR_INVALID;
@@ -59,18 +60,31 @@ KSQProvision::prepareOwnKeyPair() {
                               &public_key_sz,
                               &keypair_type
                               )) {
-        return true;
-    }
-
-    // Try to create own key pair if absent
-    if (VS_CODE_OK == KSQSecModule::instance().secmoduleImpl()->create_keypair(
-            PRIVATE_KEY_SLOT,
-            VS_KEYPAIR_EC_SECP256R1
+        res = true;
+    } else {
+        // Try to create own key pair if absent
+        if (VS_CODE_OK == KSQSecModule::instance().secmoduleImpl()->create_keypair(
+                PRIVATE_KEY_SLOT,
+                VS_KEYPAIR_EC_SECP256R1
+        )) {
+            if (VS_CODE_OK == KSQSecModule::instance().secmoduleImpl()->get_pubkey(
+                    PRIVATE_KEY_SLOT,
+                    public_key,
+                    sizeof(public_key),
+                    &public_key_sz,
+                    &keypair_type
             )) {
-        return true;
+                res = true;
+            }
+        }
     }
 
-    return false;
+    if (res) {
+        m_ownPubic = KSQPublicKey(keypair_type,
+                                  QByteArray(reinterpret_cast<char *>(public_key), public_key_sz));
+    }
+
+    return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -81,8 +95,46 @@ KSQProvision::~KSQProvision() {
 
 //-----------------------------------------------------------------------------
 bool
+KSQProvision::saveElement(vs_provision_element_id_e element, const QByteArray &data) {
+    uint16_t slot;
+    CHECK_RET(VS_CODE_OK == vs_provision_get_slot_num((vs_provision_element_id_e)element, &slot),
+              false,
+              "Unable to get slot");
+
+    auto saveFunc =  KSQSecModule::instance().secmoduleImpl()->slot_save;
+    CHECK_RET(VS_CODE_OK == saveFunc(static_cast<vs_iot_secmodule_slot_e>(slot),
+                                     reinterpret_cast<const uint8_t*>(data.data()), data.size()),
+              false,
+              "Unable to get slot");
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+bool
 KSQProvision::create(QSharedPointer<KSQRoT> rot) {
     VS_LOG_DEBUG("Creation of self-signed provision");
+
+    CHECK_NOT_ZERO_RET(rot->isValid(), false);
+    CHECK_NOT_ZERO_RET(!rot->factory().first.isNull(), false);
+
+    // Save all required pulic keys
+    CHECK_RET(saveElement(VS_PROVISION_PBR1, rot->recovery1().val()), false, "Cannot save Recovery 1");
+    CHECK_RET(saveElement(VS_PROVISION_PBR2, rot->recovery2().val()), false, "Cannot save Recovery 2");
+    CHECK_RET(saveElement(VS_PROVISION_PBA1, rot->auth1().val()), false, "Cannot save Auth 1");
+    CHECK_RET(saveElement(VS_PROVISION_PBA2, rot->auth2().val()), false, "Cannot save Auth 2");
+    CHECK_RET(saveElement(VS_PROVISION_PBT1, rot->tl1().val()), false, "Cannot save TL 1");
+    CHECK_RET(saveElement(VS_PROVISION_PBT2, rot->tl2().val()), false, "Cannot save TL 2");
+    CHECK_RET(saveElement(VS_PROVISION_PBF1, rot->firmware1().val()), false, "Cannot save Firmware 1");
+    CHECK_RET(saveElement(VS_PROVISION_PBF2, rot->firmware2().val()), false, "Cannot save Firmware 2");
+
+    // Sign own public key by factory
+    auto signature = KSQSecModule::instance().sign(m_ownPubic.val(), rot->factory().first);
+    CHECK_RET(signature.size(), false, "Cannot sign own public key");
+
+    // Save signature
+    CHECK_RET(saveElement(VS_PROVISION_SGNP, signature), false, "Cannot save own signature");
+
     return true;
 }
 
