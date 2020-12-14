@@ -23,6 +23,8 @@
 #include <virgil/iot/trust_list/trust_list.h>
 #include <virgil/iot/secmodule/secmodule-helpers.h>
 
+#include <endian-config.h>
+
 //-----------------------------------------------------------------------------
 KSQTrustList::KSQTrustList(const QString &id): QObject() {
     m_valid = false;
@@ -100,6 +102,8 @@ KSQTrustList::create(const QString &id, const KSQRoT &rot) {
     tlHeader->version.build = 0;
     tlHeader->version.timestamp = QDateTime::currentDateTime().toSecsSinceEpoch() - VS_START_EPOCH;
 
+    vs_tl_header_to_net(tlHeader, tlHeader);
+
     // -----------
     //  Body
     // -----------
@@ -108,41 +112,24 @@ KSQTrustList::create(const QString &id, const KSQRoT &rot) {
     factoryKey->pubkey.ec_type = rot.factory().second->ecType();
     factoryKey->pubkey.key_type = VS_KEY_FACTORY;
     factoryKey->pubkey.meta_data_sz = 0;
-    memcpy(factoryKey->pubkey.meta_and_pubkey,
-           rot.factory().second->val().data(),
-           rot.factory().second->val().size());
+    auto datedKey = rot.factory().second->datedKey();
+    memcpy(factoryKey->pubkey.meta_and_pubkey, datedKey.data(), datedKey.size());
 
     // -----------
     //  Footer
     // -----------
     tlFooter->tl_type = TL_STORAGE_TYPE_STATIC;
-    vs_sign_t *signAuth = reinterpret_cast<vs_sign_t *>(tlFooter->signatures);
-    vs_sign_t *signTl = reinterpret_cast<vs_sign_t *>(
-            reinterpret_cast<uint8_t *>(signAuth) + authSignSz
-            );
 
     // Data to be signed
     const auto dataToSign = QByteArray::fromRawData(m_tl.data(), signSz);
 
-    // Signature by Auth key
-    signAuth->ec_type = rot.auth1Full().first->ecType();
-    signAuth->hash_type = VS_HASH_SHA_256;
-    signAuth->signer_type = VS_KEY_AUTH;
-    auto signAuthData = KSQSecModule::instance().sign(dataToSign, rot.auth1Full().first);
-    CHECK_RET(signAuthData.size(), false, "Cannot sign TrustList by Auth key");
-    memcpy(signAuth->raw_sign_pubkey, signAuthData.data(), signAuthData.size());
-    uint8_t *pubBuf = signAuth->raw_sign_pubkey + signAuthData.size();
-    memcpy(pubBuf, rot.auth1Full().second->val().data(), rot.auth1Full().second->val().size());
+    // Sign data
+    auto authSign = KSQSecModule::instance().sign(dataToSign, rot.auth1Full());
+    auto tlSign = KSQSecModule::instance().sign(dataToSign, rot.tl1Full());
 
-    // Signature by TL key
-    signTl->ec_type = rot.tl1Full().first->ecType();
-    signTl->hash_type = VS_HASH_SHA_256;
-    signTl->signer_type = VS_KEY_TRUSTLIST;
-    auto signTlData = KSQSecModule::instance().sign(dataToSign, rot.tl1Full().first);
-    CHECK_RET(signTlData.size(), false, "Cannot sign TrustList by TL key");
-    memcpy(signTl->raw_sign_pubkey, signTlData.data(), signTlData.size());
-    uint8_t *pubBufTl = signTl->raw_sign_pubkey + signTlData.size();
-    memcpy(pubBufTl, rot.tl1Full().second->val().data(), rot.tl1Full().second->val().size());
+    // Set signatures to TrustList
+    auto allSignatures = authSign + tlSign;
+    memcpy(tlFooter->signatures, allSignatures.data(), allSignatures.size());
 
     m_id = id;
 

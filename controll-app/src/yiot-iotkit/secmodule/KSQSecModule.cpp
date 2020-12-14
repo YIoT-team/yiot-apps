@@ -24,9 +24,12 @@
 #include <virgil/iot/secmodule/secmodule-helpers.h>
 #include <virgil/iot/converters/crypto_format_converters.h>
 #include <virgil/iot/vs-soft-secmodule/vs-soft-secmodule.h>
+#include <virgil/iot/secmodule/secmodule-helpers.h>
 
 #include <yiot-iotkit/storages/KSQStorageKeychain.h>
+#include <yiot-iotkit/storages/KSQStorageFS.h>
 
+#include <endian-config.h>
 
 // !!! Include private headers from Software security module !!!
 using namespace VirgilIoTKit;
@@ -81,7 +84,7 @@ KSQSecModule::generateKeypair(vs_secmodule_keypair_type_e keypair_type) const {
 
 //-----------------------------------------------------------------------------
 QByteArray
-KSQSecModule::sign(const QByteArray &data,
+KSQSecModule::signRaw(const QByteArray &data,
                    QSharedPointer<KSQPrivateKey> key,
                    vs_secmodule_hash_type_e hashType) const {
 
@@ -130,4 +133,47 @@ KSQSecModule::sign(const QByteArray &data,
 
     return QByteArray(reinterpret_cast<char*>(sign), signResSz);
 }
+
+//-----------------------------------------------------------------------------
+QByteArray
+KSQSecModule::sign(const QByteArray &data,
+     const KSQKeyPair &signerKeyPair,
+     vs_secmodule_hash_type_e hashType) const {
+    QByteArray res;
+
+    // Check input parameters
+    CHECK_NOT_ZERO_RET(!signerKeyPair.first.isNull(), res);
+    CHECK_NOT_ZERO_RET(!signerKeyPair.second.isNull(), res);
+
+    // Calculate required size of buffer
+    size_t signSz = sizeof(vs_sign_t)
+                    + vs_secmodule_get_signature_len(signerKeyPair.first->ecType())
+                    + vs_secmodule_get_pubkey_len(signerKeyPair.first->ecType());
+
+    // Allocate buffer
+    res.resize(signSz);
+
+    // Fill signature data
+    vs_sign_t *sign = reinterpret_cast<vs_sign_t *>(res.data());
+    sign->ec_type = signerKeyPair.first->ecType();
+    sign->hash_type = hashType;
+    sign->signer_type = signerKeyPair.second->provisionType();
+
+    // Sign data
+    auto signRawData = KSQSecModule::instance().signRaw(data, signerKeyPair.first);
+    CHECK_RET(signRawData.size(), QByteArray(), "");
+
+    // Copy signature
+    memcpy(sign->raw_sign_pubkey, signRawData.data(), signRawData.size());
+
+    // Set signer's public key
+    uint8_t *pubBuf = sign->raw_sign_pubkey + signRawData.size();
+    auto datedKey = reinterpret_cast<const vs_pubkey_dated_t *>(signerKeyPair.second->datedKey().data());
+    memcpy(pubBuf,
+           datedKey->pubkey.meta_and_pubkey + VS_IOT_NTOHS(datedKey->pubkey.meta_data_sz),
+           vs_secmodule_get_pubkey_len(static_cast<vs_secmodule_keypair_type_e>(datedKey->pubkey.ec_type)));
+
+    return res;
+}
+
 //-----------------------------------------------------------------------------

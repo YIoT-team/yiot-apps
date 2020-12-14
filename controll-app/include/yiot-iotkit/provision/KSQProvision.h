@@ -54,7 +54,10 @@ private:
     prepareOwnKeyPair();
 
     bool
-    saveElement(vs_provision_element_id_e element, const QByteArray &data);
+    savePubKey(vs_provision_element_id_e element, const KSQPublicKey &key);
+
+    bool
+    saveElementData(vs_provision_element_id_e element, const QByteArray &data);
 
     bool m_valid;
     KSQStorageFS *m_storage;

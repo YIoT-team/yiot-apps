@@ -23,14 +23,20 @@
 #include <yiot-iotkit/secmodule/KSQSecModule.h>
 #include <yiot-iotkit/secbox/KSQSecBox.h>
 
+#include <virgil/iot/provision/provision-structs.h>
+#include <virgil/iot/secmodule/secmodule-helpers.h>
+
+// TODO: Move it from SNAP protocol
+extern "C" {
+#include <virgil/iot/protocols/snap/generated/snap_cvt.h>
+}
+
 using namespace VirgilIoTKit;
 
 const vs_secmodule_keypair_type_e KSQRoT::kDefaultEC = VS_KEYPAIR_EC_SECP256R1;
+const vs_secmodule_hash_type_e KSQRoT::kDefaultHash = VS_HASH_SHA_256;
 
 const QString KSQRoT::kLocalID = "local_rot";
-
-const QString KSQRoT::kNamePrivate = "_priv";
-const QString KSQRoT::kNamePublic = "_pub";
 
 const QString KSQRoT::kNameRecovery1 = "recovery_1";
 const QString KSQRoT::kNameRecovery2 = "recovery_2";
@@ -86,6 +92,28 @@ KSQRoT::image() const {
 
 //-----------------------------------------------------------------------------
 bool
+KSQRoT::prepareProvisionKeyPair(KSQKeyPair &dst,
+                                const KSQKeyPair &src,
+                                vs_key_type_e provType,
+                                const KSQKeyPair &signer) {
+    dst = src;
+    dst.second->setProvisionType(provType);
+
+    QByteArray signature;
+    if (!signer.first.isNull() && !signer.second.isNull()) {
+        signature = KSQSecModule::instance().sign(dst.second->datedKey(), signer);
+        if (!signature.size()) {
+            VS_LOG_WARNING("Cannot sign data");
+            return false;
+        }
+    }
+    dst.second->setSignature(signature);
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+bool
 KSQRoT::generate(const QString &name) {
     static const size_t _keysCnt = 9;
     KSQKeyPair keyPairs[_keysCnt];
@@ -106,19 +134,28 @@ KSQRoT::generate(const QString &name) {
         keyPairs[i] = keyPair;
     }
 
-    m_recovery1 = keyPairs[0];
-    m_recovery2 = keyPairs[1];
+    CHECK_RET(prepareProvisionKeyPair(m_recovery1, keyPairs[0], VS_KEY_RECOVERY),
+              false, "Cannot prepare Recovery Key 1");
+    CHECK_RET(prepareProvisionKeyPair(m_recovery2, keyPairs[1], VS_KEY_RECOVERY),
+              false, "Cannot prepare Recovery Key 2");
 
-    m_auth1 = keyPairs[2];
-    m_auth2 = keyPairs[3];
+    CHECK_RET(prepareProvisionKeyPair(m_auth1, keyPairs[2], VS_KEY_AUTH, m_recovery1),
+              false, "Cannot prepare Auth Key 1");
+    CHECK_RET(prepareProvisionKeyPair(m_auth2, keyPairs[3], VS_KEY_AUTH, m_recovery1),
+              false, "Cannot prepare Auth Key 2");
 
-    m_tl1 = keyPairs[4];
-    m_tl2 = keyPairs[5];
+    CHECK_RET(prepareProvisionKeyPair(m_tl1, keyPairs[4], VS_KEY_TRUSTLIST, m_recovery1),
+              false, "Cannot prepare TL Key 1");
+    CHECK_RET(prepareProvisionKeyPair(m_tl2, keyPairs[5], VS_KEY_TRUSTLIST, m_recovery1),
+              false, "Cannot prepare TL Key 2");
 
-    m_firmware1 = keyPairs[6];
-    m_firmware2 = keyPairs[7];
+    CHECK_RET(prepareProvisionKeyPair(m_firmware1, keyPairs[6], VS_KEY_FIRMWARE, m_recovery1),
+              false, "Cannot prepare Firmware Key 1");
+    CHECK_RET(prepareProvisionKeyPair(m_firmware2, keyPairs[7], VS_KEY_FIRMWARE, m_recovery1),
+              false, "Cannot prepare Firmware Key 2");
 
-    m_factory = keyPairs[8];
+    CHECK_RET(prepareProvisionKeyPair(m_factory, keyPairs[8], VS_KEY_FACTORY),
+              false, "Cannot prepare Factory Key");
 
     // Generate TrustList
     if (!m_trustList.create(m_id, *this)) {
@@ -132,44 +169,53 @@ KSQRoT::generate(const QString &name) {
 //-----------------------------------------------------------------------------
 bool
 KSQRoT::saveKeyPair(const QString &name, const KSQKeyPair &keypair) const {
-    vs_storage_element_id_t id_priv;
-    vs_storage_element_id_t id_pub;
+    QByteArray data;
+    QDataStream dataStreamWrite(&data, QIODevice::WriteOnly);
+    dataStreamWrite << keypair.second->ecType()
+                    << keypair.second->provisionType()
+                    << keypair.first->val()
+                    << keypair.second->val()
+                    << keypair.second->signature();
 
-    CHECK_NOT_ZERO_RET(prepName(name + kNamePrivate, id_priv), false);
-    CHECK_NOT_ZERO_RET(prepName(name + kNamePublic, id_pub), false);
+    vs_storage_element_id_t id;
+    CHECK_NOT_ZERO_RET(prepName(name, id), false);
 
     CHECK_NOT_ZERO_RET(KSQSecBox::instance().save(
                                VS_SECBOX_SIGNED_AND_ENCRYPTED,
-                               id_priv,
-                               keypair.first.get()->val()), false);
-
-    CHECK_NOT_ZERO_RET(KSQSecBox::instance().save(
-            VS_SECBOX_SIGNED_AND_ENCRYPTED,
-            id_pub,
-            keypair.second.get()->val()), false);
-
+                               id,
+                               data), false);
     return true;
 }
 
 //-----------------------------------------------------------------------------
 bool
 KSQRoT::loadKeyPair(const QString &name, KSQKeyPair &res) const {
-    vs_storage_element_id_t id_priv;
-    vs_storage_element_id_t id_pub;
-    QByteArray baPriv;
-    QByteArray baPub;
 
-    res = std::make_pair(nullptr, nullptr);
+    vs_storage_element_id_t id;
+    CHECK_NOT_ZERO_RET(prepName(name, id), false);
 
-    CHECK_RET(prepName(name + kNamePrivate, id_priv), false, "Cannot prepare name %s", kNamePrivate.toStdString().c_str());
-    CHECK_RET(prepName(name + kNamePublic, id_pub), false, "Cannot prepare name %s", kNamePublic.toStdString().c_str());
+    QByteArray data;
+    CHECK_RET(KSQSecBox::instance().load(id, data), false, "Cannot load keypair %s", name.toStdString().c_str());
 
-    CHECK_RET(KSQSecBox::instance().load(id_priv, baPriv), false, "Cannot load %s", kNamePrivate.toStdString().c_str());
-    CHECK_RET(KSQSecBox::instance().load(id_pub, baPub), false, "Cannot load %s", kNamePublic.toStdString().c_str());
+    QDataStream dataStreamRead(data);
 
-    auto pubkey = QSharedPointer<KSQPublicKey>::create(kDefaultEC, baPub);
-    auto privkey = QSharedPointer<KSQPrivateKey>::create(kDefaultEC, baPriv);
+    vs_secmodule_keypair_type_e ecType;
+    vs_key_type_e provisionType;
+    QByteArray privKey;
+    QByteArray pubKey;
+    QByteArray signature;
+    dataStreamRead
+            >> ecType
+            >> provisionType
+            >> privKey
+            >> pubKey
+            >> signature;
 
+    auto privkey = QSharedPointer<KSQPrivateKey>::create(ecType, privKey);
+    auto pubkey = QSharedPointer<KSQPublicKey>::create(ecType,
+                                                       pubKey,
+                                                       provisionType,
+                                                       signature);
     res = std::make_pair(privkey, pubkey);
     return true;
 }

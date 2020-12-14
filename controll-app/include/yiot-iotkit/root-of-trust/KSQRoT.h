@@ -25,6 +25,7 @@
 #include <yiot-iotkit/secmodule/KSQPublicKey.h>
 #include <yiot-iotkit/secmodule/KSQKeyPair.h>
 #include <yiot-iotkit/root-of-trust/KSQTrustList.h>
+#include <virgil/iot/provision/provision-structs.h>
 
 #include <virgil/iot/storage_hal/storage_hal.h>
 
@@ -134,8 +135,7 @@ public slots:
 
 private:
     static const vs_secmodule_keypair_type_e kDefaultEC;
-    static const QString kNamePrivate;
-    static const QString kNamePublic;
+    static const vs_secmodule_hash_type_e kDefaultHash;
 
     static const QString kNameRecovery1;
     static const QString kNameRecovery2;
@@ -188,6 +188,12 @@ private:
 
     bool
     loadKeyPair(const QString &name, KSQKeyPair &keyPair) const;
+
+    bool
+    prepareProvisionKeyPair(KSQKeyPair &dst,
+                            const KSQKeyPair &src,
+                            vs_key_type_e provType = VS_KEY_UNSUPPORTED,
+                            const KSQKeyPair &signer = std::make_pair(nullptr, nullptr));
 };
 
 Q_DECLARE_METATYPE(KSQRoT)

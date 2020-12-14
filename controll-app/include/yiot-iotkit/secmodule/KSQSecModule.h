@@ -46,8 +46,14 @@ public:
     generateKeypair(vs_secmodule_keypair_type_e keypair_type) const;
 
     QByteArray
-    sign(const QByteArray &data, QSharedPointer<KSQPrivateKey> key, vs_secmodule_hash_type_e hashType = VS_HASH_SHA_256) const;
+    signRaw(const QByteArray &data,
+            QSharedPointer<KSQPrivateKey> key,
+            vs_secmodule_hash_type_e hashType = VS_HASH_SHA_256) const;
 
+    QByteArray
+    sign(const QByteArray &data,
+         const KSQKeyPair &signerKeyPair,
+         vs_secmodule_hash_type_e hashType = VS_HASH_SHA_256) const;
 signals:
 
 public slots:
