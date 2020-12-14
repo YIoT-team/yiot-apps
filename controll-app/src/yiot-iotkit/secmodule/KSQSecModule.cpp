@@ -40,7 +40,16 @@ extern "C" {
 
 //-----------------------------------------------------------------------------
 KSQSecModule::KSQSecModule() {
+#if 0
     auto storage = KSQStorageKeychain::instance().storageImpl();
+#else
+    auto base = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
+    static KSQStorageFS *storageFS = nullptr;
+    if (!storageFS) {
+        storageFS = new KSQStorageFS(base + QDir::separator() + "hsm");
+    }
+    auto storage = storageFS->storageImpl();
+#endif
     m_secmoduleImpl = vs_soft_secmodule_impl(storage);
 }
 
