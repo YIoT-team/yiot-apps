@@ -135,11 +135,13 @@ KSQRoTController::prepare() {
             return false;
         }
         m_rots.push_back(localRoT);
+        idsList << KSQRoT::kLocalID;
+        saveRoTList(idsList);
     }
 
-    m_isValid = true;
+    m_valid = true;
 
-    return m_isValid;
+    return m_valid;
 }
 
 //-----------------------------------------------------------------------------

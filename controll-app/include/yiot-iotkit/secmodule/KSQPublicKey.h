@@ -35,7 +35,9 @@ public:
     KSQPublicKey(vs_secmodule_keypair_type_e keypairType,
                  const QByteArray &key,
                  vs_key_type_e provisionType = VS_KEY_UNSUPPORTED,
-                 const QByteArray &signature = QByteArray());
+                 const QByteArray &signature = QByteArray(),
+                 QDateTime startDate = QDateTime::currentDateTimeUtc(),
+                 QDateTime expireDate = QDateTime::fromSecsSinceEpoch(VS_START_EPOCH));
 
     KSQPublicKey &
     operator=(const KSQPublicKey &k);
@@ -45,26 +47,20 @@ public:
     QString
     description() const;
 
+    bool
+    isValid() const;
+
     const QByteArray &
-    val() const {
-        return m_key;
-    }
+    val() const;
 
     const vs_secmodule_keypair_type_e
-    ecType() const {
-        return m_ecType;
-    }
+    ecType() const;
 
     const vs_key_type_e
-    provisionType() const {
-        return m_provisionType;
-    }
+    provisionType() const;
 
     KSQPublicKey &
-    setProvisionType(vs_key_type_e provType) {
-        m_provisionType = provType;
-        return *this;
-    }
+    setProvisionType(vs_key_type_e provType);
 
     QByteArray
     datedKey() const;
@@ -75,6 +71,12 @@ public:
     KSQPublicKey &
     setSignature(const QByteArray& signature);
 
+    QDateTime
+    startDate() const;
+
+    QDateTime
+    expireDate() const;
+
 signals:
 
 public slots:
@@ -84,6 +86,8 @@ private:
     vs_key_type_e m_provisionType;
     QByteArray m_key;
     vs_secmodule_keypair_type_e m_ecType;
+    QDateTime m_startDate;
+    QDateTime m_expireDate;
     QByteArray m_signature;
 };
 

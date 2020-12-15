@@ -175,6 +175,8 @@ KSQRoT::saveKeyPair(const QString &name, const KSQKeyPair &keypair) const {
                     << keypair.second->provisionType()
                     << keypair.first->val()
                     << keypair.second->val()
+                    << keypair.second->startDate()
+                    << keypair.second->expireDate()
                     << keypair.second->signature();
 
     vs_storage_element_id_t id;
@@ -204,18 +206,24 @@ KSQRoT::loadKeyPair(const QString &name, KSQKeyPair &res) const {
     QByteArray privKey;
     QByteArray pubKey;
     QByteArray signature;
+    QDateTime startDate;
+    QDateTime expireDate;
     dataStreamRead
             >> ecType
             >> provisionType
             >> privKey
             >> pubKey
+            >> startDate
+            >> expireDate
             >> signature;
 
     auto privkey = QSharedPointer<KSQPrivateKey>::create(ecType, privKey);
     auto pubkey = QSharedPointer<KSQPublicKey>::create(ecType,
                                                        pubKey,
                                                        provisionType,
-                                                       signature);
+                                                       signature,
+                                                       startDate,
+                                                       expireDate);
     res = std::make_pair(privkey, pubkey);
     return true;
 }

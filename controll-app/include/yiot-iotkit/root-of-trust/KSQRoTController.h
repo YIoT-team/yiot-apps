@@ -47,7 +47,7 @@ public:
 
     bool
     isValid() const {
-        return m_isValid;
+        return m_valid;
     }
 
     QSharedPointer<KSQRoT>
@@ -77,7 +77,7 @@ private:
     virtual ~KSQRoTController() = default;
 
     std::list<QSharedPointer<KSQRoT>> m_rots;
-    bool m_isValid;
+    bool m_valid;
 
     bool
     prepare();

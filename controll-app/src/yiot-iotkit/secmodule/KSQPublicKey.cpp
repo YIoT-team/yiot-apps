@@ -33,11 +33,15 @@ KSQPublicKey::KSQPublicKey() {
 KSQPublicKey::KSQPublicKey(vs_secmodule_keypair_type_e keypairType,
                            const QByteArray &key,
                            vs_key_type_e provisionType,
-                           const QByteArray &signature) {
+                           const QByteArray &signature,
+                           QDateTime startDate,
+                           QDateTime expireDate) {
     m_key = key;
     m_signature = signature;
     m_ecType = keypairType;
     m_provisionType = provisionType;
+    m_startDate = startDate;
+    m_expireDate = expireDate;
     m_valid = !m_key.isEmpty();
 }
 
@@ -53,6 +57,8 @@ KSQPublicKey::operator=(const KSQPublicKey &k) {
     m_key = k.m_key;
     m_provisionType = k.m_provisionType;
     m_valid = k.m_valid;
+    m_startDate = k.m_startDate;
+    m_expireDate = k.m_expireDate;
 
     return *this;
 }
@@ -61,6 +67,37 @@ KSQPublicKey::operator=(const KSQPublicKey &k) {
 QString
 KSQPublicKey::description() const {
     return m_key.toBase64();
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQPublicKey::isValid() const{
+    return m_valid;
+}
+
+//-----------------------------------------------------------------------------
+const QByteArray &
+KSQPublicKey::val() const {
+    return m_key;
+}
+
+//-----------------------------------------------------------------------------
+const vs_secmodule_keypair_type_e
+KSQPublicKey::ecType() const {
+    return m_ecType;
+}
+
+//-----------------------------------------------------------------------------
+const vs_key_type_e
+KSQPublicKey::provisionType() const {
+    return m_provisionType;
+}
+
+//-----------------------------------------------------------------------------
+KSQPublicKey &
+KSQPublicKey::setProvisionType(vs_key_type_e provType) {
+    m_provisionType = provType;
+    return *this;
 }
 
 //-----------------------------------------------------------------------------
@@ -77,8 +114,8 @@ KSQPublicKey::datedKey() const {
     vs_pubkey_dated_t *pubkeyDated = reinterpret_cast<vs_pubkey_dated_t *>(publicKeyBuf);
 
     // Fill data
-    pubkeyDated->start_date = VS_IOT_HTONL(QDateTime::currentSecsSinceEpoch());
-    pubkeyDated->expire_date = 0;
+    pubkeyDated->start_date = VS_IOT_HTONL(m_startDate.toSecsSinceEpoch() - VS_START_EPOCH);
+    pubkeyDated->expire_date = VS_IOT_HTONL(m_expireDate.toSecsSinceEpoch() - VS_START_EPOCH);
     pubkeyDated->pubkey.key_type = m_provisionType;
     pubkeyDated->pubkey.ec_type = m_ecType;
     pubkeyDated->pubkey.meta_data_sz = 0;

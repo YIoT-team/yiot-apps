@@ -61,6 +61,15 @@ public:
     bool
     load(const QString &id);
 
+    QByteArray
+    header() const;
+
+    QByteArray
+    key(size_t num) const;
+
+    QByteArray
+    footer() const;
+
 signals:
 
 public slots:

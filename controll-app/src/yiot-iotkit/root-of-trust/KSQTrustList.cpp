@@ -181,3 +181,22 @@ KSQTrustList::load(const QString &id) {
 }
 
 //-----------------------------------------------------------------------------
+QByteArray
+KSQTrustList::header() const {
+    return QByteArray();
+}
+
+//-----------------------------------------------------------------------------
+QByteArray
+KSQTrustList::key(size_t num) const {
+    return QByteArray();
+
+}
+
+//-----------------------------------------------------------------------------
+QByteArray
+KSQTrustList::footer() const {
+    return QByteArray();
+}
+
+//-----------------------------------------------------------------------------
