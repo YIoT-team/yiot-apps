@@ -89,7 +89,7 @@ KSQSnapPRVSClient::uploadData(const vs_netif_t *netif,
                                        reinterpret_cast<const uint8_t*> (data.data()),
                                        data.size(),
                                        kDefaultTimeoutMs)) {
-        VS_LOG_ERROR("Cannot get public key of device");
+        VS_LOG_ERROR("Cannot get upload data to device");
         return false;
     }
     return true;
@@ -191,107 +191,47 @@ KSQSnapPRVSClient::uploadTrustList(const vs_netif_t *netif,
     // Check input parameters
     if (!netif
         || !deviceMac
-        || !rootOfTrust->trustList().isValid()) {
+        || !rootOfTrust->trustList().isValid()
+        || !rootOfTrust->trustList().keysCount()) {
         emit fireProvisionError(tr("Wrong parameters to upload TrustList"));
         return false;
     }
 
     emit fireProvisionStateChanged(tr("Upload TrustList header"));
-
-
-    if (VS_CODE_OK != vs_snap_prvs_set_tl_header(netif,
-                                       deviceMac,
-                                       prvsElement,
-                                       reinterpret_cast<const uint8_t*> (data.data()),
-                                       data.size(),
-                                       kDefaultTimeoutMs)) {
-
-//        const vs_netif_t *netif,
-//        const vs_mac_addr_t *mac,
-//        const uint8_t *data,
-//        uint16_t data_sz,
-//        uint32_t wait_ms
-
-        VS_LOG_ERROR("Cannot get public key of device");
+    auto tlHeader = rootOfTrust->trustList().header();
+    if (VS_CODE_OK != vs_snap_prvs_set_tl_header(
+                              netif,
+                              deviceMac,
+                              reinterpret_cast<const uint8_t*> (tlHeader.data()),
+                              tlHeader.size(),
+                              kDefaultTimeoutMs)) {
+        emit fireProvisionError(tr("Cannot upload TrustList header"));
         return false;
     }
 
+    for (int i = 0; i < rootOfTrust->trustList().keysCount(); i++) {
+        emit fireProvisionStateChanged(tr("Upload TrustList key %1").arg(i));
+        auto tlKey = rootOfTrust->trustList().key(i);
+        if (!uploadData(netif, deviceMac, VS_PRVS_TLC, tlKey)) {
+            emit fireProvisionError(tr("Cannot upload TrustList key"));
+            return false;
+        }
+    }
 
-    return false;
+    emit fireProvisionStateChanged(tr("Upload TrustList footer"));
+    auto tlFooter = rootOfTrust->trustList().footer();
+    if (VS_CODE_OK != vs_snap_prvs_set_tl_footer(
+            netif,
+            deviceMac,
+            reinterpret_cast<const uint8_t*> (tlFooter.data()),
+            tlFooter.size(),
+            kDefaultTimeoutMs * 10)) {
+        emit fireProvisionError(tr("Cannot upload TrustList footer"));
+        return false;
+    }
+
+    return true;
 }
-
-//func (p *DeviceProcessor) SetTrustList() error {
-//trustList, err := common.NewTrustList(p.ProvisioningInfo.TrustList)
-//if err != nil {
-//return err
-//}
-//var binBuf bytes.Buffer
-//
-//        mac := p.deviceInfo.mac_addr
-//
-//// Set TL header
-//fmt.Println("Upload TrustList Header")
-//
-//if err := binary.Write(&binBuf, binary.BigEndian, trustList.Header); err != nil {
-//return fmt.Errorf("failed to write TrustList header to buffer")
-//}
-//
-//headerBytes := binBuf.Bytes()
-//headerPtr := (*C.uchar)(unsafe.Pointer(&headerBytes[0]))
-//
-//if 0 != C.vs_snap_prvs_set_tl_header(C.vs_snap_netif_routing(),
-//        &mac,
-//        headerPtr,
-//        C.uint16_t(len(headerBytes)),
-//DEFAULT_TIMEOUT_MS) {
-//return fmt.Errorf("failed to set TrustList header")
-//}
-//
-//
-//// Set TL chunks
-//for index, chunk := range trustList.TlChunks {
-//chunkBytes, err := chunk.ToBytes()
-//if err != nil {
-//return err
-//}
-//name := fmt.Sprintf("TrustList chunk %d", index)
-//if err := p.uploadData(C.VS_PRVS_TLC, chunkBytes, name); err != nil {
-//return err
-//}
-//}
-//
-//// Set TL Footer
-//binBuf.Reset()  // reset buffer
-//if err := binary.Write(&binBuf, binary.BigEndian, trustList.Footer.TLType); err != nil {
-//return fmt.Errorf("failed to write TrustList footer tl_type to buffer")
-//}
-//for index, signature := range trustList.Footer.Signatures {
-//signatureBytes, err := signature.ToBytes()
-//if err != nil {
-//return err
-//}
-//if _, err := binBuf.Write(signatureBytes); err != nil {
-//return fmt.Errorf("failed to write footer signature #%d to buffer: %v", index, err)
-//}
-//}
-//
-//fmt.Println("Upload TrustList Footer")
-//
-//footerBytes := binBuf.Bytes()
-//dataPtr := (*C.uchar)(unsafe.Pointer(&footerBytes[0]))
-//
-//if 0 != C.vs_snap_prvs_set_tl_footer(C.vs_snap_netif_routing(),
-//        &mac,
-//        dataPtr,
-//        C.uint16_t(len(footerBytes)),
-//DEFAULT_TIMEOUT_MS * 6) {
-//return fmt.Errorf("failed to set TrustList footer")
-//}
-//
-//fmt.Println("OK: Trust List set successfully.")
-//
-//return nil
-//}
 
 //-----------------------------------------------------------------------------
 void
@@ -331,7 +271,7 @@ KSQSnapPRVSClient::provisionDevice(const vs_netif_t *netif,
         }
 
         emit fireProvisionStateChanged(tr("Sign device"));
-        if (!signDevice(netif, deviceMac, rootOfTrust)) {
+        if (!signDevice(netif, deviceMac, deviceKey, rootOfTrust)) {
             emit fireProvisionError(tr("Cannot sign device"));
             return;
         }
@@ -340,14 +280,6 @@ KSQSnapPRVSClient::provisionDevice(const vs_netif_t *netif,
             return;
         }
 
-
-//      if err := p.SetTrustList(); err != nil {
-//            return err
-//    }
-//    }
-//    if err := p.GetProvisionInfo(); err != nil {
-//            return err
-//    }
     });
 
     t.detach();

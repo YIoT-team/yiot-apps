@@ -60,7 +60,9 @@ KSQStorageFS::readImpl(const QString &file, QByteArray &data) {
     auto fn = m_baseDir + QDir::separator() + file;
     QFile f(fn);
     if (!f.open(QIODevice::ReadOnly)) {
+#if 0
         VS_LOG_WARNING("Cannot open file %s", fn.toStdString().c_str());
+#endif
         return false;
     }
 

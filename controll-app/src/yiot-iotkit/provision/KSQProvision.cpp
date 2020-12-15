@@ -146,28 +146,25 @@ KSQProvision::create(QSharedPointer<KSQRoT> rot) {
     CHECK_RET(saveElementData(VS_PROVISION_SGNP, signature), false, "Cannot save own signature");
 
     // Set TrustList header
-    auto tl = rot->trustList().val();
-    auto tlHeaderBuf = reinterpret_cast<uint8_t*>(tl.data());
-    size_t tlHeaderSz = sizeof(vs_tl_header_t);
+    auto tlHeader = rot->trustList().header();
+    auto tlHeaderBuf = reinterpret_cast<uint8_t*>(tlHeader.data());
     vs_tl_element_info_t tlHeaderInfo = {.id = VS_TL_ELEMENT_TLH, .index = 0};
-    CHECK_RET(VS_CODE_OK == vs_tl_save_part(&tlHeaderInfo, tlHeaderBuf, tlHeaderSz), false, "Cannot save TL header");
+    CHECK_RET(VS_CODE_OK == vs_tl_save_part(&tlHeaderInfo, tlHeaderBuf, tlHeader.size()), false, "Cannot save TL header");
 
     // Set TrustList key
-    auto tlKeyBuf = tlHeaderBuf + sizeof(vs_tl_header_t);
-    const vs_pubkey_dated_t *key = reinterpret_cast<const vs_pubkey_dated_t *>(tlKeyBuf);
-    size_t tlKeySz = sizeof(vs_pubkey_dated_t)
-                     + VS_IOT_NTOHS(key->pubkey.meta_data_sz)
-                     + vs_secmodule_get_pubkey_len(static_cast<vs_secmodule_keypair_type_e>(key->pubkey.ec_type));
-    vs_tl_element_info_t tlKeyInfo = {.id = VS_TL_ELEMENT_TLC, .index = 0};
-    CHECK_RET(VS_CODE_OK == vs_tl_save_part(&tlKeyInfo, tlKeyBuf, tlKeySz), false, "Cannot save TL key");
+    auto keysCnt = rot->trustList().keysCount();
+    for (int i = 0; i < keysCnt; i++) {
+        auto tlKey = rot->trustList().key(i);
+        auto tlKeyBuf = reinterpret_cast<uint8_t*> (tlKey.data());
+        vs_tl_element_info_t tlKeyInfo = {.id = VS_TL_ELEMENT_TLC, .index = i};
+        CHECK_RET(VS_CODE_OK == vs_tl_save_part(&tlKeyInfo, tlKeyBuf, tlKey.size()), false, "Cannot save TL key");
+    }
 
     // Set TrustList footer
-    auto tlFooterBuf = tlKeyBuf + tlKeySz;
-    size_t tlFooterSz = tlHeaderBuf
-                        + rot->trustList().val().size()
-                        - tlFooterBuf;
+    auto tlFooter = rot->trustList().footer();
+    auto tlFooterBuf = reinterpret_cast<uint8_t *>(tlFooter.data());
     vs_tl_element_info_t tlFooterInfo = {.id = VS_TL_ELEMENT_TLF, .index = 0};
-    CHECK_RET(VS_CODE_OK == vs_tl_save_part(&tlFooterInfo, tlFooterBuf, tlFooterSz), false, "Cannot save TL footer");
+    CHECK_RET(VS_CODE_OK == vs_tl_save_part(&tlFooterInfo, tlFooterBuf, tlFooter.size()), false, "Cannot save TL footer");
 
     return true;
 }

@@ -141,3 +141,15 @@ KSQPublicKey::setSignature(const QByteArray& signature) {
 }
 
 //-----------------------------------------------------------------------------
+QDateTime
+KSQPublicKey::startDate() const {
+        return m_startDate;
+}
+
+//-----------------------------------------------------------------------------
+QDateTime
+KSQPublicKey::expireDate() const {
+    return m_expireDate;
+}
+
+//-----------------------------------------------------------------------------
