@@ -61,6 +61,9 @@ public:
     bool
     load(const QString &id);
 
+    size_t
+    minSz() const;
+
     QByteArray
     header() const;
 

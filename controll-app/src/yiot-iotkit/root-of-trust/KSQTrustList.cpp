@@ -48,7 +48,12 @@ KSQTrustList::version() const {
 //-----------------------------------------------------------------------------
 int
 KSQTrustList::keysCount() const {
-    return 11;
+    if (!m_valid || m_tl.size() <= minSz()) {
+        return 0;
+    }
+
+    auto header = reinterpret_cast<const vs_tl_header_t *>(m_tl.data());
+    return VS_IOT_NTOHS(header->pub_keys_count);
 }
 
 //-----------------------------------------------------------------------------
@@ -132,8 +137,9 @@ KSQTrustList::create(const QString &id, const KSQRoT &rot) {
     memcpy(tlFooter->signatures, allSignatures.data(), allSignatures.size());
 
     m_id = id;
+    m_valid = save();
 
-    return save();
+    return m_valid;
 }
 
 //-----------------------------------------------------------------------------
@@ -183,20 +189,79 @@ KSQTrustList::load(const QString &id) {
 //-----------------------------------------------------------------------------
 QByteArray
 KSQTrustList::header() const {
-    return QByteArray();
+    if (!m_valid || m_tl.size() <= minSz()) {
+        return QByteArray();
+    }
+
+    return m_tl.left(sizeof(vs_tl_header_t));
 }
 
 //-----------------------------------------------------------------------------
 QByteArray
 KSQTrustList::key(size_t num) const {
-    return QByteArray();
+    if (!m_valid || m_tl.size() <= minSz() || num >= keysCount()) {
+        return QByteArray();
+    }
 
+    auto keyData = reinterpret_cast<const uint8_t *>(m_tl.data() + sizeof(vs_tl_header_t));
+    const vs_pubkey_dated_t *key;
+    size_t keySz;
+    int i = -1;
+    do {
+        ++i;
+        key = reinterpret_cast<const vs_pubkey_dated_t *> (keyData);
+        auto ecType = static_cast<vs_secmodule_keypair_type_e>(key->pubkey.ec_type);
+        keySz = sizeof(vs_pubkey_dated_t)
+                + VS_IOT_NTOHS(key->pubkey.meta_data_sz)
+                + vs_secmodule_get_pubkey_len(ecType);
+        keyData += keySz;
+    } while(i < num);
+
+    return QByteArray(reinterpret_cast<const char *>(key), keySz);
 }
 
 //-----------------------------------------------------------------------------
 QByteArray
 KSQTrustList::footer() const {
-    return QByteArray();
+    if (!m_valid || m_tl.size() <= minSz()) {
+        return QByteArray();
+    }
+
+    auto header = reinterpret_cast<const vs_tl_header_t *>(m_tl.data());
+    auto keysNum = VS_IOT_NTOHS(header->pub_keys_count);
+    auto signaturesNum = header->signatures_count;
+
+    auto keyData = reinterpret_cast<const uint8_t *>(m_tl.data() + sizeof(vs_tl_header_t));
+    for (int i = 0; i < keysNum; i++) {
+        auto key = reinterpret_cast<const vs_pubkey_dated_t *> (keyData);
+        auto ecType = static_cast<vs_secmodule_keypair_type_e>(key->pubkey.ec_type);
+        auto keySz = sizeof(vs_pubkey_dated_t)
+                     + VS_IOT_NTOHS(key->pubkey.meta_data_sz)
+                     + vs_secmodule_get_pubkey_len(ecType);
+        keyData += keySz;
+    }
+
+    auto footerSz = sizeof(vs_tl_footer_t);
+    auto footer = reinterpret_cast<const vs_tl_footer_t*> (keyData);
+    auto signData = footer->signatures;
+
+    for (int i = 0; i < signaturesNum; i++) {
+        auto sign = reinterpret_cast<const vs_sign_t *> (signData);
+        auto ecType = static_cast<vs_secmodule_keypair_type_e>(sign->ec_type);
+        auto signSz = sizeof(vs_sign_t)
+                     + vs_secmodule_get_signature_len(ecType)
+                     + vs_secmodule_get_pubkey_len(ecType);
+        signData += signSz;
+        footerSz += signSz;
+    }
+
+    return QByteArray(reinterpret_cast<const char *>(footer), footerSz);
+}
+
+//-----------------------------------------------------------------------------
+size_t
+KSQTrustList::minSz() const {
+    return sizeof(vs_tl_header_t) + sizeof(vs_tl_footer_t) + sizeof(vs_pubkey_t);
 }
 
 //-----------------------------------------------------------------------------
