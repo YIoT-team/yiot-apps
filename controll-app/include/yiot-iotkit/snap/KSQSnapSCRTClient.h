@@ -47,8 +47,27 @@ public:
         return name;
     }
 
-signals:
+    bool
+    getInfo(const vs_netif_t *netif, const VSQMac &mac);
 
+    bool
+    requestSessionKey(const vs_netif_t *netif, const VSQMac &mac);
+
+    bool
+    addUser(const vs_netif_t *netif, const VSQMac &mac, const QString &userName);
+
+    bool
+    removeUser(const vs_netif_t *netif, const VSQMac &mac, const QString &userName);
+
+    bool
+    getUsers(const vs_netif_t *netif, const VSQMac &mac);
+
+signals:
+    void fireInfo();
+    void fireSessionKeyReady();
+    void fireUserAddDone();
+    void fireUserRemoveDone();
+    void fireGetUsersDone();
 
 public slots:
 
@@ -57,6 +76,21 @@ private:
 
     KSQSnapSCRTClient();
     virtual ~KSQSnapSCRTClient() = default;
+
+    static vs_status_e
+    _infoCb(vs_snap_transaction_id_t id, vs_status_e res);
+
+    static vs_status_e
+    _sessionKeyCb(vs_snap_transaction_id_t id, vs_status_e res);
+
+    static vs_status_e
+    _addUserCb(vs_snap_transaction_id_t id, vs_status_e res);
+
+    static vs_status_e
+    _removeUserCb(vs_snap_transaction_id_t id, vs_status_e res);
+
+    static vs_status_e
+    _getUsersCb(vs_snap_transaction_id_t id, vs_status_e res);
 };
 
 #endif // _YIOT_QT_SNAP_SCRT_CLIENT_SERVICE_H_
