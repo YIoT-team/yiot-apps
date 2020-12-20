@@ -32,14 +32,7 @@
 #
 #   Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 
-cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
-
-# ---------------------------------------------------------------------------
-# This little macro lets you set any XCode specific property
-# ---------------------------------------------------------------------------
-macro (set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
-    set_property (TARGET ${TARGET} PROPERTY XCODE_ATTRIBUTE_${XCODE_PROPERTY} ${XCODE_VALUE})
-endmacro (set_xcode_property)
+cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
 # ---------------------------------------------------------------------------
 # Set CMAKE_FIND_ROOT_PATH for QT cmake include directory
@@ -50,6 +43,10 @@ function(PREPARE_QT_SDK CMAKE_PREFIX_PATH_OUT CMAKE_FIND_ROOT_PATH_OUT QT_QMAKE_
         set(${CMAKE_FIND_ROOT_PATH_OUT} "${QT_RELATIVE_PATH}/${QT_PREFIX_PATH}" PARENT_SCOPE)
         set(${CMAKE_PREFIX_PATH_OUT} "${QT_RELATIVE_PATH}/${QT_PREFIX_PATH}" PARENT_SCOPE)        
         set(${QT_QMAKE_EXECUTABLE_OUT} "${QT_RELATIVE_PATH}/${QT_PREFIX_PATH}/bin/qmake" PARENT_SCOPE)        
+
+        message(STATUS "CMAKE_FIND_ROOT_PATH = ${CMAKE_FIND_ROOT_PATH}")
+        message(STATUS "CMAKE_PREFIX_PATH = ${CMAKE_PREFIX_PATH}")
+        message(STATUS "QT_QMAKE_EXECUTABLE = ${QT_QMAKE_EXECUTABLE}")
     else()
         message(FATAL_ERROR "Error detecting QT SDK (Env QTDIR not set)")    
     endif()
@@ -58,30 +55,19 @@ endfunction()
 # ---------------------------------------------------------------------------
 # Check target platform and customer variable
 # ---------------------------------------------------------------------------
-
-if(VS_PLATFORM OR VS_CUSTOMER AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/../transitive-args.cmake")
+if(KS_PLATFORM OR VS_CUSTOMER AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/../transitive-args.cmake")
     file(REMOVE "${CMAKE_CURRENT_LIST_DIR}/../transitive-args.cmake")
 endif()
-    
-if(VS_PLATFORM)
-    file(APPEND "${CMAKE_CURRENT_LIST_DIR}/../transitive-args.cmake" "set(VS_PLATFORM \"${VS_PLATFORM}\" CACHE \"STRING\" \"Target build platform\")\n")
-    message(STATUS "Write VS_PLATFORM transitive-args.cmake")     
+
+if(KS_PLATFORM)
+    file(APPEND "${CMAKE_CURRENT_LIST_DIR}/../transitive-args.cmake" "set(KS_PLATFORM \"${KS_PLATFORM}\" CACHE \"STRING\" \"Target build platform\")\n")
+    message(STATUS "Create transitive-args.cmake")     
 endif()
 
-if(VS_CUSTOMER)
-    file(APPEND "${CMAKE_CURRENT_LIST_DIR}/../transitive-args.cmake" "set(VS_CUSTOMER \"${VS_CUSTOMER}\" CACHE \"STRING\" \"Customer name\")\n")
-    message(STATUS "Write VS_CUSTOMER transitive-args.cmake")     
-endif()
-
-if(CMAKE_BUILD_TYPE)
-    file(APPEND "${CMAKE_CURRENT_LIST_DIR}/../transitive-args.cmake" "set(CMAKE_BUILD_TYPE \"${CMAKE_BUILD_TYPE}\" CACHE \"STRING\" \"Build type\")\n")
-    message(STATUS "Write CMAKE_BUILD_TYPE  transitive-args.cmake")     
-endif()
-
-if(NOT VS_PLATFORM OR NOT VS_CUSTOMER)
+if(NOT KS_PLATFORM)
     if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/../transitive-args.cmake")
 	include("${CMAKE_CURRENT_LIST_DIR}/../transitive-args.cmake")
-	message(STATUS "Set VS_PLATFORM from  transitive-args.cmake") 
+	message(STATUS "Set KS_PLATFORM from  transitive-args.cmake")
     endif()
 endif()    
 
@@ -91,20 +77,23 @@ endif()
 
 
 # Autodetect sdk, ndk for specified platform
-list(APPEND VS_PLATFORM_LIST "linux" "android" "ios" "macos" "windows")
-if(VS_PLATFORM)
-    message(STATUS "Autodetecting enviroment for target platform: [${VS_PLATFORM}]")
+list(APPEND VS_PLATFORM_LIST "linux" "android" "ios" "ios-sim" "macos" "windows")
+if(KS_PLATFORM)
+    message(STATUS "Autodetecting enviroment for target platform: [${KS_PLATFORM}]")
     # Check platform name
-    if(NOT VS_PLATFORM IN_LIST VS_PLATFORM_LIST)
-	message(FATAL_ERROR "-- Target platform if wrong. Set VS_PLATFORM to [ ${VS_PLATFORM_LIST} ]")
+    if(NOT KS_PLATFORM IN_LIST VS_PLATFORM_LIST)
+	    message(FATAL_ERROR "-- Target platform if wrong. Set KS_PLATFORM to [ ${VS_PLATFORM_LIST} ]")
     endif()
     # -- Linux
-    if(VS_PLATFORM STREQUAL "linux")
+    if(KS_PLATFORM STREQUAL "linux")
         set(QT_PREFIX_PATH "gcc_64")
         prepare_qt_sdk(CMAKE_PREFIX_PATH CMAKE_FIND_ROOT_PATH QT_QMAKE_EXECUTABLE)    
+        message(STATUS "CMAKE_FIND_ROOT_PATH = ${CMAKE_FIND_ROOT_PATH}")
+        message(STATUS "CMAKE_PREFIX_PATH = ${CMAKE_PREFIX_PATH}")            
+        message(STATUS "QT_QMAKE_EXECUTABLE = ${QT_QMAKE_EXECUTABLE}")
 
     # -- Android
-    elseif(VS_PLATFORM STREQUAL "android")
+    elseif(KS_PLATFORM STREQUAL "android")
         set(QT_PREFIX_PATH "android")
         #   Android NDK ABIs    
         set(ANDROID_ABI "x86" CACHE "STRING" "Android default ABI")
@@ -112,15 +101,16 @@ if(VS_PLATFORM)
         set(ANDROID_BUILD_ABI_armeabi-v7a ON CACHE "BOOL" "Build armeabi-v7a architecture")
         set(ANDROID_BUILD_ABI_x86 ON CACHE "BOOL" "Build x86 architecture")
         set(ANDROID_BUILD_ABI_x86_64 ON CACHE "BOOL" "Build x86_64 architecture")
-        
-
     
         message(STATUS "Android default ABI: [${ANDROID_ABI}]")    
         message(STATUS "ANDROID_BUILD_ABI_arm64-v8a: ${ANDROID_BUILD_ABI_arm64-v8a}")		
         message(STATUS "ANDROID_BUILD_ABI_armeabi-v7a: ${ANDROID_BUILD_ABI_armeabi-v7a}")		    	
         message(STATUS "ANDROID_BUILD_ABI_x86: ${ANDROID_BUILD_ABI_x86}")		    	
-        message(STATUS "ANDROID_BUILD_ABI_x86_64: ${ANDROID_BUILD_ABI_x86_64}")		    	
-        prepare_qt_sdk(CMAKE_PREFIX_PATH CMAKE_FIND_ROOT_PATH QT_QMAKE_EXECUTABLE)            
+        message(STATUS "ANDROID_BUILD_ABI_x86_64: ${ANDROID_BUILD_ABI_x86_64}")
+        prepare_qt_sdk(CMAKE_PREFIX_PATH CMAKE_FIND_ROOT_PATH QT_QMAKE_EXECUTABLE)
+        message(STATUS "CMAKE_FIND_ROOT_PATH = ${CMAKE_FIND_ROOT_PATH}")
+        message(STATUS "CMAKE_PREFIX_PATH = ${CMAKE_PREFIX_PATH}")
+
 
         #  Android NDK
         if(NOT CMAKE_TOOLCHAIN_FILE)
@@ -142,41 +132,25 @@ if(VS_PLATFORM)
         else()
     	    message(FATAL_ERROR "-- Enviroment variable ANDROID_SDK not set")    
         endif()    
-
-        execute_process (COMMAND bash -c "cd ${ANDROID_SDK}/build-tools && ls -rd -- */ | head -n 1 | cut -d'/' -f1 | tr -d '\n'" OUTPUT_VARIABLE ANDROID_SDK_BUILD_TOOLS_REVISION)
-        message(STATUS "Android SDK build tool version: [${ANDROID_SDK_BUILD_TOOLS_REVISION}]")
-        set(QT_ANDROID_DEPLOYMENT_DEPENDENCIES "\"sdkBuildToolsRevision\": \"${ANDROID_SDK_BUILD_TOOLS_REVISION}\",")
         
     # -- MacOS
-    elseif(VS_PLATFORM STREQUAL "macos")
+    elseif(KS_PLATFORM STREQUAL "macos")
         set(QT_PREFIX_PATH "clang_64")
-        prepare_qt_sdk(CMAKE_PREFIX_PATH CMAKE_FIND_ROOT_PATH QT_QMAKE_EXECUTABLE)            
+        prepare_qt_sdk(CMAKE_PREFIX_PATH CMAKE_FIND_ROOT_PATH QT_QMAKE_EXECUTABLE)
     
     # -- IOS
-    elseif(VS_PLATFORM STREQUAL "ios" AND NOT VS_IOS_SIMULATOR)
+    elseif(KS_PLATFORM STREQUAL "ios")
         set(QT_PREFIX_PATH "ios")
         set(CMAKE_SYSTEM_NAME "iOS")
-        prepare_qt_sdk(CMAKE_PREFIX_PATH CMAKE_FIND_ROOT_PATH QT_QMAKE_EXECUTABLE)            
-
-    # -- IOS-SIM
-    elseif(VS_PLATFORM STREQUAL "ios" AND VS_IOS_SIMULATOR)
-        set(QT_PREFIX_PATH "ios")
-        set(CMAKE_SYSTEM_NAME "iOS")
-        execute_process(COMMAND xcodebuild -version -sdk iphonesimulator Path
-            OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
-	    ERROR_QUIET
-    	    OUTPUT_STRIP_TRAILING_WHITESPACE)
-	message(STATUS "Using SDK: ${CMAKE_OSX_SYSROOT} for platform: IOS Simulator")
-	if (NOT EXISTS ${CMAKE_OSX_SYSROOT})
-	    message(FATAL_ERROR "Invalid CMAKE_OSX_SYSROOT: ${CMAKE_OSX_SYSROOT} does not exist.")
-	endif()
-
-        prepare_qt_sdk(CMAKE_PREFIX_PATH CMAKE_FIND_ROOT_PATH QT_QMAKE_EXECUTABLE)            
+        set(CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH NO)
+        set(CMAKE_IOS_INSTALL_COMBINED YES)
+        prepare_qt_sdk(CMAKE_PREFIX_PATH CMAKE_FIND_ROOT_PATH QT_QMAKE_EXECUTABLE)
     
     # -- Windows
-    elseif(VS_PLATFORM STREQUAL "windows")
+    elseif(KS_PLATFORM STREQUAL "windows")
         set(QT_PREFIX_PATH "mingw32")
-        prepare_qt_sdk(CMAKE_PREFIX_PATH CMAKE_FIND_ROOT_PATH QT_QMAKE_EXECUTABLE)            
+        prepare_qt_sdk(CMAKE_PREFIX_PATH CMAKE_FIND_ROOT_PATH QT_QMAKE_EXECUTABLE)
     endif()
 endif()
+
 
