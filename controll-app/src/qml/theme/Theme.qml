@@ -2,8 +2,11 @@ pragma Singleton
 
 import QtQuick 2.12
 import QtQuick.Window 2.12
+//import "../pages/settings/"
 
 Item {
+
+
     FontLoader {
         id: robotoRegular
         source: "../resources/fonts/Roboto-Medium.ttf"
@@ -14,26 +17,28 @@ Item {
         source: "../resources/fonts/Roboto-Bold.ttf"
     }
 
+
+
     // colors
-    readonly property color mainBackgroundColor : "#0A0A0A"
-    readonly property color contrastBackgroundColor: "#222222"
+    property color mainBackgroundColor : "#0A0A0A"
+    property color contrastBackgroundColor: "#222222"
 
-    readonly property color color : "#ffffff"
-    readonly property color brandColor: "white"
-    readonly property color primaryTextColor: "#ffffff"
-    readonly property color secondaryTextColor: "#e5e5e5"
-    readonly property color errorTextColor: "#f5425d"
-    readonly property color succesTextColor: "#3cde6a"
-    readonly property color labelColor: "#6F828C"
-    readonly property color inputBackgroundColor: "#37474F"
+    property color color : "#ffffff"
+    property color brandColor: "white"
+    property color primaryTextColor: "#ffffff"
+    property color secondaryTextColor: "#e5e5e5"
+    property color errorTextColor: "#f5425d"
+    property color succesTextColor: "#3cde6a"
+    property color labelColor: "#6F828C"
+    property color inputBackgroundColor: "#37474F"
 
-    readonly property color buttonPrimaryColor: "#ffffff"
-    readonly property color buttonPrimaryTextColor: "#0A0A0A"
-    readonly property color buttonInvertedColor: "#0A0A0A"
-    readonly property color buttonInvertedTextColor: "#ffffff"
+    property color buttonPrimaryColor: "#ffffff"
+    property color buttonPrimaryTextColor: "#0A0A0A"
+    property color buttonInvertedColor: "#0A0A0A"
+    property color buttonInvertedTextColor: "#ffffff"
 
-    readonly property color tabImages : "#ffffff"
-
+    property color tabImages : "#ffffff"
+    property string state: "dark"
 
 
     // sizes
@@ -42,11 +47,74 @@ Item {
     // icons
     readonly property url mainLogo: "../resources/icons/Logo-Big.png"
 
-    readonly property url btImg: "qrc:/qml/resources/icons/dark/bt.png"
-    readonly property url wifiImg: "qrc:/qml/resources/icons/dark/wifi.png"
+    property url btImg: "qrc:/qml/resources/icons/dark/bt.png"
+    property url wifiImg: "qrc:/qml/resources/icons/dark/wifi.png"
+    property url conDevIco: "../resources/icons/dark/control-devices.png" //err
+    property url setDevIco: "../resources/icons/dark/setup-devices.png"
+    property url shaAccIco: "../resources/icons/dark/share-access.png"
+    property url settingsIco: "../resources/icons/dark/settings.png"
 
     // texts
     readonly property string mainLogoText: app.organizationDisplayName
     readonly property string mainFont: robotoRegular.name
     readonly property string mainFontBold: robotoBold.name
+
+    // TEST
+    function getTheme(mode){
+//        var mode = darkMode
+        if(mode === 1 ) {
+//            console.log("OK!")
+            // colors
+            mainBackgroundColor = "#0A0A0A"
+            contrastBackgroundColor = "#222222"
+            color = "#ffffff"
+            brandColor = "white"
+            primaryTextColor = "#ffffff"
+            secondaryTextColor = "#e5e5e5"
+            errorTextColor = "#f5425d"
+            succesTextColor = "#3cde6a"
+            labelColor = "#6F828C"
+            inputBackgroundColor = "#37474F"
+            buttonPrimaryColor = "#ffffff"
+            buttonPrimaryTextColor = "#0A0A0A"
+            buttonInvertedColor = "#0A0A0A"
+            buttonInvertedTextColor = "#ffffff"
+            btImg = "qrc:/qml/resources/icons/dark/bt.png"
+            wifiImg = "qrc:/qml/resources/icons/dark/wifi.png"
+            tabImages = "#ffffff"
+            state = "dark"
+            conDevIco = "../resources/icons/dark/control-devices.png"
+            setDevIco = "../resources/icons/dark/setup-devices.png"
+            shaAccIco = "../resources/icons/dark/share-access.png"
+            settingsIco = "../resources/icons/dark/settings.png"
+        }
+        if(mode === 0 ) {
+//            console.log("ERROR: " + mode)
+            // colors
+            mainBackgroundColor = "#F5F5F5"
+            contrastBackgroundColor = "#DDDDDD"
+            color = "#000000"
+            brandColor = "black"
+            primaryTextColor = "#000000"
+            secondaryTextColor = "#1a1a1a"
+            errorTextColor = "#f5425d"
+            succesTextColor = "#3cde6a"
+            labelColor = "#6F828C"
+            inputBackgroundColor = "#37474F"
+            buttonPrimaryColor = "#000000"
+            buttonPrimaryTextColor = "#F5F5F5"
+            buttonInvertedColor = "#F5F5F5"
+            buttonInvertedTextColor = "#000000"
+            btImg = "qrc:/qml/resources/icons/light/bt.png"
+            wifiImg = "qrc:/qml/resources/icons/light/wifi.png"
+            tabImages = "#000000"
+            state = "light"
+            conDevIco = "../resources/icons/light/control-devices.png"
+            setDevIco = "../resources/icons/light/setup-devices.png"
+            shaAccIco = "../resources/icons/light/share-access.png"
+            settingsIco = "../resources/icons/light/settings.png"
+        }
+        return 0;
+    }
+
 }

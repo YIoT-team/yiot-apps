@@ -73,7 +73,7 @@ Page {
                 Layout.fillWidth: true
 
                 fillMode: Image.PreserveAspectFit
-                source: "qrc:/qml/resources/icons/dark/devices/lamp/mono/%1".arg(img)
+                source: "qrc:/qml/resources/icons/" + Theme.state + "/devices/lamp/mono/%1".arg(img)
 
                 MouseArea {
                     anchors.fill: parent

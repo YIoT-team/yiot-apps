@@ -60,7 +60,7 @@ Page {
                 Layout.fillWidth: true
 
                 fillMode: Image.PreserveAspectFit
-                source: "qrc:/qml/resources/icons/dark/devices/pc/rpi.png"
+                source: "qrc:/qml/resources/icons/" + Theme.state + "/devices/pc/rpi.png"
             }
 
             InputTextField {

@@ -40,6 +40,7 @@ Page {
         readonly property int wifiNetworksIdx: 1
         readonly property int wifiPassIdx: 2
         readonly property int eventsIdx: 3
+        readonly property int themeIdx: 4
 
         property int backPageIdx: menuIdx
 
@@ -62,6 +63,9 @@ Page {
 
         EventsSettingsPage {
             id: eventsSettingsPage
+        }
+        ThemeListPage {
+            id: themeListPage
         }
     }
 
@@ -95,6 +99,10 @@ Page {
 
     function showEventsSettings() {
         swipeSettingsShow(settingsSwipeView.eventsIdx)
+    }
+
+    function showThemeList() {
+        swipeSettingsShow(settingsSwipeView.themeIdx)
     }
 
     function backInSettings() {

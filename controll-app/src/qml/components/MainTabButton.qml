@@ -11,7 +11,10 @@ TabButton {
     property int iconSz: 50
 
     icon.color: Theme.tabImages
-    icon.source: "../resources/icons/dark/%1.png".arg(image)
+//    icon.color: "black"
+    icon.source: "../resources/icons/light/%1.png".arg(image)
+//    icon.source: Theme.tabMenuImg.arg(image)
+//    icon.source: Theme.conDevIco
     icon.height: iconSz
     icon.width: iconSz
     background: Rectangle {

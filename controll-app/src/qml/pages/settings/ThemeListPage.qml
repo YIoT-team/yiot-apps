@@ -21,25 +21,36 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../theme"
 import "../../components"
+import "../../theme"
 
 Page {
-    id: settingsPage
-
-    property int darkMode: 1
+    id: themeSelectPage
 
     background: Rectangle {
         color: "transparent"
     }
 
     header: Header {
-        title: qsTr("Global Settings")
-        showBackButton: false
-        showMenuButton: true
-        showSettingsButton: true
+        id: header
+        title: qsTr("Select theme")
+        backAction: function() { showMenuSettings() }
     }
 
+//    Form {
+//         ВСЁ УБРАТЬ И РАЗОБРАТЬСЯ!!!!!!!!! (сделано)
+//        FormThemeList {
+//            id: dark
+//            text: "lolkek"
+//        }
+
+//        FormThemeList {
+//            text: "lolkek228"
+//            anchors.top: dark.bottom
+//        }
+
+//    }
+    //--------------------------------------
     ListView {
         id: list
         anchors.fill: parent
@@ -48,34 +59,26 @@ Page {
 
         model: ListModel {
             ListElement {
-                name: qsTr("WiFi credentials")
-                image: "creds"
+                name: qsTr("Dark")
+//                image: "creds"
                 property var action: function() {
-                    showWiFiSettings()
+                    Theme.getTheme(1)
                 }
             }
-
             ListElement {
-                name: qsTr("Event triggers")
-                image: "events" //check
-                property var action: function() {
-                    showEventsSettings()
-                }
-            }
-
-            ListElement {
-                name: qsTr("Theme")
+                name: qsTr("Light")
 //                image: "events" //check
                 property var action: function() {
 //                    temp
 //                    var mode = 1
-                    showThemeList()
+//                    showThemeList()
 //                    if (darkMode === 1){
 //                        darkMode = 0
 //                    } else {
 //                        darkMode = 1
 //                    }
 //                    Theme.getTheme(darkMode)
+                    Theme.getTheme(0)
                 }
             }
         }
@@ -93,7 +96,7 @@ Page {
 
                 Image {
                     id: icon
-                    source: "qrc:/qml/resources/icons/" + Theme.state + "/%1.png".arg(image) //lol
+                    source: "qrc:/qml/resources/icons/" + Theme.state +"/%1.png".arg(image)
                     Layout.maximumHeight: listDelegate.height * 0.7
                     Layout.maximumWidth: Layout.maximumHeight
                     fillMode: Image.PreserveAspectFit
@@ -111,21 +114,6 @@ Page {
                     Layout.alignment: Qt.AlignLeft
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                }
-
-                RowLayout {
-                    id: actionsBlock
-                    Layout.rightMargin: 10
-
-                    Image {
-                        id: iconAction
-                        source: "qrc:/qml/resources/icons/Arrow-Right.png"
-                        Layout.maximumHeight: listDelegate.height * 0.7
-                        Layout.maximumWidth: Layout.maximumHeight
-                        fillMode: Image.PreserveAspectFit
-                        Layout.alignment: Qt.AlignRight
-                        Layout.rightMargin: 10
-                    }
                 }
             }
 
@@ -146,4 +134,5 @@ Page {
             }
         }
     }
+    //------------------------------------
 }
