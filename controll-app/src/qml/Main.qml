@@ -24,6 +24,7 @@ import QtQuick.Layouts 1.5
 
 import "./pages"
 import "./pages/devices"
+import "./pages/devices/setup"
 import "./pages/settings"
 import "./components"
 import "./components/devices"
@@ -51,9 +52,8 @@ ApplicationWindow {
     // About application page
     AboutPage { id: aboutPage }
 
-    // TODO: Remove after complete adding of `CmdProcessingPage`
     // Page with Credentials upload information
-    CredLoadPage { id: credLoad }
+    SetupProcessingPage { id: deviceSetupProcessing }
 
     // Page shows command processing process
     CmdProcessingPage { id: cmdProcessingPage }
@@ -117,7 +117,7 @@ ApplicationWindow {
             State {
                 name: "about"
                 PropertyChanges { target: aboutPage; visible: true }
-                PropertyChanges { target: credLoad; visible: false }
+                PropertyChanges { target: deviceSetupProcessing; visible: false }
                 PropertyChanges { target: cmdProcessingPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: false }
@@ -127,7 +127,7 @@ ApplicationWindow {
             State {
                 name: "main"
                 PropertyChanges { target: aboutPage; visible: false }
-                PropertyChanges { target: credLoad; visible: false }
+                PropertyChanges { target: deviceSetupProcessing; visible: false }
                 PropertyChanges { target: cmdProcessingPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: true }
@@ -135,9 +135,9 @@ ApplicationWindow {
                 PropertyChanges { target: leftSideMenu; enabled: true }
             },
             State {
-                name: "credLoad"
+                name: "deviceSetupProcessing"
                 PropertyChanges { target: aboutPage; visible: false }
-                PropertyChanges { target: credLoad; visible: true }
+                PropertyChanges { target: deviceSetupProcessing; visible: true }
                 PropertyChanges { target: cmdProcessingPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: false }
@@ -147,7 +147,7 @@ ApplicationWindow {
             State {
                 name: "cmdProcessing"
                 PropertyChanges { target: aboutPage; visible: false }
-                PropertyChanges { target: credLoad; visible: false }
+                PropertyChanges { target: deviceSetupProcessing; visible: false }
                 PropertyChanges { target: cmdProcessingPage; visible: true }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: false }
@@ -157,7 +157,7 @@ ApplicationWindow {
             State {
                 name: "deviceControl"
                 PropertyChanges { target: aboutPage; visible: false }
-                PropertyChanges { target: credLoad; visible: false }
+                PropertyChanges { target: deviceSetupProcessing; visible: false }
                 PropertyChanges { target: cmdProcessingPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: true }
                 PropertyChanges { target: swipeView; visible: false }
@@ -192,7 +192,7 @@ ApplicationWindow {
     }
 
     function showCredLoad() {
-        w.state = "credLoad"
+        w.state = "deviceSetupProcessing"
     }
 
     function showCmdProcessing(device) {

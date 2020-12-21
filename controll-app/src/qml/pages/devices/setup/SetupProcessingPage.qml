@@ -17,54 +17,72 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_BLE_CONTROLLER_H
-#define PROVISION_QT_BLE_CONTROLLER_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#include <QtCore>
+import "../../../theme"
+import "../../../components"
+import "../../../components/devices/setup"
 
-#include <virgil/iot/qt/netif/VSQNetifBLEEnumerator.h>
-#include <virgil/iot/qt/netif/VSQNetifBLE.h>
+Page {
+    property alias pageTitle: h.title
+//    property alias obj: connections.target
 
-class KSQBLEController : public QObject {
-    Q_OBJECT
-public:
-    KSQBLEController();
-    virtual ~KSQBLEController();
+    id: p
+    anchors.fill: parent
+    state: "connect"
 
-    QSharedPointer<VSQNetifBLE>
-    netif();
+    background: Rectangle {
+        color: "transparent"
+    }
 
-    VSQNetifBLEEnumerator *
-    model();
+    header: Header {
+        id: h
+        title: qsTr("Credentials upload")
+        hideButtons: true
+    }
 
-signals:
+    ProcessingForm {
+        id: processingForm
+    }
 
-public slots:
+    SetupParamsForm {
+        id: paramsForm
+    }
 
-    Q_INVOKABLE bool
-    connectDevice(const QString &deviceName);
+//    states: [
+//        State {
+//            name: "get-info"
+//            PropertyChanges { target: processingForm; visible: true }
+//            PropertyChanges { target: paramsForm; visible: false }
+//        },
+//        State {
+//            name: "prepare-params"
+//            PropertyChanges { target: processingForm; visible: false }
+//            PropertyChanges { target: paramsForm; visible: true }
+//        },
+//        State {
+//            name: "upload-setup"
+//            PropertyChanges { target: processingForm; visible: true }
+//            PropertyChanges { target: paramsForm; visible: false }
+//        }
+//    ]
 
-private slots:
-    void
-    onConnected(bool);
+    onVisibleChanged: {
+        state = "get-info"
+    }
 
-    void
-    onDisconnected();
-
-    void
-    onDeviceError();
-
-    void
-    onSetupFinished(QSharedPointer<VSQNetifBase> netif);
-
-private:
-    VSQNetifBLEEnumerator m_bleEnumerator;
-    QSharedPointer<VSQNetifBLE> m_netifBLE;
-
-    bool m_needWiFiConfig;
-
-    void
-    cleanConnections();
-};
-
-#endif // PROVISION_QT_BLE_CONTROLLER_H
+//    Connections {
+//        id: connections
+//        target: deviceSetup
+//
+//        function onFireInitializationReady() {
+//            state = "prepare-params"
+//        }
+//
+//        function onFireError() {
+//            state = "error"
+//        }
+//    }
+}

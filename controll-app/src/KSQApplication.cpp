@@ -25,6 +25,7 @@
 #include <virgil/iot/logger/logger.h>
 
 #include <yiot-iotkit/KSQIoTKitFacade.h>
+#include <yiot-iotkit/setup/KSQDeviceSetupController.h>
 
 #include <devices/lamp/KSQLampController.h>
 #include <devices/pc/KSQPCController.h>
@@ -91,6 +92,8 @@ KSQApplication::run() {
     context->setContextProperty("bleEnum", m_bleController.model());        // BLE device enumeration // TODO: Use from `bleController`
     context->setContextProperty("wifiEnum", &m_wifiEnumerator);             // WiFi networks enumeration
     context->setContextProperty("deviceControllers", &m_deviceControllers); // Containers with controllers for all supported devices
+    context->setContextProperty("deviceSetup",                              // Device setup state-machine
+                                &KSQDeviceSetupController::instance());
     context->setContextProperty("rotModel", &KSQRoTController::instance()); // Container for all Roots of trust
 
     // Load UI theme

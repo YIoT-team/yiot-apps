@@ -17,54 +17,73 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_BLE_CONTROLLER_H
-#define PROVISION_QT_BLE_CONTROLLER_H
+#ifndef _YIOT_QT_DEVICE_SETUP_CONTROLLER_H_
+#define _YIOT_QT_DEVICE_SETUP_CONTROLLER_H_
 
 #include <QtCore>
 
-#include <virgil/iot/qt/netif/VSQNetifBLEEnumerator.h>
-#include <virgil/iot/qt/netif/VSQNetifBLE.h>
+#include <virgil/iot/qt/helpers/VSQSingleton.h>
+#include <virgil/iot/qt/VSQIoTKit.h>
 
-class KSQBLEController : public QObject {
+class KSQDeviceSetupController : public QObject, public VSQSingleton<KSQDeviceSetupController> {
     Q_OBJECT
+
+    friend VSQSingleton<KSQDeviceSetupController>;
+
 public:
-    KSQBLEController();
-    virtual ~KSQBLEController();
+    bool
+    isValid() const {
+        return m_valid;
+    }
 
-    QSharedPointer<VSQNetifBLE>
-    netif();
+    bool
+    start(QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
 
-    VSQNetifBLEEnumerator *
-    model();
+    bool
+    configure();
+
+    void
+    error(const QString & error);
 
 signals:
+    void
+    fireStateInfo(QString state);
 
-public slots:
+    void
+    fireError(QString text);
 
-    Q_INVOKABLE bool
-    connectDevice(const QString &deviceName);
+    void
+    fireFinished(QSharedPointer<VSQNetifBase> m_netif);
+
+    void
+    fireInitializationReady();
 
 private slots:
     void
-    onConnected(bool);
+    onDeviceSecurityInfo();
 
     void
-    onDisconnected();
+    onDeviceInfo(const VSQDeviceInfo &deviceInfo);
 
     void
-    onDeviceError();
+    onConfigurationDone();
 
     void
-    onSetupFinished(QSharedPointer<VSQNetifBase> netif);
+    onConfigurationError();
 
 private:
-    VSQNetifBLEEnumerator m_bleEnumerator;
-    QSharedPointer<VSQNetifBLE> m_netifBLE;
+    KSQDeviceSetupController();
+    virtual ~KSQDeviceSetupController();
 
-    bool m_needWiFiConfig;
+    bool m_valid;
+    bool m_readyDeviceInfo;
+    bool m_readyDeviceSecurityInfo;
 
-    void
-    cleanConnections();
+    QSharedPointer<VSQNetifBase> m_netif;
+    VSQMac m_deviceMac;
+
+    bool
+    checkInitalStep();
 };
 
-#endif // PROVISION_QT_BLE_CONTROLLER_H
+#endif // _YIOT_QT_DEVICE_SETUP_CONTROLLER_H_

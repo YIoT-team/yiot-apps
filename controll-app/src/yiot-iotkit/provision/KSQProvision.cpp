@@ -139,6 +139,9 @@ KSQProvision::create(QSharedPointer<KSQRoT> rot) {
     CHECK_RET(savePubKey(VS_PROVISION_PBF2, rot->firmware2()), false, "Cannot save Firmware 2");
 
     // Sign own public key by factory
+
+    // TODO: Sign vs_pubkey_dated_t
+    // Need to set time limits manually
     auto signature = KSQSecModule::instance().signRaw(m_ownPubic.val(), rot->factory().first);
     CHECK_RET(signature.size(), false, "Cannot sign own public key");
 

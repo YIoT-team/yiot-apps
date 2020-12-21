@@ -89,6 +89,11 @@
         <file>qml/components/devices/DeviceViewSelector.qml</file>
         <file>qml/components/devices/DeviceNameDialog.qml</file>
         <file>qml/components/devices/lamp/LampControls.qml</file>
+        <file>qml/components/devices/setup/BLEDevicesSetupList.qml</file>
+        <file>qml/components/devices/setup/WiFiAPDevicesSetupList.qml</file>
+        <file>qml/components/devices/setup/LocalDevicesSetupList.qml</file>
+        <file>qml/components/devices/setup/ProcessingForm.qml</file>
+        <file>qml/components/devices/setup/SetupParamsForm.qml</file>
 
         <file>qml/components/validators/ValidatorIPv4.qml</file>
         <file>qml/components/validators/ValidatorUserName.qml</file>
@@ -109,10 +114,10 @@
         <file>qml/pages/DevicesSetupPage.qml</file>
         <file>qml/pages/QRReaderPage.qml</file>
         <file>qml/pages/SharePage.qml</file>
-        <file>qml/pages/CredLoadPage.qml</file>
         <file>qml/pages/devices/CmdProcessingPage.qml</file>
         <file>qml/pages/devices/lamp/mono/LampMonoControl.qml</file>
         <file>qml/pages/devices/pc/PCRPiControl.qml</file>
+        <file>qml/pages/devices/setup/SetupProcessingPage.qml</file>
 
 <!--    Doers    -->
         <file>qml/doers/Contributors.qml</file>

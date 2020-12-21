@@ -47,7 +47,7 @@ KSQSnapSCRTClient::getInfo(const vs_netif_t *netif, const VSQMac &mac) {
     QTimer::singleShot(3000, [this]() {
         emit fireInfo();
     });
-    return false;
+    return true;
 }
 
 //-----------------------------------------------------------------------------

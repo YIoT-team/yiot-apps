@@ -72,9 +72,6 @@ public:
 
     virtual ~KSQIoTKitFacade();
 
-    VSQSnapInfoClient *
-    snapInfoClient();
-
     void
     updateAll();
 

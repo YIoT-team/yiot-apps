@@ -17,54 +17,37 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_BLE_CONTROLLER_H
-#define PROVISION_QT_BLE_CONTROLLER_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#include <QtCore>
+import "../../../theme"
+import "../../../components"
 
-#include <virgil/iot/qt/netif/VSQNetifBLEEnumerator.h>
-#include <virgil/iot/qt/netif/VSQNetifBLE.h>
+Form {
+    id: form
+    stretched: true
 
-class KSQBLEController : public QObject {
-    Q_OBJECT
-public:
-    KSQBLEController();
-    virtual ~KSQBLEController();
+    ColumnLayout {
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        Layout.topMargin: 40
+        Layout.bottomMargin: 20
 
-    QSharedPointer<VSQNetifBLE>
-    netif();
+        spacing: 10
 
-    VSQNetifBLEEnumerator *
-    model();
+        Item {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+        }
 
-signals:
-
-public slots:
-
-    Q_INVOKABLE bool
-    connectDevice(const QString &deviceName);
-
-private slots:
-    void
-    onConnected(bool);
-
-    void
-    onDisconnected();
-
-    void
-    onDeviceError();
-
-    void
-    onSetupFinished(QSharedPointer<VSQNetifBase> netif);
-
-private:
-    VSQNetifBLEEnumerator m_bleEnumerator;
-    QSharedPointer<VSQNetifBLE> m_netifBLE;
-
-    bool m_needWiFiConfig;
-
-    void
-    cleanConnections();
-};
-
-#endif // PROVISION_QT_BLE_CONTROLLER_H
+        FormPrimaryButton {
+            id: actionButton
+            Layout.bottomMargin: 10
+            text: "Setup Device"
+            onClicked: {
+                console.log("Setup Device")
+            }
+        }
+    }
+}
