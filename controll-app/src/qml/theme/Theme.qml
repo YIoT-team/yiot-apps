@@ -2,7 +2,6 @@ pragma Singleton
 
 import QtQuick 2.12
 import QtQuick.Window 2.12
-//import "../pages/settings/"
 
 Item {
 
@@ -49,7 +48,7 @@ Item {
 
     property url btImg: "qrc:/qml/resources/icons/dark/bt.png"
     property url wifiImg: "qrc:/qml/resources/icons/dark/wifi.png"
-    property url conDevIco: "../resources/icons/dark/control-devices.png" //err
+    property url conDevIco: "../resources/icons/dark/control-devices.png"
     property url setDevIco: "../resources/icons/dark/setup-devices.png"
     property url shaAccIco: "../resources/icons/dark/share-access.png"
     property url settingsIco: "../resources/icons/dark/settings.png"
@@ -59,12 +58,8 @@ Item {
     readonly property string mainFont: robotoRegular.name
     readonly property string mainFontBold: robotoBold.name
 
-    // TEST
     function getTheme(mode){
-//        var mode = darkMode
         if(mode === 1 ) {
-//            console.log("OK!")
-            // colors
             mainBackgroundColor = "#0A0A0A"
             contrastBackgroundColor = "#222222"
             color = "#ffffff"
@@ -89,8 +84,6 @@ Item {
             settingsIco = "../resources/icons/dark/settings.png"
         }
         if(mode === 0 ) {
-//            console.log("ERROR: " + mode)
-            // colors
             mainBackgroundColor = "#F5F5F5"
             contrastBackgroundColor = "#DDDDDD"
             color = "#000000"

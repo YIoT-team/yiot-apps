@@ -37,20 +37,6 @@ Page {
         backAction: function() { showMenuSettings() }
     }
 
-//    Form {
-//         ВСЁ УБРАТЬ И РАЗОБРАТЬСЯ!!!!!!!!! (сделано)
-//        FormThemeList {
-//            id: dark
-//            text: "lolkek"
-//        }
-
-//        FormThemeList {
-//            text: "lolkek228"
-//            anchors.top: dark.bottom
-//        }
-
-//    }
-    //--------------------------------------
     ListView {
         id: list
         anchors.fill: parent
@@ -60,24 +46,13 @@ Page {
         model: ListModel {
             ListElement {
                 name: qsTr("Dark")
-//                image: "creds"
                 property var action: function() {
                     Theme.getTheme(1)
                 }
             }
             ListElement {
                 name: qsTr("Light")
-//                image: "events" //check
                 property var action: function() {
-//                    temp
-//                    var mode = 1
-//                    showThemeList()
-//                    if (darkMode === 1){
-//                        darkMode = 0
-//                    } else {
-//                        darkMode = 1
-//                    }
-//                    Theme.getTheme(darkMode)
                     Theme.getTheme(0)
                 }
             }
@@ -96,7 +71,7 @@ Page {
 
                 Image {
                     id: icon
-                    source: "qrc:/qml/resources/icons/" + Theme.state +"/%1.png".arg(image)
+                    source: "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(image)
                     Layout.maximumHeight: listDelegate.height * 0.7
                     Layout.maximumWidth: Layout.maximumHeight
                     fillMode: Image.PreserveAspectFit
@@ -134,5 +109,4 @@ Page {
             }
         }
     }
-    //------------------------------------
 }

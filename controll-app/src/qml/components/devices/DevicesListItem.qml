@@ -49,7 +49,7 @@ Rectangle {
             id: icon
             visible: true
             enabled: visible
-            source: "qrc:/qml/resources/icons/" + Theme.state + "/%1.png".arg(topLevel ? image : deviceStateImage(model))
+            source: "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(topLevel ? image : deviceStateImage(model))
             Layout.maximumHeight: itemText.height * 0.7
             Layout.maximumWidth: Layout.maximumHeight
             Layout.leftMargin: 5
@@ -60,7 +60,7 @@ Rectangle {
                 enabled: !topLevel
                 target: topLevel ? null : deviceController
                 function onFireStateChanged() {
-                    icon.source = "qrc:/qml/resources/icons/" + Theme.state + "/%1.png".arg(deviceStateImage(model))
+                    icon.source = "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(deviceStateImage(model))
                 }
             }
         }

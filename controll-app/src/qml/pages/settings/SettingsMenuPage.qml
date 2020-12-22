@@ -57,7 +57,7 @@ Page {
 
             ListElement {
                 name: qsTr("Event triggers")
-                image: "events" //check
+                image: "events"
                 property var action: function() {
                     showEventsSettings()
                 }
@@ -65,17 +65,8 @@ Page {
 
             ListElement {
                 name: qsTr("Theme")
-//                image: "events" //check
                 property var action: function() {
-//                    temp
-//                    var mode = 1
                     showThemeList()
-//                    if (darkMode === 1){
-//                        darkMode = 0
-//                    } else {
-//                        darkMode = 1
-//                    }
-//                    Theme.getTheme(darkMode)
                 }
             }
         }
@@ -93,7 +84,7 @@ Page {
 
                 Image {
                     id: icon
-                    source: "qrc:/qml/resources/icons/" + Theme.state + "/%1.png".arg(image) //lol
+                    source: "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(image)
                     Layout.maximumHeight: listDelegate.height * 0.7
                     Layout.maximumWidth: Layout.maximumHeight
                     fillMode: Image.PreserveAspectFit
