@@ -23,6 +23,7 @@ build_apk() {
 	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="android" -DANDROID_PLATFORM=29 -DANDROID_QT=ON \
 	    -DVS_KEYCHAIN="${VS_KEYCHAIN}" \
             -DVS_KEYCHAIN_PASSWORD="${VS_KEYCHAIN_PASSWORD}" \
+            -DVS_KEY_ALIAS="${VS_KEY_ALIAS}" \
             -DVS_KEY_PASSWORD="${VS_KEY_PASSWORD}" \
              ../..
 	cp -rf ../arm64-v8a/android-build/libs  ./android-build/
