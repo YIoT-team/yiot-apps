@@ -25,11 +25,6 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 set(KS_TARGET_VERSION "0.0.2")
 
 # ---------------------------------------------------------------------------
-# Define project
-# ---------------------------------------------------------------------------
-project(yiot VERSION ${KS_TARGET_VERSION} LANGUAGES C CXX)
-
-# ---------------------------------------------------------------------------
 # Include Cmake helpers
 # ---------------------------------------------------------------------------
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -37,6 +32,12 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 include(vsplatforms)
 include(varpadding)
 #include(clangformat)
+
+# ---------------------------------------------------------------------------
+# Define project
+# ---------------------------------------------------------------------------
+
+project(yiot VERSION ${KS_TARGET_VERSION} LANGUAGES C CXX)
 
 # ---------------------------------------------------------------------------
 #   Detecting platform if KS_PLATFORM not specified
