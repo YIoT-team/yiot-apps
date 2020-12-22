@@ -340,13 +340,12 @@ target_link_libraries(${KS_TARGET_NAME}
 
         # Qt5
         Qt5::Core
-#        $<$<STREQUAL:"${KS_PLATFORM}","android">:Qt5::AndroidExtras>
+        $<$<STREQUAL:"${KS_PLATFORM}","android">:Qt5::AndroidExtras>
         Qt5::Widgets
         Qt5::Test
         Qt5::Network
         Qt5::Concurrent
         Qt5::Qml
-	Qt5::AndroidExtras        
 
         #   IoTKit Qt
         iotkit-qt-lib
