@@ -41,6 +41,7 @@ Page {
         readonly property int wifiPassIdx: 2
         readonly property int eventsIdx: 3
         readonly property int rotIdx: 4
+        readonly property int themeIdx: 5
 
         property int backPageIdx: menuIdx
 
@@ -67,6 +68,10 @@ Page {
 
         RoTSettingsPage {
             id: rotSettingsPage
+        }
+        
+        ThemeListPage {
+            id: themeListPage
         }
     }
 
@@ -104,6 +109,10 @@ Page {
 
     function showEventsSettings() {
         swipeSettingsShow(settingsSwipeView.eventsIdx)
+    }
+
+    function showThemeList() {
+        swipeSettingsShow(settingsSwipeView.themeIdx)
     }
 
     function backInSettings() {

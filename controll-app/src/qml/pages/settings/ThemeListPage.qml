@@ -21,23 +21,20 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../theme"
 import "../../components"
+import "../../theme"
 
 Page {
-    id: settingsPage
-
-    property int darkMode: 1
+    id: themeSelectPage
 
     background: Rectangle {
         color: "transparent"
     }
 
     header: Header {
-        title: qsTr("Global Settings")
-        showBackButton: false
-        showMenuButton: true
-        showSettingsButton: true
+        id: header
+        title: qsTr("Select theme")
+        backAction: function() { showMenuSettings() }
     }
 
     ListView {
@@ -48,33 +45,15 @@ Page {
 
         model: ListModel {
             ListElement {
-                name: qsTr("Root of trust")
-                image: "secure-enclave"
+                name: qsTr("Dark")
                 property var action: function() {
-                    showRoTSettings()
+                    Theme.getTheme(1)
                 }
             }
-
             ListElement {
-                name: qsTr("WiFi credentials")
-                image: "creds"
+                name: qsTr("Light")
                 property var action: function() {
-                    showWiFiSettings()
-                }
-            }
-
-            ListElement {
-                name: qsTr("Event triggers")
-                image: "events"
-                property var action: function() {
-                    showEventsSettings()
-                }
-            }
-
-            ListElement {
-                name: qsTr("Theme")
-                property var action: function() {
-                    showThemeList()
+                    Theme.getTheme(0)
                 }
             }
         }
@@ -110,21 +89,6 @@ Page {
                     Layout.alignment: Qt.AlignLeft
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                }
-
-                RowLayout {
-                    id: actionsBlock
-                    Layout.rightMargin: 10
-
-                    Image {
-                        id: iconAction
-                        source: "qrc:/qml/resources/icons/Arrow-Right.png"
-                        Layout.maximumHeight: listDelegate.height * 0.7
-                        Layout.maximumWidth: Layout.maximumHeight
-                        fillMode: Image.PreserveAspectFit
-                        Layout.alignment: Qt.AlignRight
-                        Layout.rightMargin: 10
-                    }
                 }
             }
 
