@@ -129,7 +129,7 @@ if(KS_PLATFORM STREQUAL "android")
     message(STATUS "Android OpenSSL library path: [${KS_ANDROID_SSL_DIR}]")
 
 # Linux
-elseif(VS_PLATFORM STREQUAL "linux")
+elseif(KS_PLATFORM STREQUAL "linux")
     add_executable(${KS_TARGET_NAME})
     # Add deployers targets
     include(deployers)
