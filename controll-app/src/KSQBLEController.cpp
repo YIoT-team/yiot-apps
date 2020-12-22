@@ -106,7 +106,7 @@ KSQBLEController::connectDevice(const QString &deviceName) {
         return false;
     }
 
-    QTimer::singleShot(2000, [this]() {
+    QTimer::singleShot(500, [this]() {
         onConnected(true);
     });
 

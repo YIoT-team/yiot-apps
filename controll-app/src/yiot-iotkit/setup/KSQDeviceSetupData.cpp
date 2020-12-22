@@ -17,96 +17,60 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef _YIOT_QT_DEVICE_SETUP_CONTROLLER_H_
-#define _YIOT_QT_DEVICE_SETUP_CONTROLLER_H_
-
-#include <QtCore>
-
-#include <virgil/iot/qt/helpers/VSQSingleton.h>
-#include <virgil/iot/qt/VSQIoTKit.h>
 #include <yiot-iotkit/setup/KSQDeviceSetupData.h>
 
-class KSQDeviceSetupController : public QObject, public VSQSingleton<KSQDeviceSetupController> {
-    Q_OBJECT
+//-----------------------------------------------------------------------------
+KSQDeviceSetupData::KSQDeviceSetupData() : QObject() {
+    m_name = "TestName";
+    m_manufacturer = "YIoT";
 
-    friend VSQSingleton<KSQDeviceSetupController>;
+    m_hasProvision = false;
+    m_hasOwner = false;
+    m_ownerIsYou = false;
+    m_needCreds = true;
+}
 
-    Q_PROPERTY(QObject * data READ deviceData NOTIFY fireDeviceDataChanged)
+//-----------------------------------------------------------------------------
+KSQDeviceSetupData::KSQDeviceSetupData(KSQDeviceSetupData const &d) {
+    *this = d;
+}
 
-public:
-    bool
-    isValid() const {
-        return m_valid;
+//-----------------------------------------------------------------------------
+KSQDeviceSetupData &
+KSQDeviceSetupData::operator=(KSQDeviceSetupData const & d) {
+    if (this == &d) {
+        return *this;
     }
 
-    bool
-    start(QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
+    m_name = d.m_name;
+    m_manufacturer = d.m_manufacturer;
 
-    Q_INVOKABLE void
-    stop();
+    m_hasProvision = d.m_hasProvision;
+    m_hasOwner = d.m_hasOwner;
+    m_ownerIsYou = d.m_ownerIsYou;
+    m_needCreds = d.m_needCreds;
 
-    Q_INVOKABLE bool
-    configure();
+    return *this;
+}
 
-    void
-    error(const QString & error);
+//-----------------------------------------------------------------------------
+bool
+KSQDeviceSetupData::operator==(const KSQDeviceSetupData &d) const {
+    if (m_name != d.m_name) return false;
+    if (m_manufacturer != d.m_manufacturer) return false;
 
-signals:
-    void
-    fireStateInfo(QString state);
+    if (m_hasProvision != d.m_hasProvision) return false;
+    if (m_hasOwner != d.m_hasOwner) return false;
+    if (m_ownerIsYou != d.m_ownerIsYou) return false;
+    if (m_needCreds != d.m_needCreds) return false;
 
-    void
-    fireError(QString text);
+    return true;
+}
 
-    void
-    fireFinished(QSharedPointer<VSQNetifBase> m_netif);
+//-----------------------------------------------------------------------------
+bool
+KSQDeviceSetupData::operator!=(const KSQDeviceSetupData &d) const {
+    return !this->operator==(d);
+}
 
-    void
-    fireInitializationReady();
-
-    void
-    fireUploadStarted();
-
-    void
-    fireUploadDone();
-
-    void
-    fireUploadStopped();
-
-    void
-    fireDeviceDataChanged();
-
-private slots:
-    void
-    onDeviceSecurityInfo();
-
-    void
-    onDeviceInfo(const VSQDeviceInfo &deviceInfo);
-
-    void
-    onConfigurationDone();
-
-    void
-    onConfigurationError();
-
-private:
-    KSQDeviceSetupController();
-    virtual ~KSQDeviceSetupController();
-
-    bool m_valid;
-    bool m_readyDeviceInfo;
-    bool m_readyDeviceSecurityInfo;
-
-    KSQDeviceSetupData m_deviceData;
-
-    QSharedPointer<VSQNetifBase> m_netif;
-    VSQMac m_deviceMac;
-
-    bool
-    checkInitalStep();
-
-    Q_INVOKABLE QObject*
-    deviceData();
-};
-
-#endif // _YIOT_QT_DEVICE_SETUP_CONTROLLER_H_
+//-----------------------------------------------------------------------------

@@ -17,96 +17,66 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef _YIOT_QT_DEVICE_SETUP_CONTROLLER_H_
-#define _YIOT_QT_DEVICE_SETUP_CONTROLLER_H_
+#ifndef _YIOT_QT_DEVICE_SETUP_DATA_H_
+#define _YIOT_QT_DEVICE_SETUP_DATA_H_
 
 #include <QtCore>
 
 #include <virgil/iot/qt/helpers/VSQSingleton.h>
 #include <virgil/iot/qt/VSQIoTKit.h>
-#include <yiot-iotkit/setup/KSQDeviceSetupData.h>
 
-class KSQDeviceSetupController : public QObject, public VSQSingleton<KSQDeviceSetupController> {
+class KSQDeviceSetupData : public QObject {
     Q_OBJECT
 
-    friend VSQSingleton<KSQDeviceSetupController>;
-
-    Q_PROPERTY(QObject * data READ deviceData NOTIFY fireDeviceDataChanged)
+    Q_PROPERTY(QString name MEMBER m_name NOTIFY fireNameChanged)
+    Q_PROPERTY(QString manufacturer MEMBER m_manufacturer NOTIFY fireManufacturerChanged)
+    Q_PROPERTY(bool hasProvision MEMBER m_hasProvision NOTIFY fireHasProvisionChanged)
+    Q_PROPERTY(bool hasOwner MEMBER m_hasOwner NOTIFY fireHasOwnerChanged)
+    Q_PROPERTY(bool ownerIsYou MEMBER m_ownerIsYou NOTIFY fireOwnerIsYouChanged)
+    Q_PROPERTY(bool needCreds MEMBER m_needCreds NOTIFY fireNeedCredsChanged)
 
 public:
-    bool
-    isValid() const {
-        return m_valid;
-    }
+    KSQDeviceSetupData();
+    KSQDeviceSetupData(KSQDeviceSetupData const &d);
+
+    virtual ~KSQDeviceSetupData() = default;
+
+    KSQDeviceSetupData &
+    operator=(KSQDeviceSetupData const &d);
 
     bool
-    start(QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
+    operator==(const KSQDeviceSetupData &d) const;
 
-    Q_INVOKABLE void
-    stop();
-
-    Q_INVOKABLE bool
-    configure();
-
-    void
-    error(const QString & error);
+    bool
+    operator!=(const KSQDeviceSetupData &d) const;
 
 signals:
     void
-    fireStateInfo(QString state);
+    fireNameChanged();
 
     void
-    fireError(QString text);
+    fireManufacturerChanged();
 
     void
-    fireFinished(QSharedPointer<VSQNetifBase> m_netif);
+    fireHasProvisionChanged();
 
     void
-    fireInitializationReady();
+    fireHasOwnerChanged();
 
     void
-    fireUploadStarted();
+    fireOwnerIsYouChanged();
 
     void
-    fireUploadDone();
-
-    void
-    fireUploadStopped();
-
-    void
-    fireDeviceDataChanged();
-
-private slots:
-    void
-    onDeviceSecurityInfo();
-
-    void
-    onDeviceInfo(const VSQDeviceInfo &deviceInfo);
-
-    void
-    onConfigurationDone();
-
-    void
-    onConfigurationError();
+    fireNeedCredsChanged();
 
 private:
-    KSQDeviceSetupController();
-    virtual ~KSQDeviceSetupController();
+    QString m_name;
+    QString m_manufacturer;
 
-    bool m_valid;
-    bool m_readyDeviceInfo;
-    bool m_readyDeviceSecurityInfo;
-
-    KSQDeviceSetupData m_deviceData;
-
-    QSharedPointer<VSQNetifBase> m_netif;
-    VSQMac m_deviceMac;
-
-    bool
-    checkInitalStep();
-
-    Q_INVOKABLE QObject*
-    deviceData();
+    bool m_hasProvision;
+    bool m_hasOwner;
+    bool m_ownerIsYou;
+    bool m_needCreds;
 };
 
-#endif // _YIOT_QT_DEVICE_SETUP_CONTROLLER_H_
+#endif // _YIOT_QT_DEVICE_SETUP_DATA_H_

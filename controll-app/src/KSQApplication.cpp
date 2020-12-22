@@ -93,7 +93,7 @@ KSQApplication::run() {
     context->setContextProperty("wifiEnum", &m_wifiEnumerator);             // WiFi networks enumeration
     context->setContextProperty("deviceControllers", &m_deviceControllers); // Containers with controllers for all supported devices
     context->setContextProperty("deviceSetup",                              // Device setup state-machine
-                                &KSQDeviceSetupController::instance());
+                                &KSQDeviceSetupController::instance());     // Controller to setup device provision, the first owner etc.
     context->setContextProperty("rotModel", &KSQRoTController::instance()); // Container for all Roots of trust
 
     // Load UI theme

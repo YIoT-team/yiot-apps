@@ -80,11 +80,11 @@ KSQDeviceSetupController::start(QSharedPointer<VSQNetifBase> netif, VSQMac devic
 
     emit fireStateInfo(tr("Request device state"));
 
-    QTimer::singleShot(1000, [this]() {
+    QTimer::singleShot(500, [this]() {
         onConfigurationDone();
     });
 
-    QTimer::singleShot(2000, [this]() {
+    QTimer::singleShot(500, [this]() {
         VSQDeviceInfo deviceInfo(broadcastMac);
         onDeviceInfo(deviceInfo);
     });
@@ -94,9 +94,20 @@ KSQDeviceSetupController::start(QSharedPointer<VSQNetifBase> netif, VSQMac devic
 }
 
 //-----------------------------------------------------------------------------
+void
+KSQDeviceSetupController::stop() {
+    m_valid = false;
+    emit fireUploadStopped();
+}
+
+//-----------------------------------------------------------------------------
 bool
 KSQDeviceSetupController::configure() {
-    return false;
+    emit fireUploadStarted();
+    QTimer::singleShot(500, [this]() {
+        emit fireUploadDone();
+    });
+    return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -158,6 +169,12 @@ KSQDeviceSetupController::checkInitalStep() {
     emit fireInitializationReady();
 
     return true;
+}
+
+//-----------------------------------------------------------------------------
+QObject*
+KSQDeviceSetupController::deviceData() {
+    return &m_deviceData;
 }
 
 //-----------------------------------------------------------------------------

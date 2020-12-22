@@ -48,6 +48,14 @@ Page {
         LocalDevicesSetupList { }
     }
 
+    Connections {
+        target: deviceSetup
+
+        function onFireUploadStopped(text) {
+            terminateProvision()
+        }
+    }
+
     function terminateProvision() {
         showDevicesSetup()
     }

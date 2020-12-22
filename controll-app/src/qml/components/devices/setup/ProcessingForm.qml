@@ -62,53 +62,69 @@ Form {
             id: actionButton
             Layout.bottomMargin: 10
             onClicked: {
-                devicesSetupPage.terminateProvision()
+                deviceSetup.stop()
+            }
+        }
+
+        StateGroup {
+            id: stateGroup
+            state: "connect"
+            states: [
+                State {
+                    name: "connect"
+                    PropertyChanges { target: infoText; text: qsTr("Connecting") }
+                    PropertyChanges { target: infoText; color: Theme.brandColor }
+                    PropertyChanges { target: animatedImage; visible: true }
+                    PropertyChanges { target: actionButton; text: qsTr("Stop") }
+                },
+                State {
+                    name: "process"
+                    PropertyChanges { target: infoText; color: Theme.brandColor }
+                    PropertyChanges { target: animatedImage; visible: true }
+                    PropertyChanges { target: actionButton; text: qsTr("Stop") }
+                },
+                State {
+                    name: "error"
+                    PropertyChanges { target: infoText; text: qsTr("Error occured :(") }
+                    PropertyChanges { target: infoText; color: Theme.errorTextColor }
+                    PropertyChanges { target: animatedImage; visible: false }
+                    PropertyChanges { target: actionButton; text: qsTr("Ok") }
+                },
+                State {
+                    name: "done"
+                    PropertyChanges { target: infoText; text: qsTr("DONE") }
+                    PropertyChanges { target: infoText; color: Theme.succesTextColor }
+                    PropertyChanges { target: animatedImage; visible: false }
+                    PropertyChanges { target: actionButton; text: qsTr("Ok") }
+                }
+            ]
+        }
+
+        Connections {
+            id: connections
+            target: deviceSetup
+
+            function onFireStateInfo(text) {
+                stateGroup.state = "process"
+                infoText.text = text
+            }
+
+            function onFireError() {
+                stateGroup.state = "error"
+            }
+
+            function onFireUploadDone() {
+                stateGroup.state = "done"
             }
         }
     }
 
-//    StateGroup {
-//        id: stateGroup
-//        state: "connect"
-//    states: [
-//        State {
-//            name: "connect"
-//            PropertyChanges { target: infoText; text: qsTr("Connecting") }
-//            PropertyChanges { target: infoText; color: Theme.brandColor }
-//            PropertyChanges { target: animatedImage; visible: true }
-//            PropertyChanges { target: actionButton; text: qsTr("Stop") }
-//        },
-//        State {
-//            name: "process"
-//            PropertyChanges { target: infoText; color: Theme.brandColor }
-//            PropertyChanges { target: animatedImage; visible: true }
-//            PropertyChanges { target: actionButton; text: qsTr("Stop") }
-//        },
-//        State {
-//            name: "error"
-//            PropertyChanges { target: infoText; text: qsTr("Error occured :(") }
-//            PropertyChanges { target: infoText; color: Theme.errorTextColor }
-//            PropertyChanges { target: animatedImage; visible: false }
-//            PropertyChanges { target: actionButton; text: qsTr("Ok") }
-//        }
-//    ]
-//    }
-
     onVisibleChanged: {
-        state = "connect"
+        stateGroup.state = "connect"
     }
 
-//    Connections {
-//        id: connections
-//        target: deviceSetup
-//
-//        function onFireStateInfo(text) {
-//            state = "process"
-//            infoText.text = text
-//        }
-//
-//        function onFireError() {
-//            state = "error"
-//        }
-//    }
+    function configure() {
+        stateGroup.state = "process"
+        infoText.text = qsTr("Device configuration")
+    }
 }
