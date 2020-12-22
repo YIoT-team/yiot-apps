@@ -127,8 +127,8 @@ elseif(KS_PLATFORM STREQUAL "macos")
 	-v
     COMMAND echo "Set DMG icon..."	
     COMMAND
-	${PROJECT_SOURCE_DIR}/qt/platforms/macos/tools/seticon
-	${VS_CUSTOMER_DIR}/qt/platforms/macos/pkg_resources/${MACOSX_BUNDLE_ICON_FILE}
+	${PROJECT_SOURCE_DIR}/platforms/macos/tools/seticon
+	${VS_CUSTOMER_DIR}/platforms/macos/pkg_resources/${MACOSX_BUNDLE_ICON_FILE}
 	"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dmg"
     VERBATIM)
 
@@ -140,12 +140,12 @@ elseif(KS_PLATFORM STREQUAL "macos")
     COMMAND echo "Deploy MacOS bundle data (without signing)..."
     COMMAND ${MAC_DEPLOY_QT}
        ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app
-       -qmldir=${PROJECT_SOURCE_DIR}/qt/src/qml        
+       -qmldir=${PROJECT_SOURCE_DIR}/src/qml        
        -verbose=1  
        -dmg
     COMMAND
-	${PROJECT_SOURCE_DIR}/qt/platforms/macos/tools/seticon
-	${VS_CUSTOMER_DIR}/qt/platforms/macos/pkg_resources/${MACOSX_BUNDLE_ICON_FILE}
+	${PROJECT_SOURCE_DIR}/platforms/macos/tools/seticon
+	${VS_CUSTOMER_DIR}/platforms/macos/pkg_resources/${MACOSX_BUNDLE_ICON_FILE}
 	"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dmg"       
     VERBATIM)
     

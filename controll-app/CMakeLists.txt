@@ -19,7 +19,6 @@
 
 cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
-
 # ---------------------------------------------------------------------------
 #   C++
 # ---------------------------------------------------------------------------
@@ -27,6 +26,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
 include(GNUInstallDirs)
 include(FetchContent)
@@ -102,10 +105,6 @@ endif()
 #   Qt
 # ---------------------------------------------------------------------------
 find_package(Qt5 COMPONENTS Core Widgets Test Network Concurrent Qml ${KS_QT_EXTRA} REQUIRED)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
 
 # ---------------------------------------------------------------------------
 #   Prepare for build target
@@ -196,6 +195,7 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/cmake/iotkit-qt)
 # ---------------------------------------------------------------------------
 set(BUILD_TEST_APPLICATION CACHE BOOL OFF FORCE)
 set(BUILD_TRANSLATIONS CACHE BOOL OFF FORCE)
+set(QTANDROIDEXTRAS_LIBRARIES "Qt5::AndroidExtras")
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../ext/qtkeychain qtkeychain)
 
 # ---------------------------------------------------------------------------
@@ -340,11 +340,13 @@ target_link_libraries(${KS_TARGET_NAME}
 
         # Qt5
         Qt5::Core
+#        $<$<STREQUAL:"${KS_PLATFORM}","android">:Qt5::AndroidExtras>
         Qt5::Widgets
         Qt5::Test
         Qt5::Network
         Qt5::Concurrent
         Qt5::Qml
+	Qt5::AndroidExtras        
 
         #   IoTKit Qt
         iotkit-qt-lib

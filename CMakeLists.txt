@@ -25,11 +25,6 @@ cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 set(KS_TARGET_VERSION "0.1.0")
 
 # ---------------------------------------------------------------------------
-# Define project
-# ---------------------------------------------------------------------------
-project(yiot VERSION ${KS_TARGET_VERSION} LANGUAGES C CXX)
-
-# ---------------------------------------------------------------------------
 #   Options
 # ---------------------------------------------------------------------------
 option(BUILD_DEVICE_ENABLE "Enable building of Device app" ON)
@@ -45,6 +40,12 @@ if (BUILD_APP_ENABLE)
 endif()
 include(varpadding)
 #include(clangformat)
+
+# ---------------------------------------------------------------------------
+# Define project
+# ---------------------------------------------------------------------------
+
+project(yiot VERSION ${KS_TARGET_VERSION} LANGUAGES C CXX)
 
 # ---------------------------------------------------------------------------
 #   Detecting platform if KS_PLATFORM not specified
