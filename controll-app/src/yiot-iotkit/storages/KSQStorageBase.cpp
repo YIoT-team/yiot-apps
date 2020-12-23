@@ -127,7 +127,7 @@ KSQStorageBase::_save(const vs_storage_impl_data_ctx_t storage_ctx,
 
     QByteArray &fileData = ctx->m_cache[f];
 
-    if (fileData.size() < (offset + data_sz)) {
+    if (fileData.size() < static_cast<int>(offset + data_sz)) {
         fileData.resize(offset + data_sz);
     }
 
@@ -154,7 +154,7 @@ KSQStorageBase::_load(const vs_storage_impl_data_ctx_t storage_ctx,
     const auto &f = *reinterpret_cast<QString*>(file);
     QByteArray &fileData = ctx->m_cache[f];
 
-    if (fileData.size() < (offset + data_sz)) {
+    if (fileData.size() < static_cast<int>(offset + data_sz)) {
         return res;
     }
 

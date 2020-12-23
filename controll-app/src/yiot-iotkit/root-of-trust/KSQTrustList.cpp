@@ -199,7 +199,7 @@ KSQTrustList::header() const {
 //-----------------------------------------------------------------------------
 QByteArray
 KSQTrustList::key(size_t num) const {
-    if (!m_valid || m_tl.size() <= minSz() || num >= keysCount()) {
+    if (!m_valid || m_tl.size() <= minSz() || static_cast<int>(num) >= keysCount()) {
         return QByteArray();
     }
 
@@ -215,7 +215,7 @@ KSQTrustList::key(size_t num) const {
                 + VS_IOT_NTOHS(key->pubkey.meta_data_sz)
                 + vs_secmodule_get_pubkey_len(ecType);
         keyData += keySz;
-    } while(i < num);
+    } while(i < static_cast<int>(num));
 
     return QByteArray(reinterpret_cast<const char *>(key), keySz);
 }
@@ -259,7 +259,7 @@ KSQTrustList::footer() const {
 }
 
 //-----------------------------------------------------------------------------
-size_t
+int
 KSQTrustList::minSz() const {
     return sizeof(vs_tl_header_t) + sizeof(vs_tl_footer_t) + sizeof(vs_pubkey_t);
 }

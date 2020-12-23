@@ -125,7 +125,7 @@ KSQRoT::generate(const QString &name) {
     m_id = kLocalID;
 
     // Generate required amount of keys
-    for (int i = 0; i < _keysCnt; i++) {
+    for (size_t i = 0; i < _keysCnt; i++) {
         auto keyPair = KSQSecModule::instance().generateKeypair(kDefaultEC);
         if (keyPair.first.isNull() || keyPair.second.isNull()) {
             VS_LOG_ERROR("Cannot generate key pair for a new root of trust");
@@ -234,7 +234,7 @@ KSQRoT::prepName(const QString &name, vs_storage_element_id_t id) const {
     QString fullName = m_id + "__" + name;
     memset(id, 0, sizeof(vs_storage_element_id_t));
 
-    if (fullName.size() >= sizeof(vs_storage_element_id_t)) {
+    if (static_cast<size_t>(fullName.size()) >= sizeof(vs_storage_element_id_t)) {
         VS_LOG_ERROR("File name is greater than 32 bytes %s", name.toStdString().c_str());
         return false;
     }
