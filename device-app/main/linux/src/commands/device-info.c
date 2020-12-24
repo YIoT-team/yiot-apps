@@ -24,6 +24,7 @@
 void
 ks_devinfo_manufacturer(vs_device_manufacture_id_t manufacture_id) {
     memset(manufacture_id, 0, sizeof(vs_device_manufacture_id_t));
+    strncpy(manufacture_id, "YIoT-dev", sizeof(vs_device_manufacture_id_t) - 1);
 }
 
 //-----------------------------------------------------------------------------

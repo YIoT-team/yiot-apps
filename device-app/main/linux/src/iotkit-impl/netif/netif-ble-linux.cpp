@@ -26,6 +26,7 @@
 #include <mutex>
 #include <condition_variable>
 
+#include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/protocols/snap/snap-structs.h>
 
 #include "iotkit-impl/netif/netif-ble-linux.h"
@@ -284,7 +285,7 @@ _ble_tx(struct vs_netif_t *netif, const uint8_t *data, const uint16_t data_sz) {
         return VS_CODE_ERR_NOINIT;
     }
 
-    // VS_LOG_HEX(VS_LOGLEV_DEBUG, "SEND DUMP:", data, data_sz);
+    vs_snap_packet_dump("OUT", (vs_snap_packet_t *)data);
     std::vector<uint8_t> data_vect(data, data + data_sz);
     _tx_char->tx(data_vect);
 
