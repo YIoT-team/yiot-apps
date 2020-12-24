@@ -110,11 +110,8 @@
         <file>qml/pages/devices/lamp/mono/LampMonoControl.qml</file>
         <file>qml/pages/devices/pc/PCRPiControl.qml</file>
         <file>qml/pages/devices/setup/SetupProcessingPage.qml</file>
-
-<!--    Doers    -->
         <file>qml/doers/Contributors.qml</file>
         <file>qml/doers/Sponsors.qml</file>
-<!--   ~Doers    -->
         <file>qml/theme/Theme.qml</file>
         <file>qml/base/Platform.qml</file>
         <file>qml/pages/settings/ThemeListPage.qml</file>
@@ -142,5 +139,13 @@
         <file>qml/resources/icons/light/wash-machine.png</file>
         <file>qml/resources/icons/light/wifi-dimmed.png</file>
         <file>qml/resources/icons/light/wifi.png</file>
+        <file>qml/resources/icons/light/delete.png</file>
+        <file>qml/resources/icons/light/export.png</file>
+        <file>qml/resources/icons/light/themes.png</file>
+        <file>qml/resources/icons/dark/themes.png</file>
+        <file>qml/resources/icons/light/moon.png</file>
+        <file>qml/resources/icons/light/sun.png</file>
+        <file>qml/resources/icons/dark/moon.png</file>
+        <file>qml/resources/icons/dark/sun.png</file>
     </qresource>
 </RCC>

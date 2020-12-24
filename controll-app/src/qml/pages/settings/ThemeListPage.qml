@@ -29,6 +29,8 @@ Page {
 
     background: Rectangle {
         color: "transparent"
+
+        property int themeState: 1
     }
 
     header: Header {
@@ -46,12 +48,14 @@ Page {
         model: ListModel {
             ListElement {
                 name: qsTr("Dark")
+                image: "moon"
                 property var action: function() {
                     Theme.getTheme(1)
                 }
             }
             ListElement {
                 name: qsTr("Light")
+                image: "sun"
                 property var action: function() {
                     Theme.getTheme(0)
                 }

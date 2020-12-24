@@ -2,8 +2,10 @@ pragma Singleton
 
 import QtQuick 2.12
 import QtQuick.Window 2.12
+import Qt.labs.settings 1.0
 
 Item {
+    id: themePage
 
 
     FontLoader {
@@ -14,6 +16,16 @@ Item {
     FontLoader {
         id: robotoBold
         source: "../resources/fonts/Roboto-Bold.ttf"
+    }
+
+    // Save and restore theme settings
+    Settings {
+        id: sett
+        property int saveMode: 1
+        function restore() {
+            getTheme(saveMode)
+        }
+        Component.onCompleted: restore();
     }
 
 
@@ -49,10 +61,6 @@ Item {
 
     property url btImg: "qrc:/qml/resources/icons/dark/bt.png"
     property url wifiImg: "qrc:/qml/resources/icons/dark/wifi.png"
-    property url conDevIco: "../resources/icons/dark/control-devices.png"
-    property url setDevIco: "../resources/icons/dark/setup-devices.png"
-    property url shaAccIco: "../resources/icons/dark/share-access.png"
-    property url settingsIco: "../resources/icons/dark/settings.png"
 
     // texts
     readonly property string mainLogoText: app.organizationDisplayName
@@ -79,10 +87,6 @@ Item {
             wifiImg = "qrc:/qml/resources/icons/dark/wifi.png"
             tabImages = "#ffffff"
             state = "dark"
-            conDevIco = "../resources/icons/dark/control-devices.png"
-            setDevIco = "../resources/icons/dark/setup-devices.png"
-            shaAccIco = "../resources/icons/dark/share-access.png"
-            settingsIco = "../resources/icons/dark/settings.png"
         }
         if(mode === 0 ) {
             mainBackgroundColor = "#F5F5F5"
@@ -103,12 +107,9 @@ Item {
             wifiImg = "qrc:/qml/resources/icons/light/wifi.png"
             tabImages = "#000000"
             state = "light"
-            conDevIco = "../resources/icons/light/control-devices.png"
-            setDevIco = "../resources/icons/light/setup-devices.png"
-            shaAccIco = "../resources/icons/light/share-access.png"
-            settingsIco = "../resources/icons/light/settings.png"
+
         }
+        sett.saveMode = mode
         return 0;
     }
-
 }
