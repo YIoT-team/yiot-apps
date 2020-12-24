@@ -106,9 +106,6 @@ KSQBLEController::connectDevice(const QString &deviceName) {
         return false;
     }
 
-    QTimer::singleShot(500, [this]() {
-        onConnected(true);
-    });
 
     return m_netifBLE->open(ble);
 }

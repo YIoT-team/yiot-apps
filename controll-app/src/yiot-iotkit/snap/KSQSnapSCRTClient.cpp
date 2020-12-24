@@ -43,11 +43,9 @@ KSQSnapSCRTClient::KSQSnapSCRTClient() {
 //-----------------------------------------------------------------------------
 bool
 KSQSnapSCRTClient::getInfo(const vs_netif_t *netif, const VSQMac &mac) {
-    VS_LOG_DEBUG(">>> SCRT::INFO");
-    QTimer::singleShot(3000, [this]() {
-        emit fireInfo();
-    });
-    return true;
+    CHECK_NOT_ZERO_RET(netif, false);
+    vs_mac_addr_t _mac = mac;
+    return VS_CODE_OK == vs_snap_scrt_get_info(netif, &_mac);
 }
 
 //-----------------------------------------------------------------------------
@@ -92,14 +90,29 @@ KSQSnapSCRTClient::getUsers(const vs_netif_t *netif, const VSQMac &mac) {
 
 //-----------------------------------------------------------------------------
 vs_status_e
-KSQSnapSCRTClient::_infoCb(vs_snap_transaction_id_t id, vs_status_e res) {
-    VS_LOG_DEBUG("_infoCb");
-    return VS_CODE_ERR_NOT_IMPLEMENTED;
+KSQSnapSCRTClient::_infoCb(vs_snap_transaction_id_t id, vs_status_e res,
+                           const vs_scrt_info_response_t* scrt_info) {
+    CHECK_NOT_ZERO_RET(scrt_info, VS_CODE_ERR_ZERO_ARGUMENT);
+
+    bool hasProvision = scrt_info->provisioned;
+    bool hasOwner = scrt_info->owners_count > 0;
+    bool hasOwnerIsYou = false;
+
+    bool keyPresent = scrt_info->own_cert.key_sz;
+    KSQPublicKey publicKey;
+    if (keyPresent) {
+        const vs_pubkey_t *key = (vs_pubkey_t *)scrt_info->own_cert.raw_cert;
+        publicKey = KSQPublicKey(*key);
+    }
+
+    emit KSQSnapSCRTClient::instance().fireInfo(hasProvision, hasOwner, hasOwnerIsYou, publicKey);
+    return VS_CODE_OK;
 }
 
 //-----------------------------------------------------------------------------
 vs_status_e
-KSQSnapSCRTClient::_sessionKeyCb(vs_snap_transaction_id_t id, vs_status_e res) {
+KSQSnapSCRTClient::_sessionKeyCb(vs_snap_transaction_id_t id,
+                                 vs_status_e res) {
     VS_LOG_DEBUG("_sessionKeyCb");
     return VS_CODE_ERR_NOT_IMPLEMENTED;
 }

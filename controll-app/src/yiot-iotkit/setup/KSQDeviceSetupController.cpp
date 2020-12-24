@@ -68,26 +68,19 @@ KSQDeviceSetupController::start(QSharedPointer<VSQNetifBase> netif, VSQMac devic
 
     auto bleNetif = m_netif->lowLevelNetif();
 
+    // Request Device information
     if (!VSQSnapInfoClient::instance().onStartFullPolling(m_deviceMac, bleNetif)) {
         emit fireError(tr("Cannot request device info"));
         return false;
     }
 
+    // Request Device Security information
     if (!KSQSnapSCRTClient::instance().getInfo(bleNetif, m_deviceMac)) {
         emit fireError(tr("Cannot request security device info"));
         return false;
     }
 
     emit fireStateInfo(tr("Request device state"));
-
-    QTimer::singleShot(500, [this]() {
-        onConfigurationDone();
-    });
-
-    QTimer::singleShot(500, [this]() {
-        VSQDeviceInfo deviceInfo(broadcastMac);
-        onDeviceInfo(deviceInfo);
-    });
 
     m_valid = true;
     return m_valid;
@@ -138,11 +131,19 @@ KSQDeviceSetupController::onConfigurationError() {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceSetupController::onDeviceSecurityInfo() {
+KSQDeviceSetupController::onDeviceSecurityInfo(bool hasProvision,
+                                               bool hasOwner,
+                                               bool ownerIsYou,
+                                               const KSQPublicKey& publicKey) {
     if (!m_valid) {
         return;
     }
-    VS_LOG_DEBUG(">>> onDeviceSecurityInfo");
+
+    m_deviceData.setHasProvision(hasProvision);
+    m_deviceData.setHasOwner(hasOwner);
+    m_deviceData.setOwnerIsYou(ownerIsYou);
+    m_deviceData.setPublicKey(publicKey);
+
     m_readyDeviceSecurityInfo = true;
     checkInitalStep();
 }
@@ -150,10 +151,11 @@ KSQDeviceSetupController::onDeviceSecurityInfo() {
 //-----------------------------------------------------------------------------
 void
 KSQDeviceSetupController::onDeviceInfo(const VSQDeviceInfo &deviceInfo) {
-    if (!m_valid) {
+    if (!m_valid || m_readyDeviceInfo) {
         return;
     }
-    VS_LOG_DEBUG(">>> onDeviceInfo");
+
+    m_deviceData.setDeviceInfo(deviceInfo);
     m_readyDeviceInfo = true;
     checkInitalStep();
 }

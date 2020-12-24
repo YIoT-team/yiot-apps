@@ -26,6 +26,10 @@
 #include <virgil/iot/qt/VSQIoTKit.h>
 #include <yiot-iotkit/setup/KSQDeviceSetupData.h>
 
+#include <yiot-iotkit/secmodule/KSQPublicKey.h>
+
+using namespace VirgilIoTKit;
+
 class KSQDeviceSetupController : public QObject, public VSQSingleton<KSQDeviceSetupController> {
     Q_OBJECT
 
@@ -78,7 +82,10 @@ signals:
 
 private slots:
     void
-    onDeviceSecurityInfo();
+    onDeviceSecurityInfo(bool hasProvision,
+                         bool hasOwner,
+                         bool ownerIsYou,
+                         const KSQPublicKey& publicKey);
 
     void
     onDeviceInfo(const VSQDeviceInfo &deviceInfo);

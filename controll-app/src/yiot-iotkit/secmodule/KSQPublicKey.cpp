@@ -43,6 +43,44 @@ KSQPublicKey::KSQPublicKey(vs_secmodule_keypair_type_e keypairType,
     m_startDate = startDate;
     m_expireDate = expireDate;
     m_valid = !m_key.isEmpty();
+
+    registerType();
+}
+
+//-----------------------------------------------------------------------------
+KSQPublicKey::KSQPublicKey(const KSQPublicKey &key) {
+    if (this == &key) {
+        return;
+    }
+
+    m_key = key.m_key;
+    m_signature = key.m_signature;
+    m_ecType = key.m_ecType;
+    m_provisionType = key.m_provisionType;
+    m_startDate = key.m_startDate;
+    m_expireDate = key.m_expireDate;
+    m_valid = key.m_valid;
+
+    registerType();
+}
+
+//-----------------------------------------------------------------------------
+KSQPublicKey::KSQPublicKey(const vs_pubkey_dated_t &key) {
+    m_valid = false;
+    registerType();
+}
+
+//-----------------------------------------------------------------------------
+KSQPublicKey::KSQPublicKey(const vs_pubkey_t &key) {
+    m_ecType = static_cast<vs_secmodule_keypair_type_e>(key.ec_type);
+    m_key = QByteArray(reinterpret_cast<const char*>(&key.meta_and_pubkey[key.meta_data_sz]),
+                       vs_secmodule_get_pubkey_len(m_ecType));
+    m_signature.clear();
+    m_provisionType = static_cast<vs_key_type_e>(key.key_type);
+    m_startDate = QDateTime::fromSecsSinceEpoch(VS_START_EPOCH);
+    m_expireDate = QDateTime::fromSecsSinceEpoch(VS_START_EPOCH);
+    m_valid = !m_key.isEmpty();
+    registerType();
 }
 
 //-----------------------------------------------------------------------------
@@ -150,6 +188,18 @@ KSQPublicKey::startDate() const {
 QDateTime
 KSQPublicKey::expireDate() const {
     return m_expireDate;
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQPublicKey::registerType() {
+    static bool registered = false;
+
+    if (registered) {
+        return;
+    }
+    qRegisterMetaType<KSQPublicKey>("KSQPublicKey");
+    registered = true;
 }
 
 //-----------------------------------------------------------------------------

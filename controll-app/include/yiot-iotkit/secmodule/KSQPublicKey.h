@@ -32,12 +32,16 @@ class KSQPublicKey : public QObject {
 
 public:
     KSQPublicKey();
+    KSQPublicKey(const KSQPublicKey &key);
     KSQPublicKey(vs_secmodule_keypair_type_e keypairType,
                  const QByteArray &key,
                  vs_key_type_e provisionType = VS_KEY_UNSUPPORTED,
                  const QByteArray &signature = QByteArray(),
                  QDateTime startDate = QDateTime::currentDateTimeUtc(),
                  QDateTime expireDate = QDateTime::fromSecsSinceEpoch(VS_START_EPOCH));
+
+    KSQPublicKey(const vs_pubkey_dated_t &key);
+    KSQPublicKey(const vs_pubkey_t &key);
 
     KSQPublicKey &
     operator=(const KSQPublicKey &k);
@@ -89,6 +93,9 @@ private:
     QDateTime m_startDate;
     QDateTime m_expireDate;
     QByteArray m_signature;
+
+    void
+    registerType();
 };
 
 #endif // YIOT_ROT_PUBLIC_KEY_H

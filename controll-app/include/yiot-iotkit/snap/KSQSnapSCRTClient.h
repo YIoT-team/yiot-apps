@@ -27,6 +27,8 @@
 #include <virgil/iot/qt/helpers/VSQSingleton.h>
 #include <virgil/iot/qt/protocols/snap/VSQSnapServiceBase.h>
 
+#include <yiot-iotkit/secmodule/KSQPublicKey.h>
+
 using namespace VirgilIoTKit;
 
 class KSQSnapSCRTClient final : public QObject, public VSQSingleton<KSQSnapSCRTClient>, public VSQSnapServiceBase {
@@ -63,7 +65,7 @@ public:
     getUsers(const vs_netif_t *netif, const VSQMac &mac);
 
 signals:
-    void fireInfo();
+    void fireInfo(bool hasProvision, bool hasOwner, bool hasOwnerIsYou, const KSQPublicKey& publicKey);
     void fireSessionKeyReady();
     void fireUserAddDone();
     void fireUserRemoveDone();
@@ -78,7 +80,7 @@ private:
     virtual ~KSQSnapSCRTClient() = default;
 
     static vs_status_e
-    _infoCb(vs_snap_transaction_id_t id, vs_status_e res);
+    _infoCb(vs_snap_transaction_id_t id, vs_status_e res, const vs_scrt_info_response_t* scrt_info);
 
     static vs_status_e
     _sessionKeyCb(vs_snap_transaction_id_t id, vs_status_e res);
