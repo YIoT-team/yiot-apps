@@ -19,6 +19,8 @@
 
 #include <yiot-iotkit/setup/KSQDeviceSetupController.h>
 #include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
+#include <yiot-iotkit/snap/KSQSnapPRVSClient.h>
+#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
 #include <yiot-iotkit/KSQIoTKitFacade.h>
 
 //-----------------------------------------------------------------------------
@@ -47,11 +49,40 @@ KSQDeviceSetupController::KSQDeviceSetupController() {
             &VSQSnapCfgClient::fireConfigurationError,
             this,
             &KSQDeviceSetupController::onConfigurationError);
+
+    // SNAP::PRVS signals
+    connect(&KSQSnapPRVSClient::instance(),
+            &KSQSnapPRVSClient::fireProvisionStateChanged,
+            this,
+            &KSQDeviceSetupController::fireStateInfo);
+
+    connect(&KSQSnapPRVSClient::instance(),
+            &KSQSnapPRVSClient::fireProvisionError,
+            this,
+            &KSQDeviceSetupController::onProvisionError);
+
+    connect(&KSQSnapPRVSClient::instance(),
+            &KSQSnapPRVSClient::fireProvisionDone,
+            this,
+            &KSQDeviceSetupController::onProvisionDone);
 }
 
 //-----------------------------------------------------------------------------
 KSQDeviceSetupController::~KSQDeviceSetupController() {
 
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDeviceSetupController::onProvisionError(QString errorStr) {
+    error(errorStr);
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDeviceSetupController::onProvisionDone() {
+    emit fireStateInfo(tr("Set WiFi credentials"));
+    KSQIoTKitFacade::instance().snapCfgClient().onConfigureDevice();
 }
 
 //-----------------------------------------------------------------------------
@@ -95,11 +126,18 @@ KSQDeviceSetupController::stop() {
 
 //-----------------------------------------------------------------------------
 bool
-KSQDeviceSetupController::configure() {
+KSQDeviceSetupController::configure(QString ssid, QString password) {
     emit fireUploadStarted();
-    QTimer::singleShot(500, [this]() {
-        emit fireUploadDone();
-    });
+
+    KSQIoTKitFacade::instance().snapCfgClient().onSetConfigData(ssid, password);
+
+    if (!KSQSnapPRVSClient::instance().provisionDevice(m_netif,
+                                                       m_deviceMac,
+                                                       KSQRoTController::instance().localRootOfTrust())) {
+        VS_LOG_ERROR("Cannot do device provision.");
+        return false;
+    }
+
     return true;
 }
 
@@ -113,11 +151,20 @@ KSQDeviceSetupController::error(const QString & error) {
 
 //-----------------------------------------------------------------------------
 void
+KSQDeviceSetupController::done() {
+    m_valid = false;
+    emit fireUploadDone();
+    emit fireFinished(m_netif);
+}
+
+//-----------------------------------------------------------------------------
+void
 KSQDeviceSetupController::onConfigurationDone() {
     if (!m_valid) {
         return;
     }
-//    emit fireFinished(m_netif);
+
+    done();
 }
 
 //-----------------------------------------------------------------------------

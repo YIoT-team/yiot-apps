@@ -50,7 +50,7 @@ public:
     stop();
 
     Q_INVOKABLE bool
-    configure();
+    configure(QString ssid, QString password);
 
     void
     error(const QString & error);
@@ -96,6 +96,12 @@ private slots:
     void
     onConfigurationError();
 
+    void
+    onProvisionError(QString errorStr);
+
+    void
+    onProvisionDone();
+
 private:
     KSQDeviceSetupController();
     virtual ~KSQDeviceSetupController();
@@ -114,6 +120,9 @@ private:
 
     Q_INVOKABLE QObject*
     deviceData();
+
+    void
+    done();
 };
 
 #endif // _YIOT_QT_DEVICE_SETUP_CONTROLLER_H_

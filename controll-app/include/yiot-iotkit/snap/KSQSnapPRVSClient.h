@@ -44,9 +44,9 @@ public:
     const QString &
     serviceName() const override;
 
-    void
-    provisionDevice(const vs_netif_t *netif,
-                    const vs_mac_addr_t *deviceMac,
+    bool
+    provisionDevice(QSharedPointer<VSQNetifBase> netif,
+                    VSQMac deviceMac,
                     QSharedPointer<KSQRoT> rootOfTrust);
 
 signals:
@@ -62,33 +62,42 @@ private:
     static const size_t kPubKeyBufMax = 512;
     const VirgilIoTKit::vs_snap_service_t *m_snapService;
 
+    std::condition_variable m_waitCondition;
+    std::mutex m_waitGuard;
+
+    static vs_status_e
+    _wait(uint32_t waitMs, int *condition, int idle);
+
+    static vs_status_e
+    _waitStop(int *condition, int expect);
+
     KSQSnapPRVSClient();
     virtual ~KSQSnapPRVSClient() = default;
 
     KSQPublicKey
-    getDevicePublicKey(const vs_netif_t *netif,
-                       const vs_mac_addr_t *deviceMac);
+    getDevicePublicKey(QSharedPointer<VSQNetifBase> netif,
+                       VSQMac deviceMac);
 
     bool
-    uploadKeys(const vs_netif_t *netif,
-               const vs_mac_addr_t *deviceMac,
+    uploadKeys(QSharedPointer<VSQNetifBase> netif,
+               VSQMac deviceMac,
                QSharedPointer<KSQRoT> rootOfTrust);
 
     bool
-    uploadData(const vs_netif_t *netif,
-               const vs_mac_addr_t *deviceMac,
+    uploadData(QSharedPointer<VSQNetifBase> netif,
+               VSQMac deviceMac,
                vs_snap_prvs_element_e prvsElement,
                const QByteArray &data);
 
     bool
-    signDevice(const vs_netif_t *netif,
-               const vs_mac_addr_t *deviceMac,
+    signDevice(QSharedPointer<VSQNetifBase> netif,
+               VSQMac deviceMac,
                const KSQPublicKey &deviceKey,
                QSharedPointer<KSQRoT> rootOfTrust);
 
     bool
-    uploadTrustList(const vs_netif_t *netif,
-                    const vs_mac_addr_t *deviceMac,
+    uploadTrustList(QSharedPointer<VSQNetifBase> netif,
+                    VSQMac deviceMac,
                     QSharedPointer<KSQRoT> rootOfTrust);
 };
 

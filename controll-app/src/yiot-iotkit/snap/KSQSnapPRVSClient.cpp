@@ -29,12 +29,40 @@
 
 
 using namespace VirgilIoTKit;
+using namespace std::chrono_literals;
 
 //-----------------------------------------------------------------------------
 KSQSnapPRVSClient::KSQSnapPRVSClient() {
     vs_snap_prvs_client_impl_t impl;
     memset(&impl, 0, sizeof(impl));
+    impl.wait_func = _wait;
+    impl.stop_wait_func = _waitStop;
     m_snapService = vs_snap_prvs_client(impl);
+}
+
+//-----------------------------------------------------------------------------
+vs_status_e
+KSQSnapPRVSClient::_wait(uint32_t waitMs, int *condition, int idle) {
+    // Wait for expected condition
+    qDebug() << ">>> wait start";
+    std::unique_lock<std::mutex> lk(KSQSnapPRVSClient::instance().m_waitGuard);
+    KSQSnapPRVSClient::instance().m_waitCondition.wait_for(lk,
+                            waitMs * 1ms,
+                            [condition, idle](){return *condition != idle;});
+
+    qDebug() << "<<< wait stop";
+    return VS_CODE_OK;
+}
+
+//-----------------------------------------------------------------------------
+vs_status_e
+KSQSnapPRVSClient::_waitStop(int *condition, int expect) {
+    {
+        std::lock_guard<std::mutex> lock(KSQSnapPRVSClient::instance().m_waitGuard);
+        *condition = expect;
+    }
+    KSQSnapPRVSClient::instance().m_waitCondition.notify_all();
+    return VS_CODE_OK;
 }
 
 //-----------------------------------------------------------------------------
@@ -52,13 +80,14 @@ KSQSnapPRVSClient::serviceName() const {
 
 //-----------------------------------------------------------------------------
 KSQPublicKey
-KSQSnapPRVSClient::getDevicePublicKey(const vs_netif_t *netif,
-                                      const vs_mac_addr_t *deviceMac) {
+KSQSnapPRVSClient::getDevicePublicKey(QSharedPointer<VSQNetifBase> netif,
+                                      VSQMac deviceMac) {
     QByteArray pubKey;
     pubKey.resize(sizeof(vs_pubkey_t) + kPubKeyBufMax);
 
-    if (VS_CODE_OK != vs_snap_prvs_save_provision(netif,
-                                                  deviceMac,
+    vs_mac_addr_t mac = deviceMac;
+    if (VS_CODE_OK != vs_snap_prvs_save_provision(netif->lowLevelNetif(),
+                                                  &mac,
                                                   reinterpret_cast<uint8_t*> (pubKey.data()),
                                                   pubKey.size(),
                                                   kDefaultTimeoutMs)) {
@@ -76,15 +105,15 @@ KSQSnapPRVSClient::getDevicePublicKey(const vs_netif_t *netif,
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapPRVSClient::uploadData(const vs_netif_t *netif,
-                              const vs_mac_addr_t *deviceMac,
+KSQSnapPRVSClient::uploadData(QSharedPointer<VSQNetifBase> netif,
+                              VSQMac deviceMac,
                               vs_snap_prvs_element_e prvsElement,
                               const QByteArray &data) {
-    CHECK_NOT_ZERO_RET(netif, false);
-    CHECK_NOT_ZERO_RET(deviceMac, false);
+    CHECK_NOT_ZERO_RET(!netif.isNull(), false);
 
-    if (VS_CODE_OK != vs_snap_prvs_set(netif,
-                                       deviceMac,
+    vs_mac_addr_t mac = deviceMac;
+    if (VS_CODE_OK != vs_snap_prvs_set(netif->lowLevelNetif(),
+                                       &mac,
                                        prvsElement,
                                        reinterpret_cast<const uint8_t*> (data.data()),
                                        data.size(),
@@ -97,53 +126,53 @@ KSQSnapPRVSClient::uploadData(const vs_netif_t *netif,
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapPRVSClient::uploadKeys(const vs_netif_t *netif,
-                              const vs_mac_addr_t *deviceMac,
+KSQSnapPRVSClient::uploadKeys(QSharedPointer<VSQNetifBase> netif,
+                              VSQMac deviceMac,
                               QSharedPointer<KSQRoT> rootOfTrust) {
     emit fireProvisionStateChanged(tr("Upload Recovery Key 1"));
-    if (!uploadData(netif, deviceMac, VS_PRVS_PBR1, rootOfTrust->recovery1().datedKey())) {
+    if (!uploadData(netif, deviceMac, VS_PRVS_PBR1, rootOfTrust->recovery1().signedDatedKey())) {
         emit fireProvisionError(tr("Cannot upload Recovery Key 1"));
         return false;
     }
 
     emit fireProvisionStateChanged(tr("Upload Recovery Key 2"));
-    if (!uploadData(netif, deviceMac, VS_PRVS_PBR2, rootOfTrust->recovery2().datedKey())) {
+    if (!uploadData(netif, deviceMac, VS_PRVS_PBR2, rootOfTrust->recovery2().signedDatedKey())) {
         emit fireProvisionError(tr("Cannot upload Recovery Key 2"));
         return false;
     }
 
     emit fireProvisionStateChanged(tr("Upload Auth Key 1"));
-    if (!uploadData(netif, deviceMac, VS_PRVS_PBA1, rootOfTrust->auth1().datedKey())) {
+    if (!uploadData(netif, deviceMac, VS_PRVS_PBA1, rootOfTrust->auth1().signedDatedKey())) {
         emit fireProvisionError(tr("Cannot upload Auth Key 1"));
         return false;
     }
 
     emit fireProvisionStateChanged(tr("Upload Auth Key 2"));
-    if (!uploadData(netif, deviceMac, VS_PRVS_PBA2, rootOfTrust->auth2().datedKey())) {
+    if (!uploadData(netif, deviceMac, VS_PRVS_PBA2, rootOfTrust->auth2().signedDatedKey())) {
         emit fireProvisionError(tr("Cannot upload Auth Key 2"));
         return false;
     }
 
     emit fireProvisionStateChanged(tr("Upload TL Key 1"));
-    if (!uploadData(netif, deviceMac, VS_PRVS_PBT1, rootOfTrust->tl1().datedKey())) {
+    if (!uploadData(netif, deviceMac, VS_PRVS_PBT1, rootOfTrust->tl1().signedDatedKey())) {
         emit fireProvisionError(tr("Cannot upload TL Key 1"));
         return false;
     }
 
     emit fireProvisionStateChanged(tr("Upload TL Key 2"));
-    if (!uploadData(netif, deviceMac, VS_PRVS_PBT2, rootOfTrust->tl2().datedKey())) {
+    if (!uploadData(netif, deviceMac, VS_PRVS_PBT2, rootOfTrust->tl2().signedDatedKey())) {
         emit fireProvisionError(tr("Cannot upload TL Key 2"));
         return false;
     }
 
     emit fireProvisionStateChanged(tr("Upload Firmware Key 1"));
-    if (!uploadData(netif, deviceMac, VS_PRVS_PBF1, rootOfTrust->firmware1().datedKey())) {
+    if (!uploadData(netif, deviceMac, VS_PRVS_PBF1, rootOfTrust->firmware1().signedDatedKey())) {
         emit fireProvisionError(tr("Cannot upload Firmware Key 1"));
         return false;
     }
 
     emit fireProvisionStateChanged(tr("Upload Firmware Key 2"));
-    if (!uploadData(netif, deviceMac, VS_PRVS_PBF2, rootOfTrust->firmware2().datedKey())) {
+    if (!uploadData(netif, deviceMac, VS_PRVS_PBF2, rootOfTrust->firmware2().signedDatedKey())) {
         emit fireProvisionError(tr("Cannot upload Firmware Key 2"));
         return false;
     }
@@ -153,8 +182,8 @@ KSQSnapPRVSClient::uploadKeys(const vs_netif_t *netif,
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapPRVSClient::signDevice(const vs_netif_t *netif,
-                              const vs_mac_addr_t *deviceMac,
+KSQSnapPRVSClient::signDevice(QSharedPointer<VSQNetifBase> netif,
+                              VSQMac deviceMac,
                               const KSQPublicKey &deviceKey,
                               QSharedPointer<KSQRoT> rootOfTrust) {
 
@@ -168,7 +197,9 @@ KSQSnapPRVSClient::signDevice(const vs_netif_t *netif,
         return false;
     }
 
-    auto signature = KSQSecModule::instance().sign(deviceKey.datedKey(), rootOfTrust->factory());
+    // TODO: Sign vs_pubkey_dated_t
+    // auto signature = KSQSecModule::instance().sign(deviceKey.datedKey(), rootOfTrust->factory());
+    auto signature = KSQSecModule::instance().sign(deviceKey.val(), rootOfTrust->factory());
     if (signature.isEmpty()) {
         emit fireProvisionError(tr("Cannot sign device's key"));
         return false;
@@ -184,24 +215,26 @@ KSQSnapPRVSClient::signDevice(const vs_netif_t *netif,
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapPRVSClient::uploadTrustList(const vs_netif_t *netif,
-                                   const vs_mac_addr_t *deviceMac,
+KSQSnapPRVSClient::uploadTrustList(QSharedPointer<VSQNetifBase> netif,
+                                   VSQMac deviceMac,
                                    QSharedPointer<KSQRoT> rootOfTrust) {
 
     // Check input parameters
-    if (!netif
-        || !deviceMac
+    if (netif.isNull()
         || !rootOfTrust->trustList().isValid()
         || !rootOfTrust->trustList().keysCount()) {
         emit fireProvisionError(tr("Wrong parameters to upload TrustList"));
         return false;
     }
 
+    vs_mac_addr_t mac = deviceMac;
+    auto lowLevelNetif = netif->lowLevelNetif();
+
     emit fireProvisionStateChanged(tr("Upload TrustList header"));
     auto tlHeader = rootOfTrust->trustList().header();
     if (VS_CODE_OK != vs_snap_prvs_set_tl_header(
-                              netif,
-                              deviceMac,
+                              lowLevelNetif,
+                              &mac,
                               reinterpret_cast<const uint8_t*> (tlHeader.data()),
                               tlHeader.size(),
                               kDefaultTimeoutMs)) {
@@ -210,7 +243,7 @@ KSQSnapPRVSClient::uploadTrustList(const vs_netif_t *netif,
     }
 
     for (int i = 0; i < rootOfTrust->trustList().keysCount(); i++) {
-        emit fireProvisionStateChanged(tr("Upload TrustList key %1").arg(i));
+        emit fireProvisionStateChanged(tr("Upload TrustList key %1").arg(i + 1));
         auto tlKey = rootOfTrust->trustList().key(i);
         if (!uploadData(netif, deviceMac, VS_PRVS_TLC, tlKey)) {
             emit fireProvisionError(tr("Cannot upload TrustList key"));
@@ -221,8 +254,8 @@ KSQSnapPRVSClient::uploadTrustList(const vs_netif_t *netif,
     emit fireProvisionStateChanged(tr("Upload TrustList footer"));
     auto tlFooter = rootOfTrust->trustList().footer();
     if (VS_CODE_OK != vs_snap_prvs_set_tl_footer(
-            netif,
-            deviceMac,
+            lowLevelNetif,
+            &mac,
             reinterpret_cast<const uint8_t*> (tlFooter.data()),
             tlFooter.size(),
             kDefaultTimeoutMs * 10)) {
@@ -234,26 +267,23 @@ KSQSnapPRVSClient::uploadTrustList(const vs_netif_t *netif,
 }
 
 //-----------------------------------------------------------------------------
-void
-KSQSnapPRVSClient::provisionDevice(const vs_netif_t *netif,
-                                   const vs_mac_addr_t *deviceMac,
+bool
+KSQSnapPRVSClient::provisionDevice(QSharedPointer<VSQNetifBase> netif,
+                                   VSQMac deviceMac,
                                    QSharedPointer<KSQRoT> rootOfTrust) {
-    // Prevent broadcasting and routing for network interfaces
-    if (!netif || netif == vs_snap_netif_routing()) {
-        emit fireProvisionError(tr("Wrong network Interface"));
-        return;
-    }
 
-    // Prevent usage of broadcast addresses
-    if (deviceMac && vs_snap_is_broadcast(deviceMac)) {
-        emit fireProvisionError(tr("Provision couldn't be broadcast"));
-        return;
+    auto lowLevelNetif = netif->lowLevelNetif();
+
+    // Prevent broadcasting and routing for network interfaces
+    if (!lowLevelNetif || lowLevelNetif == vs_snap_netif_routing()) {
+        emit fireProvisionError(tr("Wrong network Interface"));
+        return false;
     }
 
     // Check Root of trust is valid
     if (!rootOfTrust->isValid()) {
         emit fireProvisionError(tr("Wrong root of trust for provision"));
-        return;
+        return false;
     }
 
     // Start provision thread
@@ -280,9 +310,12 @@ KSQSnapPRVSClient::provisionDevice(const vs_netif_t *netif,
             return;
         }
 
+        emit fireProvisionDone();
     });
 
     t.detach();
+
+    return true;
 }
 
 //-----------------------------------------------------------------------------

@@ -72,6 +72,9 @@ public:
     QByteArray
     signature() const;
 
+    QByteArray
+    signedDatedKey() const;
+
     KSQPublicKey &
     setSignature(const QByteArray& signature);
 

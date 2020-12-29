@@ -172,6 +172,12 @@ KSQPublicKey::signature() const {
 }
 
 //-----------------------------------------------------------------------------
+QByteArray
+KSQPublicKey::signedDatedKey() const {
+    return datedKey() + signature();
+}
+
+//-----------------------------------------------------------------------------
 KSQPublicKey &
 KSQPublicKey::setSignature(const QByteArray& signature) {
     m_signature = signature;

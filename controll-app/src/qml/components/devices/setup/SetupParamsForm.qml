@@ -101,7 +101,12 @@ Form {
             Layout.bottomMargin: 10
             text: qsTr("Setup Device")
             onClicked: {
-                deviceSetup.configure()
+                var cred = settings.getWiFiCredDefault()
+                if (cred.ready) {
+                    deviceSetup.configure(cred.ssid, cred.pass)
+                } else {
+                    showPopupError(qsTr("Need to set WiFi credentials"), showSettingsForWiFi)
+                }
             }
         }
     }
