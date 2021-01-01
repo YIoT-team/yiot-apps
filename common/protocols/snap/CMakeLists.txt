@@ -89,6 +89,7 @@ function(add_snap _targetname _definitions)
             PUBLIC
             virgil-iot-status-code
             vs-module-provision
+            vs-module-users
 
             PRIVATE
             macros
