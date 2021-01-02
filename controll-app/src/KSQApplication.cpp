@@ -50,6 +50,7 @@ KSQApplication::run() {
     // Early initialization of logger
     vs_logger_init(VirgilIoTKit::VS_LOGLEV_DEBUG);
 
+    m_bleController = QSharedPointer<KSQBLEController>::create();
     m_netifUdp = QSharedPointer<KSQUdp>::create();
 
     // Prepare IoTKit data
@@ -62,8 +63,8 @@ KSQApplication::run() {
                           << KSQFeatures::SNAP_PC_CLIENT;  // Possibility to control PSs, Raspberry Pi for example
 
     // TODO: Dynamic adding of supported network interfaces
-    auto impl = VSQImplementations() << m_netifUdp               // Enables UDP communication
-                                     << m_bleController.netif(); // Enables Bluetooth Low Energy communication
+    auto impl = VSQImplementations() << m_netifUdp                // Enables UDP communication
+                                     << m_bleController->netif(); // Enables Bluetooth Low Energy communication
 
     // This is a control device
     auto roles = VSQDeviceRoles() << VirgilIoTKit::VS_SNAP_DEV_CONTROL;
@@ -77,7 +78,7 @@ KSQApplication::run() {
         return -1;
     }
 
-    VSQSnapCfgClient::instance().setNetifRestriction(m_bleController.netif());
+    VSQSnapCfgClient::instance().setNetifRestriction(m_bleController->netif());
 
     // Initialize devices controllers
     //          TODO: Dynamic adding of supported devices
@@ -89,9 +90,9 @@ KSQApplication::run() {
     context->setContextProperty("UiHelper", &uiHelper);
     context->setContextProperty("app", this); // Get app name, version, etc.
     context->setContextProperty("bleController",
-                                &m_bleController); // Connect/disconnect to BLE devices to communicate with
+                                m_bleController.get()); // Connect/disconnect to BLE devices to communicate with
     context->setContextProperty("bleEnum",
-                                m_bleController.model()); // BLE device enumeration // TODO: Use from `bleController`
+                                m_bleController->model()); // BLE device enumeration // TODO: Use from `bleController`
     context->setContextProperty("wifiEnum", &m_wifiEnumerator); // WiFi networks enumeration
     context->setContextProperty("deviceControllers",
                                 &m_deviceControllers); // Containers with controllers for all supported devices

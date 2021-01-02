@@ -59,7 +59,7 @@ public:
 
 private:
     KSQWiFiEnumerator m_wifiEnumerator;
-    KSQBLEController m_bleController;
+    QSharedPointer<KSQBLEController> m_bleController;
     QSharedPointer<KSQUdp> m_netifUdp;
 
     KSQDevices m_deviceControllers;

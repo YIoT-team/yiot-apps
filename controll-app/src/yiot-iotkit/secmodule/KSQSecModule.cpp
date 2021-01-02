@@ -165,7 +165,8 @@ KSQSecModule::sign(const QByteArray &data, const KSQKeyPair &signerKeyPair, vs_s
 
     // Set signer's public key
     uint8_t *pubBuf = sign->raw_sign_pubkey + signRawData.size();
-    auto datedKey = reinterpret_cast<const vs_pubkey_dated_t *>(signerKeyPair.second->datedKey().data());
+    QByteArray baDatedKey(signerKeyPair.second->datedKey());
+    auto datedKey = reinterpret_cast<const vs_pubkey_dated_t *>(baDatedKey.data());
     memcpy(pubBuf,
            datedKey->pubkey.meta_and_pubkey + VS_IOT_NTOHS(datedKey->pubkey.meta_data_sz),
            vs_secmodule_get_pubkey_len(static_cast<vs_secmodule_keypair_type_e>(datedKey->pubkey.ec_type)));
