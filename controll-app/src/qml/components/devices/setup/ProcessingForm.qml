@@ -55,7 +55,7 @@ Form {
             Layout.fillWidth: true
 
             fillMode: Image.PreserveAspectFit
-            source: "qrc:/qml/resources/icons/dark/upload.gif"
+            source: "qrc:/qml/resources/icons/%1/upload.gif".arg(Theme.state)
         }
 
         FormPrimaryButton {

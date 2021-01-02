@@ -38,7 +38,7 @@ RowLayout {
 
     ImageButton {
         id: btnExport
-        image: "dark/export"
+        image: Theme.state + "/export"
         onClicked: {
             console.log("Export root of trust")
         }
@@ -46,7 +46,7 @@ RowLayout {
 
     ImageButton {
         id: btnDelete
-        image: "dark/delete"
+        image: Theme.state + "/delete"
         onClicked: {
             console.log("Delete root of trust")
         }
@@ -54,7 +54,7 @@ RowLayout {
 
     ImageButton {
         id: btnInfo
-        image: "dark/info"
+        image: Theme.state + "/info"
         onClicked: { showRoTInfo(model) }
     }
 

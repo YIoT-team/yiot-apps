@@ -73,6 +73,7 @@ Page {
 
             ListElement {
                 name: qsTr("Theme")
+                image: "themes"
                 property var action: function() {
                     showThemeList()
                 }
