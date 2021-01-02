@@ -24,6 +24,7 @@
 #include <virgil/iot/protocols/snap/scrt/scrt-client.h>
 
 #include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
+#include <yiot-iotkit/secmodule/KSQSecModule.h>
 
 using namespace VirgilIoTKit;
 
@@ -37,7 +38,7 @@ KSQSnapSCRTClient::KSQSnapSCRTClient() {
     impl.scrt_client_remove_user_cb = _removeUserCb;
     impl.scrt_client_get_users_cb = _getUsersCb;
 
-    m_snapService = vs_snap_scrt_client(impl);
+    m_snapService = vs_snap_scrt_client(KSQSecModule::instance().secmoduleImpl(), impl);
 }
 
 //-----------------------------------------------------------------------------
@@ -51,22 +52,37 @@ KSQSnapSCRTClient::getInfo(const vs_netif_t *netif, const VSQMac &mac) {
 //-----------------------------------------------------------------------------
 bool
 KSQSnapSCRTClient::requestSessionKey(const vs_netif_t *netif, const VSQMac &mac) {
-    VS_LOG_DEBUG(">>> SCRT::GSEK");
-    QTimer::singleShot(3000, [this]() { emit fireSessionKeyReady(); });
-    return false;
+    vs_mac_addr_t cMac = mac;
+    if (VS_CODE_OK != vs_snap_scrt_request_session_key(netif, &cMac)) {
+        VS_LOG_ERROR("Cannot request session key");
+        return false;
+    }
+
+    return true;
 }
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapSCRTClient::addUser(const vs_netif_t *netif, const VSQMac &mac, const QString &userName) {
-    VS_LOG_DEBUG(">>> SCRT::AUSR");
-    QTimer::singleShot(3000, [this]() { emit fireUserAddDone(); });
-    return false;
+KSQSnapSCRTClient::addUser(const vs_netif_t *netif,
+                           const VSQMac &mac,
+                           vs_user_type_t type,
+                           const QString &userName,
+                           const vs_cert_t &cert) {
+    vs_mac_addr_t cMac = mac;
+    if (VS_CODE_OK != vs_snap_scrt_add_user(netif, &cMac, type, userName.toStdString().c_str(), &cert)) {
+        VS_LOG_ERROR("Cannot add a new user");
+        return false;
+    }
+
+    return true;
 }
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapSCRTClient::removeUser(const vs_netif_t *netif, const VSQMac &mac, const QString &userName) {
+KSQSnapSCRTClient::removeUser(const vs_netif_t *netif,
+                              const VSQMac &mac,
+                              vs_user_type_t type,
+                              const QString &userName) {
     VS_LOG_DEBUG(">>> SCRT::RUSR");
     QTimer::singleShot(3000, [this]() { emit fireUserRemoveDone(); });
     return false;
@@ -74,7 +90,7 @@ KSQSnapSCRTClient::removeUser(const vs_netif_t *netif, const VSQMac &mac, const 
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapSCRTClient::getUsers(const vs_netif_t *netif, const VSQMac &mac) {
+KSQSnapSCRTClient::getUsers(const vs_netif_t *netif, const VSQMac &mac, vs_user_type_t type) {
     VS_LOG_DEBUG(">>> SCRT::GUSR");
     QTimer::singleShot(3000, [this]() { emit fireGetUsersDone(); });
     return false;

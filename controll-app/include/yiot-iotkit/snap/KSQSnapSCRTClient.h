@@ -56,13 +56,17 @@ public:
     requestSessionKey(const vs_netif_t *netif, const VSQMac &mac);
 
     bool
-    addUser(const vs_netif_t *netif, const VSQMac &mac, const QString &userName);
+    addUser(const vs_netif_t *netif,
+            const VSQMac &mac,
+            vs_user_type_t type,
+            const QString &userName,
+            const vs_cert_t &cert);
 
     bool
-    removeUser(const vs_netif_t *netif, const VSQMac &mac, const QString &userName);
+    removeUser(const vs_netif_t *netif, const VSQMac &mac, vs_user_type_t type, const QString &userName);
 
     bool
-    getUsers(const vs_netif_t *netif, const VSQMac &mac);
+    getUsers(const vs_netif_t *netif, const VSQMac &mac, vs_user_type_t type);
 
 signals:
     void

@@ -99,6 +99,12 @@ private slots:
     void
     onProvisionDone();
 
+    void
+    onAddUserError(QString errorStr);
+
+    void
+    onAddUserDone();
+
 private:
     KSQDeviceSetupController();
     virtual ~KSQDeviceSetupController();

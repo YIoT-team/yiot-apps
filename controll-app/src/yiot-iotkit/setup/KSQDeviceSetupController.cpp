@@ -80,6 +80,23 @@ KSQDeviceSetupController::onProvisionError(QString errorStr) {
 //-----------------------------------------------------------------------------
 void
 KSQDeviceSetupController::onProvisionDone() {
+    vs_cert_t my_cert;
+    // TODO: Fill own certificate
+    if (!KSQSnapSCRTClient::instance().addUser(
+                m_netif->lowLevelNetif(), m_deviceMac, VS_USER_OWNER, "Owner 1", my_cert)) {
+        error(tr("Cannot set self as an owner"));
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDeviceSetupController::onAddUserError(QString errorStr) {
+    error(errorStr);
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDeviceSetupController::onAddUserDone() {
     emit fireStateInfo(tr("Set WiFi credentials"));
     KSQIoTKitFacade::instance().snapCfgClient().onConfigureDevice();
 }
@@ -96,16 +113,16 @@ KSQDeviceSetupController::start(QSharedPointer<VSQNetifBase> netif, VSQMac devic
     m_readyDeviceInfo = false;
     m_readyDeviceSecurityInfo = false;
 
-    auto bleNetif = m_netif->lowLevelNetif();
+    auto lowLevelNetif = m_netif->lowLevelNetif();
 
     // Request Device information
-    if (!VSQSnapInfoClient::instance().onStartFullPolling(m_deviceMac, bleNetif)) {
+    if (!VSQSnapInfoClient::instance().onStartFullPolling(m_deviceMac, lowLevelNetif)) {
         emit fireError(tr("Cannot request device info"));
         return false;
     }
 
     // Request Device Security information
-    if (!KSQSnapSCRTClient::instance().getInfo(bleNetif, m_deviceMac)) {
+    if (!KSQSnapSCRTClient::instance().getInfo(lowLevelNetif, m_deviceMac)) {
         emit fireError(tr("Cannot request security device info"));
         return false;
     }
