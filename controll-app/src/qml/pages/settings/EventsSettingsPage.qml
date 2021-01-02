@@ -19,6 +19,7 @@
 
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import "../../components"
 
@@ -35,8 +36,30 @@ Page {
     }
 
     Form {
-        Label {
-            text: "EVENTS SETTINGS"
+        stretched: true
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 10
+
+            SwitchableParam {
+                infoText: qsTr("Inform about new unprovisioned devices")
+            }
+
+            SwitchableParam {
+                infoText: qsTr("Inform about unknown IoT networks")
+            }
+
+            SwitchableParam {
+                infoText: qsTr("Show settings of close devices")
+            }
+
+            SwitchableParam {
+                infoText: qsTr("Automatic provision of close devices")
+            }
+
+            Item {
+                Layout.fillHeight: true
+            }
         }
     }
 }

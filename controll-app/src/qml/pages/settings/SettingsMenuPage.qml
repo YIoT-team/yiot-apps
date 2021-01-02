@@ -64,7 +64,7 @@ Page {
             }
 
             ListElement {
-                name: qsTr("Event triggers")
+                name: qsTr("Event settings")
                 image: "events"
                 property var action: function() {
                     showEventsSettings()
