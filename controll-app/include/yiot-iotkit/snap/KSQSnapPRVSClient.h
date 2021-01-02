@@ -45,14 +45,15 @@ public:
     serviceName() const override;
 
     bool
-    provisionDevice(QSharedPointer<VSQNetifBase> netif,
-                    VSQMac deviceMac,
-                    QSharedPointer<KSQRoT> rootOfTrust);
+    provisionDevice(QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac, QSharedPointer<KSQRoT> rootOfTrust);
 
 signals:
-    void fireProvisionStateChanged(QString state);
-    void fireProvisionDone();
-    void fireProvisionError(QString error);
+    void
+    fireProvisionStateChanged(QString state);
+    void
+    fireProvisionDone();
+    void
+    fireProvisionError(QString error);
 
 
 public slots:
@@ -75,13 +76,10 @@ private:
     virtual ~KSQSnapPRVSClient() = default;
 
     KSQPublicKey
-    getDevicePublicKey(QSharedPointer<VSQNetifBase> netif,
-                       VSQMac deviceMac);
+    getDevicePublicKey(QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
 
     bool
-    uploadKeys(QSharedPointer<VSQNetifBase> netif,
-               VSQMac deviceMac,
-               QSharedPointer<KSQRoT> rootOfTrust);
+    uploadKeys(QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac, QSharedPointer<KSQRoT> rootOfTrust);
 
     bool
     uploadData(QSharedPointer<VSQNetifBase> netif,
@@ -96,9 +94,7 @@ private:
                QSharedPointer<KSQRoT> rootOfTrust);
 
     bool
-    uploadTrustList(QSharedPointer<VSQNetifBase> netif,
-                    VSQMac deviceMac,
-                    QSharedPointer<KSQRoT> rootOfTrust);
+    uploadTrustList(QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac, QSharedPointer<KSQRoT> rootOfTrust);
 };
 
 #endif // _YIOT_QT_SNAP_PRVS_CLIENT_SERVICE_H_

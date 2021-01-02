@@ -73,7 +73,7 @@ KSQPublicKey::KSQPublicKey(const vs_pubkey_dated_t &key) {
 //-----------------------------------------------------------------------------
 KSQPublicKey::KSQPublicKey(const vs_pubkey_t &key) {
     m_ecType = static_cast<vs_secmodule_keypair_type_e>(key.ec_type);
-    m_key = QByteArray(reinterpret_cast<const char*>(&key.meta_and_pubkey[key.meta_data_sz]),
+    m_key = QByteArray(reinterpret_cast<const char *>(&key.meta_and_pubkey[key.meta_data_sz]),
                        vs_secmodule_get_pubkey_len(m_ecType));
     m_signature.clear();
     m_provisionType = static_cast<vs_key_type_e>(key.key_type);
@@ -109,7 +109,7 @@ KSQPublicKey::description() const {
 
 //-----------------------------------------------------------------------------
 bool
-KSQPublicKey::isValid() const{
+KSQPublicKey::isValid() const {
     return m_valid;
 }
 
@@ -142,13 +142,12 @@ KSQPublicKey::setProvisionType(vs_key_type_e provType) {
 QByteArray
 KSQPublicKey::datedKey() const {
     // Calculate size of result
-    size_t pubKeySz = sizeof(vs_pubkey_dated_t)
-                      + vs_secmodule_get_pubkey_len(m_ecType);
+    size_t pubKeySz = sizeof(vs_pubkey_dated_t) + vs_secmodule_get_pubkey_len(m_ecType);
 
     // Create result buffer
     QByteArray res;
     res.resize(pubKeySz);
-    uint8_t *publicKeyBuf = reinterpret_cast<uint8_t*>(res.data());
+    uint8_t *publicKeyBuf = reinterpret_cast<uint8_t *>(res.data());
     vs_pubkey_dated_t *pubkeyDated = reinterpret_cast<vs_pubkey_dated_t *>(publicKeyBuf);
 
     // Fill data
@@ -159,8 +158,7 @@ KSQPublicKey::datedKey() const {
     pubkeyDated->pubkey.meta_data_sz = 0;
 
     // Fill key data
-    memcpy(pubkeyDated->pubkey.meta_and_pubkey + pubkeyDated->pubkey.meta_data_sz,
-           m_key.data(),m_key.size());
+    memcpy(pubkeyDated->pubkey.meta_and_pubkey + pubkeyDated->pubkey.meta_data_sz, m_key.data(), m_key.size());
 
     return res;
 }
@@ -179,7 +177,7 @@ KSQPublicKey::signedDatedKey() const {
 
 //-----------------------------------------------------------------------------
 KSQPublicKey &
-KSQPublicKey::setSignature(const QByteArray& signature) {
+KSQPublicKey::setSignature(const QByteArray &signature) {
     m_signature = signature;
     return *this;
 }
@@ -187,7 +185,7 @@ KSQPublicKey::setSignature(const QByteArray& signature) {
 //-----------------------------------------------------------------------------
 QDateTime
 KSQPublicKey::startDate() const {
-        return m_startDate;
+    return m_startDate;
 }
 
 //-----------------------------------------------------------------------------

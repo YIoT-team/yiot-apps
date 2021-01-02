@@ -52,9 +52,7 @@ KSQSnapSCRTClient::getInfo(const vs_netif_t *netif, const VSQMac &mac) {
 bool
 KSQSnapSCRTClient::requestSessionKey(const vs_netif_t *netif, const VSQMac &mac) {
     VS_LOG_DEBUG(">>> SCRT::GSEK");
-    QTimer::singleShot(3000, [this]() {
-      emit fireSessionKeyReady();
-    });
+    QTimer::singleShot(3000, [this]() { emit fireSessionKeyReady(); });
     return false;
 }
 
@@ -62,9 +60,7 @@ KSQSnapSCRTClient::requestSessionKey(const vs_netif_t *netif, const VSQMac &mac)
 bool
 KSQSnapSCRTClient::addUser(const vs_netif_t *netif, const VSQMac &mac, const QString &userName) {
     VS_LOG_DEBUG(">>> SCRT::AUSR");
-    QTimer::singleShot(3000, [this]() {
-      emit fireUserAddDone();
-    });
+    QTimer::singleShot(3000, [this]() { emit fireUserAddDone(); });
     return false;
 }
 
@@ -72,9 +68,7 @@ KSQSnapSCRTClient::addUser(const vs_netif_t *netif, const VSQMac &mac, const QSt
 bool
 KSQSnapSCRTClient::removeUser(const vs_netif_t *netif, const VSQMac &mac, const QString &userName) {
     VS_LOG_DEBUG(">>> SCRT::RUSR");
-    QTimer::singleShot(3000, [this]() {
-      emit fireUserRemoveDone();
-    });
+    QTimer::singleShot(3000, [this]() { emit fireUserRemoveDone(); });
     return false;
 }
 
@@ -82,16 +76,13 @@ KSQSnapSCRTClient::removeUser(const vs_netif_t *netif, const VSQMac &mac, const 
 bool
 KSQSnapSCRTClient::getUsers(const vs_netif_t *netif, const VSQMac &mac) {
     VS_LOG_DEBUG(">>> SCRT::GUSR");
-    QTimer::singleShot(3000, [this]() {
-      emit fireGetUsersDone();
-    });
+    QTimer::singleShot(3000, [this]() { emit fireGetUsersDone(); });
     return false;
 }
 
 //-----------------------------------------------------------------------------
 vs_status_e
-KSQSnapSCRTClient::_infoCb(vs_snap_transaction_id_t id, vs_status_e res,
-                           const vs_scrt_info_response_t* scrt_info) {
+KSQSnapSCRTClient::_infoCb(vs_snap_transaction_id_t id, vs_status_e res, const vs_scrt_info_response_t *scrt_info) {
     CHECK_NOT_ZERO_RET(scrt_info, VS_CODE_ERR_ZERO_ARGUMENT);
 
     bool hasProvision = scrt_info->provisioned;
@@ -111,8 +102,7 @@ KSQSnapSCRTClient::_infoCb(vs_snap_transaction_id_t id, vs_status_e res,
 
 //-----------------------------------------------------------------------------
 vs_status_e
-KSQSnapSCRTClient::_sessionKeyCb(vs_snap_transaction_id_t id,
-                                 vs_status_e res) {
+KSQSnapSCRTClient::_sessionKeyCb(vs_snap_transaction_id_t id, vs_status_e res) {
     VS_LOG_DEBUG("_sessionKeyCb");
     return VS_CODE_ERR_NOT_IMPLEMENTED;
 }

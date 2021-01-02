@@ -36,9 +36,7 @@ class KSQStorageKeychain final : public KSQStorageBase, public VSQSingleton<KSQS
     friend VSQSingleton<KSQStorageKeychain>;
 
 public:
-
 protected:
-
     virtual bool
     writeImpl(const QString &file, const QByteArray &data);
 

@@ -35,7 +35,7 @@ class KSQDeviceSetupController : public QObject, public VSQSingleton<KSQDeviceSe
 
     friend VSQSingleton<KSQDeviceSetupController>;
 
-    Q_PROPERTY(QObject * data READ deviceData NOTIFY fireDeviceDataChanged)
+    Q_PROPERTY(QObject *data READ deviceData NOTIFY fireDeviceDataChanged)
 
 public:
     bool
@@ -53,7 +53,7 @@ public:
     configure(QString ssid, QString password);
 
     void
-    error(const QString & error);
+    error(const QString &error);
 
 signals:
     void
@@ -82,10 +82,7 @@ signals:
 
 private slots:
     void
-    onDeviceSecurityInfo(bool hasProvision,
-                         bool hasOwner,
-                         bool ownerIsYou,
-                         const KSQPublicKey& publicKey);
+    onDeviceSecurityInfo(bool hasProvision, bool hasOwner, bool ownerIsYou, const KSQPublicKey &publicKey);
 
     void
     onDeviceInfo(const VSQDeviceInfo &deviceInfo);
@@ -118,7 +115,7 @@ private:
     bool
     checkInitalStep();
 
-    Q_INVOKABLE QObject*
+    Q_INVOKABLE QObject *
     deviceData();
 
     void

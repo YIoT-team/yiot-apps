@@ -63,30 +63,26 @@ KSQSecModule::generateKeypair(vs_secmodule_keypair_type_e keypair_type) const {
     uint16_t private_key_sz;
 
     if (VS_CODE_OK != _keypair_create_internal(keypair_type,
-                                              public_key,
-                                              sizeof(public_key),
-                                              &public_key_sz,
-                                              private_key,
-                                              sizeof(private_key),
-                                              &private_key_sz)) {
+                                               public_key,
+                                               sizeof(public_key),
+                                               &public_key_sz,
+                                               private_key,
+                                               sizeof(private_key),
+                                               &private_key_sz)) {
         qDebug() << "Unable to create keypair";
         return std::make_pair(nullptr, nullptr);
     }
 
-    if (!vs_converters_pubkey_to_raw(keypair_type,
-                                    public_key,
-                                    public_key_sz,
-                                    public_key,
-                                    sizeof(public_key),
-                                    &public_key_sz)) {
+    if (!vs_converters_pubkey_to_raw(
+                keypair_type, public_key, public_key_sz, public_key, sizeof(public_key), &public_key_sz)) {
         qDebug() << "Unable to convert a public key to raw";
         return std::make_pair(nullptr, nullptr);
     }
 
     auto pubkey = QSharedPointer<KSQPublicKey>::create(keypair_type,
-                                                        QByteArray(reinterpret_cast<char *>(public_key), public_key_sz));
-    auto privkey = QSharedPointer<KSQPrivateKey>::create(keypair_type,
-                                                        QByteArray(reinterpret_cast<char *>(private_key), private_key_sz));
+                                                       QByteArray(reinterpret_cast<char *>(public_key), public_key_sz));
+    auto privkey = QSharedPointer<KSQPrivateKey>::create(
+            keypair_type, QByteArray(reinterpret_cast<char *>(private_key), private_key_sz));
 
     return std::make_pair(privkey, pubkey);
 }
@@ -94,8 +90,8 @@ KSQSecModule::generateKeypair(vs_secmodule_keypair_type_e keypair_type) const {
 //-----------------------------------------------------------------------------
 QByteArray
 KSQSecModule::signRaw(const QByteArray &data,
-                   QSharedPointer<KSQPrivateKey> key,
-                   vs_secmodule_hash_type_e hashType) const {
+                      QSharedPointer<KSQPrivateKey> key,
+                      vs_secmodule_hash_type_e hashType) const {
 
     QByteArray res;
     const auto kFactoryKeySlot = VS_KEY_SLOT_STD_TMP_0;
@@ -106,7 +102,7 @@ KSQSecModule::signRaw(const QByteArray &data,
     // Set Factory private key to TMP slot
     CHECK_RET(VS_CODE_OK == m_secmoduleImpl->set_keypair(kFactoryKeySlot,
                                                          key->ecType(),
-                                                         reinterpret_cast<const uint8_t*>(key->val().data()),
+                                                         reinterpret_cast<const uint8_t *>(key->val().data()),
                                                          key->val().size(),
                                                          NULL,
                                                          0),
@@ -118,7 +114,7 @@ KSQSecModule::signRaw(const QByteArray &data,
     uint8_t hash[hashSzMax];
     uint16_t hashResSz;
     CHECK_RET(VS_CODE_OK == m_secmoduleImpl->hash(hashType,
-                                                  reinterpret_cast<const uint8_t*>(data.data()),
+                                                  reinterpret_cast<const uint8_t *>(data.data()),
                                                   data.size(),
                                                   hash,
                                                   hashSzMax,
@@ -131,23 +127,16 @@ KSQSecModule::signRaw(const QByteArray &data,
     uint8_t sign[signSzMax];
     uint16_t signResSz;
 
-    CHECK_RET(VS_CODE_OK == m_secmoduleImpl->ecdsa_sign(kFactoryKeySlot,
-                                                        hashType,
-                                                        hash,
-                                                        sign,
-                                                        signSzMax,
-                                                        &signResSz),
+    CHECK_RET(VS_CODE_OK == m_secmoduleImpl->ecdsa_sign(kFactoryKeySlot, hashType, hash, sign, signSzMax, &signResSz),
               res,
               "Cannot sign data");
 
-    return QByteArray(reinterpret_cast<char*>(sign), signResSz);
+    return QByteArray(reinterpret_cast<char *>(sign), signResSz);
 }
 
 //-----------------------------------------------------------------------------
 QByteArray
-KSQSecModule::sign(const QByteArray &data,
-     const KSQKeyPair &signerKeyPair,
-     vs_secmodule_hash_type_e hashType) const {
+KSQSecModule::sign(const QByteArray &data, const KSQKeyPair &signerKeyPair, vs_secmodule_hash_type_e hashType) const {
     QByteArray res;
 
     // Check input parameters
@@ -155,9 +144,8 @@ KSQSecModule::sign(const QByteArray &data,
     CHECK_NOT_ZERO_RET(!signerKeyPair.second.isNull(), res);
 
     // Calculate required size of buffer
-    size_t signSz = sizeof(vs_sign_t)
-                    + vs_secmodule_get_signature_len(signerKeyPair.first->ecType())
-                    + vs_secmodule_get_pubkey_len(signerKeyPair.first->ecType());
+    size_t signSz = sizeof(vs_sign_t) + vs_secmodule_get_signature_len(signerKeyPair.first->ecType()) +
+                    vs_secmodule_get_pubkey_len(signerKeyPair.first->ecType());
 
     // Allocate buffer
     res.resize(signSz);

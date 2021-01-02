@@ -45,7 +45,7 @@ KSQStorageBase::id2str(const vs_storage_element_id_t id) {
         if (c.isLetterOrNumber() || c == "_" || c == "-") {
             res += c;
         } else {
-            auto baHex = QByteArray(reinterpret_cast<const char*>(&id[i]), 1).toHex();
+            auto baHex = QByteArray(reinterpret_cast<const char *>(&id[i]), 1).toHex();
             res += QString(baHex);
         }
     }
@@ -74,7 +74,7 @@ KSQStorageBase::_open(const vs_storage_impl_data_ctx_t storage_ctx, const vs_sto
 //-----------------------------------------------------------------------------
 bool
 KSQStorageBase::_inCache(const vs_storage_impl_data_ctx_t storage_ctx, const vs_storage_file_t file) {
-    const auto &f = *reinterpret_cast<QString*>(file);
+    const auto &f = *reinterpret_cast<QString *>(file);
     auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
     return ctx->m_cache.keys().contains(f);
 }
@@ -85,7 +85,7 @@ KSQStorageBase::_close(const vs_storage_impl_data_ctx_t storage_ctx, vs_storage_
     CHECK_NOT_ZERO_RET(file, VS_CODE_ERR_INCORRECT_PARAMETER);
 
     auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
-    auto f = reinterpret_cast<QString*>(file);
+    auto f = reinterpret_cast<QString *>(file);
     ctx->m_cache.remove(*f);
     delete f;
 
@@ -102,7 +102,7 @@ KSQStorageBase::_sync(const vs_storage_impl_data_ctx_t storage_ctx, const vs_sto
     CHECK_NOT_ZERO_RET(_inCache(storage_ctx, file), VS_CODE_ERR_FILE);
 
     auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
-    const auto &f = *reinterpret_cast<QString*>(file);
+    const auto &f = *reinterpret_cast<QString *>(file);
 
     if (ctx->writeImpl(f, ctx->m_cache[f])) {
         res = VS_CODE_OK;
@@ -113,17 +113,17 @@ KSQStorageBase::_sync(const vs_storage_impl_data_ctx_t storage_ctx, const vs_sto
 //-----------------------------------------------------------------------------
 vs_status_e
 KSQStorageBase::_save(const vs_storage_impl_data_ctx_t storage_ctx,
-                        const vs_storage_file_t file,
-                        size_t offset,
-                        const uint8_t *data,
-                        size_t data_sz) {
+                      const vs_storage_file_t file,
+                      size_t offset,
+                      const uint8_t *data,
+                      size_t data_sz) {
     CHECK_NOT_ZERO_RET(data, VS_CODE_ERR_NULLPTR_ARGUMENT);
     CHECK_NOT_ZERO_RET(storage_ctx, VS_CODE_ERR_NULLPTR_ARGUMENT);
     CHECK_NOT_ZERO_RET(file, VS_CODE_ERR_NULLPTR_ARGUMENT);
     CHECK_NOT_ZERO_RET(_inCache(storage_ctx, file), VS_CODE_ERR_FILE);
 
     auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
-    const auto &f = *reinterpret_cast<QString*>(file);
+    const auto &f = *reinterpret_cast<QString *>(file);
 
     QByteArray &fileData = ctx->m_cache[f];
 
@@ -139,10 +139,10 @@ KSQStorageBase::_save(const vs_storage_impl_data_ctx_t storage_ctx,
 //-----------------------------------------------------------------------------
 vs_status_e
 KSQStorageBase::_load(const vs_storage_impl_data_ctx_t storage_ctx,
-                        const vs_storage_file_t file,
-                        size_t offset,
-                        uint8_t *out_data,
-                        size_t data_sz) {
+                      const vs_storage_file_t file,
+                      size_t offset,
+                      uint8_t *out_data,
+                      size_t data_sz) {
     vs_status_e res = VS_CODE_ERR_FILE_READ;
 
     CHECK_NOT_ZERO_RET(out_data, VS_CODE_ERR_INCORRECT_PARAMETER);
@@ -151,7 +151,7 @@ KSQStorageBase::_load(const vs_storage_impl_data_ctx_t storage_ctx,
     CHECK_NOT_ZERO_RET(_inCache(storage_ctx, file), VS_CODE_ERR_FILE);
 
     auto ctx = reinterpret_cast<KSQStorageBase *>(storage_ctx);
-    const auto &f = *reinterpret_cast<QString*>(file);
+    const auto &f = *reinterpret_cast<QString *>(file);
     QByteArray &fileData = ctx->m_cache[f];
 
     if (fileData.size() < static_cast<int>(offset + data_sz)) {

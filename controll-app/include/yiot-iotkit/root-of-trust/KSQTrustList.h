@@ -87,7 +87,6 @@ private:
 
     bool
     fillStorageId(vs_storage_element_id_t id) const;
-
 };
 
 Q_DECLARE_METATYPE(KSQTrustList)

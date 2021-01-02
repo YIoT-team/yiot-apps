@@ -69,7 +69,6 @@ KSQDeviceSetupController::KSQDeviceSetupController() {
 
 //-----------------------------------------------------------------------------
 KSQDeviceSetupController::~KSQDeviceSetupController() {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -131,9 +130,8 @@ KSQDeviceSetupController::configure(QString ssid, QString password) {
 
     KSQIoTKitFacade::instance().snapCfgClient().onSetConfigData(ssid, password);
 
-    if (!KSQSnapPRVSClient::instance().provisionDevice(m_netif,
-                                                       m_deviceMac,
-                                                       KSQRoTController::instance().localRootOfTrust())) {
+    if (!KSQSnapPRVSClient::instance().provisionDevice(
+                m_netif, m_deviceMac, KSQRoTController::instance().localRootOfTrust())) {
         VS_LOG_ERROR("Cannot do device provision.");
         return false;
     }
@@ -143,7 +141,7 @@ KSQDeviceSetupController::configure(QString ssid, QString password) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceSetupController::error(const QString & error) {
+KSQDeviceSetupController::error(const QString &error) {
     m_valid = false;
     emit fireError(error);
     emit fireFinished(m_netif);
@@ -181,7 +179,7 @@ void
 KSQDeviceSetupController::onDeviceSecurityInfo(bool hasProvision,
                                                bool hasOwner,
                                                bool ownerIsYou,
-                                               const KSQPublicKey& publicKey) {
+                                               const KSQPublicKey &publicKey) {
     if (!m_valid) {
         return;
     }
@@ -221,10 +219,9 @@ KSQDeviceSetupController::checkInitalStep() {
 }
 
 //-----------------------------------------------------------------------------
-QObject*
+QObject *
 KSQDeviceSetupController::deviceData() {
     return &m_deviceData;
 }
 
 //-----------------------------------------------------------------------------
-

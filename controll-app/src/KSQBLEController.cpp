@@ -34,9 +34,12 @@ KSQBLEController::KSQBLEController() {
 
     connect(m_netifBLE.data(), &VSQNetifBLE::fireDeviceDisconnected, this, &KSQBLEController::onDisconnected);
 
-    //connect(m_netifBLE.data(), &VSQNetifBLE::fireDeviceError, this, &KSQBLEController::onDeviceError);
+    // connect(m_netifBLE.data(), &VSQNetifBLE::fireDeviceError, this, &KSQBLEController::onDeviceError);
 
-    connect(&KSQDeviceSetupController::instance(), &KSQDeviceSetupController::fireFinished, this, &KSQBLEController::onSetupFinished);
+    connect(&KSQDeviceSetupController::instance(),
+            &KSQDeviceSetupController::fireFinished,
+            this,
+            &KSQBLEController::onSetupFinished);
 }
 
 //-----------------------------------------------------------------------------
@@ -70,13 +73,12 @@ KSQBLEController::onConnected(bool success) {
 //-----------------------------------------------------------------------------
 void
 KSQBLEController::cleanConnections() {
-
 }
 
 //-----------------------------------------------------------------------------
 void
 KSQBLEController::onDisconnected() {
-//    emit fireDisconnected();
+    //    emit fireDisconnected();
     cleanConnections();
 }
 

@@ -32,10 +32,9 @@ class KSQProvision : public QObject, public VSQSingleton<KSQProvision> {
     Q_OBJECT
 
     friend VSQSingleton<KSQProvision>;
-public:
 
-    bool
-    create(QSharedPointer<KSQRoT>);
+public:
+    bool create(QSharedPointer<KSQRoT>);
 
     bool
     isValid() const {

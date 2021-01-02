@@ -33,18 +33,24 @@ class KSQRoTController : public QAbstractTableModel, public VSQSingleton<KSQRoTC
     Q_OBJECT
 
     friend VSQSingleton<KSQRoTController>;
-    enum Element { ID = Qt::UserRole,
-                   Name,
-                   Image,
-                   TrustList,
-                   ECType,
-                   Recovery1, Recovery2,
-                   Auth1, Auth2,
-                   TL1, TL2,
-                   Firmware1, Firmware2,
-                   ElementMax };
-public:
+    enum Element {
+        ID = Qt::UserRole,
+        Name,
+        Image,
+        TrustList,
+        ECType,
+        Recovery1,
+        Recovery2,
+        Auth1,
+        Auth2,
+        TL1,
+        TL2,
+        Firmware1,
+        Firmware2,
+        ElementMax
+    };
 
+public:
     bool
     isValid() const {
         return m_valid;
@@ -86,7 +92,7 @@ private:
     loadRoTList();
 
     bool
-    saveRoTList(const QStringList& list);
+    saveRoTList(const QStringList &list);
 
     vs_storage_element_id_t m_listStorageId;
 };

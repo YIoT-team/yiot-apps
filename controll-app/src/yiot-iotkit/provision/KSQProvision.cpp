@@ -58,34 +58,22 @@ KSQProvision::prepareOwnKeyPair() {
 
     // Try to load own public key
     if (VS_CODE_OK == KSQSecModule::instance().secmoduleImpl()->get_pubkey(
-                              PRIVATE_KEY_SLOT,
-                              public_key,
-                              sizeof(public_key),
-                              &public_key_sz,
-                              &keypair_type
-                              )) {
+                              PRIVATE_KEY_SLOT, public_key, sizeof(public_key), &public_key_sz, &keypair_type)) {
         res = true;
     } else {
         // Try to create own key pair if absent
-        if (VS_CODE_OK == KSQSecModule::instance().secmoduleImpl()->create_keypair(
-                PRIVATE_KEY_SLOT,
-                VS_KEYPAIR_EC_SECP256R1
-        )) {
-            if (VS_CODE_OK == KSQSecModule::instance().secmoduleImpl()->get_pubkey(
-                    PRIVATE_KEY_SLOT,
-                    public_key,
-                    sizeof(public_key),
-                    &public_key_sz,
-                    &keypair_type
-            )) {
+        if (VS_CODE_OK ==
+            KSQSecModule::instance().secmoduleImpl()->create_keypair(PRIVATE_KEY_SLOT, VS_KEYPAIR_EC_SECP256R1)) {
+            if (VS_CODE_OK ==
+                KSQSecModule::instance().secmoduleImpl()->get_pubkey(
+                        PRIVATE_KEY_SLOT, public_key, sizeof(public_key), &public_key_sz, &keypair_type)) {
                 res = true;
             }
         }
     }
 
     if (res) {
-        m_ownPubic = KSQPublicKey(keypair_type,
-                                  QByteArray(reinterpret_cast<char *>(public_key), public_key_sz));
+        m_ownPubic = KSQPublicKey(keypair_type, QByteArray(reinterpret_cast<char *>(public_key), public_key_sz));
     }
 
     return res;
@@ -111,9 +99,10 @@ KSQProvision::saveElementData(vs_provision_element_id_e element, const QByteArra
               false,
               "Unable to get slot");
 
-    auto saveFunc =  KSQSecModule::instance().secmoduleImpl()->slot_save;
+    auto saveFunc = KSQSecModule::instance().secmoduleImpl()->slot_save;
     CHECK_RET(VS_CODE_OK == saveFunc(static_cast<vs_iot_secmodule_slot_e>(slot),
-                                     reinterpret_cast<const uint8_t*>(data.data()), data.size()),
+                                     reinterpret_cast<const uint8_t *>(data.data()),
+                                     data.size()),
               false,
               "Unable to get slot");
 
@@ -150,15 +139,16 @@ KSQProvision::create(QSharedPointer<KSQRoT> rot) {
 
     // Set TrustList header
     auto tlHeader = rot->trustList().header();
-    auto tlHeaderBuf = reinterpret_cast<uint8_t*>(tlHeader.data());
+    auto tlHeaderBuf = reinterpret_cast<uint8_t *>(tlHeader.data());
     vs_tl_element_info_t tlHeaderInfo = {.id = VS_TL_ELEMENT_TLH, .index = 0};
-    CHECK_RET(VS_CODE_OK == vs_tl_save_part(&tlHeaderInfo, tlHeaderBuf, tlHeader.size()), false, "Cannot save TL header");
+    CHECK_RET(
+            VS_CODE_OK == vs_tl_save_part(&tlHeaderInfo, tlHeaderBuf, tlHeader.size()), false, "Cannot save TL header");
 
     // Set TrustList key
     auto keysCnt = rot->trustList().keysCount();
     for (int i = 0; i < keysCnt; i++) {
         auto tlKey = rot->trustList().key(i);
-        auto tlKeyBuf = reinterpret_cast<uint8_t*> (tlKey.data());
+        auto tlKeyBuf = reinterpret_cast<uint8_t *>(tlKey.data());
         vs_tl_element_info_t tlKeyInfo = {.id = VS_TL_ELEMENT_TLC, .index = i};
         CHECK_RET(VS_CODE_OK == vs_tl_save_part(&tlKeyInfo, tlKeyBuf, tlKey.size()), false, "Cannot save TL key");
     }
@@ -167,7 +157,8 @@ KSQProvision::create(QSharedPointer<KSQRoT> rot) {
     auto tlFooter = rot->trustList().footer();
     auto tlFooterBuf = reinterpret_cast<uint8_t *>(tlFooter.data());
     vs_tl_element_info_t tlFooterInfo = {.id = VS_TL_ELEMENT_TLF, .index = 0};
-    CHECK_RET(VS_CODE_OK == vs_tl_save_part(&tlFooterInfo, tlFooterBuf, tlFooter.size()), false, "Cannot save TL footer");
+    CHECK_RET(
+            VS_CODE_OK == vs_tl_save_part(&tlFooterInfo, tlFooterBuf, tlFooter.size()), false, "Cannot save TL footer");
 
     return true;
 }

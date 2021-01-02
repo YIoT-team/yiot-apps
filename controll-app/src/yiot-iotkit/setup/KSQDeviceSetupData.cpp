@@ -30,7 +30,7 @@ KSQDeviceSetupData::KSQDeviceSetupData(KSQDeviceSetupData const &d) {
 
 //-----------------------------------------------------------------------------
 KSQDeviceSetupData &
-KSQDeviceSetupData::operator=(KSQDeviceSetupData const & d) {
+KSQDeviceSetupData::operator=(KSQDeviceSetupData const &d) {
     if (this == &d) {
         return *this;
     }
@@ -46,10 +46,14 @@ KSQDeviceSetupData::operator=(KSQDeviceSetupData const & d) {
 //-----------------------------------------------------------------------------
 bool
 KSQDeviceSetupData::operator==(const KSQDeviceSetupData &d) const {
-    if (m_hasProvision != d.m_hasProvision) return false;
-    if (m_hasOwner != d.m_hasOwner) return false;
-    if (m_ownerIsYou != d.m_ownerIsYou) return false;
-    if (m_deviceInfo != d.m_deviceInfo) return false;
+    if (m_hasProvision != d.m_hasProvision)
+        return false;
+    if (m_hasOwner != d.m_hasOwner)
+        return false;
+    if (m_ownerIsYou != d.m_ownerIsYou)
+        return false;
+    if (m_deviceInfo != d.m_deviceInfo)
+        return false;
 
     return true;
 }
@@ -96,7 +100,7 @@ KSQDeviceSetupData::publicKeyInfo() const {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceSetupData::setDeviceInfo(const VSQDeviceInfo& deviceInfo) {
+KSQDeviceSetupData::setDeviceInfo(const VSQDeviceInfo &deviceInfo) {
     m_deviceInfo = deviceInfo;
     emit fireNameChanged();
     emit fireManufacturerChanged();

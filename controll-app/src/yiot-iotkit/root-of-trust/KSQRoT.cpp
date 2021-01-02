@@ -56,7 +56,6 @@ const QString KSQRoT::kNameTrustList = "trust_list";
 
 //-----------------------------------------------------------------------------
 KSQRoT::KSQRoT() : QObject(), m_trustList("") {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -134,28 +133,33 @@ KSQRoT::generate(const QString &name) {
         keyPairs[i] = keyPair;
     }
 
-    CHECK_RET(prepareProvisionKeyPair(m_recovery1, keyPairs[0], VS_KEY_RECOVERY),
-              false, "Cannot prepare Recovery Key 1");
-    CHECK_RET(prepareProvisionKeyPair(m_recovery2, keyPairs[1], VS_KEY_RECOVERY),
-              false, "Cannot prepare Recovery Key 2");
+    CHECK_RET(
+            prepareProvisionKeyPair(m_recovery1, keyPairs[0], VS_KEY_RECOVERY), false, "Cannot prepare Recovery Key 1");
+    CHECK_RET(
+            prepareProvisionKeyPair(m_recovery2, keyPairs[1], VS_KEY_RECOVERY), false, "Cannot prepare Recovery Key 2");
 
     CHECK_RET(prepareProvisionKeyPair(m_auth1, keyPairs[2], VS_KEY_AUTH, m_recovery1),
-              false, "Cannot prepare Auth Key 1");
+              false,
+              "Cannot prepare Auth Key 1");
     CHECK_RET(prepareProvisionKeyPair(m_auth2, keyPairs[3], VS_KEY_AUTH, m_recovery1),
-              false, "Cannot prepare Auth Key 2");
+              false,
+              "Cannot prepare Auth Key 2");
 
     CHECK_RET(prepareProvisionKeyPair(m_tl1, keyPairs[4], VS_KEY_TRUSTLIST, m_recovery1),
-              false, "Cannot prepare TL Key 1");
+              false,
+              "Cannot prepare TL Key 1");
     CHECK_RET(prepareProvisionKeyPair(m_tl2, keyPairs[5], VS_KEY_TRUSTLIST, m_recovery1),
-              false, "Cannot prepare TL Key 2");
+              false,
+              "Cannot prepare TL Key 2");
 
     CHECK_RET(prepareProvisionKeyPair(m_firmware1, keyPairs[6], VS_KEY_FIRMWARE, m_recovery1),
-              false, "Cannot prepare Firmware Key 1");
+              false,
+              "Cannot prepare Firmware Key 1");
     CHECK_RET(prepareProvisionKeyPair(m_firmware2, keyPairs[7], VS_KEY_FIRMWARE, m_recovery1),
-              false, "Cannot prepare Firmware Key 2");
+              false,
+              "Cannot prepare Firmware Key 2");
 
-    CHECK_RET(prepareProvisionKeyPair(m_factory, keyPairs[8], VS_KEY_FACTORY),
-              false, "Cannot prepare Factory Key");
+    CHECK_RET(prepareProvisionKeyPair(m_factory, keyPairs[8], VS_KEY_FACTORY), false, "Cannot prepare Factory Key");
 
     // Generate TrustList
     if (!m_trustList.create(m_id, *this)) {
@@ -171,21 +175,14 @@ bool
 KSQRoT::saveKeyPair(const QString &name, const KSQKeyPair &keypair) const {
     QByteArray data;
     QDataStream dataStreamWrite(&data, QIODevice::WriteOnly);
-    dataStreamWrite << keypair.second->ecType()
-                    << keypair.second->provisionType()
-                    << keypair.first->val()
-                    << keypair.second->val()
-                    << keypair.second->startDate()
-                    << keypair.second->expireDate()
+    dataStreamWrite << keypair.second->ecType() << keypair.second->provisionType() << keypair.first->val()
+                    << keypair.second->val() << keypair.second->startDate() << keypair.second->expireDate()
                     << keypair.second->signature();
 
     vs_storage_element_id_t id;
     CHECK_NOT_ZERO_RET(prepName(name, id), false);
 
-    CHECK_NOT_ZERO_RET(KSQSecBox::instance().save(
-                               VS_SECBOX_SIGNED_AND_ENCRYPTED,
-                               id,
-                               data), false);
+    CHECK_NOT_ZERO_RET(KSQSecBox::instance().save(VS_SECBOX_SIGNED_AND_ENCRYPTED, id, data), false);
     return true;
 }
 
@@ -208,22 +205,10 @@ KSQRoT::loadKeyPair(const QString &name, KSQKeyPair &res) const {
     QByteArray signature;
     QDateTime startDate;
     QDateTime expireDate;
-    dataStreamRead
-            >> ecType
-            >> provisionType
-            >> privKey
-            >> pubKey
-            >> startDate
-            >> expireDate
-            >> signature;
+    dataStreamRead >> ecType >> provisionType >> privKey >> pubKey >> startDate >> expireDate >> signature;
 
     auto privkey = QSharedPointer<KSQPrivateKey>::create(ecType, privKey);
-    auto pubkey = QSharedPointer<KSQPublicKey>::create(ecType,
-                                                       pubKey,
-                                                       provisionType,
-                                                       signature,
-                                                       startDate,
-                                                       expireDate);
+    auto pubkey = QSharedPointer<KSQPublicKey>::create(ecType, pubKey, provisionType, signature, startDate, expireDate);
     res = std::make_pair(privkey, pubkey);
     return true;
 }

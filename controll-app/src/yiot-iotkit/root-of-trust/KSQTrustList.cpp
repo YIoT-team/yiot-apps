@@ -26,7 +26,7 @@
 #include <endian-config.h>
 
 //-----------------------------------------------------------------------------
-KSQTrustList::KSQTrustList(const QString &id): QObject() {
+KSQTrustList::KSQTrustList(const QString &id) : QObject() {
     m_valid = false;
     if (id.isEmpty()) {
         return;
@@ -68,17 +68,12 @@ KSQTrustList::create(const QString &id, const KSQRoT &rot) {
 
     // Calculated requires sizes
     const size_t headerSz = sizeof(vs_tl_header_t);
-    const size_t bodySz = sizeof(vs_pubkey_dated_t)
-                          + vs_secmodule_get_pubkey_len(rot.factory().second->ecType());
-    const size_t authSignSz = + sizeof(vs_sign_t)
-                              + vs_secmodule_get_signature_len(rot.auth1Full().first->ecType())
-                              + vs_secmodule_get_pubkey_len(rot.auth1Full().first->ecType());
-    const size_t tlSignSz = + sizeof(vs_sign_t)
-                            + vs_secmodule_get_signature_len(rot.tl1Full().first->ecType())
-                            + vs_secmodule_get_pubkey_len(rot.tl1Full().first->ecType());
-    const size_t footerSz = sizeof(vs_tl_footer_t)
-                            + authSignSz
-                            + tlSignSz;
+    const size_t bodySz = sizeof(vs_pubkey_dated_t) + vs_secmodule_get_pubkey_len(rot.factory().second->ecType());
+    const size_t authSignSz = +sizeof(vs_sign_t) + vs_secmodule_get_signature_len(rot.auth1Full().first->ecType()) +
+                              vs_secmodule_get_pubkey_len(rot.auth1Full().first->ecType());
+    const size_t tlSignSz = +sizeof(vs_sign_t) + vs_secmodule_get_signature_len(rot.tl1Full().first->ecType()) +
+                            vs_secmodule_get_pubkey_len(rot.tl1Full().first->ecType());
+    const size_t footerSz = sizeof(vs_tl_footer_t) + authSignSz + tlSignSz;
     const size_t requiredSz = headerSz + bodySz + footerSz;
     const size_t signSz = headerSz + bodySz + sizeof(vs_tl_footer_t);
 
@@ -155,7 +150,7 @@ KSQTrustList::fillStorageId(vs_storage_element_id_t id) const {
         return false;
     }
 
-    strcpy(reinterpret_cast<char*>(id), name.toStdString().c_str());
+    strcpy(reinterpret_cast<char *>(id), name.toStdString().c_str());
 
     return true;
 }
@@ -166,10 +161,7 @@ KSQTrustList::save() const {
     vs_storage_element_id_t id;
     CHECK_NOT_ZERO_RET(fillStorageId(id), false);
 
-    CHECK_NOT_ZERO_RET(KSQSecBox::instance().save(
-            VS_SECBOX_SIGNED_AND_ENCRYPTED,
-            id,
-            m_tl), false);
+    CHECK_NOT_ZERO_RET(KSQSecBox::instance().save(VS_SECBOX_SIGNED_AND_ENCRYPTED, id, m_tl), false);
 
     return true;
 }
@@ -209,13 +201,12 @@ KSQTrustList::key(size_t num) const {
     int i = -1;
     do {
         ++i;
-        key = reinterpret_cast<const vs_pubkey_dated_t *> (keyData);
+        key = reinterpret_cast<const vs_pubkey_dated_t *>(keyData);
         auto ecType = static_cast<vs_secmodule_keypair_type_e>(key->pubkey.ec_type);
-        keySz = sizeof(vs_pubkey_dated_t)
-                + VS_IOT_NTOHS(key->pubkey.meta_data_sz)
-                + vs_secmodule_get_pubkey_len(ecType);
+        keySz = sizeof(vs_pubkey_dated_t) + VS_IOT_NTOHS(key->pubkey.meta_data_sz) +
+                vs_secmodule_get_pubkey_len(ecType);
         keyData += keySz;
-    } while(i < static_cast<int>(num));
+    } while (i < static_cast<int>(num));
 
     return QByteArray(reinterpret_cast<const char *>(key), keySz);
 }
@@ -233,24 +224,21 @@ KSQTrustList::footer() const {
 
     auto keyData = reinterpret_cast<const uint8_t *>(m_tl.data() + sizeof(vs_tl_header_t));
     for (int i = 0; i < keysNum; i++) {
-        auto key = reinterpret_cast<const vs_pubkey_dated_t *> (keyData);
+        auto key = reinterpret_cast<const vs_pubkey_dated_t *>(keyData);
         auto ecType = static_cast<vs_secmodule_keypair_type_e>(key->pubkey.ec_type);
-        auto keySz = sizeof(vs_pubkey_dated_t)
-                     + VS_IOT_NTOHS(key->pubkey.meta_data_sz)
-                     + vs_secmodule_get_pubkey_len(ecType);
+        auto keySz = sizeof(vs_pubkey_dated_t) + VS_IOT_NTOHS(key->pubkey.meta_data_sz) +
+                     vs_secmodule_get_pubkey_len(ecType);
         keyData += keySz;
     }
 
     auto footerSz = sizeof(vs_tl_footer_t);
-    auto footer = reinterpret_cast<const vs_tl_footer_t*> (keyData);
+    auto footer = reinterpret_cast<const vs_tl_footer_t *>(keyData);
     auto signData = footer->signatures;
 
     for (int i = 0; i < signaturesNum; i++) {
-        auto sign = reinterpret_cast<const vs_sign_t *> (signData);
+        auto sign = reinterpret_cast<const vs_sign_t *>(signData);
         auto ecType = static_cast<vs_secmodule_keypair_type_e>(sign->ec_type);
-        auto signSz = sizeof(vs_sign_t)
-                     + vs_secmodule_get_signature_len(ecType)
-                     + vs_secmodule_get_pubkey_len(ecType);
+        auto signSz = sizeof(vs_sign_t) + vs_secmodule_get_signature_len(ecType) + vs_secmodule_get_pubkey_len(ecType);
         signData += signSz;
         footerSz += signSz;
     }

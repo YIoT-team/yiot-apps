@@ -76,7 +76,7 @@ public:
     signedDatedKey() const;
 
     KSQPublicKey &
-    setSignature(const QByteArray& signature);
+    setSignature(const QByteArray &signature);
 
     QDateTime
     startDate() const;

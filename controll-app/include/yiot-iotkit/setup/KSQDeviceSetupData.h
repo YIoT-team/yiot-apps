@@ -68,7 +68,7 @@ public:
     setPublicKey(const KSQPublicKey &publicKey);
 
     void
-    setDeviceInfo(const VSQDeviceInfo& deviceInfo);
+    setDeviceInfo(const VSQDeviceInfo &deviceInfo);
 
     QString
     name() const;

@@ -82,11 +82,9 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     //
 
     //  PRVS service
-    if (device_roles & VS_SNAP_DEV_INITIALIZER) {
-        const vs_snap_service_t *snap_prvs_server;
-        snap_prvs_server = vs_snap_prvs_server(secmodule_impl);
-        STATUS_CHECK(vs_snap_register_service(snap_prvs_server), "Cannot register PRVS service");
-    }
+    const vs_snap_service_t *snap_prvs_server;
+    snap_prvs_server = vs_snap_prvs_server(secmodule_impl);
+    STATUS_CHECK(vs_snap_register_service(snap_prvs_server), "Cannot register PRVS service");
 
     //  SCRT server service
     const vs_snap_service_t *snap_scrt_server;

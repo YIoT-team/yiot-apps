@@ -36,11 +36,11 @@ KSQStorageKeychain::writeImpl(const QString &file, const QByteArray &data) {
     job.setBinaryData(data);
 
     QEventLoop loop;
-    job.connect( &job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()) );
+    job.connect(&job, SIGNAL(finished(QKeychain::Job *)), &loop, SLOT(quit()));
     job.start();
     loop.exec();
 
-    if ( job.error() ) {
+    if (job.error()) {
         VS_LOG_WARNING("Keychain: Storing data failed for file %s, error text: %s",
                        file.toStdString().c_str(),
                        job.errorString().toStdString().c_str());
@@ -59,13 +59,13 @@ KSQStorageKeychain::readImpl(const QString &file, QByteArray &data) {
     job.setKey(file);
 
     QEventLoop loop;
-    job.connect( &job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()) );
+    job.connect(&job, SIGNAL(finished(QKeychain::Job *)), &loop, SLOT(quit()));
     job.start();
     loop.exec();
 
     data = job.binaryData();
 
-    if ( job.error() ) {
+    if (job.error()) {
         VS_LOG_WARNING("Keychain: Loading data failed for file %s, error text: %s",
                        file.toStdString().c_str(),
                        job.errorString().toStdString().c_str());
@@ -85,11 +85,11 @@ KSQStorageKeychain::deleteImpl(const QString &file) {
     job.setKey(file);
 
     QEventLoop loop;
-    job.connect( &job, SIGNAL(finished(QKeychain::Job*)), &loop, SLOT(quit()) );
+    job.connect(&job, SIGNAL(finished(QKeychain::Job *)), &loop, SLOT(quit()));
     job.start();
     loop.exec();
 
-    if ( job.error() ) {
+    if (job.error()) {
         VS_LOG_WARNING("Keychain: Deleting data failed for file %s, error text: %s",
                        file.toStdString().c_str(),
                        job.errorString().toStdString().c_str());

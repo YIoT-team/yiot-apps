@@ -68,7 +68,7 @@ KSQStorageFS::readImpl(const QString &file, QByteArray &data) {
 
     data = f.read(kFileSizeMax);
     f.close();
-    
+
     return true;
 }
 

@@ -31,7 +31,7 @@ KSQRoTController::KSQRoTController() {
 //-----------------------------------------------------------------------------
 QSharedPointer<KSQRoT>
 KSQRoTController::localRootOfTrust() const {
-    for (auto &rot: m_rots) {
+    for (auto &rot : m_rots) {
         if (rot->isLocal()) {
             return rot;
         }
@@ -87,8 +87,7 @@ KSQRoTController::data(const QModelIndex &index, int role) const {
             return r->firmware1().description();
         case Element::Firmware2:
             return r->firmware2().description();
-        default: {
-        }
+        default: {}
         }
     }
 
@@ -124,7 +123,7 @@ KSQRoTController::prepare() {
     qDebug() << "RoT list: " << idsList;
 
     // Load all available RoTs
-    for (auto &rotId: idsList) {
+    for (auto &rotId : idsList) {
         m_rots.push_back(QSharedPointer<KSQRoT>::create(rotId, "secure-enclave"));
     }
 
@@ -161,7 +160,7 @@ KSQRoTController::loadRoTList() {
 
 //-----------------------------------------------------------------------------
 bool
-KSQRoTController::saveRoTList(const QStringList& list) {
+KSQRoTController::saveRoTList(const QStringList &list) {
     QByteArray data;
     QDataStream dataStreamWrite(&data, QIODevice::WriteOnly);
     dataStreamWrite << list;

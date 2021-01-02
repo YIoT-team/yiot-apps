@@ -28,7 +28,7 @@
 
 using namespace VirgilIoTKit;
 
-class KSQStorageFS final: public KSQStorageBase {
+class KSQStorageFS final : public KSQStorageBase {
 
     Q_OBJECT
 
@@ -39,7 +39,6 @@ public:
     virtual ~KSQStorageFS() = default;
 
 protected:
-
     virtual bool
     writeImpl(const QString &file, const QByteArray &data);
 

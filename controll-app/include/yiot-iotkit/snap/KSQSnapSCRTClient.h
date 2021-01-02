@@ -65,11 +65,16 @@ public:
     getUsers(const vs_netif_t *netif, const VSQMac &mac);
 
 signals:
-    void fireInfo(bool hasProvision, bool hasOwner, bool hasOwnerIsYou, const KSQPublicKey& publicKey);
-    void fireSessionKeyReady();
-    void fireUserAddDone();
-    void fireUserRemoveDone();
-    void fireGetUsersDone();
+    void
+    fireInfo(bool hasProvision, bool hasOwner, bool hasOwnerIsYou, const KSQPublicKey &publicKey);
+    void
+    fireSessionKeyReady();
+    void
+    fireUserAddDone();
+    void
+    fireUserRemoveDone();
+    void
+    fireGetUsersDone();
 
 public slots:
 
@@ -80,7 +85,7 @@ private:
     virtual ~KSQSnapSCRTClient() = default;
 
     static vs_status_e
-    _infoCb(vs_snap_transaction_id_t id, vs_status_e res, const vs_scrt_info_response_t* scrt_info);
+    _infoCb(vs_snap_transaction_id_t id, vs_status_e res, const vs_scrt_info_response_t *scrt_info);
 
     static vs_status_e
     _sessionKeyCb(vs_snap_transaction_id_t id, vs_status_e res);

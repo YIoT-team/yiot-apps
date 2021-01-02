@@ -46,9 +46,8 @@ KSQSnapPRVSClient::_wait(uint32_t waitMs, int *condition, int idle) {
     // Wait for expected condition
     qDebug() << ">>> wait start";
     std::unique_lock<std::mutex> lk(KSQSnapPRVSClient::instance().m_waitGuard);
-    KSQSnapPRVSClient::instance().m_waitCondition.wait_for(lk,
-                            waitMs * 1ms,
-                            [condition, idle](){return *condition != idle;});
+    KSQSnapPRVSClient::instance().m_waitCondition.wait_for(
+            lk, waitMs * 1ms, [condition, idle]() { return *condition != idle; });
 
     qDebug() << "<<< wait stop";
     return VS_CODE_OK;
@@ -80,26 +79,25 @@ KSQSnapPRVSClient::serviceName() const {
 
 //-----------------------------------------------------------------------------
 KSQPublicKey
-KSQSnapPRVSClient::getDevicePublicKey(QSharedPointer<VSQNetifBase> netif,
-                                      VSQMac deviceMac) {
+KSQSnapPRVSClient::getDevicePublicKey(QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac) {
     QByteArray pubKey;
     pubKey.resize(sizeof(vs_pubkey_t) + kPubKeyBufMax);
 
     vs_mac_addr_t mac = deviceMac;
     if (VS_CODE_OK != vs_snap_prvs_save_provision(netif->lowLevelNetif(),
                                                   &mac,
-                                                  reinterpret_cast<uint8_t*> (pubKey.data()),
+                                                  reinterpret_cast<uint8_t *>(pubKey.data()),
                                                   pubKey.size(),
                                                   kDefaultTimeoutMs)) {
         VS_LOG_ERROR("Cannot get public key of device");
         return KSQPublicKey();
     }
 
-    const auto _key = reinterpret_cast<vs_pubkey_t*> (pubKey.data());
-    auto ecType = static_cast<vs_secmodule_keypair_type_e> (_key->ec_type);
-    auto keyData = QByteArray::fromRawData(reinterpret_cast<char *> (_key->meta_and_pubkey + _key->meta_data_sz),
+    const auto _key = reinterpret_cast<vs_pubkey_t *>(pubKey.data());
+    auto ecType = static_cast<vs_secmodule_keypair_type_e>(_key->ec_type);
+    auto keyData = QByteArray::fromRawData(reinterpret_cast<char *>(_key->meta_and_pubkey + _key->meta_data_sz),
                                            vs_secmodule_get_pubkey_len(ecType));
-    auto provisionType = static_cast<vs_key_type_e> (_key->key_type);
+    auto provisionType = static_cast<vs_key_type_e>(_key->key_type);
     return KSQPublicKey(ecType, keyData, provisionType);
 }
 
@@ -115,7 +113,7 @@ KSQSnapPRVSClient::uploadData(QSharedPointer<VSQNetifBase> netif,
     if (VS_CODE_OK != vs_snap_prvs_set(netif->lowLevelNetif(),
                                        &mac,
                                        prvsElement,
-                                       reinterpret_cast<const uint8_t*> (data.data()),
+                                       reinterpret_cast<const uint8_t *>(data.data()),
                                        data.size(),
                                        kDefaultTimeoutMs)) {
         VS_LOG_ERROR("Cannot get upload data to device");
@@ -188,11 +186,8 @@ KSQSnapPRVSClient::signDevice(QSharedPointer<VSQNetifBase> netif,
                               QSharedPointer<KSQRoT> rootOfTrust) {
 
     // Check input parameters
-    if (!netif
-        || !deviceMac
-        || !deviceKey.isValid()
-        || rootOfTrust->factory().first.isNull()
-        || rootOfTrust->factory().second.isNull()) {
+    if (!netif || !deviceMac || !deviceKey.isValid() || rootOfTrust->factory().first.isNull() ||
+        rootOfTrust->factory().second.isNull()) {
         emit fireProvisionError(tr("Wrong parameters to sign devices"));
         return false;
     }
@@ -220,9 +215,7 @@ KSQSnapPRVSClient::uploadTrustList(QSharedPointer<VSQNetifBase> netif,
                                    QSharedPointer<KSQRoT> rootOfTrust) {
 
     // Check input parameters
-    if (netif.isNull()
-        || !rootOfTrust->trustList().isValid()
-        || !rootOfTrust->trustList().keysCount()) {
+    if (netif.isNull() || !rootOfTrust->trustList().isValid() || !rootOfTrust->trustList().keysCount()) {
         emit fireProvisionError(tr("Wrong parameters to upload TrustList"));
         return false;
     }
@@ -232,12 +225,11 @@ KSQSnapPRVSClient::uploadTrustList(QSharedPointer<VSQNetifBase> netif,
 
     emit fireProvisionStateChanged(tr("Upload TrustList header"));
     auto tlHeader = rootOfTrust->trustList().header();
-    if (VS_CODE_OK != vs_snap_prvs_set_tl_header(
-                              lowLevelNetif,
-                              &mac,
-                              reinterpret_cast<const uint8_t*> (tlHeader.data()),
-                              tlHeader.size(),
-                              kDefaultTimeoutMs)) {
+    if (VS_CODE_OK != vs_snap_prvs_set_tl_header(lowLevelNetif,
+                                                 &mac,
+                                                 reinterpret_cast<const uint8_t *>(tlHeader.data()),
+                                                 tlHeader.size(),
+                                                 kDefaultTimeoutMs)) {
         emit fireProvisionError(tr("Cannot upload TrustList header"));
         return false;
     }
@@ -253,12 +245,11 @@ KSQSnapPRVSClient::uploadTrustList(QSharedPointer<VSQNetifBase> netif,
 
     emit fireProvisionStateChanged(tr("Upload TrustList footer"));
     auto tlFooter = rootOfTrust->trustList().footer();
-    if (VS_CODE_OK != vs_snap_prvs_set_tl_footer(
-            lowLevelNetif,
-            &mac,
-            reinterpret_cast<const uint8_t*> (tlFooter.data()),
-            tlFooter.size(),
-            kDefaultTimeoutMs * 10)) {
+    if (VS_CODE_OK != vs_snap_prvs_set_tl_footer(lowLevelNetif,
+                                                 &mac,
+                                                 reinterpret_cast<const uint8_t *>(tlFooter.data()),
+                                                 tlFooter.size(),
+                                                 kDefaultTimeoutMs * 10)) {
         emit fireProvisionError(tr("Cannot upload TrustList footer"));
         return false;
     }
@@ -288,7 +279,6 @@ KSQSnapPRVSClient::provisionDevice(QSharedPointer<VSQNetifBase> netif,
 
     // Start provision thread
     std::thread t([this, netif, deviceMac, rootOfTrust]() {
-
         emit fireProvisionStateChanged(tr("Get public key from device"));
         auto deviceKey = KSQSnapPRVSClient::getDevicePublicKey(netif, deviceMac);
         if (!deviceKey.isValid()) {
