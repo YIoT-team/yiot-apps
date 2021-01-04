@@ -11,6 +11,7 @@ Contact me: kutashenko@gmail.com
     1. [Simple and safe usage of RPi](#rpi)
     1. [Share access to your IoT devices](#share)
     1. [Safe remote access to a door-lock, but with online statistics](#openandsafe)
+1. [Video](#video)
 1. [Images](#images)
 
 ## YIoT ideology <a name="ideology"></a>
@@ -97,12 +98,14 @@ After acceptation of entered data, you RPi will get:
 - safe access to sensitive devices
 - usage of power of IoT Cloud services
 
-## Images <a name="images"></a>
+## Video <a name="video"></a>
 
 [![IMAGE ALT TEXT HERE](https://i9.ytimg.com/vi/y1PAaAyR59Q/mq1.jpg?sqp=CPykzP8F&rs=AOn4CLCHxGCSaTHVMPwTn8F1udkaqQ_BjQ)](https://www.youtube.com/watch?v=y1PAaAyR59Q&feature=youtu.be)
 
-![GitHub Logo](/doc/images/1.png)
-![GitHub Logo](/doc/images/2.png)
-![GitHub Logo](/doc/images/3.png)
-![GitHub Logo](/doc/images/4.png)
-![GitHub Logo](/doc/images/5.png)
+## Images <a name="images"></a>
+
+<img src="/doc/images/1.png" alt="drawing" width="200"/>
+<img src="/doc/images/2.png" alt="drawing" width="200"/>
+<img src="/doc/images/3.png" alt="drawing" width="200"/>
+<img src="/doc/images/4.png" alt="drawing" width="200"/>
+<img src="/doc/images/5.png" alt="drawing" width="200"/>
