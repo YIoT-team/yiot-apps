@@ -47,6 +47,7 @@
         <file>qml/resources/icons/dark/themes.png</file>
         <file>qml/resources/icons/dark/moon.png</file>
         <file>qml/resources/icons/dark/sun.png</file>
+        <file>qml/resources/icons/dark/network.png</file>
 
         <file>qml/resources/icons/light/devices/lamp/mono/off.png</file>
         <file>qml/resources/icons/light/devices/lamp/mono/on.png</file>
@@ -76,6 +77,7 @@
         <file>qml/resources/icons/light/themes.png</file>
         <file>qml/resources/icons/light/moon.png</file>
         <file>qml/resources/icons/light/sun.png</file>
+        <file>qml/resources/icons/light/network.png</file>
 
         <file>qml/resources/icons/test-qr.png</file>
 
@@ -138,6 +140,7 @@
         <file>qml/pages/settings/WiFiPasswordPage.qml</file>
         <file>qml/pages/settings/EventsSettingsPage.qml</file>
         <file>qml/pages/settings/RoTSettingsPage.qml</file>
+        <file>qml/pages/settings/NetworksSettingsPage.qml</file>
 
         <file>qml/pages/AboutPage.qml</file>
         <file>qml/pages/SettingsPage.qml</file>
