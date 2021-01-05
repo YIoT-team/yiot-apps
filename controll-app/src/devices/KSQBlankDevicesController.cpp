@@ -42,6 +42,11 @@ KSQBlankDevicesController::KSQBlankDevicesController(QSharedPointer<VSQNetifBase
             this,
             &KSQBlankDevicesController::onDeviceInfoUpdate,
             Qt::QueuedConnection);
+
+    // Cleaner
+    connect(&m_cleanerTimer, &QTimer::timeout, this, &KSQBlankDevicesController::cleanOldDevices);
+
+    m_cleanerTimer.start(kInactiveTimeoutMS / 5);
 }
 
 //-----------------------------------------------------------------------------

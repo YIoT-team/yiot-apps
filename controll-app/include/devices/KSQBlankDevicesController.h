@@ -85,14 +85,18 @@ private slots:
     void
     onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo);
 
+    void
+    cleanOldDevices();
+
 private:
-    static const int kInactiveTimeoutMS = 15000;
+    static const int kInactiveTimeoutMS = 5000;
+
+    QTimer m_cleanerTimer;
+
     QSharedPointer<VSQNetifBase> m_netif;
 
 
     KSQBlankDevices m_devices;
-    void
-    cleanOldDevices();
 };
 
 #endif // KSQ_BLANK_DEVICES_CONTROLLER_H
