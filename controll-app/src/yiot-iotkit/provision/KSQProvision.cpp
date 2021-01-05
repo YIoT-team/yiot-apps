@@ -73,7 +73,9 @@ KSQProvision::prepareOwnKeyPair() {
     }
 
     if (res) {
-        m_ownPubic = KSQPublicKey(keypair_type, QByteArray(reinterpret_cast<char *>(public_key), public_key_sz));
+        // TODO: VS_KEY_USER_DEVICE
+        m_ownPubic = KSQPublicKey(
+                keypair_type, QByteArray(reinterpret_cast<char *>(public_key), public_key_sz), VS_KEY_IOT_DEVICE);
     }
 
     return res;
@@ -129,9 +131,8 @@ KSQProvision::create(QSharedPointer<KSQRoT> rot) {
 
     // Sign own public key by factory
 
-    // TODO: Sign vs_pubkey_dated_t
     // Need to set time limits manually
-    auto signature = KSQSecModule::instance().signRaw(m_ownPubic.val(), rot->factory().first);
+    auto signature = KSQSecModule::instance().sign(m_ownPubic.datedKey(), rot->factory());
     CHECK_RET(signature.size(), false, "Cannot sign own public key");
 
     // Save signature

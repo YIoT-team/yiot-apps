@@ -81,7 +81,7 @@ KSQSnapPRVSClient::serviceName() const {
 KSQPublicKey
 KSQSnapPRVSClient::getDevicePublicKey(QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac) {
     QByteArray pubKey;
-    pubKey.resize(sizeof(vs_pubkey_t) + kPubKeyBufMax);
+    pubKey.resize(sizeof(vs_pubkey_dated_t) + kPubKeyBufMax);
 
     vs_mac_addr_t mac = deviceMac;
     if (VS_CODE_OK != vs_snap_prvs_save_provision(netif->lowLevelNetif(),
@@ -93,12 +93,8 @@ KSQSnapPRVSClient::getDevicePublicKey(QSharedPointer<VSQNetifBase> netif, VSQMac
         return KSQPublicKey();
     }
 
-    const auto _key = reinterpret_cast<vs_pubkey_t *>(pubKey.data());
-    auto ecType = static_cast<vs_secmodule_keypair_type_e>(_key->ec_type);
-    auto keyData = QByteArray::fromRawData(reinterpret_cast<char *>(_key->meta_and_pubkey + _key->meta_data_sz),
-                                           vs_secmodule_get_pubkey_len(ecType));
-    auto provisionType = static_cast<vs_key_type_e>(_key->key_type);
-    return KSQPublicKey(ecType, keyData, provisionType);
+    const auto _key = reinterpret_cast<vs_pubkey_dated_t *>(pubKey.data());
+    return KSQPublicKey(*_key);
 }
 
 //-----------------------------------------------------------------------------

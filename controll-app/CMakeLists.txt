@@ -213,6 +213,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQDevices.h
         ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQControllerBase.h
         ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQDeviceBase.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQBlankDevicesController.h
 
         ${CMAKE_CURRENT_LIST_DIR}/include/devices/lamp/KSQLamp.h
         ${CMAKE_CURRENT_LIST_DIR}/include/devices/lamp/KSQLampController.h
@@ -261,6 +262,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQDevices.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQControllerBase.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQDeviceBase.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQBlankDevicesController.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/lamp/KSQLamp.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/lamp/KSQLampController.cpp

@@ -108,7 +108,7 @@ KSQSnapSCRTClient::_infoCb(vs_snap_transaction_id_t id, vs_status_e res, const v
     bool keyPresent = scrt_info->own_cert.key_sz;
     KSQPublicKey publicKey;
     if (keyPresent) {
-        const vs_pubkey_t *key = (vs_pubkey_t *)scrt_info->own_cert.raw_cert;
+        const vs_pubkey_dated_t *key = (vs_pubkey_dated_t *)scrt_info->own_cert.raw_cert;
         publicKey = KSQPublicKey(*key);
     }
 
@@ -126,8 +126,13 @@ KSQSnapSCRTClient::_sessionKeyCb(vs_snap_transaction_id_t id, vs_status_e res) {
 //-----------------------------------------------------------------------------
 vs_status_e
 KSQSnapSCRTClient::_addUserCb(vs_snap_transaction_id_t id, vs_status_e res) {
-    VS_LOG_DEBUG("_addUserCb");
-    return VS_CODE_ERR_NOT_IMPLEMENTED;
+    if (VS_CODE_OK == res) {
+        emit KSQSnapSCRTClient::instance().fireUserAddDone();
+    } else {
+        emit KSQSnapSCRTClient::instance().fireUserAddError(tr("Cannot set owner to device"));
+    }
+
+    return VS_CODE_OK;
 }
 
 //-----------------------------------------------------------------------------

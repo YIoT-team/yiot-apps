@@ -73,10 +73,22 @@ signals:
     fireInfo(bool hasProvision, bool hasOwner, bool hasOwnerIsYou, const KSQPublicKey &publicKey);
     void
     fireSessionKeyReady();
+
+    void
+    fireSessionKeyError();
+
     void
     fireUserAddDone();
+
+    void
+    fireUserAddError(QString error);
+
     void
     fireUserRemoveDone();
+
+    void
+    fireUserRemoveError();
+
     void
     fireGetUsersDone();
 

@@ -27,6 +27,7 @@
 #include <KSQBLEController.h>
 
 #include <devices/KSQDevices.h>
+#include <devices/KSQBlankDevicesController.h>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
 #include <yiot-iotkit/netif/KSQUdp.h>
@@ -60,6 +61,7 @@ public:
 private:
     KSQWiFiEnumerator m_wifiEnumerator;
     QSharedPointer<KSQBLEController> m_bleController;
+    QSharedPointer<KSQBlankDevicesController> m_localBlankDevicesController;
     QSharedPointer<KSQUdp> m_netifUdp;
 
     KSQDevices m_deviceControllers;

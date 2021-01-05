@@ -66,7 +66,14 @@ KSQPublicKey::KSQPublicKey(const KSQPublicKey &key) {
 
 //-----------------------------------------------------------------------------
 KSQPublicKey::KSQPublicKey(const vs_pubkey_dated_t &key) {
-    m_valid = false;
+    m_ecType = static_cast<vs_secmodule_keypair_type_e>(key.pubkey.ec_type);
+    m_key = QByteArray(reinterpret_cast<const char *>(&key.pubkey.meta_and_pubkey[key.pubkey.meta_data_sz]),
+                       vs_secmodule_get_pubkey_len(m_ecType));
+    m_signature.clear();
+    m_provisionType = static_cast<vs_key_type_e>(key.pubkey.key_type);
+    m_startDate = QDateTime::fromSecsSinceEpoch(VS_START_EPOCH + key.start_date);
+    m_expireDate = QDateTime::fromSecsSinceEpoch(VS_START_EPOCH + key.expire_date);
+    m_valid = !m_key.isEmpty();
     registerType();
 }
 
@@ -151,8 +158,13 @@ KSQPublicKey::datedKey() const {
     vs_pubkey_dated_t *pubkeyDated = reinterpret_cast<vs_pubkey_dated_t *>(publicKeyBuf);
 
     // Fill data
+#if 0
     pubkeyDated->start_date = VS_IOT_HTONL(m_startDate.toSecsSinceEpoch() - VS_START_EPOCH);
     pubkeyDated->expire_date = VS_IOT_HTONL(m_expireDate.toSecsSinceEpoch() - VS_START_EPOCH);
+#else
+    pubkeyDated->start_date = 0;
+    pubkeyDated->expire_date = 0;
+#endif
     pubkeyDated->pubkey.key_type = m_provisionType;
     pubkeyDated->pubkey.ec_type = m_ecType;
     pubkeyDated->pubkey.meta_data_sz = 0;

@@ -52,6 +52,7 @@ KSQApplication::run() {
 
     m_bleController = QSharedPointer<KSQBLEController>::create();
     m_netifUdp = QSharedPointer<KSQUdp>::create();
+    m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create(m_netifUdp);
 
     // Prepare IoTKit data
     auto features =
@@ -89,6 +90,7 @@ KSQApplication::run() {
     QQmlContext *context = engine.rootContext();
     context->setContextProperty("UiHelper", &uiHelper);
     context->setContextProperty("app", this); // Get app name, version, etc.
+    context->setContextProperty("localBlankDevicesController", m_localBlankDevicesController.get());
     context->setContextProperty("bleController",
                                 m_bleController.get()); // Connect/disconnect to BLE devices to communicate with
     context->setContextProperty("bleEnum",

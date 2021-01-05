@@ -28,6 +28,7 @@ ListView {
     id: list
     Layout.fillHeight: true
     Layout.fillWidth: true
+    Layout.bottomMargin: 1
 
     spacing: 1
     model: bleEnum

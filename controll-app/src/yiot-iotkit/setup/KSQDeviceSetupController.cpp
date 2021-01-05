@@ -39,6 +39,16 @@ KSQDeviceSetupController::KSQDeviceSetupController() {
             this,
             &KSQDeviceSetupController::onDeviceSecurityInfo);
 
+    connect(&KSQSnapSCRTClient::instance(),
+            &KSQSnapSCRTClient::fireUserAddDone,
+            this,
+            &KSQDeviceSetupController::onAddUserDone);
+
+    connect(&KSQSnapSCRTClient::instance(),
+            &KSQSnapSCRTClient::fireUserAddError,
+            this,
+            &KSQDeviceSetupController::onAddUserError);
+
     // SNAP::_CFG signals
     connect(&KSQIoTKitFacade::instance().snapCfgClient(),
             &VSQSnapCfgClient::fireConfigurationDone,
@@ -80,10 +90,20 @@ KSQDeviceSetupController::onProvisionError(QString errorStr) {
 //-----------------------------------------------------------------------------
 void
 KSQDeviceSetupController::onProvisionDone() {
-    vs_cert_t my_cert;
+    static const size_t kCertMaxSz = sizeof(vs_cert_t) + 1024;
+    uint8_t certBuf[kCertMaxSz];
+    vs_cert_t *myCert = reinterpret_cast<vs_cert_t *>(certBuf);
     // TODO: Fill own certificate
+
+    if (VS_CODE_OK != vs_provision_own_cert(myCert, kCertMaxSz)) {
+        VS_LOG_ERROR("Cannot get own certificate");
+        emit fireError(tr("Cannot get own certificate"));
+        return;
+    }
+
+    emit fireStateInfo(tr("Set device owner"));
     if (!KSQSnapSCRTClient::instance().addUser(
-                m_netif->lowLevelNetif(), m_deviceMac, VS_USER_OWNER, "Owner 1", my_cert)) {
+                m_netif->lowLevelNetif(), m_deviceMac, VS_USER_OWNER, "Owner 1", *myCert)) {
         error(tr("Cannot set self as an owner"));
     }
 }
@@ -113,7 +133,11 @@ KSQDeviceSetupController::start(QSharedPointer<VSQNetifBase> netif, VSQMac devic
     m_readyDeviceInfo = false;
     m_readyDeviceSecurityInfo = false;
 
-    auto lowLevelNetif = m_netif->lowLevelNetif();
+
+    auto lowLevelNetif = vs_snap_default_netif();
+    if (!m_netif.isNull()) {
+        lowLevelNetif = m_netif->lowLevelNetif();
+    }
 
     // Request Device information
     if (!VSQSnapInfoClient::instance().onStartFullPolling(m_deviceMac, lowLevelNetif)) {

@@ -249,7 +249,7 @@ KSQTrustList::footer() const {
 //-----------------------------------------------------------------------------
 int
 KSQTrustList::minSz() const {
-    return sizeof(vs_tl_header_t) + sizeof(vs_tl_footer_t) + sizeof(vs_pubkey_t);
+    return sizeof(vs_tl_header_t) + sizeof(vs_tl_footer_t) + sizeof(vs_pubkey_dated_t);
 }
 
 //-----------------------------------------------------------------------------

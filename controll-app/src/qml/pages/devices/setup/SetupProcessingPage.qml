@@ -86,8 +86,5 @@ Page {
             processingForm.configure()
         }
 
-        function onFireError() {
-            state = "error"
-        }
     }
 }
