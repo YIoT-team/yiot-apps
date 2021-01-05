@@ -118,7 +118,7 @@ KSQDeviceSetupController::onAddUserError(QString errorStr) {
 void
 KSQDeviceSetupController::onAddUserDone() {
     emit fireStateInfo(tr("Set WiFi credentials"));
-    KSQIoTKitFacade::instance().snapCfgClient().onConfigureDevice();
+    KSQIoTKitFacade::instance().snapCfgClient().onConfigureDevice(m_netif, m_deviceMac);
 }
 
 //-----------------------------------------------------------------------------

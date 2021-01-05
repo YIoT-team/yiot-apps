@@ -79,8 +79,6 @@ KSQApplication::run() {
         return -1;
     }
 
-    VSQSnapCfgClient::instance().setNetifRestriction(m_bleController->netif());
-
     // Initialize devices controllers
     //          TODO: Dynamic adding of supported devices
     m_deviceControllers << new KSQLampController() // Possibility to control lamps

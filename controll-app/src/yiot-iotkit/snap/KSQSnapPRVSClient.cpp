@@ -44,12 +44,10 @@ KSQSnapPRVSClient::KSQSnapPRVSClient() {
 vs_status_e
 KSQSnapPRVSClient::_wait(uint32_t waitMs, int *condition, int idle) {
     // Wait for expected condition
-    qDebug() << ">>> wait start";
     std::unique_lock<std::mutex> lk(KSQSnapPRVSClient::instance().m_waitGuard);
     KSQSnapPRVSClient::instance().m_waitCondition.wait_for(
             lk, waitMs * 1ms, [condition, idle]() { return *condition != idle; });
 
-    qDebug() << "<<< wait stop";
     return VS_CODE_OK;
 }
 
