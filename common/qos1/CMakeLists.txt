@@ -102,5 +102,7 @@ endif ()
 #   Install
 # ---------------------------------------------------------------------------
 install(TARGETS yiot-qos1-helper
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         )
