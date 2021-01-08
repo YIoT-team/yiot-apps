@@ -96,7 +96,7 @@ build_dev_rpi() {
       if [ "${FIND_RES}" == "1" ]; then
         print_message "Build DEB package skipping"
       else
-        sudo ${SCRIPT_DIR}/pkg/prep-pkg.sh -q -b ${SOURCE_DIR}/build/dist -t dev -p deb -n yiot-rpi -v $(cat ${SOURCE_DIR}/build/VERSION).${BUILD_NUMBER:-0}
+        ${SCRIPT_DIR}/pkg/prep-pkg.sh -q -b ${SOURCE_DIR}/build/dist -t dev -p deb -n yiot-rpi -v $(cat ${SOURCE_DIR}/build/VERSION).${BUILD_NUMBER:-0}
       fi
     fi
 }
