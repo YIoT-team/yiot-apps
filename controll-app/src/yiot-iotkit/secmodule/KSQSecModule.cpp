@@ -57,6 +57,7 @@ KSQKeyPair
 KSQSecModule::generateKeypair(vs_secmodule_keypair_type_e keypair_type) const {
     uint8_t public_key[MAX_INTERNAL_PUBKEY_SIZE];
     uint16_t public_key_sz;
+    size_t kRawPubKeySz = vs_secmodule_get_pubkey_len(keypair_type);
 
     uint8_t private_key[MAX_INTERNAL_PRIVKEY_SIZE];
     uint16_t private_key_sz;
@@ -72,14 +73,14 @@ KSQSecModule::generateKeypair(vs_secmodule_keypair_type_e keypair_type) const {
         return std::make_pair(nullptr, nullptr);
     }
 
-    //    if (!vs_converters_pubkey_to_raw(
-    //                keypair_type, public_key, public_key_sz, public_key, sizeof(public_key), &public_key_sz)) {
-    //        qDebug() << "Unable to convert a public key to raw";
-    //        return std::make_pair(nullptr, nullptr);
-    //    }
+    QByteArray rawPubkey(reinterpret_cast<char *>(&public_key[public_key_sz - kRawPubKeySz]), kRawPubKeySz);
 
-    auto pubkey = QSharedPointer<KSQPublicKey>::create(keypair_type,
-                                                       QByteArray(reinterpret_cast<char *>(public_key), public_key_sz));
+#if 0
+    qDebug() << QString::fromStdString(rawPubkey.toHex().toStdString());
+    Q_ASSERT(rawPubkey.data()[0] == 4);
+#endif
+
+    auto pubkey = QSharedPointer<KSQPublicKey>::create(keypair_type, rawPubkey);
     auto privkey = QSharedPointer<KSQPrivateKey>::create(
             keypair_type, QByteArray(reinterpret_cast<char *>(private_key), private_key_sz));
 
