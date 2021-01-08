@@ -1,0 +1,37 @@
+%global debug_package %{nil}
+
+Summary:          YIoT control application
+Name:             yiot-app
+Version:          {{MAJOR_VER}}.{{MINOR_VER}}.{{SUB_VER}}
+Release:          {{BUILD_VER}}
+Group:            IOT
+License:          BSD-3-Clause
+URL:              https://yiot-dev.io/
+Source0:         %{name}-%{version}.tgz
+Source1:         yiot.desktop
+
+%description
+YIoT control application
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+
+%install
+
+install -d                                                                                                       %{buildroot}%{_datarootdir}/yiot
+install -d                                                                                                       %{buildroot}%{_bindir}
+install -d                                                                                                       %{buildroot}%{_datadir}/applications
+
+cp -rf ./*                                                                                                       %{buildroot}%{_datarootdir}/virgil-messenger
+ln -s %{_datarootdir}/virgil-messenger/virgil-messenger.sh                                                       %{buildroot}%{_bindir}/virgil-messenger
+install -p -m 644 virgil-messenger.desktop                                                                       %{buildroot}%{_datadir}/applications/
+
+%files
+%doc VERSION_MESSENGER
+%{_datarootdir}/virgil-messenger
+%{_bindir}/virgil-messenger
+%{_datadir}/applications
+
+%changelog

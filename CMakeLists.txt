@@ -46,7 +46,7 @@ include(varpadding)
 # ---------------------------------------------------------------------------
 
 project(yiot VERSION ${KS_TARGET_VERSION} LANGUAGES C CXX)
-
+file(WRITE "${CMAKE_BINARY_DIR}/VERSION" "${KS_TARGET_VERSION}")
 # ---------------------------------------------------------------------------
 #   Detecting platform if KS_PLATFORM not specified
 # ---------------------------------------------------------------------------

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=yiot
+GenericName=yiot
+Comment=Yiot control app
+Exec=yiot
+Terminal=false
+Type=Application
+Encoding=UTF-8
+Icon=xterm-color
+Categories=Application
+Keywords=yiot
+X-Desktop-File-Install-Version=0.23
