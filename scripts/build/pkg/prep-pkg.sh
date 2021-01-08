@@ -2,12 +2,13 @@
 set -o errtrace
 
 SCRIPT_DIR="$(cd $(dirname "$0") && pwd)"
+SOURCE_DIR="${SCRIPT_DIR}/../../.."
 
 set -e
 ######################################################################
 print_usage() {
     echo "====================="
-    echo "=== $@"
+    echo "=== TODO:"
     echo "====================="
 }
 
@@ -48,7 +49,7 @@ BUILD_VER=$(echo "$PKG_VERSION"| cut -d'.' -f4)
 export MAJOR_VER MINOR_VER SUB_VER BUILD_VER
 
 PKG_SRC_NAME="${PKG_NAME}-${MAJOR_VER}.${MINOR_VER}.${SUB_VER}"
-BUILD_DIR="${SCRIPT_DIR}/build/${PKG_TARGET_TYPE}/${PKG_TYPE}/${PKG_NAME}"
+BUILD_DIR="${SOURCE_DIR}/build-pkgs/${PKG_TARGET_TYPE}/${PKG_TYPE}/${PKG_NAME}"
 
 ############################################################################################
 print_message() {
@@ -72,15 +73,15 @@ echo "--- "
 ############################################################################################
 create_dirs() {
  echo "Remove old dirs and create new"
- rm -rf ${SCRIPT_DIR}/build || true
- mkdir -p ${BUILD_DIR}/sdeb
+ rm -rf ${BUILD_DIR} || true
+ mkdir -p ${BUILD_DIR}/spkg
  mkdir -p ${BUILD_DIR}/${PKG_SRC_NAME}/dist
 }
 
 ############################################################################################
 prep_sources() {
    pushd ${BUILD_DIR}
-      cp -rf ${SCRIPT_DIR}/${PKG_TARGET_TYPE}/${PKG_TYPE}/${PKG_NAME}/* ${BUILD_DIR}/sdeb
+      cp -rf ${SCRIPT_DIR}/${PKG_TARGET_TYPE}/${PKG_TYPE}/${PKG_NAME}/* ${BUILD_DIR}/spkg
       cp -rf ${BIN_DIR}/* ${BUILD_DIR}/${PKG_SRC_NAME}/dist
       tar czf ${PKG_NAME}_${MAJOR_VER}.${MINOR_VER}.${SUB_VER}.orig.tar.gz ${PKG_SRC_NAME}
       rm -rf ${PKG_SRC_NAME}
@@ -91,14 +92,14 @@ prep_sources() {
 create_sdeb() {
  pushd ${BUILD_DIR}
   echo "------------- Create DEB from template ------------------------------"         
-  pushd sdeb
+  pushd spkg
      tar xJf ${PKG_NAME}.debian.tar.xz
      j2 -f env -o ${BUILD_DIR}/${PKG_NAME}_${MAJOR_VER}.${MINOR_VER}.${SUB_VER}-${BUILD_VER}.dsc ${PKG_NAME}.dsc.tmpl
      j2 -f env -o debian/changelog debian/changelog
      tar cJf ${BUILD_DIR}/${PKG_NAME}_${MAJOR_VER}.${MINOR_VER}.${SUB_VER}-${BUILD_VER}.debian.tar.xz debian
      rm -rf debian
   popd
-  rm -rf sdeb
+  rm -rf spkg
   echo "------------- Create checksum for DEB  ------------------------------"            
   file_dsc=${PKG_NAME}_${MAJOR_VER}.${MINOR_VER}.${SUB_VER}-${BUILD_VER}.dsc
   file_deb_name=${PKG_NAME}_${MAJOR_VER}.${MINOR_VER}.${SUB_VER}-${BUILD_VER}.debian.tar.xz
@@ -130,22 +131,41 @@ create_sdeb() {
 }
 
 ############################################################################################
-build_deb() {
- pushd ${BUILD_PATH}
-   export OS=raspbian
-   export ARCH=armhf
-   print_message "Initialization pbuilder root"   
-   sudo pbuilder create --mirror http://mirror.truenetwork.ru/raspbian/raspbian/ --debug --distribution buster --debootstrapopts "--keyring=/usr/share/keyrings/raspbian-archive-keyring.gpg"
+create_srpm() {
+ pushd ${BUILD_DIR}
+  echo "------------- Create SPEC from template ------------------------------"
+  j2 -f env -o ${PKG_NAME}.spec spkg/${SCRIPT_PATH}/${PKG_NAME}.spec.in
+  rm -rf spkg/*.in
+  cp -rf spkg/* .
+  rm -rf spkg
+  mock --buildsrpm --spec ${BUILD_DIR}/${PKG_NAME}.spec --sources ${BUILD_DIR} --resultdir=${BUILD_DIR}
+ popd
+}
 
-   print_message "Update pbuilder root"   
-   sudo pbuilder --update --debug --mirror http://mirror.truenetwork.ru/raspbian/raspbian/ 
+############################################################################################
+build_rpm() {
+ print_message "Clean mock root dir"
+ mock --clean
+ print_message "Building binary RPM".
+ mock ${BUILD_DIR}/*.src.rpm --resultdir=${BUILD_DIR}
+}
+
+
+############################################################################################
+build_deb() {
+ pushd ${BUILD_DIR}
+   print_message "Clean pbuilder root" 
+   pbuilder clean
+   
+   print_message "Initialization pbuilder root"
+   pbuilder create --debug
+
+   print_message "Update pbuilder root"
+   pbuilder update --debug
    
    print_message "Building DEB package"      
-   sudo pbuilder --debug --mirror http://mirror.truenetwork.ru/raspbian/raspbian/ --build $(ls *.dsc)
-   
-   print_message "Copy results fro mcontainer"
-   mkdir -p ${BUILD_PATH}/result
-   cp -f /var/cache/pbuilder/result/*.deb ${BUILD_PATH}/result
+   pbuilder build --buildresult ${BUILD_DIR} $(ls *.dsc) 
+
  popd
 }
 
@@ -178,7 +198,8 @@ if [ "${PKG_TYPE}" == "deb" ]; then
     fi
 
 elif [ "${PKG_TYPE}" == "rpm" ]; then
-    echo ""
+    create_srpm
+    build_rpm
 
 else
     echo "ERROR: Package type unknown"

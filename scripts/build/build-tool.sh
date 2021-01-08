@@ -92,7 +92,12 @@ build_dev_rpi() {
     cp -rf ${SOURCE_DIR}/build/depends/installed/lib/libsdbus-c++.so* ${SOURCE_DIR}/build/dist
 
     if [ "${BUILD_PKG}" == "1" ]; then
-      ${SCRIPT_DIR}/pkg/prep-pkg.sh -q -b ${SOURCE_DIR}/build/dist -t dev -p deb -n yiot-rpi -v $(cat ${SOURCE_DIR}/build/VERSION).${BUILD_NUMBER:-0}
+      find_tool dpkg-buildpackage
+      if [ "${FIND_RES}" == "1" ]; then
+        print_message "Build DEB package skipping"
+      else
+        sudo ${SCRIPT_DIR}/pkg/prep-pkg.sh -q -b ${SOURCE_DIR}/build/dist -t dev -p deb -n yiot-rpi -v $(cat ${SOURCE_DIR}/build/VERSION).${BUILD_NUMBER:-0}
+      fi
     fi
 }
 
@@ -120,8 +125,20 @@ build_app_linux() {
     popd
     cp -f ${SOURCE_DIR}/build/common/iotkit/modules/crypto/converters/libconverters.so ${SOURCE_DIR}/build/yiot.dist/lib
     if [ "${BUILD_PKG}" == "1" ]; then
-      ${SCRIPT_DIR}/pkg/prep-pkg.sh -b ${SOURCE_DIR}/build/yiot.dist -t app -p deb -n yiot-app -v $(cat ${SOURCE_DIR}/build/VERSION).${BUILD_NUMBER:-0}
-#      ${SCRIPT_DIR}/pkg/prep-pkg.sh -b ${SOURCE_DIR}/build/yiot.dist -t app -p rpm -n yiot-app -v $(cat ${SOURCE_DIR}/build/VERSION).${BUILD_NUMBER:-0}
+
+      find_tool pbuilder
+      if [ "${FIND_RES}" == "1" ]; then
+        print_message "Build DEB package skipping"
+      else
+        sudo ${SCRIPT_DIR}/pkg/prep-pkg.sh -b ${SOURCE_DIR}/build/yiot.dist -t app -p deb -n yiot-app -v $(cat ${SOURCE_DIR}/build/VERSION).${BUILD_NUMBER:-0}
+      fi
+
+      find_tool mock
+      if [ "${FIND_RES}" == "1" ]; then
+        print_message "Build RPM package skipping"
+      else
+        sudo ${SCRIPT_DIR}/pkg/prep-pkg.sh -b ${SOURCE_DIR}/build/yiot.dist -t app -p rpm -n yiot-app -v $(cat ${SOURCE_DIR}/build/VERSION).${BUILD_NUMBER:-0}
+      fi
     fi
 }
 

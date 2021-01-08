@@ -7,8 +7,9 @@ Release:          {{BUILD_VER}}
 Group:            IOT
 License:          BSD-3-Clause
 URL:              https://yiot-dev.io/
-Source0:         %{name}-%{version}.tgz
+Source0:         %{name}_%{version}.orig.tar.gz
 Source1:         yiot.desktop
+Source2:         yiot.png
 
 %description
 YIoT control application
@@ -23,15 +24,17 @@ YIoT control application
 install -d                                                                                                       %{buildroot}%{_datarootdir}/yiot
 install -d                                                                                                       %{buildroot}%{_bindir}
 install -d                                                                                                       %{buildroot}%{_datadir}/applications
+install -d                                                                                                       %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
 
-cp -rf ./*                                                                                                       %{buildroot}%{_datarootdir}/virgil-messenger
-ln -s %{_datarootdir}/virgil-messenger/virgil-messenger.sh                                                       %{buildroot}%{_bindir}/virgil-messenger
-install -p -m 644 virgil-messenger.desktop                                                                       %{buildroot}%{_datadir}/applications/
+cp -rf dist/*                                                                                                   %{buildroot}%{_datarootdir}/yiot
+ln -s %{_datarootdir}/yiot/yiot.sh                                                                              %{buildroot}%{_bindir}/yiot
+install -p -m 644 %{SOURCE1}                                                                                    %{buildroot}%{_datadir}/applications/
+install -p -m 644 %{SOURCE2}                                                                                    %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
 
 %files
-%doc VERSION_MESSENGER
-%{_datarootdir}/virgil-messenger
-%{_bindir}/virgil-messenger
+%{_datarootdir}/yiot
+%{_bindir}/yiot
 %{_datadir}/applications
+%{_datadir}/icons/hicolor/scalable/apps
 
 %changelog
