@@ -19,6 +19,7 @@
 
 #include <virgil/iot/qt/VSQIoTKit.h>
 #include <cstring>
+#include <thread>
 
 #include <virgil/iot/protocols/snap/prvs/prvs-structs.h>
 #include <virgil/iot/protocols/snap/prvs/prvs-client.h>

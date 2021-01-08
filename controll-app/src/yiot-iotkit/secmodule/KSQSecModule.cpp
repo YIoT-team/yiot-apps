@@ -22,7 +22,6 @@
 
 #include <virgil/iot/secmodule/secmodule.h>
 #include <virgil/iot/secmodule/secmodule-helpers.h>
-#include <virgil/iot/converters/crypto_format_converters.h>
 #include <virgil/iot/vs-soft-secmodule/vs-soft-secmodule.h>
 #include <virgil/iot/secmodule/secmodule-helpers.h>
 
@@ -73,11 +72,11 @@ KSQSecModule::generateKeypair(vs_secmodule_keypair_type_e keypair_type) const {
         return std::make_pair(nullptr, nullptr);
     }
 
-    if (!vs_converters_pubkey_to_raw(
-                keypair_type, public_key, public_key_sz, public_key, sizeof(public_key), &public_key_sz)) {
-        qDebug() << "Unable to convert a public key to raw";
-        return std::make_pair(nullptr, nullptr);
-    }
+    //    if (!vs_converters_pubkey_to_raw(
+    //                keypair_type, public_key, public_key_sz, public_key, sizeof(public_key), &public_key_sz)) {
+    //        qDebug() << "Unable to convert a public key to raw";
+    //        return std::make_pair(nullptr, nullptr);
+    //    }
 
     auto pubkey = QSharedPointer<KSQPublicKey>::create(keypair_type,
                                                        QByteArray(reinterpret_cast<char *>(public_key), public_key_sz));
