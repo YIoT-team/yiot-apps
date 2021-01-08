@@ -64,7 +64,8 @@ KSResendContainer::KSResendContainer(std::function<vs_status_e(const uint8_t *, 
                 //}
             }
         }
-    }).detach();
+    })
+            .detach();
 }
 
 //-----------------------------------------------------------------------------
