@@ -6,6 +6,11 @@ echo "SCRIPT: ${0}"
 echo "SSID  : ${1}"
 echo "PASS  : ${2}"
 
+if [ ! -f /etc/debian_version ]; then 
+  echo "ERROR: System is not Raspberry PI"
+  exit 127
+fi
+
 WIFI_ESSID="${1}"
 WIFI_KEY="${2}"
 TIMEOUT="20"
