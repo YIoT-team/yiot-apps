@@ -38,6 +38,11 @@ Page {
         id: header
         title: qsTr("Lamp")
         backAction: function() { showDevices() }
+        textClickEnable: true
+
+        onTextClick: {
+            devicesPage.showDeviceRenameDialog(deviceName, controller)
+        }
     }
 
     Form {
@@ -73,7 +78,7 @@ Page {
                 Layout.fillWidth: true
 
                 fillMode: Image.PreserveAspectFit
-                source: "qrc:/qml/resources/icons/dark/devices/lamp/mono/%1".arg(img)
+                source: "qrc:/qml/resources/icons/%2/devices/lamp/mono/%1".arg(img).arg(Theme.state)
 
                 MouseArea {
                     anchors.fill: parent

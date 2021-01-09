@@ -35,7 +35,7 @@ RowLayout {
 
     ImageButton {
         id: btnInfo
-        image: "dark/info"
+        image: Theme.state + "/info"
         onClicked: { showDeviceInfo(modelData.deviceController) }
     }
 

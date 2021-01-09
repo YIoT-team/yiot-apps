@@ -40,17 +40,21 @@
 #include <yiot-iotkit/KSQIoTKitFacade.h>
 #include <yiot-iotkit/snap/KSQSnapLampClient.h>
 #include <yiot-iotkit/snap/KSQSnapPCClient.h>
+#include <yiot-iotkit/snap/KSQSnapPRVSClient.h>
+#include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
+#include <yiot-iotkit/provision/KSQProvision.h>
+#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
 
 using namespace VirgilIoTKit;
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 KSQIoTKitFacade::~KSQIoTKitFacade() {
     m_snapProcessorThread->terminate();
     m_snapProcessorThread->wait();
     delete m_snapProcessorThread;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 bool
 KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &impl, const VSQAppConfig &appConfig) {
 
@@ -65,6 +69,16 @@ KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &imp
     m_snapProcessorThread = new QThread();
     m_snapProcessorThread->start();
     moveToThread(m_snapProcessorThread);
+
+    // Prepare provision
+    auto &provision = KSQProvision::instance();
+    auto &rotContloller = KSQRoTController::instance();
+    if (!provision.isValid()) {
+        if (!provision.create(rotContloller.localRootOfTrust())) {
+            VS_LOG_CRITICAL("Cannot create provision");
+            return false;
+        }
+    }
 
     m_features = features;
     m_impl = impl;
@@ -85,7 +99,7 @@ KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &imp
     }
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 void
 KSQIoTKitFacade::initSnap() {
 
@@ -115,6 +129,14 @@ KSQIoTKitFacade::initSnap() {
         }
     }
 
+    if (m_features.hasFeature(KSQFeatures::SNAP_PRVS_CLIENT)) {
+        registerService(KSQSnapPRVSClient::instance());
+    }
+
+    if (m_features.hasFeature(KSQFeatures::SNAP_SCRT_CLIENT)) {
+        registerService(KSQSnapSCRTClient::instance());
+    }
+
     if (m_features.hasFeature(KSQFeatures::SNAP_INFO_CLIENT)) {
         registerService(VSQSnapInfoClient::instance());
     }
@@ -136,7 +158,7 @@ KSQIoTKitFacade::initSnap() {
     }
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 void
 KSQIoTKitFacade::updateAll() {
     qDebug() << "Get information about connected devices";
@@ -149,7 +171,7 @@ KSQIoTKitFacade::updateAll() {
     }
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 void
 KSQIoTKitFacade::registerService(VSQSnapServiceBase &service) {
     if (vs_snap_register_service(service.serviceInterface()) != VirgilIoTKit::VS_CODE_OK) {
@@ -157,13 +179,13 @@ KSQIoTKitFacade::registerService(VSQSnapServiceBase &service) {
     }
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 void
 KSQIoTKitFacade::onNetifProcess(struct VirgilIoTKit::vs_netif_t *netif, QByteArray data) {
     vs_snap_default_processor(netif, reinterpret_cast<const uint8_t *>(data.data()), data.length());
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 vs_status_e
 KSQIoTKitFacade::netifProcessCb(struct vs_netif_t *netif, const uint8_t *data, const uint16_t data_sz) {
     vs_snap_packet_dump("IN ", (vs_snap_packet_t *)data);
@@ -179,4 +201,4 @@ KSQIoTKitFacade::netifProcessCb(struct vs_netif_t *netif, const uint8_t *data, c
     return VS_CODE_OK;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------

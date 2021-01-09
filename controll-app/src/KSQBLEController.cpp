@@ -22,6 +22,7 @@
 #include <virgil/iot/qt/VSQIoTKit.h>
 
 #include <yiot-iotkit/KSQIoTKitFacade.h>
+#include <yiot-iotkit/setup/KSQDeviceSetupController.h>
 
 //-----------------------------------------------------------------------------
 KSQBLEController::KSQBLEController() {
@@ -33,17 +34,12 @@ KSQBLEController::KSQBLEController() {
 
     connect(m_netifBLE.data(), &VSQNetifBLE::fireDeviceDisconnected, this, &KSQBLEController::onDisconnected);
 
-    connect(m_netifBLE.data(), &VSQNetifBLE::fireDeviceError, this, &KSQBLEController::onDeviceError);
+    // connect(m_netifBLE.data(), &VSQNetifBLE::fireDeviceError, this, &KSQBLEController::onDeviceError);
 
-    connect(&KSQIoTKitFacade::instance().snapCfgClient(),
-            &VSQSnapCfgClient::fireConfigurationDone,
+    connect(&KSQDeviceSetupController::instance(),
+            &KSQDeviceSetupController::fireFinished,
             this,
-            &KSQBLEController::onConfigurationDone);
-
-    connect(&KSQIoTKitFacade::instance().snapCfgClient(),
-            &VSQSnapCfgClient::fireConfigurationError,
-            this,
-            &KSQBLEController::onDeviceError);
+            &KSQBLEController::onSetupFinished);
 }
 
 //-----------------------------------------------------------------------------
@@ -67,53 +63,52 @@ KSQBLEController::model() {
 void
 KSQBLEController::onConnected(bool success) {
     if (!success) {
-        emit fireError(tr("Connection error"));
+        KSQDeviceSetupController::instance().error(tr("Connection error"));
         return;
     }
 
-    emit fireConnected();
+    KSQDeviceSetupController::instance().start(netif(), broadcastMac);
+}
 
-    if (m_needWiFiConfig) {
-        m_needWiFiConfig = false;
-        KSQIoTKitFacade::instance().snapCfgClient().onConfigureDevices();
-        emit fireDataSent();
-    }
+//-----------------------------------------------------------------------------
+void
+KSQBLEController::cleanConnections() {
 }
 
 //-----------------------------------------------------------------------------
 void
 KSQBLEController::onDisconnected() {
-    emit fireDisconnected();
+    //    emit fireDisconnected();
+    cleanConnections();
 }
 
 //-----------------------------------------------------------------------------
 void
 KSQBLEController::onDeviceError() {
     m_netifBLE->close();
-    emit fireError(tr("unknown"));
+    KSQDeviceSetupController::instance().error(tr("unknown"));
+    cleanConnections();
 }
 
 //-----------------------------------------------------------------------------
 void
-KSQBLEController::onConfigurationDone() {
-    m_netifBLE->close();
-    emit fireDataReceived();
+KSQBLEController::onSetupFinished(QSharedPointer<VSQNetifBase> netif) {
+    if (netif == m_netifBLE) {
+        m_netifBLE->close();
+    }
 }
 
 //-----------------------------------------------------------------------------
-bool
-KSQBLEController::configureWiFi(const QString &deviceName, const QString &ssid, const QString &password) {
-    qDebug() << "deviceName: " << deviceName;
-    qDebug() << "ssid      : " << ssid;
-    qDebug() << "password  : " << password;
+Q_INVOKABLE bool
+KSQBLEController::connectDevice(const QString &deviceName) {
+    cleanConnections();
 
     auto ble = m_bleEnumerator.devInfo(deviceName);
     if (!ble.isValid()) {
         return false;
     }
 
-    KSQIoTKitFacade::instance().snapCfgClient().onSetConfigData(ssid, password);
-    m_needWiFiConfig = true;
+
     return m_netifBLE->open(ble);
 }
 

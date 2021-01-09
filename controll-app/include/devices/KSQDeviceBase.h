@@ -41,164 +41,78 @@ class KSQDeviceBase : public QObject {
     Q_PROPERTY(bool active READ active NOTIFY fireActiveChanged)
 
 public:
-    KSQDeviceBase() {
-    }
-    KSQDeviceBase(VSQMac mac, QString name, QString img = "") {
-        m_lastUpdate = QDateTime::currentDateTime();
-        m_image = img;
-        m_name = name;
-        m_mac = mac;
-        m_active = true;
-    }
-
-    KSQDeviceBase(const KSQDeviceBase &d) {
-        m_lastUpdate = d.m_lastUpdate;
-        m_image = d.m_image;
-        m_name = d.m_name;
-        m_mac = d.m_mac;
-        m_active = d.m_active;
-    }
+    KSQDeviceBase();
+    KSQDeviceBase(VSQMac mac, QString name, QString img = "");
+    KSQDeviceBase(const KSQDeviceBase &d);
 
     Q_INVOKABLE QString
-    deviceType() const {
-        return _deviceType();
-    }
+    deviceType() const;
 
     Q_INVOKABLE QString
-    macAddr() const {
-        return m_mac;
-    }
+    macAddr() const;
 
     VSQMac
-    qMacAddr() const {
-        return m_mac;
-    }
+    qMacAddr() const;
 
     Q_INVOKABLE void
-    setName(QString name) {
-        if (name != m_name) {
-            m_name = name;
-            emit fireNameChanged();
-        }
-        emit fireSendNameUpdate();
-    }
+    setName(QString name);
+
+    Q_INVOKABLE void
+    setNameToHardware(QString name);
 
     void
-    setRoles(QString val) {
-        if (val != m_roles) {
-            m_roles = val;
-            emit fireRolesChanged();
-        }
-    }
+    setRoles(QString val);
 
     void
-    setManufacture(QString val) {
-        if (val != m_manufacture) {
-            m_manufacture = val;
-            emit fireManufactureChanged();
-        }
-    }
+    setManufacture(QString val);
 
     void
-    setDeviceID(QString val) {
-        if (val != m_deviceID) {
-            m_deviceID = val;
-            emit fireDeviceIDChanged();
-        }
-    }
+    setDeviceID(QString val);
 
     void
-    setFwVersion(QString val) {
-        if (val != m_fwVersion) {
-            m_fwVersion = val;
-            emit fireFwVersionChanged();
-        }
-    }
+    setFwVersion(QString val);
 
     void
-    setTlVersion(QString val) {
-        if (val != m_tlVer) {
-            m_tlVer = val;
-            emit fireTlVerChanged();
-        }
-    }
+    setTlVersion(QString val);
 
     void
-    setSentBytes(QString val) {
-        if (val != m_sentBytes) {
-            m_sentBytes = val;
-            emit fireSentBytesChanged();
-        }
-    }
+    setSentBytes(QString val);
 
     void
-    setReceivedBytes(QString val) {
-        if (val != m_receivedBytes) {
-            m_receivedBytes = val;
-            emit fireReceivedBytesChanged();
-        }
-    }
+    setReceivedBytes(QString val);
 
     void
-    commandStart() {
-        setCommandState(kCmdStateReceive);
-    }
+    commandStart();
 
     void
-    commandError() {
-        setCommandState(kCmdStateError);
-    }
+    commandError();
 
     void
-    commandDone() {
-        setCommandState(kCmdStateDone);
-    }
+    commandDone();
 
     QString
-    name() const {
-        return m_name;
-    }
+    name() const;
     QString
-    roles() const {
-        return m_roles;
-    }
+    roles() const;
     QString
-    manufacture() const {
-        return m_manufacture;
-    }
+    manufacture() const;
     QString
-    deviceID() const {
-        return m_deviceID;
-    }
+    deviceID() const;
     QString
-    fwVersion() const {
-        return m_fwVersion;
-    }
+    fwVersion() const;
     QString
-    tlVersion() const {
-        return m_tlVer;
-    }
+    tlVersion() const;
     QString
-    sentBytes() const {
-        return m_sentBytes;
-    }
+    sentBytes() const;
     QString
-    receivedBytes() const {
-        return m_receivedBytes;
-    }
+    receivedBytes() const;
     QString
-    commandState() const {
-        return m_commandState;
-    }
+    commandState() const;
     bool
-    active() const {
-        return m_active;
-    }
+    active() const;
 
     bool
-    operator<(const KSQDeviceBase &rhs) const {
-        return m_name < rhs.m_name;
-    }
+    operator<(const KSQDeviceBase &rhs) const;
 
     static const QString kCmdStateConnect;
     static const QString kCmdStateSend;
@@ -209,28 +123,13 @@ public:
 
 protected:
     void
-    setCommandState(QString val) {
-        if (val != m_commandState) {
-            m_commandState = val;
-            emit fireCommandStateChanged();
-        }
-    }
+    setCommandState(QString val);
 
     void
-    _setRecivedName(QString name) {
-        if (name != m_name) {
-            m_name = name;
-            emit fireNameChanged();
-        }
-    }
+    _setRecivedName(QString name);
 
     void
-    _setRecivedActivity(bool active) {
-        if (active != m_active) {
-            m_active = active;
-            emit fireActiveChanged();
-        }
-    }
+    _setRecivedActivity(bool active);
 
     virtual QString
     _deviceType() const = 0;
@@ -240,6 +139,8 @@ signals:
     fireNameChanged();
     void
     fireSendNameUpdate();
+    void
+    fireSetNameToHardware(VSQMac mac, QString name);
     void
     fireActiveChanged();
 

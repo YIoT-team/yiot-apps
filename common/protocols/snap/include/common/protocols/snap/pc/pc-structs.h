@@ -22,13 +22,14 @@
 
 #include <stdint.h>
 
+#include <virgil/iot/users/users-structs.h>
+
 #ifdef __cplusplus
 namespace VirgilIoTKit {
 extern "C" {
 #endif
 
 #define PROVIDER_SZ_MAX  64
-#define USER_NAME_SZ_MAX 64
 #define USER_PASS_SZ_MAX 64
 
 typedef struct __attribute__((__packed__)) {

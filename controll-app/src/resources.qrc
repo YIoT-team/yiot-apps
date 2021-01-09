@@ -19,7 +19,6 @@
         <file>qml/resources/icons/Arrow-Left@2x.png</file>
         <file>qml/resources/icons/Menu@2x.png</file>
         <file>qml/resources/icons/More.png</file>
-
         <file>qml/resources/icons/dark/bt.png</file>
         <file>qml/resources/icons/dark/wifi.png</file>
         <file>qml/resources/icons/dark/wifi-dimmed.png</file>
@@ -39,10 +38,46 @@
         <file>qml/resources/icons/dark/info.png</file>
         <file>qml/resources/icons/dark/up.png</file>
         <file>qml/resources/icons/dark/down.png</file>
+        <file>qml/resources/icons/dark/export.png</file>
+        <file>qml/resources/icons/dark/delete.png</file>
         <file>qml/resources/icons/dark/devices/lamp/mono/unknown.png</file>
         <file>qml/resources/icons/dark/devices/lamp/mono/on.png</file>
         <file>qml/resources/icons/dark/devices/lamp/mono/off.png</file>
         <file>qml/resources/icons/dark/devices/pc/rpi.png</file>
+        <file>qml/resources/icons/dark/themes.png</file>
+        <file>qml/resources/icons/dark/moon.png</file>
+        <file>qml/resources/icons/dark/sun.png</file>
+        <file>qml/resources/icons/dark/network.png</file>
+
+        <file>qml/resources/icons/light/devices/lamp/mono/off.png</file>
+        <file>qml/resources/icons/light/devices/lamp/mono/on.png</file>
+        <file>qml/resources/icons/light/devices/lamp/mono/unknown.png</file>
+        <file>qml/resources/icons/light/devices/pc/rpi.png</file>
+        <file>qml/resources/icons/light/bt.png</file>
+        <file>qml/resources/icons/light/bulb.png</file>
+        <file>qml/resources/icons/light/car.png</file>
+        <file>qml/resources/icons/light/control-devices.png</file>
+        <file>qml/resources/icons/light/creds.png</file>
+        <file>qml/resources/icons/light/down.png</file>
+        <file>qml/resources/icons/light/events.png</file>
+        <file>qml/resources/icons/light/info.png</file>
+        <file>qml/resources/icons/light/lock.png</file>
+        <file>qml/resources/icons/light/pc.png</file>
+        <file>qml/resources/icons/light/secure-enclave.png</file>
+        <file>qml/resources/icons/light/settings.png</file>
+        <file>qml/resources/icons/light/setup-devices.png</file>
+        <file>qml/resources/icons/light/share-access.png</file>
+        <file>qml/resources/icons/light/up.png</file>
+        <file>qml/resources/icons/light/upload.gif</file>
+        <file>qml/resources/icons/light/wash-machine.png</file>
+        <file>qml/resources/icons/light/wifi-dimmed.png</file>
+        <file>qml/resources/icons/light/wifi.png</file>
+        <file>qml/resources/icons/light/delete.png</file>
+        <file>qml/resources/icons/light/export.png</file>
+        <file>qml/resources/icons/light/themes.png</file>
+        <file>qml/resources/icons/light/moon.png</file>
+        <file>qml/resources/icons/light/sun.png</file>
+        <file>qml/resources/icons/light/network.png</file>
 
         <file>qml/resources/icons/test-qr.png</file>
 
@@ -51,11 +86,13 @@
         <file>qml/resources/fonts/Roboto-Bold.ttf</file>
 
         <file>qml/Main.qml</file>
+
         <file>qml/components/FormLabel.qml</file>
         <file>qml/components/Container.qml</file>
         <file>qml/components/ImageButton.qml</file>
         <file>qml/components/WiFiNetworksList.qml</file>
         <file>qml/components/FormVendor.qml</file>
+        <file>qml/components/FormDoers.qml</file>
         <file>qml/components/FormInput.qml</file>
         <file>qml/components/TextScrollView.qml</file>
         <file>qml/components/Popups/Popup.qml</file>
@@ -72,39 +109,58 @@
         <file>qml/components/InfoText.qml</file>
         <file>qml/components/InputTextField.qml</file>
         <file>qml/components/Password.qml</file>
-
+        <file>qml/components/Title.qml</file>
+        <file>qml/components/DoersTypeList.qml</file>
+        <file>qml/components/RoT/RoTList.qml</file>
+        <file>qml/components/RoT/RoTControls.qml</file>
+        <file>qml/components/RoT/RoTInfoPopup.qml</file>
         <file>qml/components/devices/DeviceInfoPopup.qml</file>
         <file>qml/components/devices/AllDevicesList.qml</file>
         <file>qml/components/devices/DevicesListItem.qml</file>
         <file>qml/components/devices/GeneralCategoryControls.qml</file>
         <file>qml/components/devices/GeneralDeviceControls.qml</file>
         <file>qml/components/devices/DeviceViewSelector.qml</file>
+        <file>qml/components/devices/DeviceNameDialog.qml</file>
         <file>qml/components/devices/lamp/LampControls.qml</file>
-
+        <file>qml/components/devices/setup/BLEDevicesSetupList.qml</file>
+        <file>qml/components/devices/setup/WiFiAPDevicesSetupList.qml</file>
+        <file>qml/components/devices/setup/LocalDevicesSetupList.qml</file>
+        <file>qml/components/devices/setup/ProcessingForm.qml</file>
+        <file>qml/components/devices/setup/SetupParamsForm.qml</file>
         <file>qml/components/validators/ValidatorIPv4.qml</file>
         <file>qml/components/validators/ValidatorUserName.qml</file>
         <file>qml/components/validators/ValidatorPassword.qml</file>
-
+        <file>qml/components/validators/ValidatorDeviceName.qml</file>
 
         <file>qml/pages/LeftSideMenu.qml</file>
+
         <file>qml/pages/settings/SettingsMenuPage.qml</file>
         <file>qml/pages/settings/WiFiSettingsPage.qml</file>
         <file>qml/pages/settings/WiFiSettingsPage.qml</file>
         <file>qml/pages/settings/WiFiPasswordPage.qml</file>
         <file>qml/pages/settings/EventsSettingsPage.qml</file>
+        <file>qml/pages/settings/RoTSettingsPage.qml</file>
+        <file>qml/pages/settings/NetworksSettingsPage.qml</file>
+
         <file>qml/pages/AboutPage.qml</file>
         <file>qml/pages/SettingsPage.qml</file>
         <file>qml/pages/DevicesPage.qml</file>
         <file>qml/pages/DevicesSetupPage.qml</file>
         <file>qml/pages/QRReaderPage.qml</file>
         <file>qml/pages/SharePage.qml</file>
-        <file>qml/pages/CredLoadPage.qml</file>
+
         <file>qml/pages/devices/CmdProcessingPage.qml</file>
         <file>qml/pages/devices/lamp/mono/LampMonoControl.qml</file>
         <file>qml/pages/devices/pc/PCRPiControl.qml</file>
+        <file>qml/pages/devices/setup/SetupProcessingPage.qml</file>
 
+        <file>qml/doers/Contributors.qml</file>
+        <file>qml/doers/Sponsors.qml</file>
         <file>qml/theme/Theme.qml</file>
-
         <file>qml/base/Platform.qml</file>
+        <file>qml/pages/settings/ThemeListPage.qml</file>
+        <file>qml/components/FormThemeList.qml</file>
+        <file>qml/components/SwitchableParam.qml</file>
+
     </qresource>
 </RCC>

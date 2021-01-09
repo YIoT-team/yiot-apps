@@ -13,8 +13,11 @@ ToolBar {
     property bool hideButtons: false
     property alias showSeporator: seporator.visible
     property alias backgroundColor: background.color
+    property alias textClickEnable: ma.enabled
     property var backAction: function() { back() }
     property var settingsAction: function() { showAbout() }
+
+    signal textClick()
 
     background: Rectangle {
         id: background
@@ -70,12 +73,24 @@ ToolBar {
 
             id: titleLabel
             elide: Label.ElideRight
+            textFormat: Text.MarkdownText
 
+            font.underline: ma.containsMouse
             font.family: Theme.mainFont
             font.pointSize: UiHelper.fixFontSz(15)
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment: Qt.AlignVCenter
-            color: Theme.primaryTextColor
+            color: ma.containsMouse ? Theme.linkTextColor : Theme.primaryTextColor
+
+            MouseArea {
+                id: ma
+                enabled: false
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {
+                    textClick()
+                }
+            }
         }
 
         ImageButton {

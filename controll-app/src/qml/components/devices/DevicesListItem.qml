@@ -27,6 +27,7 @@ import "../../components/devices/lamp"
 
 Rectangle {
     property bool topLevel: true
+    property bool submodulePresent: true
     property bool showControlsPermanent: false
     property string controlElementUrl: ""
 
@@ -48,8 +49,8 @@ Rectangle {
         Image {
             id: icon
             visible: true
-            enabled: visible
-            source: "qrc:/qml/resources/icons/dark/%1.png".arg(topLevel ? image : deviceStateImage(model))
+            enabled: !topLevel || (image !== "")
+            source: "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(topLevel ? image : deviceStateImage(model))
             Layout.maximumHeight: itemText.height * 0.7
             Layout.maximumWidth: Layout.maximumHeight
             Layout.leftMargin: 5
@@ -60,7 +61,7 @@ Rectangle {
                 enabled: !topLevel
                 target: topLevel ? null : deviceController
                 function onFireStateChanged() {
-                    icon.source = "qrc:/qml/resources/icons/dark/%1.png".arg(deviceStateImage(model))
+                    icon.source = "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(deviceStateImage(model))
                 }
             }
         }
@@ -84,7 +85,7 @@ Rectangle {
     Loader {
         id: loader
         property variant modelData: model
-        property bool collapsed: topLevel ? subModel.collapsed : false
+        property bool collapsed: (topLevel && submodulePresent) ? subModel.collapsed : false
         source: controlElementUrl
         onLoaded: {
             z = 1
@@ -98,12 +99,14 @@ Rectangle {
             })
         }
         onCollapsedChanged: {
-            subModel.collapsed = collapsed
+            if (submodulePresent) {
+                subModel.collapsed = collapsed
+            }
         }
 
         Connections {
             enabled: topLevel
-            target: topLevel ? subModel : null
+            target: (topLevel && submodulePresent) ? subModel : null
             function onCollapsedChanged() {
                 loader.collapsed = subModel.collapsed
             }
@@ -118,6 +121,9 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onClicked: {
+            if (!submodulePresent) {
+                return
+            }
             if (topLevel) {
                 subModel.collapsed = !subModel.collapsed
             } else {

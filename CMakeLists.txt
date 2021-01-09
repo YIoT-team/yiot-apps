@@ -22,22 +22,31 @@ cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 # ---------------------------------------------------------------------------
 # Project version
 # ---------------------------------------------------------------------------
-set(KS_TARGET_VERSION "0.0.2")
+set(KS_TARGET_VERSION "0.1.0")
 
 # ---------------------------------------------------------------------------
-# Define project
+#   Options
 # ---------------------------------------------------------------------------
-project(yiot VERSION ${KS_TARGET_VERSION} LANGUAGES C CXX)
+option(BUILD_DEVICE_ENABLE "Enable building of Device app" ON)
+option(BUILD_APP_ENABLE "Enable building of Application" ON)
 
 # ---------------------------------------------------------------------------
 # Include Cmake helpers
 # ---------------------------------------------------------------------------
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-include(vsplatforms)
+if (BUILD_APP_ENABLE)
+    include(vsplatforms)
+endif()
 include(varpadding)
 #include(clangformat)
 
+# ---------------------------------------------------------------------------
+# Define project
+# ---------------------------------------------------------------------------
+
+project(yiot VERSION ${KS_TARGET_VERSION} LANGUAGES C CXX)
+file(WRITE "${CMAKE_BINARY_DIR}/VERSION" "${KS_TARGET_VERSION}")
 # ---------------------------------------------------------------------------
 #   Detecting platform if KS_PLATFORM not specified
 # ---------------------------------------------------------------------------
@@ -69,12 +78,6 @@ endif()
 
 message(STATUS "KS_PLATFORM: ${KS_PLATFORM}")
 message(STATUS "KS_PLATFORM_DESKTOP: ${KS_PLATFORM_DESKTOP}")
-
-# ---------------------------------------------------------------------------
-#   Options
-# ---------------------------------------------------------------------------
-option(BUILD_DEVICE_ENABLE "Enable building of Device app" ON)
-option(BUILD_APP_ENABLE "Enable building of Application" ON)
 
 
 # ---------------------------------------------------------------------------

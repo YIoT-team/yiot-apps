@@ -27,6 +27,8 @@ import "../../components"
 Page {
     id: settingsPage
 
+    property int darkMode: 1
+
     background: Rectangle {
         color: "transparent"
     }
@@ -46,6 +48,22 @@ Page {
 
         model: ListModel {
             ListElement {
+                name: qsTr("Root of trust")
+                image: "secure-enclave"
+                property var action: function() {
+                    showRoTSettings()
+                }
+            }
+
+            ListElement {
+                name: qsTr("IoT Networks")
+                image: "network"
+                property var action: function() {
+                    showIoTNetworkSettings()
+                }
+            }
+
+            ListElement {
                 name: qsTr("WiFi credentials")
                 image: "creds"
                 property var action: function() {
@@ -54,10 +72,18 @@ Page {
             }
 
             ListElement {
-                name: qsTr("Event triggers")
+                name: qsTr("Event settings")
                 image: "events"
                 property var action: function() {
                     showEventsSettings()
+                }
+            }
+
+            ListElement {
+                name: qsTr("Theme")
+                image: "themes"
+                property var action: function() {
+                    showThemeList()
                 }
             }
         }
@@ -75,7 +101,7 @@ Page {
 
                 Image {
                     id: icon
-                    source: "qrc:/qml/resources/icons/dark/%1.png".arg(image)
+                    source: "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(image)
                     Layout.maximumHeight: listDelegate.height * 0.7
                     Layout.maximumWidth: Layout.maximumHeight
                     fillMode: Image.PreserveAspectFit

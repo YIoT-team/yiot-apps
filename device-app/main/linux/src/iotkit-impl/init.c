@@ -19,15 +19,19 @@
 
 #include <virgil/iot/protocols/snap/info/info-server.h>
 #include <virgil/iot/protocols/snap/cfg/cfg-server.h>
+#include <virgil/iot/protocols/snap/prvs/prvs-server.h>
+#include <virgil/iot/protocols/snap/scrt/scrt-server.h>
+#include <common/protocols/snap/pc/pc-server.h>
+
 #include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/provision/provision.h>
-
-#include <common/protocols/snap/pc/pc-server.h>
 
 #include "iotkit-impl/init.h"
 
 static void
 _file_ver_info_cb(vs_file_version_t ver);
+
+static vs_provision_events_t _provision_event = {_file_ver_info_cb};
 
 //-----------------------------------------------------------------------------
 vs_status_e
@@ -38,16 +42,13 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
                vs_netif_t *netif_impl[],
                vs_snap_cfg_server_service_t cfg_server_cb,
                vs_snap_pc_server_service_t pc_server_cb,
-               vs_netif_process_cb_t packet_preprocessor_cb
-#if SECURE_PROVISION
-               ,
+               vs_netif_process_cb_t packet_preprocessor_cb,
                vs_secmodule_impl_t *secmodule_impl,
-               vs_storage_op_ctx_t *tl_storage_impl
-#endif
-) {
+               vs_storage_op_ctx_t *tl_storage_impl) {
     vs_status_e res = VS_CODE_ERR_INIT_SNAP;
     vs_status_e ret_code;
     uint8_t i = 1;
+    vs_snap_scrt_server_service_t scrt_server_cb = {0};
     VS_IOT_ASSERT(netif_impl);
     VS_IOT_ASSERT(netif_impl[0]);
 
@@ -55,18 +56,18 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     // ---------- Initialize Virgil SDK modules ----------
     //
 
-#if SECURE_PROVISION
     // Provision module
     VS_IOT_ASSERT(secmodule_impl);
     VS_IOT_ASSERT(tl_storage_impl);
     ret_code = vs_provision_init(tl_storage_impl, secmodule_impl, _provision_event);
-    if (VS_CODE_OK != ret_code && VS_CODE_ERR_NOINIT != ret_code) {
+    if (VS_CODE_OK != ret_code && VS_CODE_ERR_PROVISION_NOT_READY != ret_code) {
         VS_LOG_ERROR("Cannot initialize Provision module");
         goto terminate;
     }
-#endif // SECURE_PROVISION
 
     // SNAP module
+
+    STATUS_CHECK(vs_snap_init_device_name("Test device"), "Unable to set device name");
     STATUS_CHECK(vs_snap_init(netif_impl[0], packet_preprocessor_cb, manufacture_id, device_type, serial, device_roles),
                  "Unable to initialize SNAP module");
 
@@ -80,6 +81,16 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     // ---------- Register SNAP services ----------
     //
 
+    //  PRVS service
+    const vs_snap_service_t *snap_prvs_server;
+    snap_prvs_server = vs_snap_prvs_server(secmodule_impl);
+    STATUS_CHECK(vs_snap_register_service(snap_prvs_server), "Cannot register PRVS service");
+
+    //  SCRT server service
+    const vs_snap_service_t *snap_scrt_server;
+    snap_scrt_server = vs_snap_scrt_server(secmodule_impl, scrt_server_cb);
+    STATUS_CHECK(vs_snap_register_service(snap_scrt_server), "Cannot register SCRT server service");
+
     //  INFO server service
     const vs_snap_service_t *snap_info_server;
     snap_info_server = vs_snap_info_server(NULL);
@@ -91,9 +102,11 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     STATUS_CHECK(vs_snap_register_service(snap_cfg_server), "Cannot register CFG server service");
 
     // PC server service
-    const vs_snap_service_t *snap_pc_server;
-    snap_pc_server = vs_snap_pc_server(pc_server_cb);
-    STATUS_CHECK(vs_snap_register_service(snap_pc_server), "Cannot register PC server service");
+    if (!(device_roles & VS_SNAP_DEV_INITIALIZER)) {
+        const vs_snap_service_t *snap_pc_server;
+        snap_pc_server = vs_snap_pc_server(pc_server_cb);
+        STATUS_CHECK(vs_snap_register_service(snap_pc_server), "Cannot register PC server service");
+    }
 
     res = VS_CODE_OK;
 
@@ -109,10 +122,8 @@ ks_iotkit_deinit(void) {
     // Deinit Virgil SDK modules
     vs_snap_deinit();
 
-#if SECURE_PROVISION
     // Deinit provision
     vs_provision_deinit();
-#endif
 
     return VS_CODE_OK;
 }

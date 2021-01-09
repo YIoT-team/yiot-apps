@@ -128,6 +128,12 @@ pushd "${SCRIPT_FOLDER}/../../"
         cp -rf ../x86/android-build/libs    ./android-build/
         cp -rf ../x86_64/android-build/libs ./android-build/
 
+        cp -rf ../armv7/common/iotkit/modules/crypto/converters/*.so ./common/iotkit/modules/crypto/converters/
+        cp -rf ../armv8/common/iotkit/modules/crypto/converters/*.so ./common/iotkit/modules/crypto/converters/
+        cp -rf ../x86/common/iotkit/modules/crypto/converters/*.so ./common/iotkit/modules/crypto/converters/
+        cp -rf ../x86_64/common/iotkit/modules/crypto/converters/*.so ./common/iotkit/modules/crypto/converters/
+
+
         make -j10 aab_release
     popd
 

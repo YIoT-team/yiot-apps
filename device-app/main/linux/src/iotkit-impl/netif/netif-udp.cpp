@@ -404,7 +404,7 @@ vs_hal_netif_udp(void) {
         return NULL;
     }
 
-    memcpy(_mac_addr, ifr.ifr_hwaddr.sa_data, ETH_ADDR_LEN);
+    //    memcpy(_mac_addr, ifr.ifr_hwaddr.sa_data, ETH_ADDR_LEN);
     return &_netif_udp_;
 }
 

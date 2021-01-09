@@ -39,7 +39,9 @@
 
 class KSQFeatures {
 public:
-    enum EFeature { SNAP_CFG_CLIENT,  /**< CFG client service */
+    enum EFeature { SNAP_PRVS_CLIENT,  /**< PRVS client service */
+                    SNAP_SCRT_CLIENT,  /**< SCRT client service */
+                    SNAP_CFG_CLIENT,  /**< CFG client service */
                     SNAP_INFO_CLIENT, /**< INFO client service */
                     SNAP_LAMP_CLIENT, /**< Lamp client service */
                     SNAP_PC_CLIENT,   /**< PC client service */
@@ -66,7 +68,9 @@ public:
 
     bool
     hasSnap() const {
-        return hasFeature(SNAP_INFO_CLIENT)
+        return hasFeature(SNAP_PRVS_CLIENT)
+               || hasFeature(SNAP_SCRT_CLIENT)
+               || hasFeature(SNAP_INFO_CLIENT)
                || hasFeature(SNAP_CFG_CLIENT)
                || hasFeature(SNAP_LAMP_CLIENT)
                || hasFeature(SNAP_PC_CLIENT);

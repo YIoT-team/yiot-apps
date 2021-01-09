@@ -86,6 +86,10 @@ KSQUdp::deinit() {
 //-----------------------------------------------------------------------------
 vs_status_e
 KSQUdp::_internal_tx(const uint8_t *data, const uint16_t data_sz) {
+    if (!data || data_sz < sizeof(vs_snap_packet_t)) {
+        return VS_CODE_ERR_ZERO_ARGUMENT;
+    }
+
     // TODO: ARP request by DST mac address
 
     vs_snap_packet_t *packet = (vs_snap_packet_t *)data;

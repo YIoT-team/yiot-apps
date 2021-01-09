@@ -38,21 +38,11 @@ public:
     model();
 
 signals:
-    void
-    fireConnected();
-    void
-    fireDisconnected();
-    void
-    fireError(QString text);
-    void
-    fireDataSent();
-    void
-    fireDataReceived();
 
 public slots:
 
     Q_INVOKABLE bool
-    configureWiFi(const QString &deviceName, const QString &ssid, const QString &password);
+    connectDevice(const QString &deviceName);
 
 private slots:
     void
@@ -65,13 +55,16 @@ private slots:
     onDeviceError();
 
     void
-    onConfigurationDone();
+    onSetupFinished(QSharedPointer<VSQNetifBase> netif);
 
 private:
     VSQNetifBLEEnumerator m_bleEnumerator;
     QSharedPointer<VSQNetifBLE> m_netifBLE;
 
     bool m_needWiFiConfig;
+
+    void
+    cleanConnections();
 };
 
 #endif // PROVISION_QT_BLE_CONTROLLER_H

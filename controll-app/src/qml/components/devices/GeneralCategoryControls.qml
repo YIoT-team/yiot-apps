@@ -37,7 +37,7 @@ RowLayout {
 
     ImageButton {
         id: btnInfo
-        image: "dark/info"
+        image: Theme.state + "/info"
         onClicked: {
             console.log("Show information about current category")
             showInfo()
@@ -46,7 +46,7 @@ RowLayout {
 
     ImageButton {
         id: btnCollapser
-        image: collapsed ? "dark/down" : "dark/up"
+        image: collapsed ? (Theme.state + "/down") : (Theme.state + "/up")
         onClicked: {
             collapsed = !collapsed
         }

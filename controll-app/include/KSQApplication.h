@@ -27,13 +27,17 @@
 #include <KSQBLEController.h>
 
 #include <devices/KSQDevices.h>
+#include <devices/KSQBlankDevicesController.h>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
 #include <yiot-iotkit/netif/KSQUdp.h>
 
+#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
+
 class KSQApplication : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
+    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
     Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
 public:
     KSQApplication() = default;
@@ -46,6 +50,9 @@ public:
     organizationDisplayName() const;
 
     QString
+    applicationVersion() const;
+
+    QString
     applicationDisplayName() const;
 
     Q_INVOKABLE void
@@ -53,7 +60,8 @@ public:
 
 private:
     KSQWiFiEnumerator m_wifiEnumerator;
-    KSQBLEController m_bleController;
+    QSharedPointer<KSQBLEController> m_bleController;
+    QSharedPointer<KSQBlankDevicesController> m_localBlankDevicesController;
     QSharedPointer<KSQUdp> m_netifUdp;
 
     KSQDevices m_deviceControllers;

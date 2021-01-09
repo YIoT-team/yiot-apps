@@ -40,6 +40,9 @@ Page {
         readonly property int wifiNetworksIdx: 1
         readonly property int wifiPassIdx: 2
         readonly property int eventsIdx: 3
+        readonly property int rotIdx: 4
+        readonly property int networksIdx: 5
+        readonly property int themeIdx: 6
 
         property int backPageIdx: menuIdx
 
@@ -62,6 +65,18 @@ Page {
 
         EventsSettingsPage {
             id: eventsSettingsPage
+        }
+
+        RoTSettingsPage {
+            id: rotSettingsPage
+        }
+
+        NetworksSettingsPage {
+            id: networksSettingsPage
+        }
+        
+        ThemeListPage {
+            id: themeListPage
         }
     }
 
@@ -87,6 +102,14 @@ Page {
         swipeSettingsShow(settingsSwipeView.wifiNetworksIdx)
     }
 
+    function showRoTSettings() {
+        swipeSettingsShow(settingsSwipeView.rotIdx)
+    }
+
+    function showIoTNetworkSettings() {
+        swipeSettingsShow(settingsSwipeView.networksIdx)
+    }
+
     function showWiFiPassword(ssid) {
         console.log("showWiFiPassword: ", ssid)
         wifiPassSettingsPage.prepare(ssid)
@@ -95,6 +118,10 @@ Page {
 
     function showEventsSettings() {
         swipeSettingsShow(settingsSwipeView.eventsIdx)
+    }
+
+    function showThemeList() {
+        swipeSettingsShow(settingsSwipeView.themeIdx)
     }
 
     function backInSettings() {

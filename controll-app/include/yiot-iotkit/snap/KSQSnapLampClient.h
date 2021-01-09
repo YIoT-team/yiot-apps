@@ -41,11 +41,6 @@ public:
         return m_snapService;
     }
 
-    VSQFeatures::EFeature
-    serviceFeature() const override {
-        return VSQFeatures::SNAP_LAMP_CLIENT;
-    }
-
     const QString &
     serviceName() const override {
         static QString name{"LAMP Client"};
