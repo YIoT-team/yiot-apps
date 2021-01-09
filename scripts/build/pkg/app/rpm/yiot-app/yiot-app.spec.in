@@ -1,0 +1,40 @@
+%global debug_package %{nil}
+
+Summary:          YIoT control application
+Name:             yiot-app
+Version:          {{MAJOR_VER}}.{{MINOR_VER}}.{{SUB_VER}}
+Release:          {{BUILD_VER}}
+Group:            IOT
+License:          BSD-3-Clause
+URL:              https://yiot-dev.io/
+Source0:         %{name}_%{version}.orig.tar.gz
+Source1:         yiot.desktop
+Source2:         yiot.png
+
+%description
+YIoT control application
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+
+%install
+
+install -d                                                                                                       %{buildroot}%{_datarootdir}/yiot
+install -d                                                                                                       %{buildroot}%{_bindir}
+install -d                                                                                                       %{buildroot}%{_datadir}/applications
+install -d                                                                                                       %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
+
+cp -rf dist/*                                                                                                   %{buildroot}%{_datarootdir}/yiot
+ln -s %{_datarootdir}/yiot/yiot.sh                                                                              %{buildroot}%{_bindir}/yiot
+install -p -m 644 %{SOURCE1}                                                                                    %{buildroot}%{_datadir}/applications/
+install -p -m 644 %{SOURCE2}                                                                                    %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
+
+%files
+%{_datarootdir}/yiot
+%{_bindir}/yiot
+%{_datadir}/applications
+%{_datadir}/icons/hicolor/scalable/apps
+
+%changelog

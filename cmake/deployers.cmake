@@ -89,7 +89,7 @@ elseif(KS_PLATFORM STREQUAL "linux")
   add_custom_target(deploy
     COMMAND ${LINUX_DEPLOY_QT}
        -bin ${PROJECT_NAME} 
-       -qmlDir ${PROJECT_SOURCE_DIR}/src/qml 
+       -qmlDir ${PROJECT_SOURCE_DIR}/controll-app/src/qml
        -targetDir ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist
        -qmake ${QT_QMAKE_EXECUTABLE} clear
     VERBATIM)
