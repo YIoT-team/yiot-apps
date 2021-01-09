@@ -102,11 +102,9 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     STATUS_CHECK(vs_snap_register_service(snap_cfg_server), "Cannot register CFG server service");
 
     // PC server service
-    if (!(device_roles & VS_SNAP_DEV_INITIALIZER)) {
-        const vs_snap_service_t *snap_pc_server;
-        snap_pc_server = vs_snap_pc_server(pc_server_cb);
-        STATUS_CHECK(vs_snap_register_service(snap_pc_server), "Cannot register PC server service");
-    }
+    const vs_snap_service_t *snap_pc_server;
+    snap_pc_server = vs_snap_pc_server(pc_server_cb);
+    STATUS_CHECK(vs_snap_register_service(snap_pc_server), "Cannot register PC server service");
 
     res = VS_CODE_OK;
 

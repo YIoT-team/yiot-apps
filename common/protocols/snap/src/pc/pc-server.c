@@ -125,9 +125,12 @@ _init_pc_vpn_request_processor(const struct vs_netif_t *netif,
 vs_status_e
 vs_snap_pc_start_notification(const vs_netif_t *netif) {
 
+    if (!vs_provision_is_ready()) {
+        return VS_CODE_COMMAND_NO_RESPONSE;
+    }
+
     vs_snap_pc_state_t state_data;
     vs_status_e ret_code;
-
 
     uint16_t request_sz = 0;
     vs_ethernet_header_t eth_header;
@@ -160,6 +163,10 @@ _pc_request_processor(const struct vs_netif_t *netif,
     (void)netif;
 
     *response_sz = 0;
+
+    if (!vs_provision_is_ready()) {
+        return VS_CODE_COMMAND_NO_RESPONSE;
+    }
 
     switch (element_id) {
     case VS_PC_GPST:

@@ -17,40 +17,49 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include "helpers/timer.h"
-#include <thread>
+#include <controllers/KSQUXSimplifyController.h>
+
+#include <yiot-iotkit/setup/KSQDeviceSetupController.h>
+
+#include <virgil/iot/qt/VSQIoTKit.h>
 
 //-----------------------------------------------------------------------------
-KSTimer::KSTimer() : m_running(false) {
-    std::thread([=]() {
-        while (true) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            std::lock_guard<std::mutex> lock(m_changingMutex);
-            if (m_running && std::chrono::high_resolution_clock::now() - m_start > m_delay) {
-                m_callback();
+void
+KSQUXSimplifyController::onBLEDeviceIsClose(QString deviceName, bool requiresProvision) {
+    if (requiresProvision) {
+        emit fireRequestDeviceProvision(deviceName);
+    }
+}
 
-                std::lock_guard<std::mutex> lockState(m_stateMutex);
-                m_running = false;
-            }
-        }
-    })
-            .detach();
+//-----------------------------------------------------------------------------
+void
+KSQUXSimplifyController::onDeviceRequiresProvision(QString deviceName,
+                                                   QSharedPointer<VSQNetifBase> netif,
+                                                   VSQMac deviceMac) {
+    m_netif = netif;
+    m_deviceMac = deviceMac;
+    emit fireRequestDeviceProvision(deviceName);
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQUXSimplifyController::onNewProvisionedDevice(QSharedPointer<KSQDeviceBase> device) {
+    emit fireRequestDeviceSetup(device.get());
 }
 
 //-----------------------------------------------------------------------------
 bool
-KSTimer::add(std::chrono::milliseconds delay, std::function<void()> callback) {
-    std::lock_guard<std::mutex> lockState(m_stateMutex);
-    if (m_running) {
-        return false;
-    }
+KSQUXSimplifyController::startDeviceProvision(QString name) {
+    qDebug() << "startDeviceProvision : " << name;
 
-    std::lock_guard<std::mutex> lock(m_changingMutex);
-    m_callback = callback;
-    m_start = std::chrono::high_resolution_clock::now();
-    m_delay = delay;
-    m_running = true;
+    KSQDeviceSetupController::instance().start(m_netif, m_deviceMac);
+    return true;
+}
 
+//-----------------------------------------------------------------------------
+bool
+KSQUXSimplifyController::rejectDeviceProvision(QString name) {
+    qDebug() << "rejectDeviceProvision : " << name;
     return true;
 }
 

@@ -26,6 +26,7 @@
 #include "commands/wifi-cred.h"
 
 #include <virgil/iot/protocols/snap/cfg/cfg-private.h>
+#include <common/protocols/snap/pc/pc-server.h>
 
 static KSTimer _processingDelayer;
 static const auto kDelayMs = std::chrono::milliseconds(200);
@@ -66,6 +67,13 @@ ks_snap_cfg_wifi_cb(const vs_netif_t *netif,
                                                 0)) {
             VS_LOG_WARNING("Cannot set WiFi credentials.");
         }
+
+        // TODO: Move it IoTKit
+        vs_provision_update();
+
+        // TODO: Use callback from IoTKit
+        const vs_netif_t *n = vs_snap_default_netif();
+        vs_snap_pc_start_notification(n);
     });
 
     return res ? VS_CODE_COMMAND_NO_RESPONSE : VS_CODE_ERR_QUEUE;

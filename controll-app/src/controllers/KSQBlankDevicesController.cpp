@@ -17,11 +17,10 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include <KSQBLEController.h>
+#include <controllers/KSQBLEController.h>
+#include <controllers/KSQBlankDevicesController.h>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
-
-#include <devices/KSQBlankDevicesController.h>
 
 #include <yiot-iotkit/KSQIoTKitFacade.h>
 #include <yiot-iotkit/setup/KSQDeviceSetupController.h>
@@ -79,6 +78,9 @@ KSQBlankDevicesController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
 
     if (isNew) {
         endInsertRows();
+        if (!deviceInfo.m_hasProvision) {
+            emit fireDeviceRequiresProvision(deviceInfo.m_deviceName, m_netif, deviceInfo.m_mac);
+        }
     } else {
         const auto _idx = createIndex(m_devices.keys().indexOf(key), 0);
         emit dataChanged(_idx, _idx);

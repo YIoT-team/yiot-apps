@@ -87,8 +87,7 @@ KSQRoTController::data(const QModelIndex &index, int role) const {
             return r->firmware1().description();
         case Element::Firmware2:
             return r->firmware2().description();
-        default: {
-        }
+        default: {}
         }
     }
 

@@ -17,54 +17,57 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_BLE_CONTROLLER_H
-#define PROVISION_QT_BLE_CONTROLLER_H
+#ifndef KSQ_UX_SIMPLIFY_CONTROLLER_H
+#define KSQ_UX_SIMPLIFY_CONTROLLER_H
 
 #include <QtCore>
+#include <QtNetwork>
+#include <QtBluetooth>
 
-#include <virgil/iot/qt/netif/VSQNetifBLEEnumerator.h>
-#include <virgil/iot/qt/netif/VSQNetifBLE.h>
+#include <QAbstractTableModel>
 
-class KSQBLEController : public QObject {
+#include <virgil/iot/qt/VSQIoTKit.h>
+#include <devices/KSQDeviceBase.h>
+
+class KSQUXSimplifyController : public QObject {
     Q_OBJECT
+
 public:
-    KSQBLEController();
-    virtual ~KSQBLEController();
+    KSQUXSimplifyController() = default;
 
-    QSharedPointer<VSQNetifBLE>
-    netif();
+    KSQUXSimplifyController &
+    operator=(KSQUXSimplifyController const &) = delete;
 
-    VSQNetifBLEEnumerator *
-    model();
-
-signals:
-
-public slots:
+    virtual ~KSQUXSimplifyController() = default;
 
     Q_INVOKABLE bool
-    connectDevice(const QString &deviceName);
+    startDeviceProvision(QString name);
+
+    Q_INVOKABLE bool
+    rejectDeviceProvision(QString name);
+
+public slots:
+    void
+    onBLEDeviceIsClose(QString deviceName, bool requiresProvision);
+
+    void
+    onDeviceRequiresProvision(QString deviceName, QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
+
+    void
+    onNewProvisionedDevice(QSharedPointer<KSQDeviceBase> device);
+
+signals:
+    void
+    fireRequestDeviceProvision(QString deviceName);
+
+    void
+    fireRequestDeviceSetup(KSQDeviceBase *ydeviceName);
 
 private slots:
-    void
-    onConnected(bool);
-
-    void
-    onDisconnected();
-
-    void
-    onDeviceError();
-
-    void
-    onSetupFinished(QSharedPointer<VSQNetifBase> netif);
 
 private:
-    VSQNetifBLEEnumerator m_bleEnumerator;
-    QSharedPointer<VSQNetifBLE> m_netifBLE;
-
-    bool m_needWiFiConfig;
-
-    void
-    cleanConnections();
+    QSharedPointer<VSQNetifBase> m_netif;
+    VSQMac m_deviceMac;
 };
 
-#endif // PROVISION_QT_BLE_CONTROLLER_H
+#endif // KSQ_UX_SIMPLIFY_CONTROLLER_H

@@ -121,6 +121,7 @@
         <file>qml/components/devices/GeneralDeviceControls.qml</file>
         <file>qml/components/devices/DeviceViewSelector.qml</file>
         <file>qml/components/devices/DeviceNameDialog.qml</file>
+        <file>qml/components/devices/DeviceActionRequestDialog.qml</file>
         <file>qml/components/devices/lamp/LampControls.qml</file>
         <file>qml/components/devices/setup/BLEDevicesSetupList.qml</file>
         <file>qml/components/devices/setup/WiFiAPDevicesSetupList.qml</file>

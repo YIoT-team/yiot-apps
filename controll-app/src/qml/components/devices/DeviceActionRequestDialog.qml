@@ -17,41 +17,75 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include "helpers/timer.h"
-#include <thread>
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-//-----------------------------------------------------------------------------
-KSTimer::KSTimer() : m_running(false) {
-    std::thread([=]() {
-        while (true) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            std::lock_guard<std::mutex> lock(m_changingMutex);
-            if (m_running && std::chrono::high_resolution_clock::now() - m_start > m_delay) {
-                m_callback();
+import "../../theme"
+import "../../components"
+import "../../components/devices"
+import "../../components/validators"
 
-                std::lock_guard<std::mutex> lockState(m_stateMutex);
-                m_running = false;
-            }
-        }
-    })
-            .detach();
-}
+Popup {
+    property alias name: deviceName.text
+    property alias inform: informText.text
+    property var actionOk: function(name) {  }
+    property var actionClose: function(name) {  }
+    property var ctx
 
-//-----------------------------------------------------------------------------
-bool
-KSTimer::add(std::chrono::milliseconds delay, std::function<void()> callback) {
-    std::lock_guard<std::mutex> lockState(m_stateMutex);
-    if (m_running) {
-        return false;
+    id: popup
+
+    anchors.centerIn: parent
+    width: parent.width * 0.9
+    height: 200
+    modal: true
+    focus: true
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+    background: Rectangle {
+        border.color: Theme.primaryTextColor
+        border.width: 1
+        radius: 10
+        color: Theme.mainBackgroundColor
     }
 
-    std::lock_guard<std::mutex> lock(m_changingMutex);
-    m_callback = callback;
-    m_start = std::chrono::high_resolution_clock::now();
-    m_delay = delay;
-    m_running = true;
+    ColumnLayout {
+        anchors.fill: parent
 
-    return true;
+        InfoText { id: deviceName }
+        InfoText { id: informText; wrapMode: Text.WordWrap }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 20
+
+            FormSecondaryButton {
+                Layout.topMargin: 20
+                Layout.bottomMargin: 10
+                text: qsTr("Ok")
+                onClicked: {
+                    actionOk(deviceName.text)
+                    popup.close()
+                }
+            }
+
+            FormSecondaryButton {
+                Layout.topMargin: 20
+                Layout.bottomMargin: 10
+                text: qsTr("Cancel")
+                onClicked: {
+                    actionClose(deviceName.text)
+                    popup.close()
+                }
+            }
+        }
+    }
+
+    enter: Transition {
+        NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
+    }
+
+    exit: Transition {
+        NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
+    }
 }
-
-//-----------------------------------------------------------------------------

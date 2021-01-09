@@ -113,6 +113,7 @@ void
 KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state) {
     auto res = findPC(mac);
     auto pc = res.second;
+    bool added = false;
     if (!pc) {
         // Add PC
 
@@ -134,6 +135,8 @@ KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state
         if (activating) {
             emit fireActivated();
         }
+
+        added = true;
     }
 
     res = findPC(mac);
@@ -158,6 +161,10 @@ KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state
 
         const auto _idx = createIndex(res.first, 0);
         emit dataChanged(_idx, _idx);
+
+        if (added) {
+            emit fireRequiredSetup(pc);
+        }
     }
 }
 

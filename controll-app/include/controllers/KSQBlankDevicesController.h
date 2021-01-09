@@ -26,6 +26,8 @@
 
 #include <QAbstractTableModel>
 
+#include <virgil/iot/qt/protocols/snap/VSQSnapINFOClient.h>
+
 class KSQBlankDevicesController : public QAbstractTableModel {
     Q_OBJECT
 
@@ -79,7 +81,11 @@ public:
 signals:
 
     void
-    fireDeviceSelected(QBluetoothDeviceInfo dev) const;
+    fireDeviceSelected(QBluetoothDeviceInfo dev);
+
+    void
+    fireDeviceRequiresProvision(QString name, QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
+
 
 private slots:
     void

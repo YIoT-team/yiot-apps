@@ -17,41 +17,57 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include "helpers/timer.h"
-#include <thread>
+#ifndef PROVISION_QT_BLE_CONTROLLER_H
+#define PROVISION_QT_BLE_CONTROLLER_H
 
-//-----------------------------------------------------------------------------
-KSTimer::KSTimer() : m_running(false) {
-    std::thread([=]() {
-        while (true) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            std::lock_guard<std::mutex> lock(m_changingMutex);
-            if (m_running && std::chrono::high_resolution_clock::now() - m_start > m_delay) {
-                m_callback();
+#include <QtCore>
 
-                std::lock_guard<std::mutex> lockState(m_stateMutex);
-                m_running = false;
-            }
-        }
-    })
-            .detach();
-}
+#include <virgil/iot/qt/netif/VSQNetifBLEEnumerator.h>
+#include <virgil/iot/qt/netif/VSQNetifBLE.h>
 
-//-----------------------------------------------------------------------------
-bool
-KSTimer::add(std::chrono::milliseconds delay, std::function<void()> callback) {
-    std::lock_guard<std::mutex> lockState(m_stateMutex);
-    if (m_running) {
-        return false;
-    }
+class KSQBLEController : public QObject {
+    Q_OBJECT
+public:
+    KSQBLEController();
+    virtual ~KSQBLEController();
 
-    std::lock_guard<std::mutex> lock(m_changingMutex);
-    m_callback = callback;
-    m_start = std::chrono::high_resolution_clock::now();
-    m_delay = delay;
-    m_running = true;
+    QSharedPointer<VSQNetifBLE>
+    netif();
 
-    return true;
-}
+    VSQNetifBLEEnumerator *
+    model();
 
-//-----------------------------------------------------------------------------
+    bool
+    isProvisionRequired(const QString &deviceName);
+
+signals:
+
+public slots:
+
+    Q_INVOKABLE bool
+    connectDevice(const QString &deviceName);
+
+private slots:
+    void
+    onConnected(bool);
+
+    void
+    onDisconnected();
+
+    void
+    onDeviceError();
+
+    void
+    onSetupFinished(QSharedPointer<VSQNetifBase> netif);
+
+private:
+    VSQNetifBLEEnumerator m_bleEnumerator;
+    QSharedPointer<VSQNetifBLE> m_netifBLE;
+
+    bool m_needWiFiConfig;
+
+    void
+    cleanConnections();
+};
+
+#endif // PROVISION_QT_BLE_CONTROLLER_H

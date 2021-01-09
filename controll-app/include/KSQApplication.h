@@ -24,14 +24,16 @@
 #include <QGuiApplication>
 
 #include <KSQWiFiEnumerator.h>
-#include <KSQBLEController.h>
+
+#include <controllers/KSQBLEController.h>
+#include <controllers/KSQBlankDevicesController.h>
+#include <controllers/KSQUXSimplifyController.h>
 
 #include <devices/KSQDevices.h>
-#include <devices/KSQBlankDevicesController.h>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
-#include <yiot-iotkit/netif/KSQUdp.h>
 
+#include <yiot-iotkit/netif/KSQUdp.h>
 #include <yiot-iotkit/root-of-trust/KSQRoTController.h>
 
 class KSQApplication : public QObject {
@@ -62,6 +64,7 @@ private:
     KSQWiFiEnumerator m_wifiEnumerator;
     QSharedPointer<KSQBLEController> m_bleController;
     QSharedPointer<KSQBlankDevicesController> m_localBlankDevicesController;
+    QSharedPointer<KSQUXSimplifyController> m_uxController;
     QSharedPointer<KSQUdp> m_netifUdp;
 
     KSQDevices m_deviceControllers;
