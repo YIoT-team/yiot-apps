@@ -99,8 +99,8 @@ elseif(KS_PLATFORM STREQUAL "android")
     string(APPEND KS_QT_EXTRA "AndroidExtras")
 
     # Android extra libraries
-    message(WARNING ">>> ${CMAKE_BINARY_DIR}/common/iotkit/modules/crypto/converters/libconverters.so")
-    list(APPEND ANDROID_EXTRA_LIBS ${CMAKE_BINARY_DIR}/common/iotkit/modules/crypto/converters/libconverters.so)
+    message(WARNING ">>> ${CMAKE_BINARY_DIR}/common/iotkit/modules/crypto/converters/libconverters-${ANDROID_ABI}.so")
+    list(APPEND ANDROID_EXTRA_LIBS ${CMAKE_BINARY_DIR}/common/iotkit/modules/crypto/converters/libconverters-${ANDROID_ABI}.so)
 
     # Android gradle path
     set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/platforms/android")
