@@ -73,6 +73,7 @@
         <file>qml/components/Password.qml</file>
         <file>qml/components/Title.qml</file>
         <file>qml/components/DoersTypeList.qml</file>
+		<file>qml/components/FormComboBox.qml</file>
         <file>qml/components/RoT/RoTList.qml</file>
         <file>qml/components/RoT/RoTControls.qml</file>
         <file>qml/components/RoT/RoTInfoPopup.qml</file>
@@ -109,6 +110,11 @@
         <file>qml/pages/devices/CmdProcessingPage.qml</file>
         <file>qml/pages/devices/lamp/mono/LampMonoControl.qml</file>
         <file>qml/pages/devices/pc/PCRPiControl.qml</file>
+		<file>qml/pages/devices/pc/settings/AccessPoint.qml</file>
+        <file>qml/pages/devices/pc/settings/CreateUser.qml</file>
+        <file>qml/pages/devices/pc/settings/ControlsList.qml</file>
+        <file>qml/pages/devices/pc/settings/StaticIP.qml</file>
+        <file>qml/pages/devices/pc/settings/VPNrouter.qml</file>
         <file>qml/pages/devices/setup/SetupProcessingPage.qml</file>
         <file>qml/doers/Contributors.qml</file>
         <file>qml/doers/Sponsors.qml</file>
@@ -147,5 +153,13 @@
         <file>qml/resources/icons/light/sun.png</file>
         <file>qml/resources/icons/dark/moon.png</file>
         <file>qml/resources/icons/dark/sun.png</file>
+        <file>qml/resources/icons/light/access-point.png</file>
+        <file>qml/resources/icons/light/create-user.png</file>
+        <file>qml/resources/icons/light/static-ip.png</file>
+        <file>qml/resources/icons/light/vpn-router.png</file>
+        <file>qml/resources/icons/dark/access-point.png</file>
+        <file>qml/resources/icons/dark/create-user.png</file>
+        <file>qml/resources/icons/dark/static-ip.png</file>
+        <file>qml/resources/icons/dark/vpn-router.png</file>
     </qresource>
 </RCC>
