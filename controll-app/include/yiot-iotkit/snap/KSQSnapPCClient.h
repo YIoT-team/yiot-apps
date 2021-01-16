@@ -48,6 +48,9 @@ public:
         return name;
     }
 
+    Q_INVOKABLE bool
+    sendCommand(QString mac, QString json);
+
 signals:
     void
     fireStateUpdate(const vs_mac_addr_t mac /*, const vs_snap_pc_state_t state*/);

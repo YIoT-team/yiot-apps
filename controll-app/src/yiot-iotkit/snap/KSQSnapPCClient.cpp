@@ -57,3 +57,12 @@ KSQSnapPCClient::initPC(const vs_mac_addr_t &mac /*, const vs_snap_pc_init_ssh_t
 }
 
 //-----------------------------------------------------------------------------
+
+
+bool
+KSQSnapPCClient::sendCommand(QString mac, QString json) {
+    qDebug() << "MAC: " << mac << " JSON: " << json;
+    return false;
+}
+
+//-----------------------------------------------------------------------------

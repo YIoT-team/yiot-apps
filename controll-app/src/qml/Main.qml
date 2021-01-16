@@ -239,6 +239,10 @@ ApplicationWindow {
 
     function showAbout() {
         w.state = "about"
+                        console.log(">>>")
+                        PCDevice.createUser(pcController, "user123", "pass1")
+
+
     }
 
     function hideAbout() {
@@ -268,6 +272,7 @@ ApplicationWindow {
 
     function showShared() {
         swipeShow(swipeView.sharePageIdx)
+
     }
 
     function showSettings() {
