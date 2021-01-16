@@ -36,6 +36,8 @@
 #include <yiot-iotkit/netif/KSQUdp.h>
 #include <yiot-iotkit/root-of-trust/KSQRoTController.h>
 
+#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
+
 class KSQApplication : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)

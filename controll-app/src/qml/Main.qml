@@ -30,6 +30,7 @@ import "./components"
 import "./components/devices"
 import "./components/Popups"
 import "./theme"
+import "./pages/devices/pc/"
 
 import "../js/devices/pc.js" as PCDevice
 
@@ -74,6 +75,7 @@ ApplicationWindow {
         readonly property int setupDevicePageIdx: 1
         readonly property int sharePageIdx: 2
         readonly property int settingsPageIdx: 3
+        readonly property int rpiSettingsPageIdx: 4 //------------------[FOR TESTING]------------------
 
         property int backPageIdx: devicePageIdx
 
@@ -86,6 +88,7 @@ ApplicationWindow {
         DevicesSetupPage { id: devicesSetupPage }
         SharePage { id: sharePage }
         SettingsPage { id: settingsPage }
+        PCRPiControl { id: rpiSettingsPage } //------------------[FOR TESTING]------------------
     }
 
     // Manual switcher of main pages
@@ -249,6 +252,10 @@ ApplicationWindow {
         w.state = "main"
     }
 
+    function hideAbout() {
+        w.state = "main"
+    }
+
     function showCredLoad() {
         w.state = "deviceSetupProcessing"
     }
@@ -277,6 +284,11 @@ ApplicationWindow {
 
     function showSettings() {
         swipeShow(swipeView.settingsPageIdx)
+    }
+
+    //------------------[FOR TESTING]------------------
+    function showRPiSettings(){
+        swipeShow(swipeView.rpiSettingsPageIdx)
     }
 
     // ------------------------------------------------------------------------
