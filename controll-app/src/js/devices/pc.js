@@ -17,26 +17,42 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_H
-#define YIOT_PC_H
+.pragma library
 
-#include <virgil/iot/status_code/status_code.h>
-#include <virgil/iot/protocols/snap.h>
-#include <common/protocols/snap/pc/pc-structs.h>
+var factorialCount = 0;
 
-#ifdef __cplusplus
-using namespace VirgilIoTKit;
-extern "C" {
-#endif
-
-vs_status_e
-ks_snap_pc_get_info_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, const char *state);
-
-vs_status_e
-ks_snap_pc_command_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, const char *state);
-
-#ifdef __cplusplus
+//-----------------------------------------------------------------------------
+function createUser(user, pass) {
+    console.log("Create User: ", user)
 }
-#endif
 
-#endif // YIOT_PC_H
+//-----------------------------------------------------------------------------
+function setNetworkParams(interface, isStatic, ip, gateway, dns, mask) {
+    console.log("Set network parameters:")
+    console.log("    interface: ", interface)
+    if (isStatic) {
+        console.log("    type   : static")
+        console.log("    ip     :", ip)
+        console.log("    gateway:", gateway)
+        console.log("    dns    :", dns)
+        console.log("    mask   :", mask)
+    } else {
+        console.log("    type: dhcp")
+    }
+}
+
+//-----------------------------------------------------------------------------
+function setupAccessPoint(ssid, mode, password) {
+    console.log("Setup access point:")
+    console.log("    ssid: ", ssid)
+    console.log("    mode: ", mode)
+}
+
+//-----------------------------------------------------------------------------
+function setupVPNRouter(vpnProvider, user, password) {
+    console.log("Setup VPN router:")
+    console.log("    provider: ", vpnProvider)
+    console.log("    user    : ", user)
+}
+
+//-----------------------------------------------------------------------------

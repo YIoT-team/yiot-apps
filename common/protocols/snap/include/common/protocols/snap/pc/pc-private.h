@@ -31,9 +31,10 @@
 #pragma GCC diagnostic ignored "-Wmultichar"
 typedef enum { VS_PC_SERVICE_ID = HTONL_IN_COMPILE_TIME('_PC_') } vs_pc_t;
 
+#define PC_JSON_SZ_MAX (768)
+
 typedef enum {
-    VS_PC_ISSH = HTONL_IN_COMPILE_TIME('ISSH'), /* Init PC as SSH server */
-    VS_PC_IVPN = HTONL_IN_COMPILE_TIME('IVPN'), /* Init PC as VPN router */
+    VS_PC_PCMD = HTONL_IN_COMPILE_TIME('PCMD'), /* PC comManD */
     VS_PC_GPST = HTONL_IN_COMPILE_TIME('GPST'), /* Get Pc STate */
     VS_PC_IPST = HTONL_IN_COMPILE_TIME('IPST'), /* Inform Pc STate */
 } vs_snap_pc_element_e;

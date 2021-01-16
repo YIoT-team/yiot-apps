@@ -50,7 +50,7 @@ public:
 
 signals:
     void
-    fireStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state);
+    fireStateUpdate(const vs_mac_addr_t mac /*, const vs_snap_pc_state_t state*/);
 
     void
     fireStateError(const vs_mac_addr_t mac);
@@ -60,7 +60,7 @@ public slots:
     requestState(const vs_mac_addr_t &mac);
 
     void
-    initPC(const vs_mac_addr_t &mac, const vs_snap_pc_init_ssh_t &initData);
+    initPC(const vs_mac_addr_t &mac /*, const vs_snap_pc_init_ssh_t &initData*/);
 
 private:
     const VirgilIoTKit::vs_snap_service_t *m_snapService;
@@ -69,7 +69,7 @@ private:
     virtual ~KSQSnapPCClient() = default;
 
     static vs_status_e
-    onUpdateState(vs_status_e res, const vs_mac_addr_t *mac, const vs_snap_pc_state_t *data);
+    onUpdateState(vs_status_e res, const vs_mac_addr_t *mac /*, const vs_snap_pc_state_t *data*/);
 };
 
 #endif // _YIOT_QT_SNAP_PC_CLIENT_SERVICE_H_

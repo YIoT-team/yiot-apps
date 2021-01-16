@@ -28,15 +28,15 @@ using namespace VirgilIoTKit;
 KSQSnapPCClient::KSQSnapPCClient() {
     vs_snap_pc_client_service_t impl;
     memset(&impl, 0, sizeof(impl));
-    impl.device_state_update = &KSQSnapPCClient::onUpdateState;
+    // impl.device_state_update = &KSQSnapPCClient::onUpdateState;
     m_snapService = vs_snap_pc_client(impl);
 }
 
 //-----------------------------------------------------------------------------
 vs_status_e
-KSQSnapPCClient::onUpdateState(vs_status_e res, const vs_mac_addr_t *mac, const vs_snap_pc_state_t *data) {
+KSQSnapPCClient::onUpdateState(vs_status_e res, const vs_mac_addr_t *mac /*, const vs_snap_pc_state_t *data*/) {
     if (VS_CODE_OK == res) {
-        emit KSQSnapPCClient::instance().fireStateUpdate(*mac, *data);
+        // emit KSQSnapPCClient::instance().fireStateUpdate(*mac, *data);
     } else {
         emit KSQSnapPCClient::instance().fireStateError(*mac);
     }
@@ -52,8 +52,8 @@ KSQSnapPCClient::requestState(const vs_mac_addr_t &mac) {
 
 //-----------------------------------------------------------------------------
 void
-KSQSnapPCClient::initPC(const vs_mac_addr_t &mac, const vs_snap_pc_init_ssh_t &initData) {
-    vs_snap_pc_init_ssh(vs_snap_netif_routing(), &mac, &initData);
+KSQSnapPCClient::initPC(const vs_mac_addr_t &mac /*, const vs_snap_pc_init_ssh_t &initData*/) {
+    // vs_snap_pc_init_ssh(vs_snap_netif_routing(), &mac, &initData);
 }
 
 //-----------------------------------------------------------------------------

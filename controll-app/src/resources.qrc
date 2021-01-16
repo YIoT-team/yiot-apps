@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/">
+        <!-- Java script -->
+        <file>js/devices/pc.js</file>
+
+        <!-- Icons all -->
         <file>qml/resources/icons/Logo-Big@3x.png</file>
         <file>qml/resources/icons/Plus.png</file>
         <file>qml/resources/icons/Search@2x.png</file>
@@ -19,6 +23,9 @@
         <file>qml/resources/icons/Arrow-Left@2x.png</file>
         <file>qml/resources/icons/Menu@2x.png</file>
         <file>qml/resources/icons/More.png</file>
+        <file>qml/resources/icons/test-qr.png</file>
+
+        <!-- Icons dark theme -->
         <file>qml/resources/icons/dark/bt.png</file>
         <file>qml/resources/icons/dark/wifi.png</file>
         <file>qml/resources/icons/dark/wifi-dimmed.png</file>
@@ -49,6 +56,7 @@
         <file>qml/resources/icons/dark/sun.png</file>
         <file>qml/resources/icons/dark/network.png</file>
 
+        <!-- Icons light theme -->
         <file>qml/resources/icons/light/devices/lamp/mono/off.png</file>
         <file>qml/resources/icons/light/devices/lamp/mono/on.png</file>
         <file>qml/resources/icons/light/devices/lamp/mono/unknown.png</file>
@@ -79,14 +87,15 @@
         <file>qml/resources/icons/light/sun.png</file>
         <file>qml/resources/icons/light/network.png</file>
 
-        <file>qml/resources/icons/test-qr.png</file>
-
+        <!-- Fonts -->
         <file>qml/resources/fonts/Roboto-Medium.ttf</file>
         <file>qml/resources/fonts/Roboto-Regular.ttf</file>
         <file>qml/resources/fonts/Roboto-Bold.ttf</file>
 
+        <!-- QML Main -->
         <file>qml/Main.qml</file>
 
+        <!-- QML Components -->
         <file>qml/components/FormLabel.qml</file>
         <file>qml/components/Container.qml</file>
         <file>qml/components/ImageButton.qml</file>
@@ -114,6 +123,8 @@
         <file>qml/components/RoT/RoTList.qml</file>
         <file>qml/components/RoT/RoTControls.qml</file>
         <file>qml/components/RoT/RoTInfoPopup.qml</file>
+        <file>qml/components/FormThemeList.qml</file>
+        <file>qml/components/SwitchableParam.qml</file>
         <file>qml/components/devices/DeviceInfoPopup.qml</file>
         <file>qml/components/devices/AllDevicesList.qml</file>
         <file>qml/components/devices/DevicesListItem.qml</file>
@@ -128,13 +139,17 @@
         <file>qml/components/devices/setup/LocalDevicesSetupList.qml</file>
         <file>qml/components/devices/setup/ProcessingForm.qml</file>
         <file>qml/components/devices/setup/SetupParamsForm.qml</file>
+
+        <!-- QML Validators -->
         <file>qml/components/validators/ValidatorIPv4.qml</file>
         <file>qml/components/validators/ValidatorUserName.qml</file>
         <file>qml/components/validators/ValidatorPassword.qml</file>
         <file>qml/components/validators/ValidatorDeviceName.qml</file>
 
+        <!-- QML Left Side Menu -->
         <file>qml/pages/LeftSideMenu.qml</file>
 
+        <!-- QML Settings pages -->
         <file>qml/pages/settings/SettingsMenuPage.qml</file>
         <file>qml/pages/settings/WiFiSettingsPage.qml</file>
         <file>qml/pages/settings/WiFiSettingsPage.qml</file>
@@ -142,7 +157,9 @@
         <file>qml/pages/settings/EventsSettingsPage.qml</file>
         <file>qml/pages/settings/RoTSettingsPage.qml</file>
         <file>qml/pages/settings/NetworksSettingsPage.qml</file>
+        <file>qml/pages/settings/ThemeListPage.qml</file>
 
+        <!-- QML Other pages -->
         <file>qml/pages/AboutPage.qml</file>
         <file>qml/pages/SettingsPage.qml</file>
         <file>qml/pages/DevicesPage.qml</file>
@@ -150,18 +167,19 @@
         <file>qml/pages/QRReaderPage.qml</file>
         <file>qml/pages/SharePage.qml</file>
 
+        <!-- QML Device pages -->
         <file>qml/pages/devices/CmdProcessingPage.qml</file>
         <file>qml/pages/devices/lamp/mono/LampMonoControl.qml</file>
         <file>qml/pages/devices/pc/PCRPiControl.qml</file>
         <file>qml/pages/devices/setup/SetupProcessingPage.qml</file>
 
+        <!-- QML Contributers and Sponsors -->
         <file>qml/doers/Contributors.qml</file>
         <file>qml/doers/Sponsors.qml</file>
+
+        <!-- QML Themes -->
         <file>qml/theme/Theme.qml</file>
         <file>qml/base/Platform.qml</file>
-        <file>qml/pages/settings/ThemeListPage.qml</file>
-        <file>qml/components/FormThemeList.qml</file>
-        <file>qml/components/SwitchableParam.qml</file>
 
     </qresource>
 </RCC>

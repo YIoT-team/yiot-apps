@@ -73,9 +73,9 @@ main(int argc, char *argv[]) {
                                                   NULL};
 
     // RPi-specific callbacks
-    vs_snap_pc_server_service_t pc_server_cb = {ks_snap_pc_get_info_cb,  // Get RPi information
+    vs_snap_pc_server_service_t pc_server_cb = {ks_snap_pc_get_info_cb/*,  // Get RPi information
                                                 ks_snap_pc_init_ssh_cb,  // Setup user and SSH server
-                                                ks_snap_pc_init_vpn_cb}; // Setup RPi as VPN router
+                                                ks_snap_pc_init_vpn_cb*/}; // Setup RPi as VPN router
 
     // Security API implementation
     vs_secmodule_impl_t *secmodule_impl = NULL;
