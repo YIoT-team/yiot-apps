@@ -252,10 +252,6 @@ ApplicationWindow {
         w.state = "main"
     }
 
-    function hideAbout() {
-        w.state = "main"
-    }
-
     function showCredLoad() {
         w.state = "deviceSetupProcessing"
     }

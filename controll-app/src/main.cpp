@@ -28,12 +28,11 @@ main(int argc, char *argv[]) {
     QGuiApplication a(argc, argv);
 
     QCoreApplication::setOrganizationName("Kutashenko PE");
-        QCoreApplication::setOrganizationDomain("yiot.gg");
-        QCoreApplication::setApplicationName("YIoT");
-        QSettings settings;
+    QCoreApplication::setOrganizationDomain("yiot.gg");
+    QCoreApplication::setApplicationName("YIoT");
+    QSettings settings;
 
     return KSQApplication().run();
-
 }
 
 //-----------------------------------------------------------------------------
