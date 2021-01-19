@@ -23,8 +23,9 @@ function createUser(mac, user, pass) {
 
     let json = {}
 
-    json.user = user;
-    json.pass = pass;
+    json.command = "script"
+    json.script = "create-user.sh"
+    json.params = [user, pass]
 
     pcController.sendCommand(mac, JSON.stringify(json))
 }
@@ -36,12 +37,9 @@ function setNetworkParams(mac, interface, isStatic, ip, gateway, dns, mask) {
 
     let json = {}
 
-    json.interface = interface;
-    json.isStatic = isStatic;
-    json.ip = ip;
-    json.gateway = gateway;
-    json.dns = dns;
-    json.mask = mask;
+    json.command = "script"
+    json.script = "set-network-params.sh"
+    json.params = [interface, isStatic, ip, gateway, dns, mask]
 
     if (isStatic) {
         console.log("    type   : static")
@@ -64,9 +62,9 @@ function setupAccessPoint(mac, ssid, mode, password) {
 
     let json = {}
 
-    json.ssid = ssid;
-    json.mode = mode;
-    json.password = password;
+    json.command = "script"
+    json.script = "setup-access-point.sh"
+    json.params = [ssid, mode, password]
 
     pcController.sendCommand(mac, JSON.stringify(json))
 }
@@ -79,9 +77,9 @@ function setupVPNRouter(mac, vpnProvider, user, password) {
 
     let json = {}
 
-    json.vpnProvider = vpnProvider;
-    json.user = user;
-    json.password = password;
+    json.command = "script"
+    json.script = "setup-vpn-router.sh"
+    json.params = [vpnProvider, user, password]
 
     pcController.sendCommand(mac, JSON.stringify(json))
 }

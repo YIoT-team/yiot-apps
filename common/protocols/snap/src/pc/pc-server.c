@@ -70,17 +70,21 @@ _init_pc_cmd_request_processor(const struct vs_netif_t *netif,
                                uint16_t *response_sz) {
     CHECK_NOT_ZERO_RET(eth_header, VS_CODE_ERR_ZERO_ARGUMENT);
     CHECK_NOT_ZERO_RET(request, VS_CODE_ERR_ZERO_ARGUMENT);
+    CHECK_RET(request_sz < PC_JSON_SZ_MAX, VS_CODE_ERR_ZERO_ARGUMENT, "Request too long");
 
-    //    if (_impl.init_pc_ssh) {
-    //        vs_snap_pc_init_ssh_t *init = (vs_snap_pc_init_ssh_t *)request;
-    //
-    //        vs_status_e res = _impl.init_pc_ssh(netif, eth_header->src, init);
-    //        if (VS_CODE_OK != res) {
-    //            return res;
-    //        }
-    //
-    //        return _fill_current_state(netif, eth_header, response, response_buf_sz, response_sz);
-    //    }
+    uint16_t json_sz;
+    const char *json = (const char *)request;
+    json_sz = strnlen(json, request_sz);
+    CHECK_RET(json_sz < request_sz, VS_CODE_ERR_INCORRECT_ARGUMENT, "Incorrect request");
+
+    if (_impl.pc_cmd) {
+        vs_status_e res = _impl.pc_cmd(netif, eth_header->src, json);
+        if (VS_CODE_OK != res) {
+            return res;
+        }
+
+        return _fill_current_state(netif, (char *)response, response_buf_sz, response_sz);
+    }
 
     return VS_CODE_ERR_NOT_IMPLEMENTED;
 }

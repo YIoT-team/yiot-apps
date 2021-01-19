@@ -32,8 +32,6 @@ import "./components/Popups"
 import "./theme"
 import "./pages/devices/pc/"
 
-import "../js/devices/pc.js" as PCDevice
-
 ApplicationWindow {
 
     id: applicationWindow
