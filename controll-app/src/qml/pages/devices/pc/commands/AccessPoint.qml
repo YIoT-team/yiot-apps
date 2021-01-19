@@ -57,12 +57,12 @@ Page {
                 FormLabel {
                     id: comboBoxLabel
                     text: "Select encryption mode:"
-                    Layout.leftMargin: 20
+                    Layout.leftMargin: 31
                     Layout.bottomMargin: 0
                 }
 
                 FormComboBox {
-                    Layout.leftMargin: 20
+                    Layout.leftMargin: 12
                     Layout.topMargin: 0
                     items: ["Mode 1", "Mode 2", "Mode 3"]
                 }
@@ -78,6 +78,7 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
+                                                //        PCDevice.setNetworkParams(rpiPage.controller.macAddr, "wifi", true, "192.168.0.105", "192.168.0.1", "8.8.8.8", "255.255.255.0")
                     }
                 }
 

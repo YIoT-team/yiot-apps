@@ -22,16 +22,17 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import "../../../../components"
+import "../../../../../js/devices/pc.js" as PCDevice
 
 Page {
-    id: staticIpPage
+    id: createUserPage
 
     background: Rectangle {
         color: "transparent"
     }
 
     header: Header {
-        title: qsTr("Static IP")
+        title: qsTr("Create User")
         backAction: function() { showRPiSettings() }
     }
 
@@ -47,41 +48,22 @@ Page {
 
                 spacing: 15
 
-                FormLabel {
-                    id: comboBoxLabel
-                    text: "Select network interface:"
-                    Layout.leftMargin: 20
-                    Layout.bottomMargin: 0
-                }
-
-                FormComboBox {
-                    Layout.leftMargin: 20
-                    Layout.topMargin: 0
-                    items: ["wlan0", "eth0"]
-                }
-
                 InputTextField {
-                    id: deviceIP
-                    label: qsTr("Device IP")
-                    placeholderText: qsTr("Enter device static IP addres")
+                    id: userName
+                    label: qsTr("User name")
+                    placeholderText: qsTr("Enter new user name")
                 }
 
-                InputTextField {
-                    id: gatewayIP
-                    label: qsTr("Gateway IP")
-                    placeholderText: qsTr("Enter gateway IP addres")
+                Password {
+                    id: pass1
+                    label: qsTr("Password")
+                    placeholderText: qsTr("Enter new password")
                 }
 
-                InputTextField {
-                    id: mask
-                    label: qsTr("Mask")
-                    placeholderText: qsTr("Enter network mask")
-                }
-
-                InputTextField {
-                    id: dns
-                    label: qsTr("DNS")
-                    placeholderText: qsTr("8.8.8.8")
+                Password {
+                    id: pass2
+                    label: qsTr("Password check")
+                    placeholderText: qsTr("Enter the password again")
                 }
 
                 FormSecondaryButton {
@@ -89,10 +71,12 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
+                        PCDevice.createUser(rpiPage.controller.macAddr, text, pass1.text)
                     }
                 }
 
                 Item {
+                    Layout.fillWidth: true
                     Layout.fillHeight: true
                 }
             }

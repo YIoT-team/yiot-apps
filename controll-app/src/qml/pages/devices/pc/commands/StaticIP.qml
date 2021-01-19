@@ -22,17 +22,16 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import "../../../../components"
-import "../../../../../js/devices/pc.js" as PCDevice
 
 Page {
-    id: createUserPage
+    id: staticIpPage
 
     background: Rectangle {
         color: "transparent"
     }
 
     header: Header {
-        title: qsTr("Create User")
+        title: qsTr("Static IP")
         backAction: function() { showRPiSettings() }
     }
 
@@ -48,32 +47,49 @@ Page {
 
                 spacing: 15
 
+                FormLabel {
+                    id: comboBoxLabel
+                    text: "Select network interface:"
+                    Layout.leftMargin: 31
+                    Layout.bottomMargin: 0
+                }
+
+                FormComboBox {
+                    Layout.leftMargin: 12
+                    Layout.topMargin: 0
+                    items: ["wlan0", "eth0"]
+                }
+
                 InputTextField {
-                    id: userName
-                    label: qsTr("User name")
-                    placeholderText: qsTr("Enter new user name")
+                    id: deviceIP
+                    label: qsTr("Device IP")
+                    placeholderText: qsTr("Enter device static IP addres")
                 }
 
-                Password {
-                    id: pass1
-                    label: qsTr("Password")
-                    placeholderText: qsTr("Enter new password")
+                InputTextField {
+                    id: gatewayIP
+                    label: qsTr("Gateway IP")
+                    placeholderText: qsTr("Enter gateway IP addres")
                 }
 
-                Password {
-                    id: pass2
-                    label: qsTr("Password check")
-                    placeholderText: qsTr("Enter the password again")
+                InputTextField {
+                    id: mask
+                    label: qsTr("Mask")
+                    placeholderText: qsTr("Enter network mask")
+                }
+
+                InputTextField {
+                    id: dns
+                    label: qsTr("DNS")
+                    placeholderText: qsTr("8.8.8.8")
                 }
 
                 FormSecondaryButton {
                     Layout.topMargin: 20
                     Layout.bottomMargin: 10
-                    Layout.leftMargin: 60
                     text: qsTr("Save")
                     onClicked: {
-                        PCDevice.createUser(rpiPage.controller.macAddr, "user123", "pass1")
-                        //        PCDevice.setNetworkParams("02:02:02:02:02:02", "wifi", true, "192.168.0.105", "192.168.0.1", "8.8.8.8", "255.255.255.0")
+                                                //        PCDevice.setNetworkParams(rpiPage.controller.macAddr, "wifi", true, "192.168.0.105", "192.168.0.1", "8.8.8.8", "255.255.255.0")
                     }
                 }
 
