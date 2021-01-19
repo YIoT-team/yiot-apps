@@ -79,7 +79,7 @@ private slots:
 
     // SNAP::PC
     void
-    onPCStateUpdate(const vs_mac_addr_t mac /*, const vs_snap_pc_state_t state*/);
+    onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state);
 
     void
     onPCError(const vs_mac_addr_t mac);

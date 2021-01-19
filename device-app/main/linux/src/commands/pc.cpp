@@ -34,13 +34,17 @@ static const auto kDelayMs = std::chrono::milliseconds(200);
 
 //-----------------------------------------------------------------------------
 vs_status_e
-ks_snap_pc_get_info_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, const char *state) {
-    //    CHECK_NOT_ZERO_RET(state, VS_CODE_ERR_ZERO_ARGUMENT);
-    //
-    //    state->internet_present = 1;
-    //    state->wifi_mode = KS_PC_WIFI_STA;
-    //    state->wifi_ipv4 = 0x1234;
-    //    state->ethernet_ipv4 = 0xABCD;
+ks_snap_pc_get_info_cb(const vs_netif_t *netif, char *state, const uint16_t state_buf_sz, uint16_t *state_sz) {
+    CHECK_NOT_ZERO_RET(state, VS_CODE_ERR_ZERO_ARGUMENT);
+    CHECK_NOT_ZERO_RET(state_sz, VS_CODE_ERR_ZERO_ARGUMENT);
+    CHECK_NOT_ZERO_RET(state_buf_sz, VS_CODE_ERR_ZERO_ARGUMENT);
+
+    static const char *state_mask = "{\"inet\":%s,\"wifi\":\"%s\",\"wifi_ipv4\":\"%s\",\"eth_ipv4\":\"%s\"}";
+    memset(state, 0, state_buf_sz);
+
+    snprintf(state, state_buf_sz - 1, state_mask, "false", "sta", "10.220.0.7", "192.168.0.20");
+
+    *state_sz = strlen(state) + 1;
 
     return VS_CODE_OK;
 }

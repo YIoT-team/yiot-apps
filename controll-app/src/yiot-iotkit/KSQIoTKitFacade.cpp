@@ -63,7 +63,7 @@ KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &imp
     qRegisterMetaType<VSQDeviceInfo>("VSQDeviceInfo");
     qRegisterMetaType<QAbstractSocket::SocketState>();
     qRegisterMetaType<vs_mac_addr_t>("vs_mac_addr_t");
-    // qRegisterMetaType<vs_snap_pc_state_t>("vs_snap_pc_state_t");
+    qRegisterMetaType<vs_snap_pc_state_t>("vs_snap_pc_state_t");
 
     // Process events in separate thread
     m_snapProcessorThread = new QThread();

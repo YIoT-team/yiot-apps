@@ -30,7 +30,7 @@ extern "C" {
 #endif
 
 vs_status_e
-ks_snap_pc_get_info_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, const char *state);
+ks_snap_pc_get_info_cb(const vs_netif_t *netif, char *state, const uint16_t state_buf, uint16_t *state_sz);
 
 vs_status_e
 ks_snap_pc_command_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, const char *state);

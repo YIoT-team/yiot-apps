@@ -31,7 +31,6 @@ extern "C" {
 #endif
 
 typedef vs_status_e (*vs_snap_pc_get_state_server_cb_t)(const vs_netif_t *netif,
-                                                        vs_mac_addr_t sender_mac,
                                                         char *state,
                                                         const uint16_t buf_sz,
                                                         uint16_t *state_sz);

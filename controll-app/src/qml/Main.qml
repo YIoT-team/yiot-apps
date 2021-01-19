@@ -108,32 +108,6 @@ ApplicationWindow {
     SettingsStorage { id: settings }
 
     Component.onCompleted: {
-
-        PCDevice.setNetworkParams("wifi", true, "192.168.0.105", "192.168.0.1", "8.8.8.8", "255.255.255.0")
-
-        //var obj = JSON.parse('{"firstName":"John", "lastName":"Doe"}');
-        // console.log(obj.firstName);
-
-        var jsonString = '{"Theoryname": "rythmusname", "URL1": "url1", "URL2":"url2","URL3": "url3"}';
-        var JsonObject= JSON.parse(jsonString);
-    	//retrieve values from JSON again
-    	var aString = JsonObject.Theoryname;
-    	var bString = JsonObject.URL1;
-    	var cString = JsonObject.URL2;
-    	var dString = JsonObject.URL3;
-    	console.log(aString);
-    	console.log(bString);
-    	console.log(cString);
-    	console.log(dString);
-
-    	var obj = new Object();
-        obj.name = "Raj";
-        obj.age  = 32;
-        obj.married = false;
-        var jsonString = JSON.stringify(obj);
-
-        console.log(jsonString);
-
         settings.loaded.connect(function() {
             app.updateDevices()
         })
@@ -239,10 +213,6 @@ ApplicationWindow {
 
     function showAbout() {
         w.state = "about"
-                        console.log(">>>")
-                        PCDevice.createUser(pcController, "user123", "pass1")
-
-
     }
 
     function hideAbout() {
