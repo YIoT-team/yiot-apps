@@ -57,12 +57,12 @@ Page {
                 FormLabel {
                     id: comboBoxLabel
                     text: "Select encryption mode:"
-                    Layout.leftMargin: 20
+                    Layout.leftMargin: 31
                     Layout.bottomMargin: 0
                 }
 
                 FormComboBox {
-                    Layout.leftMargin: 20
+                    Layout.leftMargin: 12
                     Layout.topMargin: 0
                     items: ["Mode 1", "Mode 2", "Mode 3"]
                 }

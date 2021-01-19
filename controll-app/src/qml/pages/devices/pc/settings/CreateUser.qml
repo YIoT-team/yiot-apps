@@ -68,10 +68,13 @@ Page {
                 FormSecondaryButton {
                     Layout.topMargin: 20
                     Layout.bottomMargin: 10
-                    Layout.leftMargin: 60
                     text: qsTr("Save")
                     onClicked: {
                     }
+                }
+
+                Item {
+                    Layout.fillWidth: true
                 }
 
                 Item {

@@ -55,6 +55,10 @@
         <file>qml/resources/icons/dark/moon.png</file>
         <file>qml/resources/icons/dark/sun.png</file>
         <file>qml/resources/icons/dark/network.png</file>
+		<file>qml/resources/icons/dark/access-point.png</file>
+        <file>qml/resources/icons/dark/create-user.png</file>
+        <file>qml/resources/icons/dark/static-ip.png</file>
+        <file>qml/resources/icons/dark/vpn-router.png</file>
 
         <!-- Icons light theme -->
         <file>qml/resources/icons/light/devices/lamp/mono/off.png</file>
@@ -86,6 +90,10 @@
         <file>qml/resources/icons/light/moon.png</file>
         <file>qml/resources/icons/light/sun.png</file>
         <file>qml/resources/icons/light/network.png</file>
+		<file>qml/resources/icons/light/access-point.png</file>
+        <file>qml/resources/icons/light/create-user.png</file>
+        <file>qml/resources/icons/light/static-ip.png</file>
+        <file>qml/resources/icons/light/vpn-router.png</file>
 
         <!-- Fonts -->
         <file>qml/resources/fonts/Roboto-Medium.ttf</file>

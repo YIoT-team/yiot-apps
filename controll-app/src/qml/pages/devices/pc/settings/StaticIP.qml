@@ -50,12 +50,12 @@ Page {
                 FormLabel {
                     id: comboBoxLabel
                     text: "Select network interface:"
-                    Layout.leftMargin: 20
+                    Layout.leftMargin: 31
                     Layout.bottomMargin: 0
                 }
 
                 FormComboBox {
-                    Layout.leftMargin: 20
+                    Layout.leftMargin: 12
                     Layout.topMargin: 0
                     items: ["wlan0", "eth0"]
                 }

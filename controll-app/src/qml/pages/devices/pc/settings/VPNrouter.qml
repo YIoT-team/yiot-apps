@@ -50,12 +50,12 @@ Page {
                 FormLabel {
                     id: comboBoxLabel
                     text: "Select VPN provider:"
-                    Layout.leftMargin: 20
+                    Layout.leftMargin: 31
                     Layout.bottomMargin: 0
                 }
 
                 FormComboBox {
-                    Layout.leftMargin: 20
+                    Layout.leftMargin: 12
                     Layout.topMargin: 0
                     items: ["VPN1", "VPN2"]
                 }

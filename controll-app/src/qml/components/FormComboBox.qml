@@ -4,102 +4,116 @@ import QtQuick.Layouts 1.5
 
 import "../theme"
 
-Rectangle {
-    id: comboBox
+ColumnLayout {
+    id: columnLayout
+    property alias items: comboBox.items
 
-    property variant items: []
-
-    property alias selectedItem: chosenItemText.text
-    property alias selectedIndex: listView.currentIndex
-    signal comboClicked
-    width: 300
-    height: 30
+    Layout.fillWidth: true
+    Layout.preferredHeight: 30
+    Layout.maximumWidth: parent.width - 60
+    Layout.alignment: Qt.AlignHCenter
     z: 100
-    smooth: true
-    color: Theme.mainBackgroundColor
+
+    spacing: 0
 
     Rectangle {
-        id: chosenItem
-        radius: 4
-        width: parent.width
-        height: comboBox.height
-        color: Theme.mainBackgroundColor
-        border.color: Theme.buttonPrimaryColor
-        border.width: 2
+        id: comboBox
+
+        property variant items: []
+
+        property alias selectedItem: chosenItemText.text
+        property alias selectedIndex: listView.currentIndex
+        signal comboClicked
+        Layout.fillWidth: true
+        Layout.preferredWidth: parent.width
+        Layout.alignment: Qt.AlignHCenter
+        height: 30
         smooth: true
+        color: Theme.mainBackgroundColor
 
-        Text {
-            anchors.margins: 8
-            anchors.fill: parent
-            id: chosenItemText
-            text: comboBox.items[0]
-            color: Theme.buttonPrimaryColor
-            font.family: Theme.mainFont
-            font.pointSize: 14
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
+        Rectangle {
+            id: chosenItem
+            radius: 4
+            width: parent.width
+            height: comboBox.height
+            color: Theme.mainBackgroundColor
+            border.color: Theme.buttonPrimaryColor
+            border.width: 2
             smooth: true
-        }
 
-                MouseArea {
-                    anchors.fill: parent;
-                    onClicked: {
-                        comboBox.state = comboBox.state==="dropDown"?"":"dropDown"
-                    }
-                }
+            Text {
+                anchors.margins: 8
+                anchors.fill: parent
+                id: chosenItemText
+                text: comboBox.items[0]
+                color: Theme.buttonPrimaryColor
+                font.family: Theme.mainFont
+                font.pointSize: 14
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                smooth: true
             }
 
-            Rectangle {
-                id: dropDown
-                width: comboBox.width
-                height: 0
-                clip: true
-                radius: 4
-                anchors.top: chosenItem.bottom
-                anchors.margins: 2
-                color: Theme.mainBackgroundColor
-                border.color: Theme.buttonPrimaryColor
-                border.width: 2
-
-                ListView {
-                    id:listView
-                    height: 500
-                    model: comboBox.items
-                    currentIndex: 0
-                    delegate: Item{
-                        width: comboBox.width
-                        height: comboBox.height
-
-                        Text {
-                            text: modelData
-                            anchors.top: parent.top
-                            anchors.left: parent.left
-                            anchors.margins: 5
-                            color: Theme.buttonPrimaryColor
-
+                    MouseArea {
+                        anchors.fill: parent;
+                        onClicked: {
+                            comboBox.state = comboBox.state==="dropDown"?"":"dropDown"
                         }
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                comboBox.state = ""
-                                var prevSelection = chosenItemText.text
-                                chosenItemText.text = modelData
-                                if(chosenItemText.text != prevSelection){
-                                    comboBox.comboClicked();
+                    }
+                }
+
+                Rectangle {
+                    id: dropDown
+                    width: comboBox.width
+                    height: 0
+                    clip: true
+                    radius: 4
+                    anchors.top: chosenItem.bottom
+                    anchors.margins: 2
+                    color: Theme.mainBackgroundColor
+                    border.color: Theme.buttonPrimaryColor
+                    border.width: 2
+
+                    ListView {
+                        id:listView
+                        height: 500
+                        model: comboBox.items
+                        currentIndex: 0
+                        delegate: Item{
+                            width: comboBox.width
+                            height: comboBox.height
+
+                            Text {
+                                text: modelData
+                                anchors.top: parent.top
+                                anchors.left: parent.left
+                                anchors.margins: 5
+                                color: Theme.buttonPrimaryColor
+
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    comboBox.state = ""
+                                    var prevSelection = chosenItemText.text
+                                    chosenItemText.text = modelData
+                                    if(chosenItemText.text != prevSelection){
+                                        comboBox.comboClicked();
+                                    }
+                                    listView.currentIndex = index;
                                 }
-                                listView.currentIndex = index;
                             }
                         }
                     }
                 }
-            }
 
-            states: State {
-                name: "dropDown";
-                PropertyChanges { target: dropDown; height:40*comboBox.items.length }
-            }
+                states: State {
+                    name: "dropDown";
+                    PropertyChanges { target: dropDown; height:40*comboBox.items.length }
+                }
 
-            transitions: Transition {
-                NumberAnimation { target: dropDown; properties: "height"; easing.type: Easing.OutExpo; duration: 1000 }
+                transitions: Transition {
+                    NumberAnimation { target: dropDown; properties: "height"; easing.type: Easing.OutExpo; duration: 1000 }
+                }
             }
-        }
+}
