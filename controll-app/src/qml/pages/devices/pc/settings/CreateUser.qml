@@ -17,59 +17,66 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#include <QtCore>
-#include <QGuiApplication>
+import "../../../../components"
 
-#include <KSQWiFiEnumerator.h>
+Page {
+    id: createUserPage
 
-#include <controllers/KSQBLEController.h>
-#include <controllers/KSQBlankDevicesController.h>
-#include <controllers/KSQUXSimplifyController.h>
+    background: Rectangle {
+        color: "transparent"
+    }
 
-#include <devices/KSQDevices.h>
+    header: Header {
+        title: qsTr("Create User")
+        backAction: function() { showRPiSettings() }
+    }
 
-#include <virgil/iot/qt/VSQIoTKit.h>
+    Form {
+            id: form
+            stretched: true
 
-#include <yiot-iotkit/netif/KSQUdp.h>
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
+            ColumnLayout {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.topMargin: 40
+                Layout.bottomMargin: 20
 
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
+                spacing: 15
 
-class KSQApplication : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
-public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
+                InputTextField {
+                    id: userName
+                    label: qsTr("User name")
+                    placeholderText: qsTr("Enter new user name")
+                }
 
-    int
-    run();
+                Password {
+                    id: pass1
+                    label: qsTr("Password")
+                    placeholderText: qsTr("Enter new password")
+                }
 
-    QString
-    organizationDisplayName() const;
+                Password {
+                    id: pass2
+                    label: qsTr("Password check")
+                    placeholderText: qsTr("Enter the password again")
+                }
 
-    QString
-    applicationVersion() const;
+                FormSecondaryButton {
+                    Layout.topMargin: 20
+                    Layout.bottomMargin: 10
+                    Layout.leftMargin: 60
+                    text: qsTr("Save")
+                    onClicked: {
+                    }
+                }
 
-    QString
-    applicationDisplayName() const;
-
-    Q_INVOKABLE void
-    updateDevices();
-
-private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    QSharedPointer<KSQBLEController> m_bleController;
-    QSharedPointer<KSQBlankDevicesController> m_localBlankDevicesController;
-    QSharedPointer<KSQUXSimplifyController> m_uxController;
-    QSharedPointer<KSQUdp> m_netifUdp;
-
-    KSQDevices m_deviceControllers;
-};
-
-#endif // PROVISION_QT_APP_H
+                Item {
+                    Layout.fillHeight: true
+                }
+            }
+        }
+}

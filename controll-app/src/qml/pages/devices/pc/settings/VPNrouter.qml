@@ -17,59 +17,72 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#include <QtCore>
-#include <QGuiApplication>
+import "../../../../components"
 
-#include <KSQWiFiEnumerator.h>
+Page {
+    id: vpnRouterPage
 
-#include <controllers/KSQBLEController.h>
-#include <controllers/KSQBlankDevicesController.h>
-#include <controllers/KSQUXSimplifyController.h>
+    background: Rectangle {
+        color: "transparent"
+    }
 
-#include <devices/KSQDevices.h>
+    header: Header {
+        title: qsTr("VPN Router")
+        backAction: function() { showRPiSettings() }
+    }
 
-#include <virgil/iot/qt/VSQIoTKit.h>
+    Form {
+            id: form
+            stretched: true
 
-#include <yiot-iotkit/netif/KSQUdp.h>
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
+            ColumnLayout {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.topMargin: 40
+                Layout.bottomMargin: 20
 
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
+                spacing: 15
 
-class KSQApplication : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
-public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
+                FormLabel {
+                    id: comboBoxLabel
+                    text: "Select VPN provider:"
+                    Layout.leftMargin: 20
+                    Layout.bottomMargin: 0
+                }
 
-    int
-    run();
+                FormComboBox {
+                    Layout.leftMargin: 20
+                    Layout.topMargin: 0
+                    items: ["VPN1", "VPN2"]
+                }
 
-    QString
-    organizationDisplayName() const;
+                InputTextField {
+                    id: user
+                    label: qsTr("User")
+                    placeholderText: qsTr("Enter user name")
+                }
 
-    QString
-    applicationVersion() const;
+                Password {
+                    id: pass
+                    label: qsTr("Password")
+                    placeholderText: qsTr("Enter user password")
+                }
 
-    QString
-    applicationDisplayName() const;
+                FormSecondaryButton {
+                    Layout.topMargin: 20
+                    Layout.bottomMargin: 10
+                    text: qsTr("Save")
+                    onClicked: {
+                    }
+                }
 
-    Q_INVOKABLE void
-    updateDevices();
-
-private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    QSharedPointer<KSQBLEController> m_bleController;
-    QSharedPointer<KSQBlankDevicesController> m_localBlankDevicesController;
-    QSharedPointer<KSQUXSimplifyController> m_uxController;
-    QSharedPointer<KSQUdp> m_netifUdp;
-
-    KSQDevices m_deviceControllers;
-};
-
-#endif // PROVISION_QT_APP_H
+                Item {
+                    Layout.fillHeight: true
+                }
+            }
+        }
+}
