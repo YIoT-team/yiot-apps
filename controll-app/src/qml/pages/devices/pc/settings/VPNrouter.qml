@@ -17,57 +17,72 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_SNAP_SERVICES_PC_SERVER_H
-#define YIOT_SNAP_SERVICES_PC_SERVER_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#if PC_SERVER
+import "../../../../components"
 
-#include <virgil/iot/protocols/snap/snap-structs.h>
-#include <common/protocols/snap/pc/pc-structs.h>
+Page {
+    id: vpnRouterPage
 
-#ifdef __cplusplus
-namespace VirgilIoTKit {
-extern "C" {
-#endif
+    background: Rectangle {
+        color: "transparent"
+    }
 
-typedef vs_status_e (*vs_snap_pc_get_state_server_cb_t)(const vs_netif_t *netif,
-                                                        char *state,
-                                                        const uint16_t buf_sz,
-                                                        uint16_t *state_sz);
+    header: Header {
+        title: qsTr("VPN Router")
+        backAction: function() { showRPiSettings() }
+    }
 
-typedef vs_status_e (*vs_snap_pc_command_server_cb_t)(const vs_netif_t *netif,
-                                                      vs_mac_addr_t sender_mac,
-                                                      const char *command_json);
+    Form {
+            id: form
+            stretched: true
 
-/** PC server implementations
- *
- * \note Any callback can be NULL. In this case, there will be no actions with requests.
- *
- */
-typedef struct {
-    vs_snap_pc_get_state_server_cb_t get_data; /**< Get data to send it over snap */
-    vs_snap_pc_command_server_cb_t pc_cmd;     /**< PC Command */
-} vs_snap_pc_server_service_t;
+            ColumnLayout {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.topMargin: 40
+                Layout.bottomMargin: 20
 
-/** PC Server SNAP Service implementation
- *
- * This call returns PC server implementation. It must be called before any PC call.
- *
- * \param[in] impl Snap PC Server functions implementation.
- *
- * \return #vs_snap_service_t PC service description. Use this pointer to call #vs_snap_register_service.
- */
-const vs_snap_service_t *
-vs_snap_pc_server(vs_snap_pc_server_service_t impl);
+                spacing: 15
 
-vs_status_e
-vs_snap_pc_start_notification(const vs_netif_t *netif);
+                FormLabel {
+                    id: comboBoxLabel
+                    text: "Select VPN provider:"
+                    Layout.leftMargin: 20
+                    Layout.bottomMargin: 0
+                }
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace VirgilIoTKit
-#endif
+                FormComboBox {
+                    Layout.leftMargin: 20
+                    Layout.topMargin: 0
+                    items: ["VPN1", "VPN2"]
+                }
 
-#endif // PC_SERVER
+                InputTextField {
+                    id: user
+                    label: qsTr("User")
+                    placeholderText: qsTr("Enter user name")
+                }
 
-#endif // YIOT_SNAP_SERVICES_PC_SERVER_H
+                Password {
+                    id: pass
+                    label: qsTr("Password")
+                    placeholderText: qsTr("Enter user password")
+                }
+
+                FormSecondaryButton {
+                    Layout.topMargin: 20
+                    Layout.bottomMargin: 10
+                    text: qsTr("Save")
+                    onClicked: {
+                    }
+                }
+
+                Item {
+                    Layout.fillHeight: true
+                }
+            }
+        }
+}

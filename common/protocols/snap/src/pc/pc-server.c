@@ -17,6 +17,8 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
+// #define PC_SERVER 1
+
 #if PC_SERVER
 
 #include <common/protocols/snap/pc/pc-server.h>
@@ -34,25 +36,13 @@ static vs_snap_pc_server_service_t _impl = {0};
 
 //-----------------------------------------------------------------------------
 static vs_status_e
-_fill_current_state(const struct vs_netif_t *netif,
-                    const vs_ethernet_header_t *eth_header,
-                    uint8_t *response,
-                    const uint16_t response_buf_sz,
-                    uint16_t *response_sz) {
-    //    vs_status_e res;
-    //    CHECK_NOT_ZERO_RET(eth_header, VS_CODE_ERR_ZERO_ARGUMENT);
-    //    CHECK_RET(response_buf_sz >= sizeof(vs_snap_pc_state_t), VS_CODE_ERR_TOO_SMALL_BUFFER, "Small buffer");
-    //
-    //    if (_impl.get_data) {
-    //        vs_snap_pc_state_t *state = (vs_snap_pc_state_t *)response;
-    //        res = _impl.get_data(netif, eth_header->src, state);
-    //
-    //        if (VS_CODE_OK == res) {
-    //            // TODO: Normalize byte order
-    //            *response_sz = sizeof(vs_snap_pc_state_t);
-    //        }
-    //        return res;
-    //    }
+_fill_current_state(const struct vs_netif_t *netif, char *json, const uint16_t json_buf_sz, uint16_t *json_sz) {
+    vs_status_e res;
+
+    if (_impl.get_data) {
+        res = _impl.get_data(netif, json, json_buf_sz, json_sz);
+        return res;
+    }
 
     return VS_CODE_ERR_NOT_IMPLEMENTED;
 }
@@ -66,7 +56,7 @@ _get_pc_state_request_processor(const struct vs_netif_t *netif,
                                 uint8_t *response,
                                 const uint16_t response_buf_sz,
                                 uint16_t *response_sz) {
-    return _fill_current_state(netif, eth_header, response, response_buf_sz, response_sz);
+    return _fill_current_state(netif, (char *)response, response_buf_sz, response_sz);
 }
 
 //-----------------------------------------------------------------------------
@@ -78,9 +68,9 @@ _init_pc_cmd_request_processor(const struct vs_netif_t *netif,
                                uint8_t *response,
                                const uint16_t response_buf_sz,
                                uint16_t *response_sz) {
-    //    CHECK_NOT_ZERO_RET(eth_header, VS_CODE_ERR_ZERO_ARGUMENT);
-    //    CHECK_NOT_ZERO_RET(request, VS_CODE_ERR_ZERO_ARGUMENT);
-    //
+    CHECK_NOT_ZERO_RET(eth_header, VS_CODE_ERR_ZERO_ARGUMENT);
+    CHECK_NOT_ZERO_RET(request, VS_CODE_ERR_ZERO_ARGUMENT);
+
     //    if (_impl.init_pc_ssh) {
     //        vs_snap_pc_init_ssh_t *init = (vs_snap_pc_init_ssh_t *)request;
     //
@@ -98,29 +88,20 @@ _init_pc_cmd_request_processor(const struct vs_netif_t *netif,
 //-----------------------------------------------------------------------------
 vs_status_e
 vs_snap_pc_start_notification(const vs_netif_t *netif) {
+    if (!vs_provision_is_ready()) {
+        return VS_CODE_COMMAND_NO_RESPONSE;
+    }
 
-    //    if (!vs_provision_is_ready()) {
-    //        return VS_CODE_COMMAND_NO_RESPONSE;
-    //    }
-    //
-    //    vs_snap_pc_state_t state_data;
-    //    vs_status_e ret_code;
-    //
-    //    uint16_t request_sz = 0;
-    //    vs_ethernet_header_t eth_header;
-    //    memset(&eth_header, 0xFF, sizeof(eth_header));
-    //    STATUS_CHECK_RET(_fill_current_state(netif, &eth_header, (uint8_t *)&state_data, sizeof(state_data),
-    //    &request_sz),
-    //                     "Cannot fill PC state data");
-    //
-    //    // Send request
-    //    STATUS_CHECK_RET(vs_snap_send_request(netif,
-    //                                          vs_snap_broadcast_mac(),
-    //                                          VS_PC_SERVICE_ID,
-    //                                          VS_PC_IPST,
-    //                                          (uint8_t *)&state_data,
-    //                                          sizeof(state_data)),
-    //                     "Cannot send data");
+    vs_status_e ret_code;
+    char json[PC_JSON_SZ_MAX] = {0};
+    uint16_t json_sz;
+
+    STATUS_CHECK_RET(_fill_current_state(netif, json, PC_JSON_SZ_MAX, &json_sz), "Cannot fill PC state data");
+
+    // Send request
+    STATUS_CHECK_RET(vs_snap_send_request(
+                             netif, vs_snap_broadcast_mac(), VS_PC_SERVICE_ID, VS_PC_IPST, (uint8_t *)&json, json_sz),
+                     "Cannot send data");
 
     return VS_CODE_OK;
 }

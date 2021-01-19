@@ -89,5 +89,7 @@ ListView {
     function provisionLocalDevice(mac) {
         showCredLoad()
         localBlankDevicesController.provisionDevice(mac)
+//        PCDevice.createUser(mac, "user123", "pass1")
+//        PCDevice.setNetworkParams("02:02:02:02:02:02", "wifi", true, "192.168.0.105", "192.168.0.1", "8.8.8.8", "255.255.255.0")
     }
 }

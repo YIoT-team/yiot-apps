@@ -30,32 +30,6 @@
 #endif
 
 //-----------------------------------------------------------------------------
-#if defined(Q_OS_WIN32)
-static int
-inet_pton(int af, const char *src, void *dst) {
-    struct sockaddr_storage ss;
-    int size = sizeof(ss);
-    char src_copy[INET6_ADDRSTRLEN + 1];
-
-    ZeroMemory(&ss, sizeof(ss));
-    /* stupid non-const API */
-    strncpy(src_copy, src, INET6_ADDRSTRLEN + 1);
-    src_copy[INET6_ADDRSTRLEN] = 0;
-
-    if (WSAStringToAddress(src_copy, af, NULL, (struct sockaddr *)&ss, &size) == 0) {
-        switch (af) {
-        case AF_INET:
-            *(struct in_addr *)dst = ((struct sockaddr_in *)&ss)->sin_addr;
-            return 1;
-        case AF_INET6:
-            *(struct in6_addr *)dst = ((struct sockaddr_in6 *)&ss)->sin6_addr;
-            return 1;
-        }
-    }
-    return 0;
-}
-#endif // Q_OS_WIN32
-//-----------------------------------------------------------------------------
 KSQPCController::KSQPCController() {
     // SNAP::INFO service
     connect(&VSQSnapInfoClient::instance(),
@@ -110,62 +84,62 @@ KSQPCController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
 
 //-----------------------------------------------------------------------------
 void
-KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac /*, const vs_snap_pc_state_t state*/) {
-    //    auto res = findPC(mac);
-    //    auto pc = res.second;
-    //    bool added = false;
-    //    if (!pc) {
-    //        // Add PC
-    //
-    //        bool activating = !m_pcs.size();
-    //
-    //        if (activating) {
-    //            emit fireAboutToActivate();
-    //        }
-    //
-    //        beginInsertRows(QModelIndex(), m_pcs.size(), m_pcs.size());
-    //
-    //        auto newPC = QSharedPointer<KSQPC>::create(VSQMac(mac), QString("test-%1").arg(m_pcs.size()));
-    //        connect(newPC.get(), &KSQPC::fireInitDevice, this, &KSQPCController::onInitDevice);
-    //        connect(newPC.get(), &KSQPC::fireSetNameToHardware, this, &KSQControllerBase::onSetDeviceName);
-    //        m_pcs.push_back(newPC);
-    //
-    //        endInsertRows();
-    //
-    //        if (activating) {
-    //            emit fireActivated();
-    //        }
-    //
-    //        added = true;
-    //    }
-    //
-    //    res = findPC(mac);
-    //    pc = res.second;
-    //    if (pc) {
-    //#if 0
-    //        if (deviceInfo.m_hasGeneralInfo) {
-    //            pc->setDeviceID(deviceInfo.m_deviceRoles);
-    //            pc->setManufacture(deviceInfo.m_manufactureId);
-    //            pc->setDeviceID(deviceInfo.m_deviceType);
-    //            pc->setFwVersion(deviceInfo.m_fwVer);
-    //            pc->setTlVersion(deviceInfo.m_tlVer);
-    //        }
-    //
-    //        if (deviceInfo.m_hasStatistics) {
-    //            pc->setSentBytes(QString("%1").arg(deviceInfo.m_sent));
-    //            pc->setReceivedBytes(QString("%1").arg(deviceInfo.m_received));
-    //        }
-    //#endif
-    //
-    //        pc->commandDone();
-    //
-    //        const auto _idx = createIndex(res.first, 0);
-    //        emit dataChanged(_idx, _idx);
-    //
-    //        if (added) {
-    //            emit fireRequiredSetup(pc);
-    //        }
-    //    }
+KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state) {
+    auto res = findPC(mac);
+    auto pc = res.second;
+    bool added = false;
+    if (!pc) {
+        // Add PC
+
+        bool activating = !m_pcs.size();
+
+        if (activating) {
+            emit fireAboutToActivate();
+        }
+
+        beginInsertRows(QModelIndex(), m_pcs.size(), m_pcs.size());
+
+        auto newPC = QSharedPointer<KSQPC>::create(VSQMac(mac), QString("test-%1").arg(m_pcs.size()));
+        connect(newPC.get(), &KSQPC::fireInitDevice, this, &KSQPCController::onInitDevice);
+        connect(newPC.get(), &KSQPC::fireSetNameToHardware, this, &KSQControllerBase::onSetDeviceName);
+        m_pcs.push_back(newPC);
+
+        endInsertRows();
+
+        if (activating) {
+            emit fireActivated();
+        }
+
+        added = true;
+    }
+
+    res = findPC(mac);
+    pc = res.second;
+    if (pc) {
+#if 0
+            if (deviceInfo.m_hasGeneralInfo) {
+                pc->setDeviceID(deviceInfo.m_deviceRoles);
+                pc->setManufacture(deviceInfo.m_manufactureId);
+                pc->setDeviceID(deviceInfo.m_deviceType);
+                pc->setFwVersion(deviceInfo.m_fwVer);
+                pc->setTlVersion(deviceInfo.m_tlVer);
+            }
+
+            if (deviceInfo.m_hasStatistics) {
+                pc->setSentBytes(QString("%1").arg(deviceInfo.m_sent));
+                pc->setReceivedBytes(QString("%1").arg(deviceInfo.m_received));
+            }
+#endif
+
+        pc->commandDone();
+
+        const auto _idx = createIndex(res.first, 0);
+        emit dataChanged(_idx, _idx);
+
+        if (added) {
+            emit fireRequiredSetup(pc);
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------

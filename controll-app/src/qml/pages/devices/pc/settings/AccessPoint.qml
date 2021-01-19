@@ -17,83 +17,73 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_CONTROLLER_H
-#define YIOT_PC_CONTROLLER_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#include <set>
+import "../../../../theme"
+import "../../../../components"
 
-#include <QtCore>
-#include <QAbstractTableModel>
+Page {
+    id: accessPointPage
 
-#include <virgil/iot/qt/VSQIoTKit.h>
-
-#include <devices/KSQControllerBase.h>
-#include <devices/pc/KSQPC.h>
-
-class KSQPCController : public KSQControllerBase {
-    Q_OBJECT
-public:
-    enum Element { Name = Qt::UserRole, Type, Mac, Active, Device, ElementMax };
-
-    KSQPCController();
-    virtual ~KSQPCController() = default;
-
-    virtual QString
-    name() const final {
-        return tr("PC");
+    background: Rectangle {
+        color: "transparent"
     }
 
-    virtual QString
-    type() const final {
-        return "pc";
+    header: Header {
+        title: qsTr("Access Point")
+        backAction: function() { showRPiSettings() }
     }
 
-    virtual QString
-    image() const final {
-        return tr("pc");
-    }
+    Form {
+            id: form
+            stretched: true
 
-    /**
-     * QAbstractTableModel implementation
-     */
-    int
-    rowCount(const QModelIndex &parent = QModelIndex()) const override;
+            ColumnLayout {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.topMargin: 40
+                Layout.bottomMargin: 20
 
-    int
-    columnCount(const QModelIndex &parent = QModelIndex()) const override;
+                spacing: 15
 
-    QVariant
-    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+                InputTextField {
+                    id: ssid
+                    label: qsTr("SSID")
+                    placeholderText: qsTr("Enter access point name")
+                }
 
-    QHash<int, QByteArray>
-    roleNames() const override;
+                FormLabel {
+                    id: comboBoxLabel
+                    text: "Select encryption mode:"
+                    Layout.leftMargin: 20
+                    Layout.bottomMargin: 0
+                }
 
-public slots:
+                FormComboBox {
+                    Layout.leftMargin: 20
+                    Layout.topMargin: 0
+                    items: ["Mode 1", "Mode 2", "Mode 3"]
+                }
 
-signals:
+                Password {
+                    id: pass
+                    label: qsTr("Password")
+                    placeholderText: qsTr("Enter new password")
+                }
 
-private slots:
-    // SNAP::INFO
-    void
-    onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo);
+                FormSecondaryButton {
+                    Layout.topMargin: 20
+                    Layout.bottomMargin: 10
+                    text: qsTr("Save")
+                    onClicked: {
+                    }
+                }
 
-    // SNAP::PC
-    void
-    onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state);
-
-    void
-    onPCError(const vs_mac_addr_t mac);
-
-    // UI
-    void
-    onInitDevice(KSQPC &pc);
-
-protected:
-    std::pair<int, QSharedPointer<KSQPC>>
-    findPC(const vs_mac_addr_t &mac);
-
-private:
-    std::list<QSharedPointer<KSQPC>> m_pcs;
-};
-
-#endif // YIOT_PC_CONTROLLER_H
+                Item {
+                    Layout.fillHeight: true
+                }
+            }
+        }
+}

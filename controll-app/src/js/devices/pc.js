@@ -17,13 +17,8 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-.pragma library
-
-var factorialCount = 0;
-
-
 //-----------------------------------------------------------------------------
-function createUser(pcController, user, pass) {
+function createUser(mac, user, pass) {
     console.log("Create User: ", user)
 
     let json = {}
@@ -31,11 +26,11 @@ function createUser(pcController, user, pass) {
     json.user = user;
     json.pass = pass;
 
-    pcController.sendCommand("1234567", JSON.stringify(json))
+    pcController.sendCommand(mac, JSON.stringify(json))
 }
 
 //-----------------------------------------------------------------------------
-function setNetworkParams(interface, isStatic, ip, gateway, dns, mask) {
+function setNetworkParams(mac, interface, isStatic, ip, gateway, dns, mask) {
     console.log("Set network parameters:")
     console.log("    interface: ", interface)
 
@@ -58,11 +53,11 @@ function setNetworkParams(interface, isStatic, ip, gateway, dns, mask) {
         console.log("    type: dhcp")
     }
 
-    // pcController.sendCommand("1234567", JSON.stringify(json))
+    pcController.sendCommand(mac, JSON.stringify(json))
 }
 
 //-----------------------------------------------------------------------------
-function setupAccessPoint(ssid, mode, password) {
+function setupAccessPoint(mac, ssid, mode, password) {
     console.log("Setup access point:")
     console.log("    ssid: ", ssid)
     console.log("    mode: ", mode)
@@ -73,11 +68,11 @@ function setupAccessPoint(ssid, mode, password) {
     json.mode = mode;
     json.password = password;
 
-    // pcController.sendCommand("1234567", JSON.stringify(json))
+    pcController.sendCommand(mac, JSON.stringify(json))
 }
 
 //-----------------------------------------------------------------------------
-function setupVPNRouter(vpnProvider, user, password) {
+function setupVPNRouter(mac, vpnProvider, user, password) {
     console.log("Setup VPN router:")
     console.log("    provider: ", vpnProvider)
     console.log("    user    : ", user)
@@ -88,7 +83,7 @@ function setupVPNRouter(vpnProvider, user, password) {
     json.user = user;
     json.password = password;
 
-    // pcController.sendCommand("1234567", JSON.stringify(json))
+    pcController.sendCommand(mac, JSON.stringify(json))
 }
 
 //-----------------------------------------------------------------------------
