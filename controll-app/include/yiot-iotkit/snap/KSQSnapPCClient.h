@@ -62,9 +62,6 @@ public slots:
     void
     requestState(const vs_mac_addr_t &mac);
 
-    void
-    initPC(const vs_mac_addr_t &mac /*, const vs_snap_pc_init_ssh_t &initData*/);
-
 private:
     static const QString kKeyInet;
     static const QString kKeyWiFi;

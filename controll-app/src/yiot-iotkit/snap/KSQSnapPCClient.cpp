@@ -122,18 +122,17 @@ KSQSnapPCClient::requestState(const vs_mac_addr_t &mac) {
 }
 
 //-----------------------------------------------------------------------------
-void
-KSQSnapPCClient::initPC(const vs_mac_addr_t &mac /*, const vs_snap_pc_init_ssh_t &initData*/) {
-    // vs_snap_pc_init_ssh(vs_snap_netif_routing(), &mac, &initData);
-}
-
-//-----------------------------------------------------------------------------
-
-
 bool
 KSQSnapPCClient::sendCommand(QString mac, QString json) {
-    qDebug() << "MAC: " << mac << " JSON: " << json;
-    return false;
+    auto macVal = VSQMac(mac);
+
+    if (macVal == invalidMac) {
+        VS_LOG_WARNING("Cannot send command to an invalid MAC address");
+        return false;
+    }
+
+    vs_mac_addr_t macLowLevel = macVal;
+    return VS_CODE_OK == vs_snap_pc_command(vs_snap_netif_routing(), &macLowLevel, json.toStdString().c_str());
 }
 
 //-----------------------------------------------------------------------------

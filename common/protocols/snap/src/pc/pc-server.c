@@ -17,7 +17,7 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-//#define PC_SERVER 1
+// #define PC_SERVER 1
 
 #if PC_SERVER
 
@@ -68,9 +68,9 @@ _init_pc_cmd_request_processor(const struct vs_netif_t *netif,
                                uint8_t *response,
                                const uint16_t response_buf_sz,
                                uint16_t *response_sz) {
-    //    CHECK_NOT_ZERO_RET(eth_header, VS_CODE_ERR_ZERO_ARGUMENT);
-    //    CHECK_NOT_ZERO_RET(request, VS_CODE_ERR_ZERO_ARGUMENT);
-    //
+        CHECK_NOT_ZERO_RET(eth_header, VS_CODE_ERR_ZERO_ARGUMENT);
+        CHECK_NOT_ZERO_RET(request, VS_CODE_ERR_ZERO_ARGUMENT);
+
     //    if (_impl.init_pc_ssh) {
     //        vs_snap_pc_init_ssh_t *init = (vs_snap_pc_init_ssh_t *)request;
     //
