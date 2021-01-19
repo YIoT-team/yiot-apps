@@ -180,11 +180,11 @@
         <file>qml/pages/devices/CmdProcessingPage.qml</file>
         <file>qml/pages/devices/lamp/mono/LampMonoControl.qml</file>
         <file>qml/pages/devices/pc/PCRPiControl.qml</file>
-		<file>qml/pages/devices/pc/settings/AccessPoint.qml</file>
-		<file>qml/pages/devices/pc/settings/ControlsList.qml</file>
-		<file>qml/pages/devices/pc/settings/CreateUser.qml</file>
-		<file>qml/pages/devices/pc/settings/StaticIP.qml</file>
-		<file>qml/pages/devices/pc/settings/VPNrouter.qml</file>
+		<file>qml/pages/devices/pc/commands/AccessPoint.qml</file>
+		<file>qml/pages/devices/pc/commands/ControlsList.qml</file>
+		<file>qml/pages/devices/pc/commands/CreateUser.qml</file>
+		<file>qml/pages/devices/pc/commands/StaticIP.qml</file>
+		<file>qml/pages/devices/pc/commands/VPNrouter.qml</file>
         <file>qml/pages/devices/setup/SetupProcessingPage.qml</file>
 
         <!-- QML Contributers and Sponsors -->

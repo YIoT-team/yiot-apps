@@ -68,58 +68,64 @@ ks_snap_pc_command_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, const c
 
     VS_LOG_DEBUG("New command: %s", json);
 
-    auto jsonObj = nlohmann::json::parse(json);
-    auto command = jsonObj["command"].get<std::string>();
-    CHECK_RET(command == "script", VS_CODE_ERR_INCORRECT_ARGUMENT, "Wrong command");
+    bool res = false;
 
-    auto script = jsonObj["script"].get<std::string>();
-    auto params = jsonObj["params"];
+    try {
+        auto jsonObj = nlohmann::json::parse(json);
+        auto command = jsonObj["command"].get<std::string>();
+        CHECK_RET(command == "script", VS_CODE_ERR_INCORRECT_ARGUMENT, "Wrong command");
 
-    CHECK_RET(!script.empty(), VS_CODE_ERR_INCORRECT_ARGUMENT, "Script field is empty");
+        auto script = jsonObj["script"].get<std::string>();
+        auto params = jsonObj["params"];
 
-    // TODO: Check for absence of '/' and '.'
+        CHECK_RET(!script.empty(), VS_CODE_ERR_INCORRECT_ARGUMENT, "Script field is empty");
 
-    auto commandStr = std::string(ks_settings_scripts_dir()) + "/" + script;
+        // TODO: Check for absence of '/' and '.'
 
-    for (const std::string &param : params) {
-        commandStr += " " + param;
+        auto commandStr = std::string(ks_settings_scripts_dir()) + "/" + script;
+
+        for (const std::string &param : params) {
+            commandStr += " " + param;
+        }
+
+        res = _processingDelayer.add(kDelayMs, [netif, sender_mac, commandStr]() -> void {
+            Command cmd;
+            cmd.Command = "bash -c \"" + commandStr + "\"";
+            cmd.execute();
+
+            // TODO: Remove it
+            std::cout << cmd.StdOut;
+            std::cerr << cmd.StdErr;
+            std::cout << "Exit Status: " << cmd.ExitStatus << "\n";
+            // ~TODO: Remove it
+
+            bool is_ok = 0 == cmd.ExitStatus;
+
+            // Prepare information about current state
+            char state[PC_JSON_SZ_MAX];
+            memset(state, 0, PC_JSON_SZ_MAX);
+            uint16_t state_sz;
+
+            if (VS_CODE_OK != ks_snap_pc_get_info_cb(netif, state, PC_JSON_SZ_MAX, &state_sz)) {
+                VS_LOG_WARNING("Cannot get PC state");
+                is_ok = false;
+            }
+
+            // Send response after complete processing
+            if (VS_CODE_OK != vs_snap_send_response(netif,
+                                                    &sender_mac,
+                                                    0, // TODO: Fill transaction ID
+                                                    VS_PC_SERVICE_ID,
+                                                    VS_PC_PCMD,
+                                                    is_ok,
+                                                    reinterpret_cast<uint8_t *>(&state),
+                                                    sizeof(state))) {
+                VS_LOG_WARNING("Cannot initialize RPi.");
+            }
+        });
+    } catch (...) {
+        VS_LOG_WARNING("Command cannot be processed");
     }
-
-    bool res = _processingDelayer.add(kDelayMs, [netif, sender_mac, commandStr]() -> void {
-        Command cmd;
-        cmd.Command = "bash -c \"" + commandStr + "\"";
-        cmd.execute();
-
-        // TODO: Remove it
-        std::cout << cmd.StdOut;
-        std::cerr << cmd.StdErr;
-        std::cout << "Exit Status: " << cmd.ExitStatus << "\n";
-        // ~TODO: Remove it
-
-        bool is_ok = 0 == cmd.ExitStatus;
-
-        // Prepare information about current state
-        char state[PC_JSON_SZ_MAX];
-        memset(state, 0, PC_JSON_SZ_MAX);
-        uint16_t state_sz;
-
-        if (VS_CODE_OK != ks_snap_pc_get_info_cb(netif, state, PC_JSON_SZ_MAX, &state_sz)) {
-            VS_LOG_WARNING("Cannot get PC state");
-            is_ok = false;
-        }
-
-        // Send response after complete processing
-        if (VS_CODE_OK != vs_snap_send_response(netif,
-                                                &sender_mac,
-                                                0, // TODO: Fill transaction ID
-                                                VS_PC_SERVICE_ID,
-                                                VS_PC_PCMD,
-                                                is_ok,
-                                                reinterpret_cast<uint8_t *>(&state),
-                                                sizeof(state))) {
-            VS_LOG_WARNING("Cannot initialize RPi.");
-        }
-    });
 
     return res ? VS_CODE_COMMAND_NO_RESPONSE : VS_CODE_ERR_QUEUE;
 }

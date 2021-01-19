@@ -7,6 +7,7 @@ import "../theme"
 ColumnLayout {
     id: columnLayout
     property alias items: comboBox.items
+    property alias text: comboBox.selectedItem
 
     Layout.fillWidth: true
     Layout.preferredHeight: 30

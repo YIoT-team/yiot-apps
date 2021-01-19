@@ -23,6 +23,7 @@ import QtQuick.Layouts 1.12
 
 import "../../../../theme"
 import "../../../../components"
+import "../../../../../js/devices/pc.js" as PCDevice
 
 Page {
     id: accessPointPage
@@ -62,9 +63,10 @@ Page {
                 }
 
                 FormComboBox {
+                    id: mode
                     Layout.leftMargin: 12
                     Layout.topMargin: 0
-                    items: ["Mode 1", "Mode 2", "Mode 3"]
+                    items: ["WPA2", "WPA", "WEP"]
                 }
 
                 Password {
@@ -78,7 +80,10 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
-                                                //        PCDevice.setNetworkParams(rpiPage.controller.macAddr, "wifi", true, "192.168.0.105", "192.168.0.1", "8.8.8.8", "255.255.255.0")
+                        PCDevice.setupAccessPoint(rpiPage.controller.macAddr,
+                                                  ssid.text,
+                                                  mode.text,
+                                                  pass.text)
                     }
                 }
 

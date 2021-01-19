@@ -22,6 +22,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import "../../../../components"
+import "../../../../../js/devices/pc.js" as PCDevice
 
 Page {
     id: vpnRouterPage
@@ -55,9 +56,10 @@ Page {
                 }
 
                 FormComboBox {
+                    id: providerCb
                     Layout.leftMargin: 12
                     Layout.topMargin: 0
-                    items: ["VPN1", "VPN2"]
+                    items: ["OVPN"]
                 }
 
                 InputTextField {
@@ -77,7 +79,10 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
-                                            //        PCDevice.setNetworkParams(rpiPage.controller.macAddr, "wifi", true, "192.168.0.105", "192.168.0.1", "8.8.8.8", "255.255.255.0")
+                        PCDevice.setupVPNRouter(rpiPage.controller.macAddr,
+                                                providerCb.text,
+                                                user.text,
+                                                pass.text)
                     }
                 }
 

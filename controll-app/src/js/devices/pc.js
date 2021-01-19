@@ -41,14 +41,15 @@ function setNetworkParams(mac, interface, isStatic, ip, gateway, dns, mask) {
     json.script = "set-network-params.sh"
     json.params = [interface, isStatic, ip, gateway, dns, mask]
 
-    if (isStatic) {
-        console.log("    type   : static")
-        console.log("    ip     :", ip)
-        console.log("    gateway:", gateway)
-        console.log("    dns    :", dns)
-        console.log("    mask   :", mask)
+    console.log("    interface : ", interface)
+    if (isStatic === "true") {
+        console.log("    type      : static")
+        console.log("    ip        :", ip)
+        console.log("    gateway   :", gateway)
+        console.log("    dns       :", dns)
+        console.log("    mask      :", mask)
     } else {
-        console.log("    type: dhcp")
+        console.log("    type      : dhcp")
     }
 
     pcController.sendCommand(mac, JSON.stringify(json))

@@ -22,6 +22,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import "../../../../components"
+import "../../../../../js/devices/pc.js" as PCDevice
 
 Page {
     id: staticIpPage
@@ -55,9 +56,10 @@ Page {
                 }
 
                 FormComboBox {
+                    id: interfaceCb
                     Layout.leftMargin: 12
                     Layout.topMargin: 0
-                    items: ["wlan0", "eth0"]
+                    items: ["wifi", "eth0"]
                 }
 
                 InputTextField {
@@ -76,12 +78,14 @@ Page {
                     id: mask
                     label: qsTr("Mask")
                     placeholderText: qsTr("Enter network mask")
+                    text: "255.255.255.0"
                 }
 
                 InputTextField {
                     id: dns
                     label: qsTr("DNS")
-                    placeholderText: qsTr("8.8.8.8")
+                    placeholderText: qsTr("Enter DNS")
+                    text: "8.8.8.8"
                 }
 
                 FormSecondaryButton {
@@ -89,7 +93,13 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
-                                                //        PCDevice.setNetworkParams(rpiPage.controller.macAddr, "wifi", true, "192.168.0.105", "192.168.0.1", "8.8.8.8", "255.255.255.0")
+                        PCDevice.setNetworkParams(rpiPage.controller.macAddr,
+                                                  interfaceCb.text,
+                                                  "true", // Force static
+                                                  deviceIP.text,
+                                                  gatewayIP.text,
+                                                  dns.text,
+                                                  mask.text)
                     }
                 }
 
