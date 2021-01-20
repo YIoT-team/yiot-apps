@@ -35,6 +35,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #   Ext projects path
 set(EXT_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../ext")
 
+#   JSON
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory("${EXT_PATH}/json" json)
+
 #   Path to Bluez-DBus
 set(BLUEZ_DBUS_PATH "${EXT_PATH}/bluez-dbus")
 
@@ -113,7 +117,6 @@ target_compile_options(yiot-device-app-linux
         -Wno-multichar
         )
 
-
 # ---------------------------------------------------------------------------
 #	Link libraries
 # ---------------------------------------------------------------------------
@@ -131,6 +134,9 @@ target_link_libraries(yiot-device-app-linux
 
         #   Bluez DBus
         bluez-dbus-cpp
+
+        #   JSON
+        nlohmann_json::nlohmann_json
 
         #   Helpers
         enable_sanitizers

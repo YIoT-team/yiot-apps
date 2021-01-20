@@ -17,41 +17,72 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include "helpers/timer.h"
-#include <thread>
-
 //-----------------------------------------------------------------------------
-KSTimer::KSTimer() : m_running(false) {
-    std::thread([=]() {
-        while (true) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            std::lock_guard<std::mutex> lock(m_changingMutex);
-            if (m_running && std::chrono::high_resolution_clock::now() - m_start > m_delay) {
-                m_callback();
+function createUser(pc, user, pass) {
+    console.log("Create User: ", user)
 
-                std::lock_guard<std::mutex> lockState(m_stateMutex);
-                m_running = false;
-            }
-        }
-    })
-            .detach();
+    let json = {}
+
+    json.command = "script"
+    json.script = "create-user.sh"
+    json.params = [user, pass]
+
+    pc.invokeCommand(JSON.stringify(json))
 }
 
 //-----------------------------------------------------------------------------
-bool
-KSTimer::add(std::chrono::milliseconds delay, std::function<void()> callback) {
-    std::lock_guard<std::mutex> lockState(m_stateMutex);
-    if (m_running) {
-        return false;
+function setNetworkParams(pc, interface, isStatic, ip, gateway, dns, mask) {
+    console.log("Set network parameters:")
+    console.log("    interface: ", interface)
+
+    let json = {}
+
+    json.command = "script"
+    json.script = "set-network-params.sh"
+    json.params = [interface, isStatic, ip, gateway, dns, mask]
+
+    console.log("    interface : ", interface)
+    if (isStatic === "true") {
+        console.log("    type      : static")
+        console.log("    ip        :", ip)
+        console.log("    gateway   :", gateway)
+        console.log("    dns       :", dns)
+        console.log("    mask      :", mask)
+    } else {
+        console.log("    type      : dhcp")
     }
 
-    std::lock_guard<std::mutex> lock(m_changingMutex);
-    m_callback = callback;
-    m_start = std::chrono::high_resolution_clock::now();
-    m_delay = delay;
-    m_running = true;
+    pc.invokeCommand(JSON.stringify(json))
+}
 
-    return true;
+//-----------------------------------------------------------------------------
+function setupAccessPoint(pc, ssid, mode, password) {
+    console.log("Setup access point:")
+    console.log("    ssid: ", ssid)
+    console.log("    mode: ", mode)
+
+    let json = {}
+
+    json.command = "script"
+    json.script = "setup-access-point.sh"
+    json.params = [ssid, mode, password]
+
+    pc.invokeCommand(JSON.stringify(json))
+}
+
+//-----------------------------------------------------------------------------
+function setupVPNRouter(pc, vpnProvider, user, password) {
+    console.log("Setup VPN router:")
+    console.log("    provider: ", vpnProvider)
+    console.log("    user    : ", user)
+
+    let json = {}
+
+    json.command = "script"
+    json.script = "setup-vpn-router.sh"
+    json.params = [vpnProvider, user, password]
+
+    pc.invokeCommand(JSON.stringify(json))
 }
 
 //-----------------------------------------------------------------------------

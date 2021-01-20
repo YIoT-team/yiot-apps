@@ -30,6 +30,7 @@ import "./components"
 import "./components/devices"
 import "./components/Popups"
 import "./theme"
+import "./pages/devices/pc/"
 
 ApplicationWindow {
 
@@ -48,6 +49,9 @@ ApplicationWindow {
 
     // Information popup
     Popup { id: inform }
+
+    // Inform about requested action by device
+    DeviceActionRequestDialog { id: deviceActionDialog }
 
     // About application page
     AboutPage { id: aboutPage }
@@ -69,6 +73,7 @@ ApplicationWindow {
         readonly property int setupDevicePageIdx: 1
         readonly property int sharePageIdx: 2
         readonly property int settingsPageIdx: 3
+        readonly property int rpiSettingsPageIdx: 4 //------------------[FOR TESTING]------------------
 
         property int backPageIdx: devicePageIdx
 
@@ -81,6 +86,7 @@ ApplicationWindow {
         DevicesSetupPage { id: devicesSetupPage }
         SharePage { id: sharePage }
         SettingsPage { id: settingsPage }
+        PCRPiControl { id: rpiSettingsPage } //------------------[FOR TESTING]------------------
     }
 
     // Manual switcher of main pages
@@ -107,6 +113,29 @@ ApplicationWindow {
             app.updateDevices()
         })
         showDevicesSetup()
+    }
+
+    Connections {
+        target: uxSimplifier
+
+        function onFireRequestDeviceProvision(name) {
+            deviceActionDialog.name = name
+            deviceActionDialog.inform = qsTr("Do you want to initialize a new device ?")
+            deviceActionDialog.actionOk = startDeviceProvision
+            deviceActionDialog.actionClose = rejectDeviceProvision
+            deviceActionDialog.open()
+        }
+
+        function onFireRequestDeviceSetup(device) {
+            console.log(">>> ", device)
+            console.log(">>> ", device.name)
+            deviceActionDialog.name = device.name
+            deviceActionDialog.ctx = device
+            deviceActionDialog.inform = qsTr("Do you want to start work with a new device ?")
+            deviceActionDialog.actionOk = startDeviceSetup
+            deviceActionDialog.actionClose = rejectDeviceSetup
+            deviceActionDialog.open()
+        }
     }
 
     StateGroup {
@@ -214,10 +243,16 @@ ApplicationWindow {
 
     function showShared() {
         swipeShow(swipeView.sharePageIdx)
+
     }
 
     function showSettings() {
         swipeShow(swipeView.settingsPageIdx)
+    }
+
+    //------------------[FOR TESTING]------------------
+    function showRPiSettings(){
+        swipeShow(swipeView.rpiSettingsPageIdx)
     }
 
     // ------------------------------------------------------------------------
@@ -268,5 +303,27 @@ ApplicationWindow {
         devicesSwipeView.show(devicesSwipeView.pcPageIdx,
                               deviceName,
                               deviceController)
+    }
+
+    // ------------------------------------------------------------------------
+    //      User experience simplifier
+    // ------------------------------------------------------------------------
+
+    function startDeviceProvision(name) {
+        showCredLoad()
+        uxSimplifier.startDeviceProvision(name)
+    }
+
+    function rejectDeviceProvision(name) {
+        uxSimplifier.rejectDeviceProvision(name)
+    }
+
+    function startDeviceSetup(name) {
+        var device = deviceActionDialog.ctx
+        devicesPage.activateDeviceView("pc", device.name, device)
+    }
+
+    function rejectDeviceSetup(name) {
+        uxSimplifier.rejectDeviceProvision(name)
     }
 }

@@ -51,42 +51,23 @@ vs_snap_pc_get_state(const vs_netif_t *netif, const vs_mac_addr_t *mac) {
 
 //-----------------------------------------------------------------------------
 vs_status_e
-vs_snap_pc_init_ssh(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap_pc_init_ssh_t *init_data) {
+vs_snap_pc_command(const vs_netif_t *netif, const vs_mac_addr_t *mac, const char *json) {
     const vs_mac_addr_t *dst_mac;
     vs_status_e ret_code;
+    uint16_t sz;
 
     // Check input parameters
-    CHECK_NOT_ZERO_RET(init_data, VS_CODE_ERR_INCORRECT_ARGUMENT);
+    CHECK_NOT_ZERO_RET(json, VS_CODE_ERR_INCORRECT_ARGUMENT);
+    sz = strnlen(json, PC_JSON_SZ_MAX);
+    CHECK_RET(sz < PC_JSON_SZ_MAX, VS_CODE_ERR_INCORRECT_ARGUMENT, "JSON command too long");
+    ++sz;
 
     // Set destination mac
     dst_mac = mac ? mac : vs_snap_broadcast_mac();
 
-    // TODO: Normalize structure
-
     // Send request
-    STATUS_CHECK_RET(vs_snap_send_request(
-                             netif, dst_mac, VS_PC_SERVICE_ID, VS_PC_ISSH, (uint8_t *)init_data, sizeof(*init_data)),
+    STATUS_CHECK_RET(vs_snap_send_request(netif, dst_mac, VS_PC_SERVICE_ID, VS_PC_PCMD, (uint8_t *)json, sz),
                      "Cannot send request");
-
-    return VS_CODE_OK;
-}
-
-//-----------------------------------------------------------------------------
-vs_status_e
-vs_snap_pc_init_vpn(const vs_netif_t *netif, const vs_mac_addr_t *mac, const vs_snap_pc_init_vpn_t *vpn_data) {
-    vs_status_e ret_code;
-
-    // Check input parameters
-    CHECK_NOT_ZERO_RET(vpn_data, VS_CODE_ERR_INCORRECT_ARGUMENT);
-    CHECK_NOT_ZERO_RET(mac, VS_CODE_ERR_INCORRECT_ARGUMENT);
-    CHECK_NOT_ZERO_RET(!vs_snap_is_broadcast(mac), VS_CODE_ERR_INCORRECT_ARGUMENT);
-
-    // TODO: Normalize structure
-
-    // Send request
-    STATUS_CHECK_RET(
-            vs_snap_send_request(netif, mac, VS_PC_SERVICE_ID, VS_PC_IVPN, (uint8_t *)vpn_data, sizeof(*vpn_data)),
-            "Cannot send request");
 
     return VS_CODE_OK;
 }
@@ -100,20 +81,19 @@ _pc_response_processor(const vs_mac_addr_t *dev_mac,
                        const uint16_t response_sz) {
 
     vs_status_e res = is_ack ? VS_CODE_OK : VS_CODE_ERR_SNAP_UNKNOWN;
-    vs_snap_pc_state_t *state = NULL;
+    uint16_t str_sz;
+    const char *json = (const char *)response;
 
     // Check input parameters
     CHECK_NOT_ZERO_RET(dev_mac, VS_CODE_ERR_INCORRECT_ARGUMENT);
     CHECK_NOT_ZERO_RET(response, VS_CODE_ERR_INCORRECT_ARGUMENT);
-
-    if (is_ack) {
-        state = (vs_snap_pc_state_t *)response;
-    }
-
-    // TODO: Normalize structure
+    CHECK_NOT_ZERO_RET(response_sz <= PC_JSON_SZ_MAX, VS_CODE_ERR_INCORRECT_ARGUMENT);
+    str_sz = strnlen(json, PC_JSON_SZ_MAX);
+    ++str_sz;
+    CHECK_NOT_ZERO_RET(str_sz <= PC_JSON_SZ_MAX, VS_CODE_ERR_INCORRECT_ARGUMENT);
 
     if (_impl.device_state_update) {
-        _impl.device_state_update(res, dev_mac, state);
+        _impl.device_state_update(res, dev_mac, json);
     }
 
     return VS_CODE_OK;
@@ -135,9 +115,8 @@ _pc_client_response_processor(const struct vs_netif_t *netif,
 
     switch (element_id) {
 
-    case VS_PC_ISSH:
+    case VS_PC_PCMD:
     case VS_PC_GPST:
-    case VS_PC_IVPN:
         return _pc_response_processor(&eth_header->src, element_id, is_ack, response, response_sz);
 
     default:

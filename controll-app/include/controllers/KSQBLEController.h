@@ -17,59 +17,57 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
+#ifndef PROVISION_QT_BLE_CONTROLLER_H
+#define PROVISION_QT_BLE_CONTROLLER_H
 
 #include <QtCore>
-#include <QGuiApplication>
 
-#include <KSQWiFiEnumerator.h>
+#include <virgil/iot/qt/netif/VSQNetifBLEEnumerator.h>
+#include <virgil/iot/qt/netif/VSQNetifBLE.h>
 
-#include <controllers/KSQBLEController.h>
-#include <controllers/KSQBlankDevicesController.h>
-#include <controllers/KSQUXSimplifyController.h>
-
-#include <devices/KSQDevices.h>
-
-#include <virgil/iot/qt/VSQIoTKit.h>
-
-#include <yiot-iotkit/netif/KSQUdp.h>
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
-
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
-
-class KSQApplication : public QObject {
+class KSQBLEController : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
 public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
+    KSQBLEController();
+    virtual ~KSQBLEController();
 
-    int
-    run();
+    QSharedPointer<VSQNetifBLE>
+    netif();
 
-    QString
-    organizationDisplayName() const;
+    VSQNetifBLEEnumerator *
+    model();
 
-    QString
-    applicationVersion() const;
+    bool
+    isProvisionRequired(const QString &deviceName);
 
-    QString
-    applicationDisplayName() const;
+signals:
 
-    Q_INVOKABLE void
-    updateDevices();
+public slots:
+
+    Q_INVOKABLE bool
+    connectDevice(const QString &deviceName);
+
+private slots:
+    void
+    onConnected(bool);
+
+    void
+    onDisconnected();
+
+    void
+    onDeviceError();
+
+    void
+    onSetupFinished(QSharedPointer<VSQNetifBase> netif);
 
 private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    QSharedPointer<KSQBLEController> m_bleController;
-    QSharedPointer<KSQBlankDevicesController> m_localBlankDevicesController;
-    QSharedPointer<KSQUXSimplifyController> m_uxController;
-    QSharedPointer<KSQUdp> m_netifUdp;
+    VSQNetifBLEEnumerator m_bleEnumerator;
+    QSharedPointer<VSQNetifBLE> m_netifBLE;
 
-    KSQDevices m_deviceControllers;
+    bool m_needWiFiConfig;
+
+    void
+    cleanConnections();
 };
 
-#endif // PROVISION_QT_APP_H
+#endif // PROVISION_QT_BLE_CONTROLLER_H

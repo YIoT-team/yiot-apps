@@ -17,41 +17,69 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include "helpers/timer.h"
-#include <thread>
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-//-----------------------------------------------------------------------------
-KSTimer::KSTimer() : m_running(false) {
-    std::thread([=]() {
-        while (true) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            std::lock_guard<std::mutex> lock(m_changingMutex);
-            if (m_running && std::chrono::high_resolution_clock::now() - m_start > m_delay) {
-                m_callback();
+import "../../../../components"
+import "../../../../../js/devices/pc.js" as PCDevice
 
-                std::lock_guard<std::mutex> lockState(m_stateMutex);
-                m_running = false;
-            }
-        }
-    })
-            .detach();
-}
+Page {
+    id: createUserPage
 
-//-----------------------------------------------------------------------------
-bool
-KSTimer::add(std::chrono::milliseconds delay, std::function<void()> callback) {
-    std::lock_guard<std::mutex> lockState(m_stateMutex);
-    if (m_running) {
-        return false;
+    background: Rectangle {
+        color: "transparent"
     }
 
-    std::lock_guard<std::mutex> lock(m_changingMutex);
-    m_callback = callback;
-    m_start = std::chrono::high_resolution_clock::now();
-    m_delay = delay;
-    m_running = true;
+    header: Header {
+        title: qsTr("Create User")
+        backAction: function() { showRPiSettings() }
+    }
 
-    return true;
+    Form {
+            id: form
+            stretched: true
+
+            ColumnLayout {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.topMargin: 40
+                Layout.bottomMargin: 20
+
+                spacing: 15
+
+                InputTextField {
+                    id: userName
+                    label: qsTr("User name")
+                    placeholderText: qsTr("Enter new user name")
+                }
+
+                Password {
+                    id: pass1
+                    label: qsTr("Password")
+                    placeholderText: qsTr("Enter new password")
+                }
+
+                Password {
+                    id: pass2
+                    label: qsTr("Password check")
+                    placeholderText: qsTr("Enter the password again")
+                }
+
+                FormSecondaryButton {
+                    Layout.topMargin: 20
+                    Layout.bottomMargin: 10
+                    text: qsTr("Save")
+                    onClicked: {
+                        showCmdProcessing(rpiPage.controller)
+                        PCDevice.createUser(rpiPage.controller, text, pass1.text)
+                    }
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+            }
+        }
 }
-
-//-----------------------------------------------------------------------------

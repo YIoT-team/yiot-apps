@@ -27,6 +27,7 @@
 #include <virgil/iot/qt/VSQIoTKit.h>
 
 #include <devices/KSQControllerBase.h>
+#include <devices/KSQDeviceBase.h>
 
 class KSQDevices : public QAbstractTableModel {
     Q_OBJECT
@@ -53,6 +54,10 @@ public:
 
     KSQDevices &
     operator<<(KSQControllerBase *controller);
+
+signals:
+    void
+    fireNewProvisionedDevice(QSharedPointer<KSQDeviceBase> device);
 
 public slots:
 

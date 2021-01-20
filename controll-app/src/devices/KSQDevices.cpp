@@ -19,15 +19,11 @@
 
 #include <devices/KSQDevices.h>
 
-void
-fireAboutToActivate();
-void
-fireActivated();
-
 //-----------------------------------------------------------------------------
 KSQDevices &
 KSQDevices::operator<<(KSQControllerBase *controller) {
     connect(controller, &KSQControllerBase::fireActivated, this, &KSQDevices::onGroupActivated);
+    connect(controller, &KSQControllerBase::fireRequiredSetup, this, &KSQDevices::fireNewProvisionedDevice);
     QSharedPointer<KSQControllerBase> e(controller);
     m_elements.push_back(e);
     return *this;

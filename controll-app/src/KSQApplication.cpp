@@ -26,6 +26,7 @@
 
 #include <yiot-iotkit/KSQIoTKitFacade.h>
 #include <yiot-iotkit/setup/KSQDeviceSetupController.h>
+#include <yiot-iotkit/snap/KSQSnapPCClient.h>
 
 #include <devices/lamp/KSQLampController.h>
 #include <devices/pc/KSQPCController.h>
@@ -53,6 +54,7 @@ KSQApplication::run() {
     m_bleController = QSharedPointer<KSQBLEController>::create();
     m_netifUdp = QSharedPointer<KSQUdp>::create();
     m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create(m_netifUdp);
+    m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
 
     // Prepare IoTKit data
     auto features =
@@ -72,6 +74,25 @@ KSQApplication::run() {
 
     // Set different information about current device
     auto appConfig = VSQAppConfig() << VSQManufactureId() << VSQDeviceType() << VSQDeviceSerial() << roles;
+
+    // Connect User Experience simplifier
+    //      Get information about close BLE devices
+    connect(m_bleController->model(),
+            &VSQNetifBLEEnumerator::fireDeviceIsClose,
+            m_uxController.get(),
+            &KSQUXSimplifyController::onBLEDeviceIsClose);
+
+    //      Get information about devices those require provision
+    connect(m_localBlankDevicesController.get(),
+            &KSQBlankDevicesController::fireDeviceRequiresProvision,
+            m_uxController.get(),
+            &KSQUXSimplifyController::onDeviceRequiresProvision);
+
+    //      Get information about devices new but provisioned devices
+    connect(&m_deviceControllers,
+            &KSQDevices::fireNewProvisionedDevice,
+            m_uxController.get(),
+            &KSQUXSimplifyController::onNewProvisionedDevice);
 
     // Initialize IoTKit
     if (!KSQIoTKitFacade::instance().init(features, impl, appConfig)) {
@@ -100,6 +121,7 @@ KSQApplication::run() {
             "deviceSetup",                          // Device setup state-machine
             &KSQDeviceSetupController::instance()); // Controller to setup device provision, the first owner etc.
     context->setContextProperty("rotModel", &KSQRoTController::instance()); // Container for all Roots of trust
+    context->setContextProperty("uxSimplifier", m_uxController.get());      // User experience simplifier
 
     // Load UI theme
     qmlRegisterSingletonType(QUrl("qrc:/qml/theme/Theme.qml"), "Theme", 1, 0, "Theme");

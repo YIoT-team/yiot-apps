@@ -25,6 +25,7 @@
 #include <QAbstractTableModel>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
+#include <devices/KSQDeviceBase.h>
 
 class KSQControllerBase : public QAbstractTableModel {
     Q_OBJECT
@@ -65,8 +66,12 @@ signals:
 
     void
     fireAboutToActivate();
+
     void
     fireActivated();
+
+    void
+    fireRequiredSetup(QSharedPointer<KSQDeviceBase> device);
 
 private:
     bool m_collapsed = true;

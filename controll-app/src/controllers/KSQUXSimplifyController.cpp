@@ -17,59 +17,50 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
-
-#include <QtCore>
-#include <QGuiApplication>
-
-#include <KSQWiFiEnumerator.h>
-
-#include <controllers/KSQBLEController.h>
-#include <controllers/KSQBlankDevicesController.h>
 #include <controllers/KSQUXSimplifyController.h>
 
-#include <devices/KSQDevices.h>
+#include <yiot-iotkit/setup/KSQDeviceSetupController.h>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
 
-#include <yiot-iotkit/netif/KSQUdp.h>
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
+//-----------------------------------------------------------------------------
+void
+KSQUXSimplifyController::onBLEDeviceIsClose(QString deviceName, bool requiresProvision) {
+    if (requiresProvision) {
+        emit fireRequestDeviceProvision(deviceName);
+    }
+}
 
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
+//-----------------------------------------------------------------------------
+void
+KSQUXSimplifyController::onDeviceRequiresProvision(QString deviceName,
+                                                   QSharedPointer<VSQNetifBase> netif,
+                                                   VSQMac deviceMac) {
+    m_netif = netif;
+    m_deviceMac = deviceMac;
+    emit fireRequestDeviceProvision(deviceName);
+}
 
-class KSQApplication : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
-public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
+//-----------------------------------------------------------------------------
+void
+KSQUXSimplifyController::onNewProvisionedDevice(QSharedPointer<KSQDeviceBase> device) {
+    emit fireRequestDeviceSetup(device.get());
+}
 
-    int
-    run();
+//-----------------------------------------------------------------------------
+bool
+KSQUXSimplifyController::startDeviceProvision(QString name) {
+    qDebug() << "startDeviceProvision : " << name;
 
-    QString
-    organizationDisplayName() const;
+    KSQDeviceSetupController::instance().start(m_netif, m_deviceMac);
+    return true;
+}
 
-    QString
-    applicationVersion() const;
+//-----------------------------------------------------------------------------
+bool
+KSQUXSimplifyController::rejectDeviceProvision(QString name) {
+    qDebug() << "rejectDeviceProvision : " << name;
+    return true;
+}
 
-    QString
-    applicationDisplayName() const;
-
-    Q_INVOKABLE void
-    updateDevices();
-
-private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    QSharedPointer<KSQBLEController> m_bleController;
-    QSharedPointer<KSQBlankDevicesController> m_localBlankDevicesController;
-    QSharedPointer<KSQUXSimplifyController> m_uxController;
-    QSharedPointer<KSQUdp> m_netifUdp;
-
-    KSQDevices m_deviceControllers;
-};
-
-#endif // PROVISION_QT_APP_H
+//-----------------------------------------------------------------------------

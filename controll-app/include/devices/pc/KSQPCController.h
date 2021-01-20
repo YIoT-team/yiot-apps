@@ -86,7 +86,7 @@ private slots:
 
     // UI
     void
-    onInitDevice(KSQPC &pc);
+    onInvokeCommand(QString mac, QString json);
 
 protected:
     std::pair<int, QSharedPointer<KSQPC>>

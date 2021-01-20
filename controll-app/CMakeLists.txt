@@ -39,8 +39,8 @@ include(FetchContent)
 # ---------------------------------------------------------------------------
 set (KS_TARGET_NAME yiot)
 
-set(VS_ORGANIZATION_NAME "Kutashenko")
-set(VS_ORGANIZATION_DISPLAYNAME "Kutashenko")
+set(VS_ORGANIZATION_NAME "YIoT")
+set(VS_ORGANIZATION_DISPLAYNAME "YIoT")
 
 set(VS_APPLICATION_NAME "YIoT")
 set(VS_APPLICATION_DISPLAY_NAME "YIoT")
@@ -99,7 +99,6 @@ elseif(KS_PLATFORM STREQUAL "android")
     string(APPEND KS_QT_EXTRA "AndroidExtras")
 
     # Android extra libraries
-    message(WARNING ">>> ${CMAKE_BINARY_DIR}/common/iotkit/modules/crypto/converters/libconverters-${ANDROID_ABI}.so")
     list(APPEND ANDROID_EXTRA_LIBS ${CMAKE_BINARY_DIR}/common/iotkit/modules/crypto/converters/libconverters-${ANDROID_ABI}.so)
 
     # Android gradle path
@@ -213,17 +212,19 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/include/KSQApplication.h
         ${CMAKE_CURRENT_LIST_DIR}/include/ui/VSQUiHelper.h
         ${CMAKE_CURRENT_LIST_DIR}/include/KSQWiFiEnumerator.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/KSQBLEController.h
 
         ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQDevices.h
         ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQControllerBase.h
         ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQDeviceBase.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQBlankDevicesController.h
 
         ${CMAKE_CURRENT_LIST_DIR}/include/devices/lamp/KSQLamp.h
         ${CMAKE_CURRENT_LIST_DIR}/include/devices/lamp/KSQLampController.h
         ${CMAKE_CURRENT_LIST_DIR}/include/devices/pc/KSQPC.h
         ${CMAKE_CURRENT_LIST_DIR}/include/devices/pc/KSQPCController.h
+
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQBlankDevicesController.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQBLEController.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQUXSimplifyController.h
 
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/KSQIoTKitFacade.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQUdp.h
@@ -260,19 +261,21 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/KSQApplication.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/ui/VSQUiHelper.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/KSQWiFiEnumerator.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/KSQBLEController.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-hal.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQDevices.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQControllerBase.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQDeviceBase.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQBlankDevicesController.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/lamp/KSQLamp.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/lamp/KSQLampController.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/pc/KSQPC.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/devices/pc/KSQPCController.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQBlankDevicesController.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQBLEController.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQUXSimplifyController.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/KSQIoTKitFacade.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQUdp.cpp

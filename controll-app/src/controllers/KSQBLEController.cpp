@@ -17,7 +17,7 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include <KSQBLEController.h>
+#include <controllers/KSQBLEController.h>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
 
