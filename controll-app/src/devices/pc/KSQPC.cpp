@@ -30,12 +30,9 @@ KSQPC::KSQPC(const KSQPC &l) : KSQDeviceBase(l) {
 
 //-----------------------------------------------------------------------------
 void
-KSQPC::initDevice(QString user, QString password, QString staticIP) {
+KSQPC::invokeCommand(QString json) {
     commandStart();
-    m_user = user;
-    m_password = password;
-    m_staticIP = staticIP;
-    emit fireInitDevice(*this);
+    emit fireInvokeCommand(macAddr(), json);
 }
 
 //-----------------------------------------------------------------------------

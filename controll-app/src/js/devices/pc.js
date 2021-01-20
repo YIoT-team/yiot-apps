@@ -18,7 +18,7 @@
 //  ────────────────────────────────────────────────────────────
 
 //-----------------------------------------------------------------------------
-function createUser(mac, user, pass) {
+function createUser(pc, user, pass) {
     console.log("Create User: ", user)
 
     let json = {}
@@ -27,11 +27,11 @@ function createUser(mac, user, pass) {
     json.script = "create-user.sh"
     json.params = [user, pass]
 
-    pcController.sendCommand(mac, JSON.stringify(json))
+    pc.invokeCommand(JSON.stringify(json))
 }
 
 //-----------------------------------------------------------------------------
-function setNetworkParams(mac, interface, isStatic, ip, gateway, dns, mask) {
+function setNetworkParams(pc, interface, isStatic, ip, gateway, dns, mask) {
     console.log("Set network parameters:")
     console.log("    interface: ", interface)
 
@@ -52,11 +52,11 @@ function setNetworkParams(mac, interface, isStatic, ip, gateway, dns, mask) {
         console.log("    type      : dhcp")
     }
 
-    pcController.sendCommand(mac, JSON.stringify(json))
+    pc.invokeCommand(JSON.stringify(json))
 }
 
 //-----------------------------------------------------------------------------
-function setupAccessPoint(mac, ssid, mode, password) {
+function setupAccessPoint(pc, ssid, mode, password) {
     console.log("Setup access point:")
     console.log("    ssid: ", ssid)
     console.log("    mode: ", mode)
@@ -67,11 +67,11 @@ function setupAccessPoint(mac, ssid, mode, password) {
     json.script = "setup-access-point.sh"
     json.params = [ssid, mode, password]
 
-    pcController.sendCommand(mac, JSON.stringify(json))
+    pc.invokeCommand(JSON.stringify(json))
 }
 
 //-----------------------------------------------------------------------------
-function setupVPNRouter(mac, vpnProvider, user, password) {
+function setupVPNRouter(pc, vpnProvider, user, password) {
     console.log("Setup VPN router:")
     console.log("    provider: ", vpnProvider)
     console.log("    user    : ", user)
@@ -82,7 +82,7 @@ function setupVPNRouter(mac, vpnProvider, user, password) {
     json.script = "setup-vpn-router.sh"
     json.params = [vpnProvider, user, password]
 
-    pcController.sendCommand(mac, JSON.stringify(json))
+    pc.invokeCommand(JSON.stringify(json))
 }
 
 //-----------------------------------------------------------------------------

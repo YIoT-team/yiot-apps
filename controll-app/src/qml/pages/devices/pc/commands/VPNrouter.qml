@@ -79,7 +79,8 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
-                        PCDevice.setupVPNRouter(rpiPage.controller.macAddr,
+                        showCmdProcessing(rpiPage.controller)
+                        PCDevice.setupVPNRouter(rpiPage.controller,
                                                 providerCb.text,
                                                 user.text,
                                                 pass.text)

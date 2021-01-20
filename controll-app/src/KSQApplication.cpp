@@ -122,7 +122,6 @@ KSQApplication::run() {
             &KSQDeviceSetupController::instance()); // Controller to setup device provision, the first owner etc.
     context->setContextProperty("rotModel", &KSQRoTController::instance()); // Container for all Roots of trust
     context->setContextProperty("uxSimplifier", m_uxController.get());      // User experience simplifier
-    context->setContextProperty("pcController", &KSQSnapPCClient::instance());
 
     // Load UI theme
     qmlRegisterSingletonType(QUrl("qrc:/qml/theme/Theme.qml"), "Theme", 1, 0, "Theme");

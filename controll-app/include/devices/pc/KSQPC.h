@@ -48,16 +48,13 @@ public:
 
 signals:
     void
-    fireInitDevice(KSQPC &pc);
+    fireInvokeCommand(QString mac, QString json);
 
 public slots:
     Q_INVOKABLE void
-    initDevice(QString user, QString password, QString staticIP);
+    invokeCommand(QString json);
 
 private:
-    QString m_user;
-    QString m_password;
-    QString m_staticIP;
 };
 
 Q_DECLARE_METATYPE(KSQPC)

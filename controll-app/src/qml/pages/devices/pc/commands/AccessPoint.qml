@@ -80,7 +80,8 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
-                        PCDevice.setupAccessPoint(rpiPage.controller.macAddr,
+                        showCmdProcessing(rpiPage.controller)
+                        PCDevice.setupAccessPoint(rpiPage.controller,
                                                   ssid.text,
                                                   mode.text,
                                                   pass.text)

@@ -20,6 +20,7 @@
 #include <arpa/inet.h>
 
 #include <iostream>
+#include <filesystem>
 
 #include "helpers/timer.h"
 #include "helpers/command.h"
@@ -80,17 +81,20 @@ ks_snap_pc_command_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, const c
 
         CHECK_RET(!script.empty(), VS_CODE_ERR_INCORRECT_ARGUMENT, "Script field is empty");
 
-        // TODO: Check for absence of '/' and '.'
+        // TODO: Prevent SHELL injections
+        // check for a certain file
+        // check for absence of &, &&, |, || etc
+        // verify script signature
 
         auto commandStr = std::string(ks_settings_scripts_dir()) + "/" + script;
 
         for (const std::string &param : params) {
-            commandStr += " " + param;
+            commandStr += " \"" + param + "\"";
         }
 
         res = _processingDelayer.add(kDelayMs, [netif, sender_mac, commandStr]() -> void {
             Command cmd;
-            cmd.Command = "bash -c \"" + commandStr + "\"";
+            cmd.Command = "bash -c '" + commandStr + "'";
             cmd.execute();
 
             // TODO: Remove it

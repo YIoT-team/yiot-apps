@@ -93,7 +93,8 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
-                        PCDevice.setNetworkParams(rpiPage.controller.macAddr,
+                        showCmdProcessing(rpiPage.controller)
+                        PCDevice.setNetworkParams(rpiPage.controller,
                                                   interfaceCb.text,
                                                   "true", // Force static
                                                   deviceIP.text,

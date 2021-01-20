@@ -71,7 +71,8 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
-                        PCDevice.createUser(rpiPage.controller.macAddr, text, pass1.text)
+                        showCmdProcessing(rpiPage.controller)
+                        PCDevice.createUser(rpiPage.controller, text, pass1.text)
                     }
                 }
 

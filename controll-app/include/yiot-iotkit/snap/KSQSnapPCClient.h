@@ -48,7 +48,7 @@ public:
         return name;
     }
 
-    Q_INVOKABLE bool
+    bool
     sendCommand(QString mac, QString json);
 
 signals:

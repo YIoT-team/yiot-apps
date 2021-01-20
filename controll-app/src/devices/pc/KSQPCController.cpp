@@ -100,7 +100,7 @@ KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state
         beginInsertRows(QModelIndex(), m_pcs.size(), m_pcs.size());
 
         auto newPC = QSharedPointer<KSQPC>::create(VSQMac(mac), QString("test-%1").arg(m_pcs.size()));
-        connect(newPC.get(), &KSQPC::fireInitDevice, this, &KSQPCController::onInitDevice);
+        connect(newPC.get(), &KSQPC::fireInvokeCommand, this, &KSQPCController::onInvokeCommand);
         connect(newPC.get(), &KSQPC::fireSetNameToHardware, this, &KSQControllerBase::onSetDeviceName);
         m_pcs.push_back(newPC);
 
@@ -155,39 +155,8 @@ KSQPCController::onPCError(const vs_mac_addr_t mac) {
 
 //-----------------------------------------------------------------------------
 void
-KSQPCController::onInitDevice(KSQPC &pc) {
-    //    vs_snap_pc_init_ssh_t init;
-    //    struct in_addr addr;
-    //
-    //    memset(&init, 0, sizeof(init));
-    //    memset(&addr, 0, sizeof(addr));
-    //
-    //    bool isOk = true;
-    //    if ((pc.m_user.length() + 1) >= USER_NAME_SZ_MAX || (pc.m_password.length() + 1) >= USER_PASS_SZ_MAX) {
-    //        isOk = false;
-    //    }
-    //
-    //    if (isOk) {
-    //        strcpy(reinterpret_cast<char *>(init.user), pc.m_user.toStdString().c_str());
-    //        strcpy(reinterpret_cast<char *>(init.pass), pc.m_password.toStdString().c_str());
-    //        if (0 >= inet_pton(AF_INET, pc.m_staticIP.toStdString().c_str(), &addr)) {
-    //            isOk = false;
-    //        } else {
-    //#if defined(Q_OS_WIN32)
-    //            init.ipv4 = addr.S_un.S_addr;
-    //#else
-    //            init.ipv4 = addr.s_addr;
-    //#endif
-    //        }
-    //    }
-    //
-    //    if (!isOk) {
-    //        VS_LOG_ERROR("Wrong parameters");
-    //        pc.commandError();
-    //        return;
-    //    }
-    //
-    //    KSQSnapPCClient::instance().initPC(pc.qMacAddr(), init);
+KSQPCController::onInvokeCommand(QString mac, QString json) {
+    KSQSnapPCClient::instance().sendCommand(mac, json);
 }
 
 //-----------------------------------------------------------------------------
