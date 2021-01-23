@@ -154,6 +154,7 @@
         <file>qml/components/validators/ValidatorUserName.qml</file>
         <file>qml/components/validators/ValidatorPassword.qml</file>
         <file>qml/components/validators/ValidatorDeviceName.qml</file>
+        <file>qml/components/validators/ValidatorSSID.qml</file>
 
         <!-- QML Left Side Menu -->
         <file>qml/pages/LeftSideMenu.qml</file>

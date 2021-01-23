@@ -23,6 +23,7 @@ import QtQuick.Layouts 1.12
 
 import "../../../../theme"
 import "../../../../components"
+import "../../../../components/validators"
 import "../../../../../js/devices/pc.js" as PCDevice
 
 Page {
@@ -53,6 +54,7 @@ Page {
                     id: ssid
                     label: qsTr("SSID")
                     placeholderText: qsTr("Enter access point name")
+                    validator: ValidatorSSID {}
                 }
 
                 FormLabel {
@@ -73,6 +75,7 @@ Page {
                     id: pass
                     label: qsTr("Password")
                     placeholderText: qsTr("Enter new password")
+                    validator: ValidatorPassword {}
                 }
 
                 FormSecondaryButton {
@@ -80,11 +83,13 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
-                        showCmdProcessing(rpiPage.controller)
-                        PCDevice.setupAccessPoint(rpiPage.controller,
-                                                  ssid.text,
-                                                  mode.text,
-                                                  pass.text)
+                        if(validateInputs()) {
+                            showCmdProcessing(rpiPage.controller)
+                            PCDevice.setupAccessPoint(rpiPage.controller,
+                                                      ssid.text,
+                                                      mode.text,
+                                                      pass.text)
+                        }
                     }
                 }
 
@@ -92,5 +97,22 @@ Page {
                     Layout.fillHeight: true
                 }
             }
+        }
+
+    function errorPopupClick() {
+        }
+
+        function validateInputs() {
+            if (ssid.text == "") {
+                showPopupError(qsTr("Set SSID"), errorPopupClick)
+                return false
+            }
+
+            if (pass.text == "") {
+                showPopupError(qsTr("Set new password"), errorPopupClick)
+                return false
+            }
+
+            return true
         }
 }
