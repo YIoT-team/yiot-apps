@@ -24,6 +24,7 @@
 
 #include <virgil/iot/protocols/snap/snap-structs.h>
 #include <common/protocols/snap/pc/pc-structs.h>
+#include <common/protocols/snap/pc/pc-private.h>
 
 #ifdef __cplusplus
 namespace VirgilIoTKit {

@@ -76,6 +76,12 @@ KSQPCController::KSQPCController() {
 void
 KSQPCController::onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey) {
     qDebug() << "onSessionKeyReady: " << mac.description();
+
+    auto res = findPC(mac);
+    auto pc = res.second;
+    if (pc) {
+        pc->setSessionKey(sessionKey);
+    }
 }
 
 //-----------------------------------------------------------------------------

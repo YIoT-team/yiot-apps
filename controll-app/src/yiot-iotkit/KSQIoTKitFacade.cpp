@@ -101,6 +101,15 @@ KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &imp
 }
 
 //-----------------------------------------------------------------------------
+bool
+KSQIoTKitFacade::needEncCb(vs_snap_service_id_t service_id, vs_snap_element_t element_id) {
+    if (VS_PC_SERVICE_ID == service_id && VS_PC_PCMD == element_id) {
+        return true;
+    }
+    return false;
+}
+
+//-----------------------------------------------------------------------------
 void
 KSQIoTKitFacade::initSnap() {
 
@@ -110,6 +119,7 @@ KSQIoTKitFacade::initSnap() {
 
     if (vs_snap_init(m_impl.netifs().first().get()->lowLevelNetif(),
                      netifProcessCb,
+                     needEncCb,
                      m_appConfig.manufactureId(),
                      m_appConfig.deviceType(),
                      m_appConfig.deviceSerial(),

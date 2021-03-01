@@ -22,6 +22,7 @@
 //-----------------------------------------------------------------------------
 KSQSessionKey::KSQSessionKey() {
     m_valid = false;
+    registerType();
 }
 
 //-----------------------------------------------------------------------------
@@ -65,6 +66,18 @@ KSQSessionKey::set(const vs_session_key_t &key) {
     m_valid = true;
 
     return m_valid;
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQSessionKey::registerType() {
+    static bool registered = false;
+
+    if (registered) {
+        return;
+    }
+    qRegisterMetaType<KSQSessionKey>("KSQSessionKey");
+    registered = true;
 }
 
 //-----------------------------------------------------------------------------

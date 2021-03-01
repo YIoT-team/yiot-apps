@@ -53,6 +53,9 @@ public slots:
 private:
     bool m_valid;
     vs_session_key_t m_key;
+
+    void
+    registerType();
 };
 
 #endif // YIOT_SEC_SESSION_KEY_H

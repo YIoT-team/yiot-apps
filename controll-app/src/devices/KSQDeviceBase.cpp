@@ -198,6 +198,13 @@ KSQDeviceBase::setHasProvision(bool hasProvision) {
 
 //-----------------------------------------------------------------------------
 void
+KSQDeviceBase::setSessionKey(const KSQSessionKey &key) {
+    m_sessionKey = key;
+    m_sessionTimer.stop();
+}
+
+//-----------------------------------------------------------------------------
+void
 KSQDeviceBase::commandStart() {
     setCommandState(kCmdStateReceive);
 }

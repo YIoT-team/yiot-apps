@@ -92,6 +92,9 @@ public:
     setHasProvision(bool hasProvision);
 
     void
+    setSessionKey(const KSQSessionKey &key);
+
+    void
     commandStart();
 
     void
