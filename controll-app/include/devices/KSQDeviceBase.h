@@ -24,6 +24,8 @@
 
 #include <virgil/iot/qt/helpers/VSQMac.h>
 
+#include <yiot-iotkit/secmodule/KSQSessionKey.h>
+
 class KSQDeviceBase : public QObject {
     Q_OBJECT
 
@@ -38,6 +40,8 @@ class KSQDeviceBase : public QObject {
     Q_PROPERTY(QString sentBytes READ sentBytes WRITE setSentBytes NOTIFY fireSentBytesChanged)
     Q_PROPERTY(QString receivedBytes READ receivedBytes WRITE setReceivedBytes NOTIFY fireReceivedBytesChanged)
     Q_PROPERTY(QString commandState READ commandState WRITE setCommandState NOTIFY fireCommandStateChanged)
+    Q_PROPERTY(bool hasOwner READ hasOwner NOTIFY fireHasOwnerChanged)
+    Q_PROPERTY(bool hasProvision READ hasProvision NOTIFY fireHasProvisionChanged)
     Q_PROPERTY(bool active READ active NOTIFY fireActiveChanged)
 
 public:
@@ -82,6 +86,12 @@ public:
     setReceivedBytes(QString val);
 
     void
+    setHasOwner(bool hasOwner);
+
+    void
+    setHasProvision(bool hasProvision);
+
+    void
     commandStart();
 
     void
@@ -108,6 +118,10 @@ public:
     receivedBytes() const;
     QString
     commandState() const;
+    bool
+    hasOwner() const;
+    bool
+    hasProvision() const;
     bool
     active() const;
 
@@ -140,8 +154,6 @@ signals:
     void
     fireSendNameUpdate();
     void
-    fireSetNameToHardware(VSQMac mac, QString name);
-    void
     fireActiveChanged();
 
     void
@@ -158,11 +170,20 @@ signals:
     fireSentBytesChanged();
     void
     fireReceivedBytesChanged();
+    void
+    fireHasOwnerChanged();
+    void
+    fireHasProvisionChanged();
 
     void
     fireDeviceStateChanged();
     void
     fireCommandStateChanged();
+
+    void
+    fireSetNameToHardware(VSQMac mac, QString name);
+    void
+    fireRequestSessionKey(VSQMac mac);
 
 private:
     bool m_active;
@@ -179,6 +200,20 @@ private:
     QString m_sentBytes;
     QString m_receivedBytes;
     QString m_commandState;
+
+    bool m_hasProvision;
+    bool m_hasOwner;
+
+    // TODO: Check if i need a separate class for Session
+    QTimer m_sessionTimer;
+    KSQSessionKey m_sessionKey;
+    static const int kSessionCheckPeriodMs = 2000;
+
+    void
+    startSessionConnection();
+private slots:
+    void
+    onSessionTimer();
 };
 
 #endif // YIOT_DEVICE_BASE_H

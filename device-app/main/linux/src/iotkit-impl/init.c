@@ -25,6 +25,7 @@
 
 #include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/provision/provision.h>
+#include <virgil/iot/session/session.h>
 
 #include "iotkit-impl/init.h"
 
@@ -64,6 +65,11 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
         VS_LOG_ERROR("Cannot initialize Provision module");
         goto terminate;
     }
+
+    // Security Session module
+    vs_mac_addr_t default_mac;
+    vs_snap_mac_addr(netif_impl[0], &default_mac);
+    vs_session_init(secmodule_impl, default_mac.bytes);
 
     // SNAP module
 

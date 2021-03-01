@@ -60,6 +60,9 @@ public slots:
     void
     onSetDeviceName(VSQMac mac, QString name);
 
+    void
+    onRequestSessionKey(VSQMac mac);
+
 signals:
     void
     fireCollapsedChanged(bool);

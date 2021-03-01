@@ -21,6 +21,7 @@
 
 #include <virgil/iot/qt/protocols/snap/VSQSnapINFOClient.h>
 #include <yiot-iotkit/snap/KSQSnapPCClient.h>
+#include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
 
 #if defined(Q_OS_WIN32)
 #include <winsock2.h>
@@ -56,6 +57,31 @@ KSQPCController::KSQPCController() {
             this,
             &KSQPCController::onPCError,
             Qt::QueuedConnection);
+
+    // SNAP:SCRT
+    connect(&KSQSnapSCRTClient::instance(),
+            &KSQSnapSCRTClient::fireSessionKeyReady,
+            this,
+            &KSQPCController::onSessionKeyReady,
+            Qt::QueuedConnection);
+
+    connect(&KSQSnapSCRTClient::instance(),
+            &KSQSnapSCRTClient::fireSessionKeyError,
+            this,
+            &KSQPCController::onSessionKeyError,
+            Qt::QueuedConnection);
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQPCController::onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey) {
+    qDebug() << "onSessionKeyReady: " << mac.description();
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQPCController::onSessionKeyError(VSQMac mac) {
+    qDebug() << "onSessionKeyError: " << mac.description();
 }
 
 //-----------------------------------------------------------------------------
@@ -70,6 +96,9 @@ KSQPCController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
             pc->setDeviceID(deviceInfo.m_deviceType);
             pc->setFwVersion(deviceInfo.m_fwVer);
             pc->setTlVersion(deviceInfo.m_tlVer);
+
+            pc->setHasProvision(deviceInfo.m_hasProvision);
+            pc->setHasOwner(deviceInfo.m_hasOwner);
         }
 
         if (deviceInfo.m_hasStatistics) {
@@ -102,6 +131,7 @@ KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state
         auto newPC = QSharedPointer<KSQPC>::create(VSQMac(mac), QString("test-%1").arg(m_pcs.size()));
         connect(newPC.get(), &KSQPC::fireInvokeCommand, this, &KSQPCController::onInvokeCommand);
         connect(newPC.get(), &KSQPC::fireSetNameToHardware, this, &KSQControllerBase::onSetDeviceName);
+        connect(newPC.get(), &KSQPC::fireRequestSessionKey, this, &KSQControllerBase::onRequestSessionKey);
         m_pcs.push_back(newPC);
 
         endInsertRows();

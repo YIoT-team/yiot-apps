@@ -17,90 +17,42 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_CONTROLLER_H
-#define YIOT_PC_CONTROLLER_H
-
-#include <set>
+#ifndef YIOT_SEC_SESSION_KEY_H
+#define YIOT_SEC_SESSION_KEY_H
 
 #include <QtCore>
-#include <QAbstractTableModel>
 
-#include <virgil/iot/qt/VSQIoTKit.h>
+#include <virgil/iot/secmodule/secmodule.h>
+#include <virgil/iot/session/session-structs.h>
 
-#include <devices/KSQControllerBase.h>
-#include <devices/pc/KSQPC.h>
+using namespace VirgilIoTKit;
 
-class KSQPCController : public KSQControllerBase {
+class KSQSessionKey : public QObject {
     Q_OBJECT
+
 public:
-    enum Element { Name = Qt::UserRole, Type, Mac, Active, Device, ElementMax };
+    KSQSessionKey();
+    KSQSessionKey(const vs_session_key_t &key);
+    KSQSessionKey(const KSQSessionKey &key);
 
-    KSQPCController();
-    virtual ~KSQPCController() = default;
+    virtual ~KSQSessionKey() = default;
 
-    virtual QString
-    name() const final {
-        return tr("PC");
-    }
+    KSQSessionKey &
+    operator=(KSQSessionKey const &key);
 
-    virtual QString
-    type() const final {
-        return "pc";
-    }
+    bool
+    isValid() const;
 
-    virtual QString
-    image() const final {
-        return tr("pc");
-    }
-
-    /**
-     * QAbstractTableModel implementation
-     */
-    int
-    rowCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    int
-    columnCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    QVariant
-    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-
-    QHash<int, QByteArray>
-    roleNames() const override;
-
-public slots:
+    bool
+    set(const vs_session_key_t &key);
 
 signals:
 
-private slots:
-    // SNAP::INFO
-    void
-    onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo);
-
-    // SNAP::PC
-    void
-    onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state);
-
-    void
-    onPCError(const vs_mac_addr_t mac);
-
-    // SNAP::SCRT
-    void
-    onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey);
-
-    void
-    onSessionKeyError(VSQMac mac);
-
-    // UI
-    void
-    onInvokeCommand(QString mac, QString json);
-
-protected:
-    std::pair<int, QSharedPointer<KSQPC>>
-    findPC(const vs_mac_addr_t &mac);
+public slots:
 
 private:
-    std::list<QSharedPointer<KSQPC>> m_pcs;
+    bool m_valid;
+    vs_session_key_t m_key;
 };
 
-#endif // YIOT_PC_CONTROLLER_H
+#endif // YIOT_SEC_SESSION_KEY_H

@@ -17,90 +17,54 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_CONTROLLER_H
-#define YIOT_PC_CONTROLLER_H
+#include <yiot-iotkit/secmodule/KSQSessionKey.h>
 
-#include <set>
+//-----------------------------------------------------------------------------
+KSQSessionKey::KSQSessionKey() {
+    m_valid = false;
+}
 
-#include <QtCore>
-#include <QAbstractTableModel>
+//-----------------------------------------------------------------------------
+KSQSessionKey::KSQSessionKey(const vs_session_key_t &key) {
+    set(key);
+}
 
-#include <virgil/iot/qt/VSQIoTKit.h>
-
-#include <devices/KSQControllerBase.h>
-#include <devices/pc/KSQPC.h>
-
-class KSQPCController : public KSQControllerBase {
-    Q_OBJECT
-public:
-    enum Element { Name = Qt::UserRole, Type, Mac, Active, Device, ElementMax };
-
-    KSQPCController();
-    virtual ~KSQPCController() = default;
-
-    virtual QString
-    name() const final {
-        return tr("PC");
+//-----------------------------------------------------------------------------
+KSQSessionKey::KSQSessionKey(const KSQSessionKey &key) {
+    if (this == &key) {
+        return;
     }
 
-    virtual QString
-    type() const final {
-        return "pc";
+    m_valid = key.m_valid;
+    memcpy(&m_key, &key.m_key, sizeof(m_key));
+}
+
+//-----------------------------------------------------------------------------
+KSQSessionKey &
+KSQSessionKey::operator=(KSQSessionKey const &key) {
+    if (this == &key) {
+        return *this;
     }
 
-    virtual QString
-    image() const final {
-        return tr("pc");
-    }
+    m_valid = key.m_valid;
+    memcpy(&m_key, &key.m_key, sizeof(m_key));
 
-    /**
-     * QAbstractTableModel implementation
-     */
-    int
-    rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    return *this;
+}
 
-    int
-    columnCount(const QModelIndex &parent = QModelIndex()) const override;
+//-----------------------------------------------------------------------------
+bool
+KSQSessionKey::isValid() const {
+    return m_valid;
+}
 
-    QVariant
-    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+//-----------------------------------------------------------------------------
+bool
+KSQSessionKey::set(const vs_session_key_t &key) {
+    memcpy(&m_key, &key, sizeof(key));
+    m_valid = true;
 
-    QHash<int, QByteArray>
-    roleNames() const override;
+    return m_valid;
+}
 
-public slots:
-
-signals:
-
-private slots:
-    // SNAP::INFO
-    void
-    onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo);
-
-    // SNAP::PC
-    void
-    onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state);
-
-    void
-    onPCError(const vs_mac_addr_t mac);
-
-    // SNAP::SCRT
-    void
-    onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey);
-
-    void
-    onSessionKeyError(VSQMac mac);
-
-    // UI
-    void
-    onInvokeCommand(QString mac, QString json);
-
-protected:
-    std::pair<int, QSharedPointer<KSQPC>>
-    findPC(const vs_mac_addr_t &mac);
-
-private:
-    std::list<QSharedPointer<KSQPC>> m_pcs;
-};
-
-#endif // YIOT_PC_CONTROLLER_H
+//-----------------------------------------------------------------------------

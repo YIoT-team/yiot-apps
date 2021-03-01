@@ -52,21 +52,19 @@ vs_snap_pc_get_state(const vs_netif_t *netif, const vs_mac_addr_t *mac) {
 //-----------------------------------------------------------------------------
 vs_status_e
 vs_snap_pc_command(const vs_netif_t *netif, const vs_mac_addr_t *mac, const char *json) {
-    const vs_mac_addr_t *dst_mac;
     vs_status_e ret_code;
     uint16_t sz;
 
     // Check input parameters
+    CHECK_NOT_ZERO_RET(mac, VS_CODE_ERR_INCORRECT_ARGUMENT);
     CHECK_NOT_ZERO_RET(json, VS_CODE_ERR_INCORRECT_ARGUMENT);
     sz = strnlen(json, PC_JSON_SZ_MAX);
     CHECK_RET(sz < PC_JSON_SZ_MAX, VS_CODE_ERR_INCORRECT_ARGUMENT, "JSON command too long");
     ++sz;
 
-    // Set destination mac
-    dst_mac = mac ? mac : vs_snap_broadcast_mac();
 
     // Send request
-    STATUS_CHECK_RET(vs_snap_send_request(netif, dst_mac, VS_PC_SERVICE_ID, VS_PC_PCMD, (uint8_t *)json, sz),
+    STATUS_CHECK_RET(vs_snap_send_request(netif, mac, VS_PC_SERVICE_ID, VS_PC_PCMD, (uint8_t *)json, sz),
                      "Cannot send request");
 
     return VS_CODE_OK;

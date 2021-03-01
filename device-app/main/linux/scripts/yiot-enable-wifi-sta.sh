@@ -8,7 +8,7 @@ echo "PASS  : ${2}"
 
 if [ ! -f /etc/debian_version ]; then 
   echo "ERROR: System is not Raspberry PI"
-  exit 127
+  exit 0
 fi
 
 WIFI_ESSID="${1}"
