@@ -45,6 +45,8 @@
 #include <yiot-iotkit/provision/KSQProvision.h>
 #include <yiot-iotkit/root-of-trust/KSQRoTController.h>
 
+#include <virgil/iot/session/session.h>
+
 using namespace VirgilIoTKit;
 
 //-----------------------------------------------------------------------------
@@ -139,6 +141,11 @@ KSQIoTKitFacade::initSnap() {
             throw QString("Unable to add SNAP network interface");
         }
     }
+
+    // Setup Session
+    vs_mac_addr_t default_mac;
+    vs_snap_mac_addr(0, &default_mac);
+    vs_session_init(KSQSecModule::instance().secmoduleImpl(), default_mac.bytes);
 
     if (m_features.hasFeature(KSQFeatures::SNAP_PRVS_CLIENT)) {
         registerService(KSQSnapPRVSClient::instance());
