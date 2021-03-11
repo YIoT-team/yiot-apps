@@ -50,7 +50,7 @@ public:
     stop();
 
     Q_INVOKABLE bool
-    configure(QString ssid, QString password);
+    configure(bool needProvision, bool needUser, QString userName, bool needWiFi, QString ssid, QString password);
 
     void
     error(const QString &error);
@@ -112,6 +112,11 @@ private:
     bool m_valid;
     bool m_readyDeviceInfo;
     bool m_readyDeviceSecurityInfo;
+
+    bool m_needProvision;
+    bool m_needUser;
+    bool m_needWiFi;
+    QString m_userName;
 
     KSQDeviceSetupData m_deviceData;
 

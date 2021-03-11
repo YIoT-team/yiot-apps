@@ -68,7 +68,7 @@ KSQDeviceSetupData::operator!=(const KSQDeviceSetupData &d) const {
 void
 KSQDeviceSetupData::setHasProvision(bool hasProvision) {
     m_hasProvision = hasProvision;
-    emit fireHasOwnerChanged();
+    emit fireHasProvisionChanged();
 }
 
 //-----------------------------------------------------------------------------

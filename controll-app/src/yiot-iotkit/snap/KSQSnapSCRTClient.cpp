@@ -23,6 +23,9 @@
 #include <virgil/iot/protocols/snap/scrt/scrt-structs.h>
 #include <virgil/iot/protocols/snap/scrt/scrt-client.h>
 
+#include <virgil/iot/provision/provision.h>
+#include <virgil/iot/high-level/high-level-crypto.h>
+
 #include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
 #include <yiot-iotkit/secmodule/KSQSecModule.h>
 

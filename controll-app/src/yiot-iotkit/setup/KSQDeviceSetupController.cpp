@@ -93,7 +93,6 @@ KSQDeviceSetupController::onProvisionDone() {
     static const size_t kCertMaxSz = sizeof(vs_cert_t) + 1024;
     uint8_t certBuf[kCertMaxSz];
     vs_cert_t *myCert = reinterpret_cast<vs_cert_t *>(certBuf);
-    // TODO: Fill own certificate
 
     if (VS_CODE_OK != vs_provision_own_cert(myCert, kCertMaxSz)) {
         VS_LOG_ERROR("Cannot get own certificate");
@@ -101,10 +100,14 @@ KSQDeviceSetupController::onProvisionDone() {
         return;
     }
 
-    emit fireStateInfo(tr("Set device owner"));
-    if (!KSQSnapSCRTClient::instance().addUser(
-                m_netif->lowLevelNetif(), m_deviceMac, VS_USER_OWNER, "Owner 1", *myCert)) {
-        error(tr("Cannot set self as an owner"));
+    if (m_needUser) {
+        emit fireStateInfo(tr("Set device owner"));
+        if (!KSQSnapSCRTClient::instance().addUser(
+                    m_netif->lowLevelNetif(), m_deviceMac, VS_USER_OWNER, m_userName, *myCert)) {
+            error(tr("Cannot set self as an owner"));
+        }
+    } else {
+        done();
     }
 }
 
@@ -117,8 +120,16 @@ KSQDeviceSetupController::onAddUserError(QString errorStr) {
 //-----------------------------------------------------------------------------
 void
 KSQDeviceSetupController::onAddUserDone() {
-    emit fireStateInfo(tr("Set WiFi credentials"));
-    KSQIoTKitFacade::instance().snapCfgClient().onConfigureDevice(m_netif, m_deviceMac);
+    if (!m_valid) {
+        return;
+    }
+
+    if (m_needWiFi) {
+        emit fireStateInfo(tr("Set WiFi credentials"));
+        KSQIoTKitFacade::instance().snapCfgClient().onConfigureDevice(m_netif, m_deviceMac);
+    } else {
+        done();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -166,16 +177,39 @@ KSQDeviceSetupController::stop() {
 
 //-----------------------------------------------------------------------------
 bool
-KSQDeviceSetupController::configure(QString ssid, QString password) {
+KSQDeviceSetupController::configure(bool needProvision,
+                                    bool needUser,
+                                    QString userName,
+                                    bool needWiFi,
+                                    QString ssid,
+                                    QString password) {
     emit fireUploadStarted();
 
-    KSQIoTKitFacade::instance().snapCfgClient().onSetConfigData(ssid, password);
+    m_needProvision = needProvision;
+    m_needUser = needUser;
+    m_needWiFi = needWiFi;
+    m_userName = userName;
 
-    if (!KSQSnapPRVSClient::instance().provisionDevice(
-                m_netif, m_deviceMac, KSQRoTController::instance().localRootOfTrust())) {
-        VS_LOG_ERROR("Cannot do device provision.");
-        return false;
+    if (needUser) {
+        KSQIoTKitFacade::instance().snapCfgClient().onSetConfigData(ssid, password);
     }
+
+    if (needProvision) {
+        if (!KSQSnapPRVSClient::instance().provisionDevice(
+                    m_netif, m_deviceMac, KSQRoTController::instance().localRootOfTrust())) {
+            VS_LOG_ERROR("Cannot do device provision.");
+            return false;
+        }
+    } else if (needUser) {
+        onProvisionDone();
+
+    } else if (needWiFi) {
+        onAddUserDone();
+
+    } else {
+        done();
+    }
+
 
     return true;
 }
