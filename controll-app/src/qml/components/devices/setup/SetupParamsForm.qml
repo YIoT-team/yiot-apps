@@ -61,8 +61,8 @@ Form {
             InfoText { text: qsTr("Owner:"); horizontalAlignment: Text.AlignRight }
             InfoText { text: deviceSetup.data.hasOwner ? qsTr("present") : qsTr("absent") }
 
-            InfoText { text: qsTr("Owned by me:"); horizontalAlignment: Text.AlignRight }
-            InfoText { text: deviceSetup.data.ownerIsYou ? qsTr("yes") : qsTr("no") }
+            // InfoText { text: qsTr("Owned by me:"); horizontalAlignment: Text.AlignRight }
+            // InfoText { text: deviceSetup.data.ownerIsYou ? qsTr("yes") : qsTr("no") }
 
             InfoText { text: qsTr("WiFi Credentials:"); horizontalAlignment: Text.AlignRight }
             InfoText { text: deviceSetup.data.needCreds ? qsTr("required") : qsTr("present") }
@@ -103,7 +103,12 @@ Form {
             onClicked: {
                 var cred = settings.getWiFiCredDefault()
                 if (cred.ready) {
-                    deviceSetup.configure(cred.ssid, cred.pass)
+
+                    deviceSetup.configure(
+                        !deviceSetup.data.hasProvision,
+                        !deviceSetup.data.hasOwner, "Me",
+                        deviceSetup.data.needCreds, cred.ssid, cred.pass)
+
                 } else {
                     showPopupError(qsTr("Need to set WiFi credentials"), showSettingsForWiFi)
                 }
