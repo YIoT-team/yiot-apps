@@ -61,6 +61,7 @@ static vs_netif_process_cb_t _netif_ble_process_cb = 0;
 
 class TxCharacteristic;
 static std::shared_ptr<TxCharacteristic> _tx_char;
+static std::string NAME;
 
 //-----------------------------------------------------------------------------
 static vs_status_e
@@ -145,8 +146,6 @@ _ble_thread_func() {
     constexpr const char *SRV_PATH = "/com/kutashenko/provision/service1";
     constexpr const char *ADV_PATH = "/com/kutashenko/provision/advertisement1";
 
-    constexpr const char *NAME = "BLEProvision";
-
     std::shared_ptr<IConnection> connection{std::move(sdbus::createSystemBusConnection())};
 
     // ---- Adapter Info -----------------------------------------------------------------------------------------------
@@ -157,14 +156,8 @@ _ble_thread_func() {
         adapter1.Powered(true);
         adapter1.Discoverable(true);
         adapter1.Pairable(false);
-        adapter1.Alias(NAME);
 
-        std::cout << "Found adapter '" << DEVICE0 << "'" << std::endl;
-        std::cout << "  Name: " << adapter1.Name() << std::endl;
-        std::cout << "  Address: " << adapter1.Address() << " type: " << adapter1.AddressType() << std::endl;
-        std::cout << "  Powered: " << adapter1.Powered() << std::endl;
-        std::cout << "  Discoverable: " << adapter1.Discoverable() << std::endl;
-        std::cout << "  Pairable: " << adapter1.Pairable() << std::endl;
+        NAME = "yiot_RPi_" + adapter1.Address();
 
         // Save MAC address
         unsigned int bytes[ETH_ADDR_LEN];
@@ -182,6 +175,15 @@ _ble_thread_func() {
         for (int i = 0; i < ETH_ADDR_LEN; i++) {
             _mac.bytes[i] = bytes[i];
         }
+
+        adapter1.Alias(NAME);
+
+        std::cout << "Found adapter '" << DEVICE0 << "'" << std::endl;
+        std::cout << "  Name: " << adapter1.Name() << std::endl;
+        std::cout << "  Address: " << adapter1.Address() << " type: " << adapter1.AddressType() << std::endl;
+        std::cout << "  Powered: " << adapter1.Powered() << std::endl;
+        std::cout << "  Discoverable: " << adapter1.Discoverable() << std::endl;
+        std::cout << "  Pairable: " << adapter1.Pairable() << std::endl;
     }
 
     std::cout << std::endl;
@@ -246,6 +248,7 @@ _ble_thread_func() {
                       .withLocalName(NAME)
                       .withServiceUUIDs(std::vector{std::string{IOTKIT_BLE_SERVICE_UUID}})
                       .withIncludes(std::vector{std::string{"tx-power"}})
+                      .withDuration(10)
                       .onReleaseCall([]() { std::cout << "advertisement released" << std::endl; })
                       .registerWith(mgr, register_adv_callback);
 
