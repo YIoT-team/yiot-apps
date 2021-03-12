@@ -190,7 +190,11 @@ KSQDeviceSetupController::configure(bool needProvision,
     m_needWiFi = needWiFi;
     m_userName = userName;
 
-    if (needUser) {
+    if (needWiFi) {
+        if (ssid.isEmpty() || password.isEmpty()) {
+            error("Empty WiFi parameters");
+            return false;
+        }
         KSQIoTKitFacade::instance().snapCfgClient().onSetConfigData(ssid, password);
     }
 
