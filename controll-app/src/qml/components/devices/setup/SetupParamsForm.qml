@@ -107,7 +107,7 @@ Form {
                     deviceSetup.configure(
                         !deviceSetup.data.hasProvision,
                         !deviceSetup.data.hasOwner, "Me",
-                        deviceSetup.data.needCreds, cred.ssid, cred.pass)
+                        true, cred.ssid, cred.pass)
 
                 } else {
                     showPopupError(qsTr("Need to set WiFi credentials"), showSettingsForWiFi)

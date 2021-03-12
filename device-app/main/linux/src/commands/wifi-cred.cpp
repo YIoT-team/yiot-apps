@@ -25,6 +25,7 @@
 
 #include "commands/wifi-cred.h"
 
+#include <virgil/iot/protocols/snap/info/info-server.h>
 #include <virgil/iot/protocols/snap/cfg/cfg-private.h>
 #include <common/protocols/snap/pc/pc-server.h>
 
@@ -57,16 +58,19 @@ ks_snap_cfg_wifi_cb(const vs_netif_t *netif,
         // ~TODO: Remove it
 
         // Send response after complete processing
-        if (VS_CODE_OK != vs_snap_send_response(netif,
-                                                &sender_mac,
-                                                0, // TODO: Fill transaction ID
-                                                VS_CFG_SERVICE_ID,
-                                                VS_CFG_WIFI,
-                                                0 == cmd.ExitStatus,
-                                                NULL,
-                                                0)) {
+        bool success = VS_CODE_OK == vs_snap_send_response(netif,
+                                                           &sender_mac,
+                                                           0, // TODO: Fill transaction ID
+                                                           VS_CFG_SERVICE_ID,
+                                                           VS_CFG_WIFI,
+                                                           0 == cmd.ExitStatus,
+                                                           NULL,
+                                                           0);
+        if (!success) {
             VS_LOG_WARNING("Cannot set WiFi credentials.");
         }
+
+        vs_snap_info_set_need_cred(!success);
 
         // TODO: Move it IoTKit
         vs_provision_update();
