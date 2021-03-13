@@ -59,7 +59,11 @@ ks_snap_cfg_reset_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac) {
         }
     });
 
-    return res ? VS_CODE_COMMAND_NO_RESPONSE : VS_CODE_ERR_QUEUE;
+    if (!res) {
+        VS_LOG_WARNING("reset processor is busy");
+    }
+
+    return VS_CODE_COMMAND_NO_RESPONSE;
 }
 
 //-----------------------------------------------------------------------------

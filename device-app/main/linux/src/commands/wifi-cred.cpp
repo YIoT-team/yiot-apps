@@ -80,7 +80,11 @@ ks_snap_cfg_wifi_cb(const vs_netif_t *netif,
         vs_snap_pc_start_notification(n);
     });
 
-    return res ? VS_CODE_COMMAND_NO_RESPONSE : VS_CODE_ERR_QUEUE;
+    if (!res) {
+        VS_LOG_WARNING("wifi-cred is busy");
+    }
+
+    return VS_CODE_COMMAND_NO_RESPONSE;
 }
 
 //-----------------------------------------------------------------------------

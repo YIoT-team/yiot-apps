@@ -131,7 +131,11 @@ ks_snap_pc_command_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, const c
         VS_LOG_WARNING("Command cannot be processed");
     }
 
-    return res ? VS_CODE_COMMAND_NO_RESPONSE : VS_CODE_ERR_QUEUE;
+    if (!res) {
+        VS_LOG_WARNING("PC command processor is busy");
+    }
+
+    return VS_CODE_COMMAND_NO_RESPONSE;
 }
 
 //-----------------------------------------------------------------------------
