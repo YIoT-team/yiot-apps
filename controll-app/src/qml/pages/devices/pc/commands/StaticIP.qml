@@ -59,7 +59,7 @@ Page {
                     id: interfaceCb
                     Layout.leftMargin: 12
                     Layout.topMargin: 0
-                    items: ["wifi", "eth0"]
+                    items: ["wlan0", "eth0"]
                 }
 
                 InputTextField {
