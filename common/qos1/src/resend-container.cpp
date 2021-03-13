@@ -22,6 +22,10 @@
 
 #include "qos1/resend-container.h"
 
+#if !defined(YIOT_DEBUG_QOS)
+#define YIOT_DEBUG_QOS 0
+#endif
+
 //-----------------------------------------------------------------------------
 KSResendContainer::KSResendContainer(std::function<vs_status_e(const uint8_t *, const uint16_t)> senderFunc,
                                      size_t resendAttempts,
@@ -54,7 +58,9 @@ KSResendContainer::KSResendContainer(std::function<vs_status_e(const uint8_t *, 
                 // Resend if required
                 if (m.attempts < m_resendMax) {
                     if (m_senderFunc) {
+#if YIOT_DEBUG_QOS
                         VS_LOG_DEBUG("Resend %u", (unsigned int)m.id);
+#endif
                         m_senderFunc(m.data.data(), m.data.size());
                     }
                 }
@@ -93,7 +99,9 @@ KSResendContainer::addPacket(const vs_mac_addr_t *mac,
     m.time = std::chrono::system_clock::now();
     m.data.swap(d);
 
+#if YIOT_DEBUG_QOS
     VS_LOG_DEBUG("Add packet %u", (unsigned int)id);
+#endif
 
     m_container.push_back(m);
 
@@ -107,7 +115,9 @@ KSResendContainer::processResponse(const vs_mac_addr_t *mac, vs_snap_transaction
     auto end = std::remove_if(m_container.begin(), m_container.end(), [mac, id](const KSMessage &m) {
         if (id == m.id) {
             if (0 == memcmp(mac->bytes, m.mac.bytes, ETH_ADDR_LEN)) {
+#if YIOT_DEBUG_QOS
                 VS_LOG_DEBUG("Packet processed %u", (unsigned int)id);
+#endif
                 return true;
             }
         }

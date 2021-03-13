@@ -127,8 +127,7 @@ ApplicationWindow {
         }
 
         function onFireRequestDeviceSetup(device) {
-            console.log(">>> ", device)
-            console.log(">>> ", device.name)
+            console.log("Setup device: ", device.name)
             deviceActionDialog.name = device.name
             deviceActionDialog.ctx = device
             deviceActionDialog.inform = qsTr("Do you want to start work with a new device ?")
