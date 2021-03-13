@@ -110,9 +110,20 @@ protected:
 
         VS_LOG_DEBUG("Received %d bytes:", recv_size);
 
-        if (recv_size > 0) {
+        if (recv_size > 1) {
+            uint8_t marker = rx_buffer[0];
+            if (marker != 0xAA && marker != 0x55) {
+                VS_LOG_WARNING("Malformed packet");
+                return;
+            }
+
+            if (marker == 0xAA) {
+                // First element of packet. Need to reset received data.
+                _netif_ble.packet_buf_filled = 0;
+            }
+
             if (_netif_ble_rx_cb) {
-                if (0 == _netif_ble_rx_cb(&_netif_ble, rx_buffer, recv_size, &packet_data, &packet_data_sz)) {
+                if (0 == _netif_ble_rx_cb(&_netif_ble, &rx_buffer[1], recv_size - 1, &packet_data, &packet_data_sz)) {
                     // Ready to process packet
                     if (_netif_ble_process_cb) {
                         VS_LOG_HEX(VS_LOGLEV_DEBUG, "RECV DUMP:", packet_data, packet_data_sz);
@@ -155,7 +166,8 @@ _ble_thread_func() {
 
         adapter1.Powered(true);
         adapter1.Discoverable(true);
-        adapter1.Pairable(false);
+        adapter1.DiscoverableTimeout(0);
+        adapter1.Pairable(true);
 
         NAME = "yiot_RPi_" + adapter1.Address();
 
@@ -248,7 +260,6 @@ _ble_thread_func() {
                       .withLocalName(NAME)
                       .withServiceUUIDs(std::vector{std::string{IOTKIT_BLE_SERVICE_UUID}})
                       .withIncludes(std::vector{std::string{"tx-power"}})
-                      .withDuration(10)
                       .onReleaseCall([]() { std::cout << "advertisement released" << std::endl; })
                       .registerWith(mgr, register_adv_callback);
 
