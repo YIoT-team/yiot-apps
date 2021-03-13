@@ -77,7 +77,7 @@ signals:
     fireRequiredSetup(QSharedPointer<KSQDeviceBase> device);
 
 private:
-    bool m_collapsed = true;
+    bool m_collapsed = false;
 };
 
 #endif // YIOT_DEVICE_CONTROLLER_BASE_H
