@@ -152,7 +152,7 @@ public:
 
 //-----------------------------------------------------------------------------
 static void
-_ble_thread_func() {
+_ble_thread_internal_func() {
     constexpr const char *APP_PATH = "/com/kutashenko/provision";
     constexpr const char *SRV_PATH = "/com/kutashenko/provision/service1";
     constexpr const char *ADV_PATH = "/com/kutashenko/provision/advertisement1";
@@ -257,11 +257,11 @@ _ble_thread_func() {
     };
 
     auto ad = LEAdvertisement1::create(*connection, ADV_PATH)
-                      .withLocalName(NAME)
-                      .withServiceUUIDs(std::vector{std::string{IOTKIT_BLE_SERVICE_UUID}})
-                      .withIncludes(std::vector{std::string{"tx-power"}})
-                      .onReleaseCall([]() { std::cout << "advertisement released" << std::endl; })
-                      .registerWith(mgr, register_adv_callback);
+            .withLocalName(NAME)
+            .withServiceUUIDs(std::vector{std::string{IOTKIT_BLE_SERVICE_UUID}})
+            .withIncludes(std::vector{std::string{"tx-power"}})
+            .onReleaseCall([]() { std::cout << "advertisement released" << std::endl; })
+            .registerWith(mgr, register_adv_callback);
 
     std::cout << "Loading complete." << std::endl;
 
@@ -270,6 +270,19 @@ _ble_thread_func() {
     // Wait to finish
     std::unique_lock<std::mutex> lck(_mtx_stop);
     _cv_stop.wait(lck, []() -> bool { return _need_stop; });
+}
+//-----------------------------------------------------------------------------
+static void
+_ble_thread_func() {
+    while(!_need_stop) {
+        try {
+            _ble_thread_internal_func();
+        } catch (...) {
+            if (!_need_stop) {
+                usleep(3 * 1000 * 1000);
+            }
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
