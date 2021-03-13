@@ -324,8 +324,10 @@ static vs_status_e
 _ble_deinit(struct vs_netif_t *netif) {
     (void)netif;
     if (_ble_thread) {
-        std::unique_lock<std::mutex> lck(_mtx_stop);
-        _need_stop = true;
+        {
+            std::unique_lock<std::mutex> lck(_mtx_stop);
+            _need_stop = true;
+        }
         _cv_stop.notify_one();
         _ble_thread->join();
         delete _ble_thread;
