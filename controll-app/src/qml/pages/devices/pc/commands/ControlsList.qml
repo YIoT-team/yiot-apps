@@ -52,20 +52,20 @@ Page {
                     showStaticipPage()
                 }
             }
-            ListElement {
-                name: qsTr("Access Point")
-                image: "access-point"
-                property var action: function() {
-                    showAccessPointPage()
-                }
-            }
-            ListElement {
-                name: qsTr("VPN Router")
-                image: "vpn-router"
-                property var action: function() {
-                    showVPNrouterPage()
-                }
-            }
+            //ListElement {
+            //    name: qsTr("Access Point")
+            //    image: "access-point"
+            //    property var action: function() {
+            //        showAccessPointPage()
+            //    }
+            //}
+            //ListElement {
+            //    name: qsTr("VPN Router")
+            //    image: "vpn-router"
+            //    property var action: function() {
+            //        showVPNrouterPage()
+            //    }
+            //}
             ListElement {
                 name: qsTr("Enable SSH")
                 image: "vpn-router"
