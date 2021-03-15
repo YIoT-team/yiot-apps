@@ -66,6 +66,13 @@ Page {
                     showVPNrouterPage()
                 }
             }
+            ListElement {
+                name: qsTr("Enable SSH")
+                image: "vpn-router"
+                property var action: function() {
+                    showSSHPage()
+                }
+            }
         }
 
         delegate: Rectangle {

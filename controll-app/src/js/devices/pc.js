@@ -86,3 +86,16 @@ function setupVPNRouter(pc, vpnProvider, user, password) {
 }
 
 //-----------------------------------------------------------------------------
+function enableSSH(pc) {
+    console.log("Enable SSH:")
+
+    let json = {}
+
+    json.command = "script"
+    json.script = "enable-ssh.sh"
+    json.params = []
+
+    pc.invokeCommand(JSON.stringify(json))
+}
+
+//-----------------------------------------------------------------------------

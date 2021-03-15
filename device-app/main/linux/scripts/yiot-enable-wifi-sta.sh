@@ -31,6 +31,11 @@ rfkill unblock wifi
 echo "Enable WiFi interface"
 ifconfig wlan0 up
 
+echo "Restore network settings"
+if [ -f /etc/dhcpcd.conf.orig ]; then
+    cp -f /etc/dhcpcd.conf.orig /etc/dhcpcd.conf
+fi
+
 echo "Reconfiguring wpa_supplicant"
 chmod 600 /etc/wpa_supplicant/wpa_supplicant.conf
 wpa_cli -i wlan0 reconfigure
