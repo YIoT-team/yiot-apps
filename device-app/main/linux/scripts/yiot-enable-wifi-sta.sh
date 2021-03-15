@@ -13,7 +13,7 @@ fi
 
 WIFI_ESSID="${1}"
 WIFI_KEY="${2}"
-TIMEOUT="20"
+TIMEOUT="45"
 
 echo "Prepare WPA supplicant configuration"
 cat <<EOF >/etc/wpa_supplicant/wpa_supplicant.conf
