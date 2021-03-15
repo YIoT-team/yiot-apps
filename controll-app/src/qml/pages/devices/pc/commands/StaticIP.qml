@@ -76,6 +76,7 @@ Page {
 
                 InputTextField {
                     id: mask
+                    visible: false
                     label: qsTr("Mask")
                     placeholderText: qsTr("Enter network mask")
                     text: "255.255.255.0"
@@ -83,6 +84,7 @@ Page {
 
                 InputTextField {
                     id: dns
+                    visible: false
                     label: qsTr("DNS")
                     placeholderText: qsTr("Enter DNS")
                     text: "8.8.8.8"
