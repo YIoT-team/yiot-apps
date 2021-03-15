@@ -257,11 +257,11 @@ _ble_thread_internal_func() {
     };
 
     auto ad = LEAdvertisement1::create(*connection, ADV_PATH)
-            .withLocalName(NAME)
-            .withServiceUUIDs(std::vector{std::string{IOTKIT_BLE_SERVICE_UUID}})
-            .withIncludes(std::vector{std::string{"tx-power"}})
-            .onReleaseCall([]() { std::cout << "advertisement released" << std::endl; })
-            .registerWith(mgr, register_adv_callback);
+                      .withLocalName(NAME)
+                      .withServiceUUIDs(std::vector{std::string{IOTKIT_BLE_SERVICE_UUID}})
+                      .withIncludes(std::vector{std::string{"tx-power"}})
+                      .onReleaseCall([]() { std::cout << "advertisement released" << std::endl; })
+                      .registerWith(mgr, register_adv_callback);
 
     std::cout << "Loading complete." << std::endl;
 
@@ -274,7 +274,7 @@ _ble_thread_internal_func() {
 //-----------------------------------------------------------------------------
 static void
 _ble_thread_func() {
-    while(!_need_stop) {
+    while (!_need_stop) {
         try {
             _ble_thread_internal_func();
         } catch (...) {
