@@ -29,6 +29,7 @@
 KSQBlankDevicesController::KSQBlankDevicesController(QSharedPointer<VSQNetifBase> netif) {
     m_netif = netif;
 
+#if 0
     // SNAP::INFO service
     connect(&VSQSnapInfoClient::instance(),
             &VSQSnapInfoClient::fireNewDevice,
@@ -46,6 +47,7 @@ KSQBlankDevicesController::KSQBlankDevicesController(QSharedPointer<VSQNetifBase
     connect(&m_cleanerTimer, &QTimer::timeout, this, &KSQBlankDevicesController::cleanOldDevices);
 
     m_cleanerTimer.start(kInactiveTimeoutMS / 5);
+#endif
 }
 
 //-----------------------------------------------------------------------------
