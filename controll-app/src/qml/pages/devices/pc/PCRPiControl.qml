@@ -48,6 +48,7 @@ Page {
         readonly property int staticipIdx: 2
         readonly property int accessPointIdx: 3
         readonly property int vpnRouterIdx: 4
+        readonly property int sshIdx: 5
 
         property int backPageIdx: listIdx
 
@@ -74,6 +75,10 @@ Page {
 
         VPNrouter {
             id: vpnRouterPage
+        }
+
+        SSHEnabler {
+            id: sshPage
         }
     }
 
@@ -115,6 +120,10 @@ Page {
 
     function showVPNrouterPage() {
         swipeSettingsShow(settingsSwipeView.vpnRouterIdx)
+    }
+
+    function showSSHPage() {
+        swipeSettingsShow(settingsSwipeView.sshIdx)
     }
 
     function backInRPiSettings() {

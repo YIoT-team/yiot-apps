@@ -185,6 +185,7 @@
 		<file>qml/pages/devices/pc/commands/CreateUser.qml</file>
 		<file>qml/pages/devices/pc/commands/StaticIP.qml</file>
 		<file>qml/pages/devices/pc/commands/VPNrouter.qml</file>
+        <file>qml/pages/devices/pc/commands/SSHEnabler.qml</file>
         <file>qml/pages/devices/setup/SetupProcessingPage.qml</file>
 
         <!-- QML Contributers and Sponsors -->

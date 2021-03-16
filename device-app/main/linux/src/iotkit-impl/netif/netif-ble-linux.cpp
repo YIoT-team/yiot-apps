@@ -110,9 +110,20 @@ protected:
 
         VS_LOG_DEBUG("Received %d bytes:", recv_size);
 
-        if (recv_size > 0) {
+        if (recv_size > 1) {
+            uint8_t marker = rx_buffer[0];
+            if (marker != 0xAA && marker != 0x55) {
+                VS_LOG_WARNING("Malformed packet");
+                return;
+            }
+
+            if (marker == 0xAA) {
+                // First element of packet. Need to reset received data.
+                _netif_ble.packet_buf_filled = 0;
+            }
+
             if (_netif_ble_rx_cb) {
-                if (0 == _netif_ble_rx_cb(&_netif_ble, rx_buffer, recv_size, &packet_data, &packet_data_sz)) {
+                if (0 == _netif_ble_rx_cb(&_netif_ble, &rx_buffer[1], recv_size - 1, &packet_data, &packet_data_sz)) {
                     // Ready to process packet
                     if (_netif_ble_process_cb) {
                         VS_LOG_HEX(VS_LOGLEV_DEBUG, "RECV DUMP:", packet_data, packet_data_sz);
@@ -141,7 +152,7 @@ public:
 
 //-----------------------------------------------------------------------------
 static void
-_ble_thread_func() {
+_ble_thread_internal_func() {
     constexpr const char *APP_PATH = "/com/kutashenko/provision";
     constexpr const char *SRV_PATH = "/com/kutashenko/provision/service1";
     constexpr const char *ADV_PATH = "/com/kutashenko/provision/advertisement1";
@@ -155,7 +166,8 @@ _ble_thread_func() {
 
         adapter1.Powered(true);
         adapter1.Discoverable(true);
-        adapter1.Pairable(false);
+        adapter1.DiscoverableTimeout(0);
+        adapter1.Pairable(true);
 
         NAME = "yiot_RPi_" + adapter1.Address();
 
@@ -248,7 +260,6 @@ _ble_thread_func() {
                       .withLocalName(NAME)
                       .withServiceUUIDs(std::vector{std::string{IOTKIT_BLE_SERVICE_UUID}})
                       .withIncludes(std::vector{std::string{"tx-power"}})
-                      .withDuration(10)
                       .onReleaseCall([]() { std::cout << "advertisement released" << std::endl; })
                       .registerWith(mgr, register_adv_callback);
 
@@ -259,6 +270,19 @@ _ble_thread_func() {
     // Wait to finish
     std::unique_lock<std::mutex> lck(_mtx_stop);
     _cv_stop.wait(lck, []() -> bool { return _need_stop; });
+}
+//-----------------------------------------------------------------------------
+static void
+_ble_thread_func() {
+    while (!_need_stop) {
+        try {
+            _ble_thread_internal_func();
+        } catch (...) {
+            if (!_need_stop) {
+                usleep(3 * 1000 * 1000);
+            }
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -313,8 +337,10 @@ static vs_status_e
 _ble_deinit(struct vs_netif_t *netif) {
     (void)netif;
     if (_ble_thread) {
-        std::unique_lock<std::mutex> lck(_mtx_stop);
-        _need_stop = true;
+        {
+            std::unique_lock<std::mutex> lck(_mtx_stop);
+            _need_stop = true;
+        }
         _cv_stop.notify_one();
         _ble_thread->join();
         delete _ble_thread;

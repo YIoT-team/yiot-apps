@@ -71,9 +71,9 @@ ApplicationWindow {
     SwipeView {
         readonly property int devicePageIdx: 0
         readonly property int setupDevicePageIdx: 1
-        readonly property int sharePageIdx: 2
-        readonly property int settingsPageIdx: 3
-        readonly property int rpiSettingsPageIdx: 4 //------------------[FOR TESTING]------------------
+        // readonly property int sharePageIdx: 2
+        readonly property int settingsPageIdx: 2
+        readonly property int rpiSettingsPageIdx: 3
 
         property int backPageIdx: devicePageIdx
 
@@ -84,9 +84,9 @@ ApplicationWindow {
 
         DevicesPage { id: devicesPage }
         DevicesSetupPage { id: devicesSetupPage }
-        SharePage { id: sharePage }
+        // SharePage { id: sharePage }
         SettingsPage { id: settingsPage }
-        PCRPiControl { id: rpiSettingsPage } //------------------[FOR TESTING]------------------
+        PCRPiControl { id: rpiSettingsPage }
     }
 
     // Manual switcher of main pages
@@ -101,8 +101,8 @@ ApplicationWindow {
 
         MainTabButton { idx: 0; image: "control-devices" }
         MainTabButton { idx: 1; image: "setup-devices" }
-        MainTabButton { idx: 2; image: "share-access" }
-        MainTabButton { idx: 3; image: "settings" }
+        // MainTabButton { idx: 2; image: "share-access" }
+        MainTabButton { idx: 2; image: "settings" }
     }
 
     // Settings container
@@ -127,8 +127,7 @@ ApplicationWindow {
         }
 
         function onFireRequestDeviceSetup(device) {
-            console.log(">>> ", device)
-            console.log(">>> ", device.name)
+            console.log("Setup device: ", device.name)
             deviceActionDialog.name = device.name
             deviceActionDialog.ctx = device
             deviceActionDialog.inform = qsTr("Do you want to start work with a new device ?")

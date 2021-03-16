@@ -26,8 +26,9 @@ import "../../components"
 
 RowLayout {
     property variant modelData: none
-    property bool containsMouse: btnInfo.containsMouse || btnExport.containsMouse || btnDelete.containsMouse
-    property int wSz: 150
+    property bool containsMouse: btnInfo.containsMouse
+    //|| btnExport.containsMouse || btnDelete.containsMouse
+    property int wSz: 50
 
     signal showInfo()
 
@@ -36,21 +37,21 @@ RowLayout {
     anchors.right: parent.right
     width: 0
 
-    ImageButton {
-        id: btnExport
-        image: Theme.state + "/export"
-        onClicked: {
-            console.log("Export root of trust")
-        }
-    }
+    //ImageButton {
+    //    id: btnExport
+    //    image: Theme.state + "/export"
+    //    onClicked: {
+    //        console.log("Export root of trust")
+    //    }
+    //}
 
-    ImageButton {
-        id: btnDelete
-        image: Theme.state + "/delete"
-        onClicked: {
-            console.log("Delete root of trust")
-        }
-    }
+    //ImageButton {
+    //    id: btnDelete
+    //    image: Theme.state + "/delete"
+    //    onClicked: {
+    //        console.log("Delete root of trust")
+    //    }
+    //}
 
     ImageButton {
         id: btnInfo

@@ -129,8 +129,6 @@ KSQSnapSCRTClient::_sessionKeyCb(vs_mac_addr_t mac,
                                  vs_snap_transaction_id_t id,
                                  vs_status_e res,
                                  const vs_session_key_t *key) {
-    VS_LOG_DEBUG("_sessionKeyCb");
-
     if (key && VS_CODE_OK == res) {
         emit KSQSnapSCRTClient::instance().fireSessionKeyReady(mac, KSQSessionKey(*key));
     } else {

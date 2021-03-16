@@ -13,7 +13,7 @@ fi
 
 WIFI_ESSID="${1}"
 WIFI_KEY="${2}"
-TIMEOUT="20"
+TIMEOUT="45"
 
 echo "Prepare WPA supplicant configuration"
 cat <<EOF >/etc/wpa_supplicant/wpa_supplicant.conf
@@ -30,6 +30,11 @@ rfkill unblock wifi
 
 echo "Enable WiFi interface"
 ifconfig wlan0 up
+
+echo "Restore network settings"
+if [ -f /etc/dhcpcd.conf.orig ]; then
+    cp -f /etc/dhcpcd.conf.orig /etc/dhcpcd.conf
+fi
 
 echo "Reconfiguring wpa_supplicant"
 chmod 600 /etc/wpa_supplicant/wpa_supplicant.conf

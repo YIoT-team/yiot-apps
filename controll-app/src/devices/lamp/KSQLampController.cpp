@@ -52,7 +52,7 @@ KSQLampController::KSQLampController() {
 
 
     // Test data
-#if 1
+#if 0
     auto t = new QTimer();
     connect(t, &QTimer::timeout, [t, this]() {
         static int n = 0;

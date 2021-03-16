@@ -59,7 +59,9 @@ KSQUXSimplifyController::startDeviceProvision(QString name) {
 //-----------------------------------------------------------------------------
 bool
 KSQUXSimplifyController::rejectDeviceProvision(QString name) {
+#if 0
     qDebug() << "rejectDeviceProvision : " << name;
+#endif
     return true;
 }
 

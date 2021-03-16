@@ -255,6 +255,7 @@ KSQRoT::save() {
 bool
 KSQRoT::load(const QString &id) {
     m_id = id;
+    m_name = id;
 
     CHECK_NOT_ZERO_RET(loadKeyPair(kNameRecovery1, m_recovery1), false);
     CHECK_NOT_ZERO_RET(loadKeyPair(kNameRecovery2, m_recovery2), false);
