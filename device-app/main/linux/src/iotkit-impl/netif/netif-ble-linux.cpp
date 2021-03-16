@@ -167,7 +167,7 @@ _ble_thread_internal_func() {
         adapter1.Powered(true);
         adapter1.Discoverable(true);
         adapter1.DiscoverableTimeout(0);
-        adapter1.Pairable(true);
+        adapter1.Pairable(false);
 
         NAME = "yiot_RPi_" + adapter1.Address();
 
