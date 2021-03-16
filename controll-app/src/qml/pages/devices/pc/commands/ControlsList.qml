@@ -107,6 +107,21 @@ Page {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                 }
+
+                RowLayout {
+                    id: actionsBlock
+                    Layout.rightMargin: 10
+
+                    Image {
+                        id: iconAction
+                        source: "qrc:/qml/resources/icons/Arrow-Right.png"
+                        Layout.maximumHeight: listDelegate.height * 0.7
+                        Layout.maximumWidth: Layout.maximumHeight
+                        fillMode: Image.PreserveAspectFit
+                        Layout.alignment: Qt.AlignRight
+                        Layout.rightMargin: 10
+                    }
+                }
             }
 
             MouseArea {

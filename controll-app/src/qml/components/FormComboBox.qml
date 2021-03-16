@@ -8,6 +8,7 @@ ColumnLayout {
     id: columnLayout
     property alias items: comboBox.items
     property alias text: comboBox.selectedItem
+    property alias listHeight: comboBox.listHeight
 
     Layout.fillWidth: true
     Layout.preferredHeight: 30
@@ -21,6 +22,7 @@ ColumnLayout {
         id: comboBox
 
         property variant items: []
+        property int listHeight: 40*comboBox.items.length
 
         property alias selectedItem: chosenItemText.text
         property alias selectedIndex: listView.currentIndex
@@ -56,12 +58,22 @@ ColumnLayout {
             }
 
                     MouseArea {
-                        anchors.fill: parent;
+                        height: comboBox.height
+                        width: comboBox.width
+
+                        hoverEnabled: true
+
                         onClicked: {
-                            comboBox.state = comboBox.state==="dropDown"?"":"dropDown"
+                            comboBox.state = "dropDown"
+                            height = comboBox.height + comboBox.listHeight
+                        }
+
+                        onExited: {
+                            comboBox.state = ""
+                            height = comboBox.height
                         }
                     }
-                }
+        }
 
                 Rectangle {
                     id: dropDown
@@ -110,11 +122,11 @@ ColumnLayout {
 
                 states: State {
                     name: "dropDown";
-                    PropertyChanges { target: dropDown; height:40*comboBox.items.length }
+                    PropertyChanges { target: dropDown; height:comboBox.listHeight }
                 }
 
                 transitions: Transition {
-                    NumberAnimation { target: dropDown; properties: "height"; easing.type: Easing.OutExpo; duration: 1000 }
+                    NumberAnimation { target: dropDown; properties: "height"; easing.type: Easing.OutExpo; duration: 500 }
                 }
             }
 }

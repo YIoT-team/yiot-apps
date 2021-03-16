@@ -22,6 +22,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import "../../../../components"
+import "../../../../components/validators"
 import "../../../../../js/devices/pc.js" as PCDevice
 
 Page {
@@ -66,12 +67,14 @@ Page {
                     id: deviceIP
                     label: qsTr("Device IP")
                     placeholderText: qsTr("Enter device static IP addres")
+                    validator: ValidatorIPv4 {}
                 }
 
                 InputTextField {
                     id: gatewayIP
                     label: qsTr("Gateway IP")
                     placeholderText: qsTr("Enter gateway IP addres")
+                    validator: ValidatorIPv4 {}
                 }
 
                 InputTextField {
@@ -80,6 +83,7 @@ Page {
                     label: qsTr("Mask")
                     placeholderText: qsTr("Enter network mask")
                     text: "255.255.255.0"
+                    validator: ValidatorIPv4 {}
                 }
 
                 InputTextField {
@@ -88,6 +92,7 @@ Page {
                     label: qsTr("DNS")
                     placeholderText: qsTr("Enter DNS")
                     text: "8.8.8.8"
+                    validator: ValidatorIPv4 {}
                 }
 
                 FormSecondaryButton {
@@ -95,14 +100,16 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
-                        showCmdProcessing(rpiPage.controller)
-                        PCDevice.setNetworkParams(rpiPage.controller,
-                                                  interfaceCb.text,
-                                                  "true", // Force static
-                                                  deviceIP.text,
-                                                  gatewayIP.text,
-                                                  dns.text,
-                                                  mask.text)
+                        if(validateInputs()) {
+                            showCmdProcessing(rpiPage.controller)
+                            PCDevice.setNetworkParams(rpiPage.controller,
+                                                      interfaceCb.text,
+                                                      "true", // Force static
+                                                      deviceIP.text,
+                                                      gatewayIP.text,
+                                                      dns.text,
+                                                      mask.text)
+                        }
                     }
                 }
 
@@ -110,5 +117,32 @@ Page {
                     Layout.fillHeight: true
                 }
             }
+        }
+
+    function errorPopupClick() {
+        }
+
+        function validateInputs() {
+            if (deviceIP.text == "") {
+                showPopupError(qsTr("Set device static IP addres"), errorPopupClick)
+                return false
+            }
+
+            if (gatewayIP.text == "") {
+                showPopupError(qsTr("Set gateway IP addres"), errorPopupClick)
+                return false
+            }
+
+            if (mask.text == "") {
+                showPopupError(qsTr("Set network mask"), errorPopupClick)
+                return false
+            }
+
+            if (dns.text == "") {
+                showPopupError(qsTr("Set DNS"), errorPopupClick)
+                return false
+            }
+
+            return true
         }
 }

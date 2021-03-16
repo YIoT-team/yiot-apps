@@ -22,6 +22,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import "../../../../components"
+import "../../../../components/validators"
 import "../../../../../js/devices/pc.js" as PCDevice
 
 Page {
@@ -66,12 +67,14 @@ Page {
                     id: user
                     label: qsTr("User")
                     placeholderText: qsTr("Enter user name")
+                    validator: ValidatorUserName {}
                 }
 
                 Password {
                     id: pass
                     label: qsTr("Password")
                     placeholderText: qsTr("Enter user password")
+                    validator: ValidatorPassword {}
                 }
 
                 FormSecondaryButton {
@@ -79,11 +82,13 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
-                        showCmdProcessing(rpiPage.controller)
-                        PCDevice.setupVPNRouter(rpiPage.controller,
-                                                providerCb.text,
-                                                user.text,
-                                                pass.text)
+                        if(validateInputs()){
+                            showCmdProcessing(rpiPage.controller)
+                            PCDevice.setupVPNRouter(rpiPage.controller,
+                                                    providerCb.text,
+                                                    user.text,
+                                                    pass.text)
+                        }
                     }
                 }
 
@@ -91,5 +96,22 @@ Page {
                     Layout.fillHeight: true
                 }
             }
+        }
+
+    function errorPopupClick() {
+        }
+
+        function validateInputs() {
+            if (user.text == "") {
+                showPopupError(qsTr("Enter user name"), errorPopupClick)
+                return false
+            }
+
+            if (pass.text == "") {
+                showPopupError(qsTr("Enter user password"), errorPopupClick)
+                return false
+            }
+
+            return true
         }
 }
