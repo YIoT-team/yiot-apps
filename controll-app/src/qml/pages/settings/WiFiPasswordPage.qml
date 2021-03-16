@@ -23,7 +23,6 @@ import QtQuick.Layouts 1.12
 
 import "../../theme"
 import "../../components"
-
 Page {
     property string ssid: ""
 
@@ -74,6 +73,7 @@ Page {
             text: qsTr("Apply password")
             onClicked: {
                 useWiFiNetwork(ssid, password.text)
+                wifiNetworksList.ssid = ""
             }
         }
     }
