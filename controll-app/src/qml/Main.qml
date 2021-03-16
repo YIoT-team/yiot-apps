@@ -310,7 +310,7 @@ ApplicationWindow {
 
     function startDeviceProvision(name) {
         showCredLoad()
-        uxSimplifier.startDeviceProvision(name)
+        devicesSetupPage.startBLEProvision(name)
     }
 
     function rejectDeviceProvision(name) {
