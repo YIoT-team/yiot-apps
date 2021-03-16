@@ -25,6 +25,9 @@ import "../theme"
 
 ListView {
     id: wifiList
+
+    property string ssid: ""
+
     Layout.fillHeight: true
     Layout.fillWidth: true
 
@@ -83,6 +86,7 @@ ListView {
             hoverEnabled: true
             onClicked: {
                 wifiList.currentIndex = index
+                ssid = name
                 showWiFiPassword(name)
             }
 
@@ -95,9 +99,6 @@ ListView {
                 base.color = colorIfActive(name)
             }
         }
-    }
-
-    Component.onCompleted: {
     }
 
     function colorIfActive(name) {
