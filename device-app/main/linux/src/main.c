@@ -49,6 +49,7 @@
 
 // Platform-specific helpers
 #include "helpers/app-helpers.h" // Different helpers
+#include "helpers/utils.h"
 #include "helpers/app-storage.h" // Data Storage helpers
 #include "helpers/file-cache.h"  // File cache to speed-up file operations
 
@@ -153,6 +154,9 @@ main(int argc, char *argv[]) {
     //
     // ---------- Application work ----------
     //
+
+    // Inform about need of WiFi credentials
+    vs_snap_info_set_need_cred(!is_wifi_connected());
 
     // Send broadcast notification about self start
     const vs_netif_t *n = vs_snap_default_netif();

@@ -45,6 +45,8 @@
 #include <yiot-iotkit/provision/KSQProvision.h>
 #include <yiot-iotkit/root-of-trust/KSQRoTController.h>
 
+#include <virgil/iot/session/session.h>
+
 using namespace VirgilIoTKit;
 
 //-----------------------------------------------------------------------------
@@ -63,6 +65,7 @@ KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &imp
     qRegisterMetaType<VSQDeviceInfo>("VSQDeviceInfo");
     qRegisterMetaType<QAbstractSocket::SocketState>();
     qRegisterMetaType<vs_mac_addr_t>("vs_mac_addr_t");
+    qRegisterMetaType<VSQMac>("VSQMac");
     qRegisterMetaType<vs_snap_pc_state_t>("vs_snap_pc_state_t");
 
     // Process events in separate thread
@@ -100,6 +103,15 @@ KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &imp
 }
 
 //-----------------------------------------------------------------------------
+bool
+KSQIoTKitFacade::needEncCb(vs_snap_service_id_t service_id, vs_snap_element_t element_id) {
+    if (VS_PC_SERVICE_ID == service_id && VS_PC_PCMD == element_id) {
+        return true;
+    }
+    return false;
+}
+
+//-----------------------------------------------------------------------------
 void
 KSQIoTKitFacade::initSnap() {
 
@@ -109,6 +121,7 @@ KSQIoTKitFacade::initSnap() {
 
     if (vs_snap_init(m_impl.netifs().first().get()->lowLevelNetif(),
                      netifProcessCb,
+                     needEncCb,
                      m_appConfig.manufactureId(),
                      m_appConfig.deviceType(),
                      m_appConfig.deviceSerial(),
@@ -128,6 +141,11 @@ KSQIoTKitFacade::initSnap() {
             throw QString("Unable to add SNAP network interface");
         }
     }
+
+    // Setup Session
+    vs_mac_addr_t default_mac;
+    vs_snap_mac_addr(0, &default_mac);
+    vs_session_init(KSQSecModule::instance().secmoduleImpl(), default_mac.bytes);
 
     if (m_features.hasFeature(KSQFeatures::SNAP_PRVS_CLIENT)) {
         registerService(KSQSnapPRVSClient::instance());

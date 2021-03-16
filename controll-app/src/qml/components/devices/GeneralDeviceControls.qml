@@ -29,8 +29,8 @@ RowLayout {
     property int wSz: 50
 
     id: deviceActionsBlock
-    visible: false
     anchors.right: parent.right
+    visible: false
     width: 0
 
     ImageButton {
@@ -51,8 +51,10 @@ RowLayout {
         },
         State {
             name: "hidden"
-            PropertyChanges { target: deviceActionsBlock; width: 0       }
-            PropertyChanges { target: deviceActionsBlock; visible: false }
+            // PropertyChanges { target: deviceActionsBlock; width: 0       }
+            // PropertyChanges { target: deviceActionsBlock; visible: false }
+            PropertyChanges { target: deviceActionsBlock; width: wSz    }
+            PropertyChanges { target: deviceActionsBlock; visible: true }
         }]
 
     transitions: Transition {

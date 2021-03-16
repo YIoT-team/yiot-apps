@@ -60,7 +60,7 @@ Page {
                     id: interfaceCb
                     Layout.leftMargin: 12
                     Layout.topMargin: 0
-                    items: ["wifi", "eth0"]
+                    items: ["wlan0", "eth0"]
                 }
 
                 InputTextField {
@@ -79,6 +79,7 @@ Page {
 
                 InputTextField {
                     id: mask
+                    visible: false
                     label: qsTr("Mask")
                     placeholderText: qsTr("Enter network mask")
                     text: "255.255.255.0"
@@ -87,6 +88,7 @@ Page {
 
                 InputTextField {
                     id: dns
+                    visible: false
                     label: qsTr("DNS")
                     placeholderText: qsTr("Enter DNS")
                     text: "8.8.8.8"

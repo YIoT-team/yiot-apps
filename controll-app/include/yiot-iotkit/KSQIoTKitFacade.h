@@ -95,6 +95,9 @@ private:
 
     static VirgilIoTKit::vs_status_e
     netifProcessCb(struct VirgilIoTKit::vs_netif_t *netif, const uint8_t *data, const uint16_t data_sz);
+
+    static bool
+    needEncCb(vs_snap_service_id_t service_id, vs_snap_element_t element_id);
 };
 
 #endif // YIOT_IOTKIT_QT_FACADE_H

@@ -45,6 +45,8 @@
 #include <net/if.h>
 #include <netinet/in.h>
 
+#include <atomic>
+
 #include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/protocols/snap/snap-structs.h>
 #include <virgil/iot/logger/logger.h>
@@ -78,11 +80,14 @@ static vs_netif_process_cb_t _netif_udp_process_cb = 0;
 
 static int _udp_sock = -1;
 static pthread_t receive_thread;
+static pthread_t connect_thread;
 static uint8_t _mac_addr[6] = {2, 2, 2, 2, 2, 2};
 
 static in_addr_t _dst_addr = INADDR_BROADCAST;
 
 static KSResendContainer *_resendContainer = nullptr;
+static std::atomic<bool> _ready = false;
+static std::atomic<bool> _connecting = false;
 
 #define UDP_BCAST_PORT (4100)
 
@@ -153,6 +158,12 @@ _udp_receive_processor(void *sock_desc) {
     vs_log_thread_descriptor("udp bcast thr");
 
     while (1) {
+        // Wait for a connection
+        if (!_ready) {
+            usleep(300 * 1000);
+            continue;
+        }
+
         memset(received_data, 0, RX_BUF_SZ);
 
         recv_sz =
@@ -190,6 +201,20 @@ _udp_receive_processor(void *sock_desc) {
     }
 
     return NULL;
+}
+
+//-----------------------------------------------------------------------------
+static void
+_prepare_dst_addr(void) {
+    const char *_addr_str = getenv("VS_BCAST_SUBNET_ADDR");
+    if (!_addr_str) {
+        VS_LOG_INFO("VS_BCAST_SUBNET_ADDR = 255.255.255.255");
+        _dst_addr = INADDR_BROADCAST;
+        return;
+    }
+
+    VS_LOG_INFO("VS_BCAST_SUBNET_ADDR = %s", _addr_str);
+    _dst_addr = inet_addr(_addr_str);
 }
 
 //-----------------------------------------------------------------------------
@@ -259,6 +284,79 @@ terminate:
 }
 
 //-----------------------------------------------------------------------------
+static bool
+_netif_udp_internal(void) {
+    // Get MAC address
+    struct ifreq ifr;
+    struct ifconf ifc;
+    char buf[1024];
+    bool success = false;
+
+    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
+    if (sock == -1) {
+        VS_LOG_ERROR("Cannot init UDP netif. Socket error, AF_INET::SOCK_DGRAM::IPPROTO_IP");
+        return false;
+    };
+
+    ifc.ifc_len = sizeof(buf);
+    ifc.ifc_buf = buf;
+    if (ioctl(sock, SIOCGIFCONF, &ifc) == -1) {
+        VS_LOG_ERROR("Cannot init UDP netif. SIOCGIFCONF error");
+        return false;
+    }
+
+    struct ifreq *it = ifc.ifc_req;
+    const struct ifreq *const end = it + (ifc.ifc_len / sizeof(struct ifreq));
+
+    for (; it != end; ++it) {
+        strcpy(ifr.ifr_name, it->ifr_name);
+        if (ioctl(sock, SIOCGIFFLAGS, &ifr) == 0) {
+            if (!(ifr.ifr_flags & IFF_LOOPBACK)) { // don't count loopback
+                if (ioctl(sock, SIOCGIFHWADDR, &ifr) == 0) {
+                    success = true;
+                    break;
+                }
+            }
+        } else {
+            VS_LOG_ERROR("Cannot init UDP netif. SIOCGIFFLAGS error");
+            return false;
+        }
+    }
+
+    if (!success) {
+#if 0
+        VS_LOG_ERROR("Cannot init UDP netif. Cannot get MAC address.");
+#endif
+        return false;
+    }
+
+    _prepare_dst_addr();
+
+    //    memcpy(_mac_addr, ifr.ifr_hwaddr.sa_data, ETH_ADDR_LEN);
+    return VS_CODE_OK == _udp_connect();
+}
+
+//-----------------------------------------------------------------------------
+static void *
+_udp_connection_processor(void *) {
+    vs_log_thread_descriptor("udp conn thr");
+
+    while (!_ready) {
+        // Wait for a connection
+        if (!_netif_udp_internal()) {
+            usleep(300 * 1000);
+            continue;
+        } else {
+            _connecting = false;
+            _ready = true;
+            VS_LOG_DEBUG("UDP connection is activated");
+        }
+    }
+
+    return NULL;
+}
+
+//-----------------------------------------------------------------------------
 static vs_status_e
 _internal_udp_tx(const uint8_t *data, const uint16_t data_sz) {
     // TODO: ARP request by DST mac address
@@ -280,6 +378,10 @@ static vs_status_e
 _udp_tx(struct vs_netif_t *netif, const uint8_t *data, const uint16_t data_sz) {
     (void)netif;
 
+    if (!_ready) {
+        return VS_CODE_OK;
+    }
+
     if (VS_CODE_OK == _internal_udp_tx(data, data_sz)) {
         vs_snap_packet_dump("OUT", (vs_snap_packet_t *)data);
         //--------------------------------------------
@@ -298,20 +400,6 @@ _udp_tx(struct vs_netif_t *netif, const uint8_t *data, const uint16_t data_sz) {
 }
 
 //-----------------------------------------------------------------------------
-static void
-_prepare_dst_addr(void) {
-    const char *_addr_str = getenv("VS_BCAST_SUBNET_ADDR");
-    if (!_addr_str) {
-        VS_LOG_INFO("VS_BCAST_SUBNET_ADDR = 255.255.255.255");
-        _dst_addr = INADDR_BROADCAST;
-        return;
-    }
-
-    VS_LOG_INFO("VS_BCAST_SUBNET_ADDR = %s", _addr_str);
-    _dst_addr = inet_addr(_addr_str);
-}
-
-//-----------------------------------------------------------------------------
 static vs_status_e
 _udp_init(struct vs_netif_t *netif, const vs_netif_rx_cb_t rx_cb, const vs_netif_process_cb_t process_cb) {
     assert(rx_cb);
@@ -324,8 +412,13 @@ _udp_init(struct vs_netif_t *netif, const vs_netif_rx_cb_t rx_cb, const vs_netif
     _netif_udp_rx_cb = rx_cb;
     _netif_udp_process_cb = process_cb;
     _netif_udp_.packet_buf_filled = 0;
-    _prepare_dst_addr();
-    _udp_connect();
+
+
+    if (!_ready && !_connecting) {
+        VS_LOG_DEBUG("Start connection thread");
+        _connecting = true;
+        pthread_create(&connect_thread, NULL, _udp_connection_processor, NULL);
+    }
 
     return VS_CODE_OK;
 }
@@ -333,6 +426,9 @@ _udp_init(struct vs_netif_t *netif, const vs_netif_rx_cb_t rx_cb, const vs_netif
 //-----------------------------------------------------------------------------
 static vs_status_e
 _udp_deinit(struct vs_netif_t *netif) {
+    if (!_ready) {
+        return VS_CODE_OK;
+    }
     (void)netif;
     if (_udp_sock >= 0) {
 #if !defined(_APPLE_)
@@ -361,50 +457,6 @@ _udp_mac(const struct vs_netif_t *netif, struct vs_mac_addr_t *mac_addr) {
 //-----------------------------------------------------------------------------
 extern "C" vs_netif_t *
 vs_hal_netif_udp(void) {
-
-    // Get MAC address
-    struct ifreq ifr;
-    struct ifconf ifc;
-    char buf[1024];
-    bool success = false;
-
-    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
-    if (sock == -1) {
-        VS_LOG_ERROR("Cannot init UDP netif. Socket error, AF_INET::SOCK_DGRAM::IPPROTO_IP");
-        return NULL;
-    };
-
-    ifc.ifc_len = sizeof(buf);
-    ifc.ifc_buf = buf;
-    if (ioctl(sock, SIOCGIFCONF, &ifc) == -1) {
-        VS_LOG_ERROR("Cannot init UDP netif. SIOCGIFCONF error");
-        return NULL;
-    }
-
-    struct ifreq *it = ifc.ifc_req;
-    const struct ifreq *const end = it + (ifc.ifc_len / sizeof(struct ifreq));
-
-    for (; it != end; ++it) {
-        strcpy(ifr.ifr_name, it->ifr_name);
-        if (ioctl(sock, SIOCGIFFLAGS, &ifr) == 0) {
-            if (!(ifr.ifr_flags & IFF_LOOPBACK)) { // don't count loopback
-                if (ioctl(sock, SIOCGIFHWADDR, &ifr) == 0) {
-                    success = true;
-                    break;
-                }
-            }
-        } else {
-            VS_LOG_ERROR("Cannot init UDP netif. SIOCGIFFLAGS error");
-            return NULL;
-        }
-    }
-
-    if (!success) {
-        VS_LOG_ERROR("Cannot init UDP netif. Cannot get MAC address.");
-        return NULL;
-    }
-
-    //    memcpy(_mac_addr, ifr.ifr_hwaddr.sa_data, ETH_ADDR_LEN);
     return &_netif_udp_;
 }
 

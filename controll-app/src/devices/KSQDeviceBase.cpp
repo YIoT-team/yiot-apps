@@ -37,6 +37,10 @@ KSQDeviceBase::KSQDeviceBase(VSQMac mac, QString name, QString img) {
     m_name = name;
     m_mac = mac;
     m_active = true;
+    m_hasProvision = false;
+    m_hasOwner = false;
+
+    startSessionConnection();
 }
 
 //-----------------------------------------------------------------------------
@@ -46,6 +50,34 @@ KSQDeviceBase::KSQDeviceBase(const KSQDeviceBase &d) {
     m_name = d.m_name;
     m_mac = d.m_mac;
     m_active = d.m_active;
+    m_sessionKey = d.m_sessionKey;
+    m_hasProvision = d.m_hasProvision;
+    m_hasOwner = d.m_hasOwner;
+
+    startSessionConnection();
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDeviceBase::startSessionConnection() {
+    if (m_sessionTimer.isActive()) {
+        return;
+    }
+
+    m_sessionTimer.setSingleShot(false);
+    m_sessionTimer.setInterval(kSessionCheckPeriodMs);
+    connect(&m_sessionTimer, &QTimer::timeout, this, &KSQDeviceBase::onSessionTimer);
+    m_sessionTimer.start();
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDeviceBase::onSessionTimer() {
+    if (!m_hasProvision || m_sessionKey.isValid()) {
+        return;
+    }
+
+    emit fireRequestSessionKey(m_mac);
 }
 
 //-----------------------------------------------------------------------------
@@ -148,6 +180,31 @@ KSQDeviceBase::setReceivedBytes(QString val) {
 
 //-----------------------------------------------------------------------------
 void
+KSQDeviceBase::setHasOwner(bool hasOwner) {
+    if (hasOwner != m_hasOwner) {
+        m_hasOwner = hasOwner;
+        emit fireHasOwnerChanged();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDeviceBase::setHasProvision(bool hasProvision) {
+    if (hasProvision != m_hasProvision) {
+        m_hasProvision = hasProvision;
+        emit fireHasProvisionChanged();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDeviceBase::setSessionKey(const KSQSessionKey &key) {
+    m_sessionKey = key;
+    m_sessionTimer.stop();
+}
+
+//-----------------------------------------------------------------------------
+void
 KSQDeviceBase::commandStart() {
     setCommandState(kCmdStateReceive);
 }
@@ -216,6 +273,18 @@ KSQDeviceBase::receivedBytes() const {
 QString
 KSQDeviceBase::commandState() const {
     return m_commandState;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQDeviceBase::hasOwner() const {
+    return m_hasOwner;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQDeviceBase::hasProvision() const {
+    return m_hasProvision;
 }
 
 //-----------------------------------------------------------------------------

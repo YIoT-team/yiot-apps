@@ -26,7 +26,7 @@ import "../../components"
 
 RowLayout {
     property bool containsMouse: btnInfo.containsMouse || btnCollapser.containsMouse
-    property int wSz: 100
+    property int wSz: 50
 
     signal showInfo()
 
@@ -35,14 +35,14 @@ RowLayout {
     anchors.right: parent.right
     width: 0
 
-    ImageButton {
-        id: btnInfo
-        image: Theme.state + "/info"
-        onClicked: {
-            console.log("Show information about current category")
-            showInfo()
-        }
-    }
+    //ImageButton {
+    //    id: btnInfo
+    //    image: Theme.state + "/info"
+    //    onClicked: {
+    //        console.log("Show information about current category")
+    //        showInfo()
+    //    }
+    //}
 
     ImageButton {
         id: btnCollapser

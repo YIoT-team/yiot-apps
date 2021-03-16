@@ -17,38 +17,45 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+#ifndef YIOT_SEC_SESSION_KEY_H
+#define YIOT_SEC_SESSION_KEY_H
 
-import "../../components"
+#include <QtCore>
 
-Page {
-    id: wifiSettingsPage
+#include <virgil/iot/secmodule/secmodule.h>
+#include <virgil/iot/session/session-structs.h>
 
-    background: Rectangle {
-        color: "transparent"
-    }
+using namespace VirgilIoTKit;
 
-    header: Header {
-        title: qsTr("Select WiFi or share current")
-        backAction: function() { showMenuSettings() }
-    }
+class KSQSessionKey : public QObject {
+    Q_OBJECT
 
-    ColumnLayout {
-        anchors.topMargin: 1
-        anchors.fill: parent
-        WiFiNetworksList {
-            id: wifiNetworksList
-            Layout.fillHeight: true
-        }
+public:
+    KSQSessionKey();
+    KSQSessionKey(const vs_session_key_t &key);
+    KSQSessionKey(const KSQSessionKey &key);
 
-        //FormPrimaryButton {
-        //    Layout.bottomMargin: 10
-        //    text: qsTr("Share current WiFi network")
-        //    onClicked: {
-        //        showDevicesSetup()
-        //    }
-        //}
-    }
-}
+    virtual ~KSQSessionKey() = default;
+
+    KSQSessionKey &
+    operator=(KSQSessionKey const &key);
+
+    bool
+    isValid() const;
+
+    bool
+    set(const vs_session_key_t &key);
+
+signals:
+
+public slots:
+
+private:
+    bool m_valid;
+    vs_session_key_t m_key;
+
+    void
+    registerType();
+};
+
+#endif // YIOT_SEC_SESSION_KEY_H

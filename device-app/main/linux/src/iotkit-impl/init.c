@@ -25,6 +25,7 @@
 
 #include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/provision/provision.h>
+#include <virgil/iot/session/session.h>
 
 #include "iotkit-impl/init.h"
 
@@ -32,6 +33,15 @@ static void
 _file_ver_info_cb(vs_file_version_t ver);
 
 static vs_provision_events_t _provision_event = {_file_ver_info_cb};
+
+//-----------------------------------------------------------------------------
+static bool
+need_enc_cb(vs_snap_service_id_t service_id, vs_snap_element_t element_id) {
+    if (VS_PC_SERVICE_ID == service_id && VS_PC_PCMD == element_id) {
+        return true;
+    }
+    return false;
+}
 
 //-----------------------------------------------------------------------------
 vs_status_e
@@ -65,10 +75,21 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
         goto terminate;
     }
 
+    // Security Session module
+    vs_mac_addr_t default_mac;
+    vs_snap_mac_addr(netif_impl[0], &default_mac);
+    vs_session_init(secmodule_impl, default_mac.bytes);
+
     // SNAP module
 
     STATUS_CHECK(vs_snap_init_device_name("Test device"), "Unable to set device name");
-    STATUS_CHECK(vs_snap_init(netif_impl[0], packet_preprocessor_cb, manufacture_id, device_type, serial, device_roles),
+    STATUS_CHECK(vs_snap_init(netif_impl[0],
+                              packet_preprocessor_cb,
+                              need_enc_cb,
+                              manufacture_id,
+                              device_type,
+                              serial,
+                              device_roles),
                  "Unable to initialize SNAP module");
 
 

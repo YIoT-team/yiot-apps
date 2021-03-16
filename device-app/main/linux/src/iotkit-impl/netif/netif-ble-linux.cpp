@@ -61,6 +61,7 @@ static vs_netif_process_cb_t _netif_ble_process_cb = 0;
 
 class TxCharacteristic;
 static std::shared_ptr<TxCharacteristic> _tx_char;
+static std::string NAME;
 
 //-----------------------------------------------------------------------------
 static vs_status_e
@@ -109,9 +110,20 @@ protected:
 
         VS_LOG_DEBUG("Received %d bytes:", recv_size);
 
-        if (recv_size > 0) {
+        if (recv_size > 1) {
+            uint8_t marker = rx_buffer[0];
+            if (marker != 0xAA && marker != 0x55) {
+                VS_LOG_WARNING("Malformed packet");
+                return;
+            }
+
+            if (marker == 0xAA) {
+                // First element of packet. Need to reset received data.
+                _netif_ble.packet_buf_filled = 0;
+            }
+
             if (_netif_ble_rx_cb) {
-                if (0 == _netif_ble_rx_cb(&_netif_ble, rx_buffer, recv_size, &packet_data, &packet_data_sz)) {
+                if (0 == _netif_ble_rx_cb(&_netif_ble, &rx_buffer[1], recv_size - 1, &packet_data, &packet_data_sz)) {
                     // Ready to process packet
                     if (_netif_ble_process_cb) {
                         VS_LOG_HEX(VS_LOGLEV_DEBUG, "RECV DUMP:", packet_data, packet_data_sz);
@@ -140,12 +152,10 @@ public:
 
 //-----------------------------------------------------------------------------
 static void
-_ble_thread_func() {
+_ble_thread_internal_func() {
     constexpr const char *APP_PATH = "/com/kutashenko/provision";
     constexpr const char *SRV_PATH = "/com/kutashenko/provision/service1";
     constexpr const char *ADV_PATH = "/com/kutashenko/provision/advertisement1";
-
-    constexpr const char *NAME = "BLEProvision";
 
     std::shared_ptr<IConnection> connection{std::move(sdbus::createSystemBusConnection())};
 
@@ -156,15 +166,10 @@ _ble_thread_func() {
 
         adapter1.Powered(true);
         adapter1.Discoverable(true);
+        adapter1.DiscoverableTimeout(0);
         adapter1.Pairable(false);
-        adapter1.Alias(NAME);
 
-        std::cout << "Found adapter '" << DEVICE0 << "'" << std::endl;
-        std::cout << "  Name: " << adapter1.Name() << std::endl;
-        std::cout << "  Address: " << adapter1.Address() << " type: " << adapter1.AddressType() << std::endl;
-        std::cout << "  Powered: " << adapter1.Powered() << std::endl;
-        std::cout << "  Discoverable: " << adapter1.Discoverable() << std::endl;
-        std::cout << "  Pairable: " << adapter1.Pairable() << std::endl;
+        NAME = "yiot_RPi_" + adapter1.Address();
 
         // Save MAC address
         unsigned int bytes[ETH_ADDR_LEN];
@@ -182,6 +187,15 @@ _ble_thread_func() {
         for (int i = 0; i < ETH_ADDR_LEN; i++) {
             _mac.bytes[i] = bytes[i];
         }
+
+        adapter1.Alias(NAME);
+
+        std::cout << "Found adapter '" << DEVICE0 << "'" << std::endl;
+        std::cout << "  Name: " << adapter1.Name() << std::endl;
+        std::cout << "  Address: " << adapter1.Address() << " type: " << adapter1.AddressType() << std::endl;
+        std::cout << "  Powered: " << adapter1.Powered() << std::endl;
+        std::cout << "  Discoverable: " << adapter1.Discoverable() << std::endl;
+        std::cout << "  Pairable: " << adapter1.Pairable() << std::endl;
     }
 
     std::cout << std::endl;
@@ -257,6 +271,19 @@ _ble_thread_func() {
     std::unique_lock<std::mutex> lck(_mtx_stop);
     _cv_stop.wait(lck, []() -> bool { return _need_stop; });
 }
+//-----------------------------------------------------------------------------
+static void
+_ble_thread_func() {
+    while (!_need_stop) {
+        try {
+            _ble_thread_internal_func();
+        } catch (...) {
+            if (!_need_stop) {
+                usleep(3 * 1000 * 1000);
+            }
+        }
+    }
+}
 
 //-----------------------------------------------------------------------------
 static vs_status_e
@@ -310,8 +337,10 @@ static vs_status_e
 _ble_deinit(struct vs_netif_t *netif) {
     (void)netif;
     if (_ble_thread) {
-        std::unique_lock<std::mutex> lck(_mtx_stop);
-        _need_stop = true;
+        {
+            std::unique_lock<std::mutex> lck(_mtx_stop);
+            _need_stop = true;
+        }
         _cv_stop.notify_one();
         _ble_thread->join();
         delete _ble_thread;

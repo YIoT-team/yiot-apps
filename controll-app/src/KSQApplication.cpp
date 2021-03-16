@@ -73,7 +73,8 @@ KSQApplication::run() {
     auto roles = VSQDeviceRoles() << VirgilIoTKit::VS_SNAP_DEV_CONTROL;
 
     // Set different information about current device
-    auto appConfig = VSQAppConfig() << VSQManufactureId() << VSQDeviceType() << VSQDeviceSerial() << roles;
+    auto appConfig = VSQAppConfig() << VSQManufactureId() << VSQDeviceType() << VSQDeviceSerial() << roles
+                                    << VS_LOGLEV_DEBUG;
 
     // Connect User Experience simplifier
     //      Get information about close BLE devices

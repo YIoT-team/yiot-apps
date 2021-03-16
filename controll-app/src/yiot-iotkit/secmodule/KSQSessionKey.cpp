@@ -17,85 +17,67 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
+#include <yiot-iotkit/secmodule/KSQSessionKey.h>
+
 //-----------------------------------------------------------------------------
-function createUser(pc, user, pass) {
-    console.log("Create User: ", user)
-
-    let json = {}
-
-    json.command = "script"
-    json.script = "create-user.sh"
-    json.params = [user, pass]
-
-    pc.invokeCommand(JSON.stringify(json))
+KSQSessionKey::KSQSessionKey() {
+    m_valid = false;
+    registerType();
 }
 
 //-----------------------------------------------------------------------------
-function setNetworkParams(pc, interface, isStatic, ip, gateway, dns, mask) {
-    console.log("Set network parameters:")
-    console.log("    interface: ", interface)
+KSQSessionKey::KSQSessionKey(const vs_session_key_t &key) {
+    set(key);
+}
 
-    let json = {}
-
-    json.command = "script"
-    json.script = "set-network-params.sh"
-    json.params = [interface, isStatic, ip, gateway, dns, mask]
-
-    console.log("    interface : ", interface)
-    if (isStatic === "true") {
-        console.log("    type      : static")
-        console.log("    ip        :", ip)
-        console.log("    gateway   :", gateway)
-        console.log("    dns       :", dns)
-        console.log("    mask      :", mask)
-    } else {
-        console.log("    type      : dhcp")
+//-----------------------------------------------------------------------------
+KSQSessionKey::KSQSessionKey(const KSQSessionKey &key) {
+    if (this == &key) {
+        return;
     }
 
-    pc.invokeCommand(JSON.stringify(json))
+    m_valid = key.m_valid;
+    memcpy(&m_key, &key.m_key, sizeof(m_key));
 }
 
 //-----------------------------------------------------------------------------
-function setupAccessPoint(pc, ssid, mode, password) {
-    console.log("Setup access point:")
-    console.log("    ssid: ", ssid)
-    console.log("    mode: ", mode)
+KSQSessionKey &
+KSQSessionKey::operator=(KSQSessionKey const &key) {
+    if (this == &key) {
+        return *this;
+    }
 
-    let json = {}
+    m_valid = key.m_valid;
+    memcpy(&m_key, &key.m_key, sizeof(m_key));
 
-    json.command = "script"
-    json.script = "setup-access-point.sh"
-    json.params = [ssid, mode, password]
-
-    pc.invokeCommand(JSON.stringify(json))
+    return *this;
 }
 
 //-----------------------------------------------------------------------------
-function setupVPNRouter(pc, vpnProvider, user, password) {
-    console.log("Setup VPN router:")
-    console.log("    provider: ", vpnProvider)
-    console.log("    user    : ", user)
-
-    let json = {}
-
-    json.command = "script"
-    json.script = "setup-vpn-router.sh"
-    json.params = [vpnProvider, user, password]
-
-    pc.invokeCommand(JSON.stringify(json))
+bool
+KSQSessionKey::isValid() const {
+    return m_valid;
 }
 
 //-----------------------------------------------------------------------------
-function enableSSH(pc) {
-    console.log("Enable SSH:")
+bool
+KSQSessionKey::set(const vs_session_key_t &key) {
+    memcpy(&m_key, &key, sizeof(key));
+    m_valid = true;
 
-    let json = {}
+    return m_valid;
+}
 
-    json.command = "script"
-    json.script = "enable-ssh.sh"
-    json.params = []
+//-----------------------------------------------------------------------------
+void
+KSQSessionKey::registerType() {
+    static bool registered = false;
 
-    pc.invokeCommand(JSON.stringify(json))
+    if (registered) {
+        return;
+    }
+    qRegisterMetaType<KSQSessionKey>("KSQSessionKey");
+    registered = true;
 }
 
 //-----------------------------------------------------------------------------

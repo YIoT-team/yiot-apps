@@ -77,7 +77,7 @@ Page {
                     onClicked: {
                         if(validateInputs()) {
                             showCmdProcessing(rpiPage.controller)
-                            PCDevice.createUser(rpiPage.controller, text, pass1.text)
+                            PCDevice.createUser(rpiPage.controller, userName.text, pass1.text)
                         }
                     }
                 }

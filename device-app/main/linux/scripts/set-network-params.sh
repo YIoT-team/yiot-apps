@@ -2,7 +2,7 @@
 
 set -e
 
-echo ">>> START: RPi initialization"
+echo "START: Network settings"
 
 echo "SCRIPT     : ${0}"
 echo "INTERFACE  : ${1}"
@@ -20,6 +20,7 @@ NET_IPADDR="${3}"
 NET_GATEWAY="${4}"
 NET_DNS="${5}"
 NET_MASK="${6}"
+TIMEOUT=20
 
 restore_network_original() {
     if [ ! -f /etc/dhcpcd.conf.orig ]; then
@@ -51,9 +52,40 @@ restart_network() {
     systemctl restart dhcpcd.service
 }
 
+wait_connection() {
+    PING_IP="${1}"
+    PING_TIMEOUT="${2}"
+
+    echo -n "Wait for ${PING_IP} ..."
+    let "end_time=$(date +%s) + PING_TIMEOUT"
+
+    while :
+    do
+        if ! ping -c 1 -W 1 ${PING_IP} ; then
+            if [ "$(date +%s)" -gt "$end_time" ]; then
+                echo "ERROR TIMEOUT"
+                return 128
+            fi
+            sleep 1
+            echo -n "."
+        else
+            return 0
+        fi
+    done
+}
+
 restore_network_original
 create_network_config
 restart_network
 
-echo ">>> END  : RPi initialization"
+# Check for connectiona
+if ! wait_connection ${NET_GATEWAY} ${TIMEOUT} ; then
+    echo "ERROR: Cannot connect. Restore original settings"
+    restore_network_original
+    restart_network
+    wait_connection ${NET_GATEWAY} ${TIMEOUT}
 
+    exit 128
+fi
+
+echo "END  : Network settings"

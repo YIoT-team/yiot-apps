@@ -84,6 +84,13 @@ private slots:
     void
     onPCError(const vs_mac_addr_t mac);
 
+    // SNAP::SCRT
+    void
+    onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey);
+
+    void
+    onSessionKeyError(VSQMac mac);
+
     // UI
     void
     onInvokeCommand(QString mac, QString json);

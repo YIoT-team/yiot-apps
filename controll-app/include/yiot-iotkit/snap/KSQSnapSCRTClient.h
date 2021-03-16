@@ -28,6 +28,7 @@
 #include <virgil/iot/qt/protocols/snap/VSQSnapServiceBase.h>
 
 #include <yiot-iotkit/secmodule/KSQPublicKey.h>
+#include <yiot-iotkit/secmodule/KSQSessionKey.h>
 
 using namespace VirgilIoTKit;
 
@@ -71,26 +72,27 @@ public:
 signals:
     void
     fireInfo(bool hasProvision, bool hasOwner, bool hasOwnerIsYou, const KSQPublicKey &publicKey);
-    void
-    fireSessionKeyReady();
 
     void
-    fireSessionKeyError();
+    fireSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey);
 
     void
-    fireUserAddDone();
+    fireSessionKeyError(VSQMac mac);
 
     void
-    fireUserAddError(QString error);
+    fireUserAddDone(VSQMac mac);
 
     void
-    fireUserRemoveDone();
+    fireUserAddError(VSQMac mac, QString error);
 
     void
-    fireUserRemoveError();
+    fireUserRemoveDone(VSQMac mac);
 
     void
-    fireGetUsersDone();
+    fireUserRemoveError(VSQMac mac);
+
+    void
+    fireGetUsersDone(VSQMac mac);
 
 public slots:
 
@@ -101,19 +103,19 @@ private:
     virtual ~KSQSnapSCRTClient() = default;
 
     static vs_status_e
-    _infoCb(vs_snap_transaction_id_t id, vs_status_e res, const vs_scrt_info_response_t *scrt_info);
+    _infoCb(vs_mac_addr_t mac, vs_snap_transaction_id_t id, vs_status_e res, const vs_scrt_info_response_t *scrt_info);
 
     static vs_status_e
-    _sessionKeyCb(vs_snap_transaction_id_t id, vs_status_e res);
+    _sessionKeyCb(vs_mac_addr_t mac, vs_snap_transaction_id_t id, vs_status_e res, const vs_session_key_t *key);
 
     static vs_status_e
-    _addUserCb(vs_snap_transaction_id_t id, vs_status_e res);
+    _addUserCb(vs_mac_addr_t mac, vs_snap_transaction_id_t id, vs_status_e res);
 
     static vs_status_e
-    _removeUserCb(vs_snap_transaction_id_t id, vs_status_e res);
+    _removeUserCb(vs_mac_addr_t mac, vs_snap_transaction_id_t id, vs_status_e res);
 
     static vs_status_e
-    _getUsersCb(vs_snap_transaction_id_t id, vs_status_e res);
+    _getUsersCb(vs_mac_addr_t mac, vs_snap_transaction_id_t id, vs_status_e res);
 };
 
 #endif // _YIOT_QT_SNAP_SCRT_CLIENT_SERVICE_H_

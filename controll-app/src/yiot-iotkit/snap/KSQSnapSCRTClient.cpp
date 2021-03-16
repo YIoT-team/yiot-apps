@@ -23,6 +23,9 @@
 #include <virgil/iot/protocols/snap/scrt/scrt-structs.h>
 #include <virgil/iot/protocols/snap/scrt/scrt-client.h>
 
+#include <virgil/iot/provision/provision.h>
+#include <virgil/iot/high-level/high-level-crypto.h>
+
 #include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
 #include <yiot-iotkit/secmodule/KSQSecModule.h>
 
@@ -53,6 +56,7 @@ KSQSnapSCRTClient::getInfo(const vs_netif_t *netif, const VSQMac &mac) {
 bool
 KSQSnapSCRTClient::requestSessionKey(const vs_netif_t *netif, const VSQMac &mac) {
     vs_mac_addr_t cMac = mac;
+    qDebug() << "Request session key: " << mac.description();
     if (VS_CODE_OK != vs_snap_scrt_request_session_key(netif, &cMac)) {
         VS_LOG_ERROR("Cannot request session key");
         return false;
@@ -84,7 +88,7 @@ KSQSnapSCRTClient::removeUser(const vs_netif_t *netif,
                               vs_user_type_t type,
                               const QString &userName) {
     VS_LOG_DEBUG(">>> SCRT::RUSR");
-    QTimer::singleShot(3000, [this]() { emit fireUserRemoveDone(); });
+    // QTimer::singleShot(3000, [this]() { emit fireUserRemoveDone(); });
     return false;
 }
 
@@ -92,13 +96,16 @@ KSQSnapSCRTClient::removeUser(const vs_netif_t *netif,
 bool
 KSQSnapSCRTClient::getUsers(const vs_netif_t *netif, const VSQMac &mac, vs_user_type_t type) {
     VS_LOG_DEBUG(">>> SCRT::GUSR");
-    QTimer::singleShot(3000, [this]() { emit fireGetUsersDone(); });
+    // QTimer::singleShot(3000, [this]() { emit fireGetUsersDone(); });
     return false;
 }
 
 //-----------------------------------------------------------------------------
 vs_status_e
-KSQSnapSCRTClient::_infoCb(vs_snap_transaction_id_t id, vs_status_e res, const vs_scrt_info_response_t *scrt_info) {
+KSQSnapSCRTClient::_infoCb(vs_mac_addr_t mac,
+                           vs_snap_transaction_id_t id,
+                           vs_status_e res,
+                           const vs_scrt_info_response_t *scrt_info) {
     CHECK_NOT_ZERO_RET(scrt_info, VS_CODE_ERR_ZERO_ARGUMENT);
 
     bool hasProvision = scrt_info->provisioned;
@@ -118,18 +125,25 @@ KSQSnapSCRTClient::_infoCb(vs_snap_transaction_id_t id, vs_status_e res, const v
 
 //-----------------------------------------------------------------------------
 vs_status_e
-KSQSnapSCRTClient::_sessionKeyCb(vs_snap_transaction_id_t id, vs_status_e res) {
-    VS_LOG_DEBUG("_sessionKeyCb");
-    return VS_CODE_ERR_NOT_IMPLEMENTED;
+KSQSnapSCRTClient::_sessionKeyCb(vs_mac_addr_t mac,
+                                 vs_snap_transaction_id_t id,
+                                 vs_status_e res,
+                                 const vs_session_key_t *key) {
+    if (key && VS_CODE_OK == res) {
+        emit KSQSnapSCRTClient::instance().fireSessionKeyReady(mac, KSQSessionKey(*key));
+    } else {
+        emit KSQSnapSCRTClient::instance().fireSessionKeyError(mac);
+    }
+    return VS_CODE_OK;
 }
 
 //-----------------------------------------------------------------------------
 vs_status_e
-KSQSnapSCRTClient::_addUserCb(vs_snap_transaction_id_t id, vs_status_e res) {
+KSQSnapSCRTClient::_addUserCb(vs_mac_addr_t mac, vs_snap_transaction_id_t id, vs_status_e res) {
     if (VS_CODE_OK == res) {
-        emit KSQSnapSCRTClient::instance().fireUserAddDone();
+        emit KSQSnapSCRTClient::instance().fireUserAddDone(VSQMac(mac));
     } else {
-        emit KSQSnapSCRTClient::instance().fireUserAddError(tr("Cannot set owner to device"));
+        emit KSQSnapSCRTClient::instance().fireUserAddError(VSQMac(mac), tr("Cannot set owner to device"));
     }
 
     return VS_CODE_OK;
@@ -137,14 +151,14 @@ KSQSnapSCRTClient::_addUserCb(vs_snap_transaction_id_t id, vs_status_e res) {
 
 //-----------------------------------------------------------------------------
 vs_status_e
-KSQSnapSCRTClient::_removeUserCb(vs_snap_transaction_id_t id, vs_status_e res) {
+KSQSnapSCRTClient::_removeUserCb(vs_mac_addr_t mac, vs_snap_transaction_id_t id, vs_status_e res) {
     VS_LOG_DEBUG("_removeUserCb");
     return VS_CODE_ERR_NOT_IMPLEMENTED;
 }
 
 //-----------------------------------------------------------------------------
 vs_status_e
-KSQSnapSCRTClient::_getUsersCb(vs_snap_transaction_id_t id, vs_status_e res) {
+KSQSnapSCRTClient::_getUsersCb(vs_mac_addr_t mac, vs_snap_transaction_id_t id, vs_status_e res) {
     VS_LOG_DEBUG("_getUsersCb");
     return VS_CODE_ERR_NOT_IMPLEMENTED;
 }

@@ -17,53 +17,29 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include <iostream>
+#ifndef YIOT_UTILS_H
+#define YIOT_UTILS_H
 
-#include "helpers/timer.h"
-#include "helpers/command.h"
-#include "helpers/settings.h"
+#include <stdbool.h>
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <ifaddrs.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <linux/wireless.h>
 
-#include "commands/reset.h"
+#ifdef __cplusplus
+using namespace VirgilIoTKit;
+extern "C" {
+#endif
 
-#include <virgil/iot/protocols/snap/cfg/cfg-private.h>
+bool
+is_wifi_connected(void);
 
-static KSTimer _processingDelayer;
-static const auto kDelayMs = std::chrono::milliseconds(200);
-
-//-----------------------------------------------------------------------------
-vs_status_e
-ks_snap_cfg_reset_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac) {
-    auto command = std::string(ks_settings_scripts_dir()) + "/yiot-reset-rpi.sh";
-
-    bool res = _processingDelayer.add(kDelayMs, [netif, sender_mac, command]() -> void {
-        Command cmd;
-        cmd.Command = "bash -c \"" + command + "\"";
-        cmd.execute();
-
-        // TODO: Remove it
-        std::cout << cmd.StdOut;
-        std::cerr << cmd.StdErr;
-        std::cout << "Exit Status: " << cmd.ExitStatus << "\n";
-        // ~TODO: Remove it
-
-        // Send response after complete processing
-        if (VS_CODE_OK != vs_snap_send_response(netif,
-                                                &sender_mac,
-                                                0, // TODO: Fill transaction ID
-                                                VS_CFG_SERVICE_ID,
-                                                VS_CFG_WIFI,
-                                                0 == cmd.ExitStatus,
-                                                NULL,
-                                                0)) {
-            VS_LOG_WARNING("Cannot set WiFi credentials.");
-        }
-    });
-
-    if (!res) {
-        VS_LOG_WARNING("reset processor is busy");
-    }
-
-    return VS_CODE_COMMAND_NO_RESPONSE;
+#ifdef __cplusplus
 }
+#endif
 
-//-----------------------------------------------------------------------------
+#endif // YIOT_UTILS_H
