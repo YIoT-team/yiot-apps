@@ -173,6 +173,7 @@ void
 KSQDeviceSetupController::stop() {
     m_valid = false;
     emit fireUploadStopped();
+    emit fireFinished(m_netif);
 }
 
 //-----------------------------------------------------------------------------
@@ -213,7 +214,6 @@ KSQDeviceSetupController::configure(bool needProvision,
     } else {
         done();
     }
-
 
     return true;
 }
