@@ -28,6 +28,8 @@ Page {
 
     id: wifiSettingsPage
 
+    width: parent
+
     background: Rectangle {
         color: "transparent"
     }

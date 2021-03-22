@@ -80,11 +80,11 @@ Form {
             text: qsTr("There is no owner. So, you'll be set as an Owner for the device.")
         }
 
-        InfoText {
-            visible: deviceSetup.data.needCreds
-            wrapMode: Text.WordWrap
-            text: qsTr("This device requires WiFi credentials. Credentials will be passed as an encrypted data.")
-        }
+//        InfoText {
+//            visible: deviceSetup.data.needCreds
+//            wrapMode: Text.WordWrap
+//            text: qsTr("This device requires WiFi credentials. Credentials will be passed as an encrypted data.")
+//        }
 
         Item {
             Layout.fillHeight: true

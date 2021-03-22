@@ -39,12 +39,16 @@ Page {
             if (aSsid != "") {
                 wifiPassVisib = true
                 state = "passwd"
-                h.visible = false
+                h.title = qsTr("Set WiFi password ") + wifiNetworksList.ssid
+                h.hideButtons = false
+                h.backAction = function() { wifiNetworksList.ssid = "" }
                 return (aSsid)
             } else {
                 wifiPassVisib = false
                 state = "prepare-params"
                 h.visible = true
+                h.title = qsTr("Credentials upload")
+                h.hideButtons = true
             }
         }
 
@@ -68,11 +72,8 @@ Page {
 
     WiFiPasswordPage {
         id: pass
-        header: Header {
-            id: header
-            title: qsTr("WiFi password for current network.")
-            backAction: function() { /*soon*/ }
-        }
+        header.children: width = p.width
+
         visible: wifiPassVisib
         ssid: ssidCheck(wifiNetworksList.ssid)
     }
@@ -82,14 +83,17 @@ Page {
         visible: false
 
         ColumnLayout {
-            Layout.bottomMargin: 65
+            anchors.fill: parent
+            Layout.bottomMargin: -200
+            Layout.maximumHeight: 130
             Layout.fillWidth: true
-            Layout.fillHeight: true
 
             WiFiNetworksList {
                 id: wifiNetworksList
+                Layout.topMargin: 50
+                Layout.fillHeight: true
             }
-        }
+       }
     }
 
     states: [
@@ -134,10 +138,6 @@ Page {
         function onFireUploadStarted() {
             state = "upload-setup"
             processingForm.configure()
-        }
-
-        Component.onCompleted: function() {
-            ssid = wifiNetworksList.ssid
         }
 
     }
