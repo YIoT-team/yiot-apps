@@ -73,54 +73,52 @@ KSQWiFiEnumerator::stop() {
 }
 
 //-----------------------------------------------------------------------------
-QStringList wifiListHandler(QString &input_list, QRegExp &rx) {
-    QStringList list;
-    int pos = 0;
-    while ((pos = rx.indexIn(input_list, pos)) != -1) {
-                list << rx.cap(1);
-                pos += rx.matchedLength();
-    }
-
-    return list;
-}
-//-----------------------------------------------------------------------------
 #if !defined(Q_OS_MACOS) && !defined(Q_OS_WIN32)
 KSQWiFiNetworks
 KSQWiFiEnumerator::wifi_enum() {
 #ifdef Q_OS_ANDROID
     return KSQAndroid::enumWifi();
 #else
-    QStringList ssid_list;
-    QStringList rssi_list;
-    QProcess wifiProcess;
-
-    wifiProcess.start("sh", QStringList() << "-c" << "nmcli -f SSID dev wifi");
-    if (wifiProcess.waitForFinished()) {
-        QString raw_list = QTextCodec::codecForMib(106)->toUnicode(wifiProcess.readAll());
-        QRegExp ssid_rx("[\\S\\s]([a-zA-Z0-9_-]+)[\\S\\s]");
-        QStringList out_list = wifiListHandler(raw_list, ssid_rx);
-        out_list.removeFirst();
-        ssid_list = out_list;
-        wifiProcess.close();
-    }
-
-    qDebug() << "++++++++++++++++++[FILTRED_SSID_LIST]++++++++++++++++++: " << ssid_list;
-
-    wifiProcess.start("sh", QStringList() << "-c" << "nmcli -f SIGNAL dev wifi");
-    if (wifiProcess.waitForFinished()) {
-        QString raw_list = QTextCodec::codecForMib(106)->toUnicode(wifiProcess.readAll());
-        QRegExp rssi_rx("(\\d+)");
-        QStringList out_list = wifiListHandler(raw_list, rssi_rx);
-        rssi_list = out_list;
-        wifiProcess.close();
-    }
-
-    qDebug() << "++++++++++++++++++[FILTRED_RSSI_LIST]++++++++++++++++++: " << rssi_list;
-
     KSQWiFiNetworks wifiList;
-    for (int i = 0; i < ssid_list.size(); i++) {
-        int current_rssi = rssi_list[i].toInt();
-        wifiList[ssid_list[i]] = current_rssi;
+
+    QDBusInterface nm("org.freedesktop.NetworkManager", "/org/freedesktop/NetworkManager",
+            "org.freedesktop.NetworkManager", QDBusConnection::systemBus());
+    if(!nm.isValid())
+    {
+        qFatal("D-Bus: Failed to connect to the system bus");
+    }
+
+    QDBusMessage msg = nm.call("GetDevices");
+    QDBusArgument arg = msg.arguments().at(0).value<QDBusArgument>();
+
+    if(arg.currentType() != QDBusArgument::ArrayType)
+    {
+        qFatal("D-Bus: Something went wrong with getting the device list");
+    }
+    QList<QDBusObjectPath> pathsLst = qdbus_cast<QList<QDBusObjectPath> >(arg);
+    foreach(QDBusObjectPath p, pathsLst)
+    {
+        QDBusInterface device("org.freedesktop.NetworkManager", p.path(),
+        "org.freedesktop.NetworkManager.Device", QDBusConnection::systemBus());
+        if (device.property("DeviceType").toInt() != 2)
+        {
+            continue;
+        }
+        QDBusInterface wifi_device("org.freedesktop.NetworkManager", p.path(),
+        "org.freedesktop.NetworkManager.Device.Wireless", QDBusConnection::systemBus());
+        QMap<QString, QVariant> argList;
+        QDBusMessage msg = wifi_device.call("RequestScan", argList);
+        QThread::sleep(2);
+
+        msg = wifi_device.call("GetAllAccessPoints");
+        QDBusArgument ap_list_arg = msg.arguments().at(0).value<QDBusArgument>();
+        QList<QDBusObjectPath> ap_path_list = qdbus_cast<QList<QDBusObjectPath> >(ap_list_arg);
+        foreach(QDBusObjectPath p ,ap_path_list)
+        {
+            QDBusInterface ap_interface("org.freedesktop.NetworkManager", p.path(),
+            "org.freedesktop.NetworkManager.AccessPoint", QDBusConnection::systemBus());
+            wifiList[ap_interface.property("Ssid").toString()] = ap_interface.property("Strength").toInt();
+        }
     }
     return wifiList;
 #endif

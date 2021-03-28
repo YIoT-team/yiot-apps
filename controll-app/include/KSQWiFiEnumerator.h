@@ -22,6 +22,7 @@
 
 #include <QtCore>
 #include <QAbstractTableModel>
+#include <QtDBus/QtDBus>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
 
