@@ -22,7 +22,6 @@
 
 #include <QtCore>
 #include <QAbstractTableModel>
-#include <QtDBus/QtDBus>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
 
@@ -86,10 +85,6 @@ private:
     _findWiFiGeneral();
 #endif
 
-#if defined(Q_OS_LINUX)
-    KSQWiFiNetworks
-    wifi_enum();
-#endif
 };
 
 #endif // PROVISION_QT_WIFI_ENUM_H
