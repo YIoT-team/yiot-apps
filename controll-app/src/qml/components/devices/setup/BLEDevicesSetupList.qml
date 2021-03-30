@@ -25,7 +25,11 @@ import "../../../theme"
 import "../../../components"
 
 ListView {
+
     id: list
+
+    readonly property int elementHeight: 45
+
     Layout.fillHeight: true
     Layout.fillWidth: true
     Layout.bottomMargin: 1
@@ -33,10 +37,12 @@ ListView {
     spacing: 1
     model: bleEnum
 
+    Layout.maximumHeight: list.count * list.elementHeight
+
     delegate: Rectangle {
         id: base
         width: list.width
-        height: 45
+        height: list.elementHeight
         color: "transparent"
 
         RowLayout {
