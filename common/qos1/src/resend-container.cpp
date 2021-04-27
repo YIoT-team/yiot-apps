@@ -47,13 +47,12 @@ KSResendContainer::KSResendContainer(std::function<vs_status_e(const uint8_t *, 
         while (true) {
             std::this_thread::sleep_for(timeQuant);
             std::lock_guard<std::mutex> lock(m_guard);
+
+            // Removed old packets
+            cleanQueue();
+
             for (auto &m : m_container) {
                 // if (m.time - std::chrono::system_clock::now() >= timeQuant) {
-
-                // Removed old packets
-                auto end = std::remove_if(m_container.begin(), m_container.end(), [this](const KSMessage &m) {
-                    return m.attempts > m_resendMax;
-                });
 
                 // Resend if required
                 if (m.attempts < m_resendMax) {
@@ -76,6 +75,22 @@ KSResendContainer::KSResendContainer(std::function<vs_status_e(const uint8_t *, 
 
 //-----------------------------------------------------------------------------
 bool
+KSResendContainer::cleanQueue() {
+    bool cleaned = false;
+    auto end = std::remove_if(m_container.begin(), m_container.end(), [this, &cleaned](const KSMessage &m) {
+      bool isOld = m.attempts > m_resendMax;
+      if (isOld) {
+          cleaned = true;
+      }
+      return isOld;
+    });
+    m_container.erase(end, m_container.end());
+
+    return cleaned;
+}
+
+//-----------------------------------------------------------------------------
+bool
 KSResendContainer::addPacket(const vs_mac_addr_t *mac,
                              vs_snap_transaction_id_t id,
                              const uint8_t *data,
@@ -85,6 +100,9 @@ KSResendContainer::addPacket(const vs_mac_addr_t *mac,
     CHECK_NOT_ZERO_RET(data_sz, false);
 
     std::lock_guard<std::mutex> l(m_guard);
+
+    // Removed old packets
+    cleanQueue();
 
     if (m_container.size() >= m_szMax) {
         VS_LOG_WARNING("Re-send container is full");
