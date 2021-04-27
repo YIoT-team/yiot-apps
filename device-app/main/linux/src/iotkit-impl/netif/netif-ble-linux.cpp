@@ -63,6 +63,10 @@ class TxCharacteristic;
 static std::shared_ptr<TxCharacteristic> _tx_char;
 static std::string NAME;
 
+#if !defined(YIOT_DEBUG_BLE_TRAFIC)
+#define YIOT_DEBUG_BLE_TRAFIC 0
+#endif
+
 //-----------------------------------------------------------------------------
 static vs_status_e
 _ble_init(struct vs_netif_t *netif, const vs_netif_rx_cb_t rx_cb, const vs_netif_process_cb_t process_cb);
@@ -108,7 +112,9 @@ protected:
         const uint8_t *rx_buffer = value.data();
         uint16_t recv_size = value.size();
 
+#if YIOT_DEBUG_BLE_TRAFIC
         VS_LOG_DEBUG("Received %d bytes:", recv_size);
+#endif
 
         if (recv_size > 1) {
             uint8_t marker = rx_buffer[0];
