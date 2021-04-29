@@ -78,11 +78,11 @@ bool
 KSResendContainer::cleanQueue() {
     bool cleaned = false;
     auto end = std::remove_if(m_container.begin(), m_container.end(), [this, &cleaned](const KSMessage &m) {
-      bool isOld = m.attempts > m_resendMax;
-      if (isOld) {
-          cleaned = true;
-      }
-      return isOld;
+        bool isOld = m.attempts > m_resendMax;
+        if (isOld) {
+            cleaned = true;
+        }
+        return isOld;
     });
     m_container.erase(end, m_container.end());
 

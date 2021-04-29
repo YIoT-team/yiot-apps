@@ -54,6 +54,7 @@ static std::mutex _mtx_stop;
 static std::condition_variable _cv_stop;
 static bool _ready = false;
 static bool _need_stop = false;
+static bool _initialized = false;
 static vs_mac_addr_t _mac;
 
 static vs_netif_rx_cb_t _netif_ble_rx_cb = 0;
@@ -62,6 +63,7 @@ static vs_netif_process_cb_t _netif_ble_process_cb = 0;
 class TxCharacteristic;
 static std::shared_ptr<TxCharacteristic> _tx_char;
 static std::string NAME;
+static const uint16_t MANUFACTURER_DATA = 0x1914;
 
 #if !defined(YIOT_DEBUG_BLE_TRAFIC)
 #define YIOT_DEBUG_BLE_TRAFIC 0
@@ -175,7 +177,7 @@ _ble_thread_internal_func() {
         adapter1.DiscoverableTimeout(0);
         adapter1.Pairable(false);
 
-        NAME = "yiot_RPi_" + adapter1.Address();
+        NAME = "RPi " + adapter1.Address();
 
         // Save MAC address
         unsigned int bytes[ETH_ADDR_LEN];
@@ -262,10 +264,18 @@ _ble_thread_internal_func() {
         _cv_start.notify_one();
     };
 
+    std::map<uint16_t, sdbus::Variant> manufacturerData;
+    std::vector<uint8_t> manData;
+    manData.push_back(_initialized ? 1 : 0);
+    sdbus::Variant val(manData);
+    manufacturerData[MANUFACTURER_DATA] = val;
     auto ad = LEAdvertisement1::create(*connection, ADV_PATH)
                       .withLocalName(NAME)
                       .withServiceUUIDs(std::vector{std::string{IOTKIT_BLE_SERVICE_UUID}})
                       .withIncludes(std::vector{std::string{"tx-power"}})
+                      .withManufacturerData(manufacturerData)
+                      .withDuration(1)
+                      .withTimeout(0)
                       .onReleaseCall([]() { std::cout << "advertisement released" << std::endl; })
                       .registerWith(mgr, register_adv_callback);
 
@@ -365,7 +375,8 @@ _ble_mac(const struct vs_netif_t *netif, struct vs_mac_addr_t *mac_addr) {
 
 //-----------------------------------------------------------------------------
 vs_netif_t *
-ks_netif_ble(void) {
+ks_netif_ble(bool initialized) {
+    _initialized = initialized;
     return &_netif_ble;
 }
 
