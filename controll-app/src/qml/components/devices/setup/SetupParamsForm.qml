@@ -68,17 +68,22 @@ Form {
             InfoText { text: deviceSetup.data.needCreds ? qsTr("required") : qsTr("present") }
         }
 
-        InfoText {
-            visible: !deviceSetup.data.hasProvision
-            wrapMode: Text.WordWrap
-            text: qsTr("This device will be provisioned using your Root Of Trust")
-        }
+            InfoText {
+                wrapMode: Text.WordWrap
+                text: qsTr("Select WiFI:")
+            }
 
-        InfoText {
-            visible: !deviceSetup.data.hasOwner
-            wrapMode: Text.WordWrap
-            text: qsTr("There is no owner. So, you'll be set as an Owner for the device.")
-        }
+//        InfoText {
+//            visible: !deviceSetup.data.hasProvision
+//            wrapMode: Text.WordWrap
+//            text: qsTr("This device will be provisioned using your Root Of Trust")
+//        }
+
+//        InfoText {
+//            visible: !deviceSetup.data.hasOwner
+//            wrapMode: Text.WordWrap
+//            text: qsTr("There is no owner. So, you'll be set as an Owner for the device.")
+//        }
 
 //        InfoText {
 //            visible: deviceSetup.data.needCreds

@@ -80,17 +80,16 @@ Page {
 
     Form {
         id: wifiList
+        stretched: true
         visible: false
 
         ColumnLayout {
-            anchors.fill: parent
-            Layout.bottomMargin: -200
-            Layout.maximumHeight: 130
-            Layout.fillWidth: true
+            clip: true
+            Layout.topMargin: 240
+            Layout.bottomMargin: 160
 
             WiFiNetworksList {
                 id: wifiNetworksList
-                Layout.topMargin: 50
                 Layout.fillHeight: true
             }
        }
