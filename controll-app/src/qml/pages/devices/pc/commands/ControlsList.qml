@@ -59,13 +59,13 @@ Page {
             //        showAccessPointPage()
             //    }
             //}
-            //ListElement {
-            //    name: qsTr("VPN Router")
-            //    image: "vpn-router"
-            //    property var action: function() {
-            //        showVPNrouterPage()
-            //    }
-            //}
+            ListElement {
+                name: qsTr("VPN Router")
+                image: "vpn-router"
+                property var action: function() {
+                    showVPNrouterPage()
+                }
+            }
             ListElement {
                 name: qsTr("Enable SSH")
                 image: "vpn-router"
