@@ -68,6 +68,14 @@ Page {
                     label: qsTr("Device IP")
                     placeholderText: qsTr("Enter device static IP addres")
                     validator: ValidatorIPv4 {}
+                    inputMethodHints: Qt.ImhDigitsOnly
+
+                    Connections {
+                        target: deviceIP
+                        function onReady() {
+                            gatewayIP.text = PCDevice.gatewayFromIP(deviceIP.text, gatewayIP.text);
+                        }
+                    }
                 }
 
                 InputTextField {
@@ -75,6 +83,7 @@ Page {
                     label: qsTr("Gateway IP")
                     placeholderText: qsTr("Enter gateway IP addres")
                     validator: ValidatorIPv4 {}
+                    inputMethodHints: Qt.ImhDigitsOnly
                 }
 
                 InputTextField {
