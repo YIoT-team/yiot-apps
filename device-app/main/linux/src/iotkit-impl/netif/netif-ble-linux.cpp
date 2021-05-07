@@ -48,10 +48,14 @@ constexpr const char *IOTKIT_BLE_CHAR_RX_UUID = "0000abf1-0000-1000-8000-00805f9
 
 static std::thread *_ble_thread = nullptr;
 
+static std::mutex _mtx_adv;
 static std::mutex _mtx_start;
 static std::condition_variable _cv_start;
 static std::mutex _mtx_stop;
 static std::condition_variable _cv_stop;
+static std::shared_ptr<IConnection> _connection;
+static std::shared_ptr<LEAdvertisingManager1> _advMgr;
+static std::shared_ptr<LEAdvertisement1> _advController;
 static bool _ready = false;
 static bool _need_stop = false;
 static vs_mac_addr_t _mac;
@@ -62,6 +66,11 @@ static vs_netif_process_cb_t _netif_ble_process_cb = 0;
 class TxCharacteristic;
 static std::shared_ptr<TxCharacteristic> _tx_char;
 static std::string NAME;
+static const uint16_t MANUFACTURER_DATA = 0x1914;
+
+#if !defined(YIOT_DEBUG_BLE_TRAFIC)
+#define YIOT_DEBUG_BLE_TRAFIC 0
+#endif
 
 //-----------------------------------------------------------------------------
 static vs_status_e
@@ -108,7 +117,9 @@ protected:
         const uint8_t *rx_buffer = value.data();
         uint16_t recv_size = value.size();
 
+#if YIOT_DEBUG_BLE_TRAFIC
         VS_LOG_DEBUG("Received %d bytes:", recv_size);
+#endif
 
         if (recv_size > 1) {
             uint8_t marker = rx_buffer[0];
@@ -155,21 +166,21 @@ static void
 _ble_thread_internal_func() {
     constexpr const char *APP_PATH = "/com/kutashenko/provision";
     constexpr const char *SRV_PATH = "/com/kutashenko/provision/service1";
-    constexpr const char *ADV_PATH = "/com/kutashenko/provision/advertisement1";
 
-    std::shared_ptr<IConnection> connection{std::move(sdbus::createSystemBusConnection())};
+    _connection = std::move(sdbus::createSystemBusConnection());
+
 
     // ---- Adapter Info -----------------------------------------------------------------------------------------------
 
     {
-        Adapter1 adapter1{*connection, BLUEZ_SERVICE, DEVICE0};
+        Adapter1 adapter1{*_connection, BLUEZ_SERVICE, DEVICE0};
 
         adapter1.Powered(true);
         adapter1.Discoverable(true);
         adapter1.DiscoverableTimeout(0);
-        adapter1.Pairable(true);
+        adapter1.Pairable(false);
 
-        NAME = "yiot_RPi_" + adapter1.Address();
+        NAME = "RPi " + adapter1.Address();
 
         // Save MAC address
         unsigned int bytes[ETH_ADDR_LEN];
@@ -201,8 +212,8 @@ _ble_thread_internal_func() {
     std::cout << std::endl;
 
     // ---- Services ---------------------------------------------------------------------------------------------------
-    GattManager1 gattMgr{connection, BLUEZ_SERVICE, DEVICE0};
-    auto app = std::make_shared<GattApplication1>(connection, "/org/bluez/service");
+    GattManager1 gattMgr{_connection, BLUEZ_SERVICE, DEVICE0};
+    auto app = std::make_shared<GattApplication1>(_connection, "/org/bluez/service");
     auto srv1 = std::make_shared<GattService1>(app, "deviceinfo", "180A");
     ReadOnlyCharacteristic::createFinal(srv1, "2A24", NAME);               // model name
     ReadOnlyCharacteristic::createFinal(srv1, "2A25", "000-11111111-222"); // serial number
@@ -227,50 +238,22 @@ _ble_thread_internal_func() {
 
     gattMgr.RegisterApplicationAsync(app->getPath(), {}).uponReplyInvoke(register_app_callback);
 
-    // ---- Advertising ------------------------------------------------------------------------------------------------
-
-    auto mgr = std::make_shared<LEAdvertisingManager1>(connection, BLUEZ_SERVICE, DEVICE0);
-    std::cout << "LEAdvertisingManager1" << std::endl;
-    std::cout << "  ActiveInstances: " << std::to_string(mgr->ActiveInstances()) << std::endl;
-    std::cout << "  SupportedInstances: " << std::to_string(mgr->SupportedInstances()) << std::endl;
-    {
-        std::cout << "  SupportedIncludes: ";
-        auto includes = mgr->SupportedIncludes();
-        for (auto include : includes) {
-            std::cout << "\"" << include << "\",";
-        }
-        std::cout << std::endl;
-    }
-
-    auto register_adv_callback = [](const sdbus::Error *error) -> void {
-        if (error == nullptr) {
-            std::cout << "Advertisement registered." << std::endl;
-        } else {
-            std::cerr << "Error registering advertisment " << error->getName() << " with message "
-                      << error->getMessage() << std::endl;
-        }
-
-        // Inform about readiness of BLE
-        std::unique_lock<std::mutex> lck(_mtx_start);
-        _ready = true;
-        _cv_start.notify_one();
-    };
-
-    auto ad = LEAdvertisement1::create(*connection, ADV_PATH)
-                      .withLocalName(NAME)
-                      .withServiceUUIDs(std::vector{std::string{IOTKIT_BLE_SERVICE_UUID}})
-                      .withIncludes(std::vector{std::string{"tx-power"}})
-                      .onReleaseCall([]() { std::cout << "advertisement released" << std::endl; })
-                      .registerWith(mgr, register_adv_callback);
-
     std::cout << "Loading complete." << std::endl;
 
-    connection->enterEventLoopAsync();
+    _connection->enterEventLoopAsync();
+
+    // Inform about readiness of BLE
+    {
+        std::unique_lock<std::mutex> lckStart(_mtx_start);
+        _ready = true;
+        _cv_start.notify_one();
+    }
 
     // Wait to finish
     std::unique_lock<std::mutex> lck(_mtx_stop);
     _cv_stop.wait(lck, []() -> bool { return _need_stop; });
 }
+
 //-----------------------------------------------------------------------------
 static void
 _ble_thread_func() {
@@ -295,11 +278,6 @@ _ble_connect() {
     _ready = false;
     _need_stop = false;
     _ble_thread = new std::thread(_ble_thread_func);
-
-    // Wait for BLE started
-    std::unique_lock<std::mutex> lck(_mtx_start);
-    _cv_start.wait(lck, []() -> bool { return _ready; });
-    VS_LOG_DEBUG("BLE NETIF is connected");
 
     return VS_CODE_OK;
 }
@@ -333,10 +311,25 @@ _ble_init(struct vs_netif_t *netif, const vs_netif_rx_cb_t rx_cb, const vs_netif
 }
 
 //-----------------------------------------------------------------------------
+static void
+_stop_adv(void) {
+    if (_advController.get()) {
+        _advController->unregister();
+        _advController.reset();
+    }
+
+    if (_advMgr.get()) {
+        _advMgr.reset();
+    }
+}
+
+//-----------------------------------------------------------------------------
 static vs_status_e
 _ble_deinit(struct vs_netif_t *netif) {
     (void)netif;
     if (_ble_thread) {
+        _stop_adv();
+
         {
             std::unique_lock<std::mutex> lck(_mtx_stop);
             _need_stop = true;
@@ -361,6 +354,55 @@ _ble_mac(const struct vs_netif_t *netif, struct vs_mac_addr_t *mac_addr) {
 vs_netif_t *
 ks_netif_ble(void) {
     return &_netif_ble;
+}
+
+//-----------------------------------------------------------------------------
+void
+ks_netif_ble_advertise(bool initialized) {
+    // Wait for BLE started
+    std::unique_lock<std::mutex> lck(_mtx_start);
+    _cv_start.wait(lck, []() -> bool { return _ready; });
+    VS_LOG_DEBUG("BLE NETIF is connected");
+
+    _stop_adv();
+
+    constexpr const char *ADV_PATH = "/com/kutashenko/provision/advertisement1";
+
+    _advMgr = std::make_shared<LEAdvertisingManager1>(_connection, BLUEZ_SERVICE, DEVICE0);
+    std::cout << "LEAdvertisingManager1" << std::endl;
+    std::cout << "  ActiveInstances: " << std::to_string(_advMgr->ActiveInstances()) << std::endl;
+    std::cout << "  SupportedInstances: " << std::to_string(_advMgr->SupportedInstances()) << std::endl;
+    {
+        std::cout << "  SupportedIncludes: ";
+        auto includes = _advMgr->SupportedIncludes();
+        for (auto include : includes) {
+            std::cout << "\"" << include << "\",";
+        }
+        std::cout << std::endl;
+    }
+
+    auto register_adv_callback = [](const sdbus::Error *error) -> void {
+        if (error == nullptr) {
+            std::cout << "Advertisement registered." << std::endl;
+        } else {
+            std::cerr << "Error registering advertisment " << error->getName() << " with message "
+                      << error->getMessage() << std::endl;
+        }
+    };
+
+    std::map<uint16_t, sdbus::Variant> manufacturerData;
+    std::vector<uint8_t> manData;
+    manData.push_back(initialized ? 1 : 0);
+    sdbus::Variant val(manData);
+    manufacturerData[MANUFACTURER_DATA] = val;
+    _advController = LEAdvertisement1::create(*_connection, ADV_PATH)
+                      .withLocalName(NAME)
+                      .withServiceUUIDs(std::vector{std::string{IOTKIT_BLE_SERVICE_UUID}})
+                      .withIncludes(std::vector{std::string{"tx-power"}})
+                      .withManufacturerData(manufacturerData)
+                      .withDuration(1)
+                      .onReleaseCall([]() { std::cout << "advertisement released" << std::endl; })
+                      .registerWith(_advMgr, register_adv_callback);
 }
 
 //-----------------------------------------------------------------------------

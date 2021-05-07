@@ -77,7 +77,7 @@ Page {
                 id: actionButton
                 Layout.bottomMargin: 10
                 onClicked: {
-                    showDevices()
+                    showLastDevice()
                 }
             }
         }

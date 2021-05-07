@@ -56,7 +56,12 @@ Page {
         }
     }
 
+    function startBLEProvision(name) {
+        bleDevicesSetupList.connectBLEDevice(name)
+    }
+
     function terminateProvision() {
         showDevicesSetup()
     }
+
 }

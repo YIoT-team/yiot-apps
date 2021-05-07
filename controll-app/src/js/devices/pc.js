@@ -99,3 +99,13 @@ function enableSSH(pc) {
 }
 
 //-----------------------------------------------------------------------------
+function gatewayFromIP(userIP, currentGatewayIP) {
+    var ipParts = userIP.split('.')
+    if (ipParts.length != 4) {
+        return currentGatewayIP
+    }
+    ipParts[3] = "1"
+    return ipParts.join('.')
+}
+
+//-----------------------------------------------------------------------------

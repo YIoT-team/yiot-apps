@@ -112,9 +112,10 @@ main(int argc, char *argv[]) {
     //
 
     // Network interface
-    vs_packets_queue_init(vs_snap_default_processor); // Initialize Queue for incoming packets
-    netifs_impl[0] = vs_hal_netif_udp();              // Initalize UDP-based transport
-    netifs_impl[1] = ks_netif_ble();                  //           BLE-based
+    bool wifi_ready = is_wifi_connected();
+    vs_packets_queue_init(vs_snap_default_processor);  // Initialize Queue for incoming packets
+    netifs_impl[0] = vs_hal_netif_udp();               // Initialize UDP-based transport
+    netifs_impl[1] = ks_netif_ble();                   //           BLE-based
 
     // TrustList storage
     STATUS_CHECK(vs_app_storage_init_impl(&tl_storage_impl, vs_app_trustlist_dir(), VS_TL_STORAGE_MAX_PART_SIZE),
@@ -156,7 +157,7 @@ main(int argc, char *argv[]) {
     //
 
     // Inform about need of WiFi credentials
-    vs_snap_info_set_need_cred(!is_wifi_connected());
+    vs_snap_info_set_need_cred(!wifi_ready);
 
     // Send broadcast notification about self start
     const vs_netif_t *n = vs_snap_default_netif();

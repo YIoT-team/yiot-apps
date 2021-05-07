@@ -22,6 +22,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import "../../../../components"
+import "../../../../components/validators"
 import "../../../../../js/devices/pc.js" as PCDevice
 
 Page {
@@ -52,18 +53,21 @@ Page {
                     id: userName
                     label: qsTr("User name")
                     placeholderText: qsTr("Enter new user name")
+                    validator: ValidatorUserName {}
                 }
 
                 Password {
                     id: pass1
                     label: qsTr("Password")
                     placeholderText: qsTr("Enter new password")
+                    validator: ValidatorPassword {}
                 }
 
                 Password {
                     id: pass2
                     label: qsTr("Password check")
                     placeholderText: qsTr("Enter the password again")
+                    validator: ValidatorPassword {}
                 }
 
                 FormSecondaryButton {
@@ -71,8 +75,10 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
-                        showCmdProcessing(rpiPage.controller)
-                        PCDevice.createUser(rpiPage.controller, userName.text, pass1.text)
+                        if(validateInputs()) {
+                            showCmdProcessing(rpiPage.controller)
+                            PCDevice.createUser(rpiPage.controller, userName.text, pass1.text)
+                        }
                     }
                 }
 
@@ -81,5 +87,27 @@ Page {
                     Layout.fillHeight: true
                 }
             }
+        }
+
+    function errorPopupClick() {
+        }
+
+        function validateInputs() {
+            if (userName.text == "") {
+                showPopupError(qsTr("Set new User name"), errorPopupClick)
+                return false
+            }
+
+            if (pass1.text == "") {
+                showPopupError(qsTr("Set new User password"), errorPopupClick)
+                return false
+            }
+
+            if (pass1.text != pass2.text) {
+                showPopupError(qsTr("Passwords are not equal"), errorPopupClick)
+                return false
+            }
+
+            return true
         }
 }

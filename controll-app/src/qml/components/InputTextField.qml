@@ -10,6 +10,9 @@ ColumnLayout {
     property alias placeholderText: formField.placeholderText
     property alias validator: formField.validator
     property alias echoMode: formField.echoMode
+    property alias inputMethodHints: formField.inputMethodHints
+
+    signal ready()
 
     Layout.preferredHeight: 30
     Layout.maximumWidth: parent.width - 60
@@ -42,6 +45,8 @@ ColumnLayout {
                 color: Theme.brandColor
             }
         }
+
+        onEditingFinished: ready()
     }
 
 }

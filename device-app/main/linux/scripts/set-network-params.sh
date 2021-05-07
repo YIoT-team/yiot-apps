@@ -78,7 +78,7 @@ restore_network_original
 create_network_config
 restart_network
 
-# Check for connectiona
+# Check for connection
 if ! wait_connection ${NET_GATEWAY} ${TIMEOUT} ; then
     echo "ERROR: Cannot connect. Restore original settings"
     restore_network_original

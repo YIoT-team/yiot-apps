@@ -59,18 +59,19 @@ Page {
             //        showAccessPointPage()
             //    }
             //}
-            //ListElement {
-            //    name: qsTr("VPN Router")
-            //    image: "vpn-router"
-            //    property var action: function() {
-            //        showVPNrouterPage()
-            //    }
-            //}
             ListElement {
                 name: qsTr("Enable SSH")
                 image: "vpn-router"
                 property var action: function() {
                     showSSHPage()
+                }
+            }
+
+            ListElement {
+                name: qsTr("Create WiFi VPN bridge")
+                image: "vpn-router"
+                property var action: function() {
+                    showVPNrouterPage()
                 }
             }
         }
@@ -106,6 +107,21 @@ Page {
                     Layout.alignment: Qt.AlignLeft
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                }
+
+                RowLayout {
+                    id: actionsBlock
+                    Layout.rightMargin: 10
+
+                    Image {
+                        id: iconAction
+                        source: "qrc:/qml/resources/icons/Arrow-Right.png"
+                        Layout.maximumHeight: listDelegate.height * 0.7
+                        Layout.maximumWidth: Layout.maximumHeight
+                        fillMode: Image.PreserveAspectFit
+                        Layout.alignment: Qt.AlignRight
+                        Layout.rightMargin: 10
+                    }
                 }
             }
 
