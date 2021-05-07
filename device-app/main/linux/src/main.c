@@ -113,9 +113,9 @@ main(int argc, char *argv[]) {
 
     // Network interface
     bool wifi_ready = is_wifi_connected();
-    vs_packets_queue_init(vs_snap_default_processor); // Initialize Queue for incoming packets
-    netifs_impl[0] = vs_hal_netif_udp();              // Initalize UDP-based transport
-    netifs_impl[1] = ks_netif_ble(wifi_ready);        //           BLE-based
+    vs_packets_queue_init(vs_snap_default_processor);  // Initialize Queue for incoming packets
+    netifs_impl[0] = vs_hal_netif_udp();               // Initialize UDP-based transport
+    netifs_impl[1] = ks_netif_ble();                   //           BLE-based
 
     // TrustList storage
     STATUS_CHECK(vs_app_storage_init_impl(&tl_storage_impl, vs_app_trustlist_dir(), VS_TL_STORAGE_MAX_PART_SIZE),

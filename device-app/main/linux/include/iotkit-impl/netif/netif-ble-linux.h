@@ -28,7 +28,10 @@ extern "C" {
 #endif
 
 vs_netif_t *
-ks_netif_ble(bool initialized);
+ks_netif_ble(void);
+
+void
+ks_netif_ble_advertise(bool initialized);
 
 #ifdef __cplusplus
 }

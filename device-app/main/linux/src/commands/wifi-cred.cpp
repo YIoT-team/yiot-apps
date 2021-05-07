@@ -18,6 +18,7 @@
 //  ────────────────────────────────────────────────────────────
 
 #include <iostream>
+#include <unistd.h>
 
 #include "helpers/timer.h"
 #include "helpers/command.h"
@@ -29,6 +30,8 @@
 #include <virgil/iot/protocols/snap/cfg/cfg-private.h>
 #include <common/protocols/snap/pc/pc-server.h>
 
+#include "iotkit-impl/netif/netif-ble-linux.h"
+
 static KSTimer _processingDelayer;
 static const auto kDelayMs = std::chrono::milliseconds(200);
 
@@ -38,6 +41,14 @@ ks_snap_cfg_wifi_cb(const vs_netif_t *netif,
                     vs_mac_addr_t sender_mac,
                     const vs_cfg_wifi_configuration_t *configuration) {
     CHECK_NOT_ZERO_RET(configuration, VS_CODE_ERR_NULLPTR_ARGUMENT);
+
+    // TODO: Move it IoTKit
+    // Reload provision
+    vs_provision_update();
+
+    // Update BLE advertising
+    ks_netif_ble_advertise(vs_provision_is_ready());
+    // ~ TODO: Move it IoTKit
 
     VS_LOG_DEBUG("ssid: %s", configuration->ssid);
     VS_LOG_DEBUG("pass: *******");
@@ -72,10 +83,8 @@ ks_snap_cfg_wifi_cb(const vs_netif_t *netif,
 
         vs_snap_info_set_need_cred(!success);
 
-        // TODO: Move it IoTKit
-        vs_provision_update();
-
         // TODO: Use callback from IoTKit
+        sleep(1);
         const vs_netif_t *n = vs_snap_default_netif();
         vs_snap_pc_start_notification(n);
     });

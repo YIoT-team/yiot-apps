@@ -29,6 +29,8 @@
 
 #include "iotkit-impl/init.h"
 
+#include "iotkit-impl/netif/netif-ble-linux.h"
+
 static void
 _file_ver_info_cb(vs_file_version_t ver);
 
@@ -81,7 +83,6 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     vs_session_init(secmodule_impl, default_mac.bytes);
 
     // SNAP module
-
     STATUS_CHECK(vs_snap_init_device_name("Test device"), "Unable to set device name");
     STATUS_CHECK(vs_snap_init(netif_impl[0],
                               packet_preprocessor_cb,
@@ -97,6 +98,9 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
         STATUS_CHECK_RET(vs_snap_netif_add(netif_impl[i]), "Unable to add netif to a SNAP module");
         ++i;
     }
+
+    // Start BLE advertising
+    ks_netif_ble_advertise(vs_provision_is_ready());
 
     //
     // ---------- Register SNAP services ----------
