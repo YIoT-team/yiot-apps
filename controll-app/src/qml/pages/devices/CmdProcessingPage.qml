@@ -24,6 +24,8 @@ import QtQuick.Layouts 1.12
 import "../../theme"
 import "../../components"
 
+import "../../../js/devices/pc.js" as PCDevice
+
 Page {
     property var device: null
 
@@ -71,6 +73,25 @@ Page {
 
                 fillMode: Image.PreserveAspectFit
                 source: "qrc:/qml/resources/icons/%1/upload.gif".arg(Theme.state)
+            }
+
+            ScrollView {
+                id: scrollProcessingText
+
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
+                Layout.bottomMargin: p.state == "done" ? 450 : 20 // will need to be redone or removed altogether
+
+                TextArea {
+                    id: processingTextArea
+
+                    font.family: Theme.mainFont
+                    color: Theme.primaryTextColor
+                    readOnly: true
+
+                    text: PCDevice.processingText()
+                    }
             }
 
             FormPrimaryButton {
