@@ -73,6 +73,7 @@ Page {
     WiFiPasswordPage {
         id: pass
         header.children: width = p.width
+        header.visible: false
 
         visible: wifiPassVisib
         ssid: ssidCheck(wifiNetworksList.ssid)
