@@ -25,6 +25,7 @@ import "../../theme"
 import "../../components"
 Page {
     property string ssid: ""
+    property string location: "credentials"
 
     id: wifiSettingsPage
 
@@ -93,11 +94,22 @@ Page {
         })
     }
 
+    function prepareLocation(aLocation) { location = aLocation; }
+
     function useWiFiNetwork(ssid, pass) {
         // Set default WiFi Network in settings
         settings.setWiFiCredDefault(ssid, pass)
 
-        // Switch to devices page
-        showDevicesSetup()
+        // Switch back
+        switch (location) {
+        case "credentials":
+            showDevicesSetup()
+            break;
+        case "deviceSetup":
+            showSetupProcessing()
+            break;
+        default:
+            console.error("Error in the location of the call to the WiFi password page: '" + location + "' is not defined")
+        }
     }
 }

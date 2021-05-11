@@ -99,6 +99,7 @@ Page {
      }
 
     function showWiFiSettings() {
+        wifiPassSettingsPage.prepareLocation("credentials")
         swipeSettingsShow(settingsSwipeView.wifiNetworksIdx)
     }
 
@@ -126,5 +127,8 @@ Page {
 
     function backInSettings() {
         swipeSettingsShow(settingsSwipeView.backPageIdx)
+    }
+    function setPassPageLocation(location) {
+        wifiPassSettingsPage.prepareLocation(location)
     }
 }

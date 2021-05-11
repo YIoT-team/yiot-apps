@@ -228,6 +228,10 @@ ApplicationWindow {
         w.state = "cmdProcessing"
     }
 
+    function showSetupProcessing() {
+        w.state = "deviceSetupProcessing"
+    }
+
     function showMain() {
         w.state = "main"
     }
@@ -265,7 +269,8 @@ ApplicationWindow {
         settingsPage.swipeSettingsShow(idx)
     }
 
-    function showSettingsForWiFi() {
+    function showSettingsForWiFi(location) {
+        settingsPage.setPassPageLocation(location)
         showSettingsElement(settingsPage.wifiNetworksIdx)
     }
 

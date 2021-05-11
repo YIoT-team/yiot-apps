@@ -68,10 +68,10 @@ Form {
             InfoText { text: deviceSetup.data.needCreds ? qsTr("required") : qsTr("present") }
         }
 
-            InfoText {
-                wrapMode: Text.WordWrap
-                text: qsTr("Select WiFI:")
-            }
+//            InfoText {
+//                wrapMode: Text.WordWrap
+//                text: qsTr("Select WiFI:")
+//            }
 
 //        InfoText {
 //            visible: !deviceSetup.data.hasProvision
@@ -107,7 +107,7 @@ Form {
             text: qsTr("Setup Device")
             onClicked: {
                 var cred = settings.getWiFiCredDefault()
-                if (cred.ready) {
+                if (1 == 0/*cred.ready*/) {
 
                     deviceSetup.configure(
                         !deviceSetup.data.hasProvision,
@@ -115,7 +115,8 @@ Form {
                         true, cred.ssid, cred.pass)
 
                 } else {
-                    showPopupError(qsTr("Need to set WiFi credentials"), showSettingsForWiFi)
+                    //showPopupError(qsTr("Need to set WiFi credentials"), showSettingsForWiFi)
+                    showSettingsForWiFi("deviceSetup")
                 }
             }
         }

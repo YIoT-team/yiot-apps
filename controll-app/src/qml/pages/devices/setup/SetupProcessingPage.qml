@@ -76,50 +76,50 @@ Page {
         header.visible: false
 
         visible: wifiPassVisib
-        ssid: ssidCheck(wifiNetworksList.ssid)
+        //ssid: ssidCheck(wifiNetworksList.ssid)
     }
 
-    Form {
-        id: wifiList
-        stretched: true
-        visible: false
+//    Form {                                //no need, the design will (or already) be redone
+//        id: wifiList
+//        stretched: true
+//        visible: false
 
-        ColumnLayout {
-            clip: true
-            Layout.topMargin: 240
-            Layout.bottomMargin: 160
+//        ColumnLayout {
+//            clip: true
+//            Layout.topMargin: 240
+//            Layout.bottomMargin: 160
 
-            WiFiNetworksList {
-                id: wifiNetworksList
-                Layout.fillHeight: true
-            }
-       }
-    }
+//            WiFiNetworksList {
+//                id: wifiNetworksList
+//                Layout.fillHeight: true
+//            }
+//       }
+//    }
 
     states: [
         State {
             name: "get-info"
             PropertyChanges { target: processingForm; visible: true }
             PropertyChanges { target: paramsForm; visible: false }
-            PropertyChanges { target: wifiList; visible: false }
+            //PropertyChanges { target: wifiList; visible: false }
         },
         State {
             name: "prepare-params"
             PropertyChanges { target: processingForm; visible: false }
             PropertyChanges { target: paramsForm; visible: true }
-            PropertyChanges { target: wifiList; visible: true }
+            //PropertyChanges { target: wifiList; visible: true }
         },
         State {
             name: "upload-setup"
             PropertyChanges { target: processingForm; visible: true }
             PropertyChanges { target: paramsForm; visible: false }
-            PropertyChanges { target: wifiList; visible: false }
+            //PropertyChanges { target: wifiList; visible: false }
         },
         State {
             name: "passwd"
             PropertyChanges { target: processingForm; visible: false }
             PropertyChanges { target: paramsForm; visible: false }
-            PropertyChanges { target: wifiList; visible: false }
+            //PropertyChanges { target: wifiList; visible: false }
         }
     ]
 
