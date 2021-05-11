@@ -332,7 +332,7 @@ _netif_udp_internal(void) {
 
     _prepare_dst_addr();
 
-    //    memcpy(_mac_addr, ifr.ifr_hwaddr.sa_data, ETH_ADDR_LEN);
+    memcpy(_mac_addr, ifr.ifr_hwaddr.sa_data, ETH_ADDR_LEN);
     return VS_CODE_OK == _udp_connect();
 }
 
