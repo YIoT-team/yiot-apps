@@ -61,7 +61,7 @@ signals:
     fireRequestDeviceProvision(QString deviceName);
 
     void
-    fireRequestDeviceSetup(KSQDeviceBase *ydeviceName);
+    fireRequestDeviceSetup(KSQDeviceBase *deviceName);
 
 private slots:
 
@@ -69,6 +69,7 @@ private:
     QSharedPointer<VSQNetifBase> m_netif;
     VSQMac m_deviceMac;
     QSet<QString> m_ignoredDevices;
+    QSet<QString> m_provisionedDevices;
 
     void
     requestProvisionUI(const QString &deviceName);

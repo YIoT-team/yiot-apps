@@ -44,7 +44,10 @@ KSQUXSimplifyController::onDeviceRequiresProvision(QString deviceName,
 //-----------------------------------------------------------------------------
 void
 KSQUXSimplifyController::onNewProvisionedDevice(QSharedPointer<KSQDeviceBase> device) {
-    emit fireRequestDeviceSetup(device.get());
+    if (m_provisionedDevices.contains(device->macAddr())) {
+        m_provisionedDevices.remove(device->macAddr());
+        emit fireRequestDeviceSetup(device.get());
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -52,6 +55,7 @@ bool
 KSQUXSimplifyController::startDeviceProvision(QString name) {
     qDebug() << "startDeviceProvision : " << name;
 
+    m_provisionedDevices << m_deviceMac;
     KSQDeviceSetupController::instance().start(m_netif, m_deviceMac);
     return true;
 }
