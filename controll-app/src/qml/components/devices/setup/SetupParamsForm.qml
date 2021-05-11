@@ -55,17 +55,14 @@ Form {
             InfoText { text: qsTr("Manufacturer:"); horizontalAlignment: Text.AlignRight }
             InfoText { text: deviceSetup.data.manufacturer }
 
-            InfoText { text: qsTr("Provision:"); horizontalAlignment: Text.AlignRight }
-            InfoText { text: deviceSetup.data.hasProvision ? qsTr("present") : qsTr("absent") }
+            InfoText { text: qsTr("Security is initialized:"); horizontalAlignment: Text.AlignRight }
+            InfoText { text: deviceSetup.data.hasProvision ? qsTr("yes") : qsTr("no") }
 
-            InfoText { text: qsTr("Owner:"); horizontalAlignment: Text.AlignRight }
-            InfoText { text: deviceSetup.data.hasOwner ? qsTr("present") : qsTr("absent") }
+            InfoText { text: qsTr("Owner is set:"); horizontalAlignment: Text.AlignRight }
+            InfoText { text: deviceSetup.data.hasOwner ? qsTr("yes") : qsTr("no") }
 
             // InfoText { text: qsTr("Owned by me:"); horizontalAlignment: Text.AlignRight }
             // InfoText { text: deviceSetup.data.ownerIsYou ? qsTr("yes") : qsTr("no") }
-
-            InfoText { text: qsTr("WiFi Credentials:"); horizontalAlignment: Text.AlignRight }
-            InfoText { text: deviceSetup.data.needCreds ? qsTr("required") : qsTr("present") }
         }
 
         InfoText {
@@ -81,9 +78,9 @@ Form {
         }
 
         InfoText {
-            visible: deviceSetup.data.needCreds
+            visible: true
             wrapMode: Text.WordWrap
-            text: qsTr("This device requires WiFi credentials. Credentials will be passed as an encrypted data.")
+            text: qsTr("WiFi credentials will be passed as an encrypted data.")
         }
 
         Item {

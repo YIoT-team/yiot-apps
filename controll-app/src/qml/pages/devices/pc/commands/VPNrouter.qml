@@ -49,6 +49,20 @@ Page {
 
             spacing: 15
 
+            InputTextField {
+                id: apName
+                label: qsTr("Access Point name")
+                placeholderText: qsTr("Enter AP name")
+                validator: ValidatorUserName {}
+            }
+
+            Password {
+                id: apPass
+                label: qsTr("Access Point Password")
+                placeholderText: qsTr("Enter AP password")
+                validator: ValidatorPassword {}
+            }
+
             FormLabel {
                 id: comboBoxLabel
                 text: "Select VPN provider:"
@@ -65,14 +79,14 @@ Page {
 
             InputTextField {
                 id: user
-                label: qsTr("User")
+                label: qsTr("VPN User")
                 placeholderText: qsTr("Enter user name")
                 validator: ValidatorUserName {}
             }
 
             Password {
                 id: pass
-                label: qsTr("Password")
+                label: qsTr("VPN Password")
                 placeholderText: qsTr("Enter user password")
                 validator: ValidatorPassword {}
             }
@@ -85,6 +99,8 @@ Page {
                     if(validateInputs()){
                         showCmdProcessing(rpiPage.controller)
                         PCDevice.setupVPNRouter(rpiPage.controller,
+                                                apName.text,
+                                                apPass.text,
                                                 providerCb.text,
                                                 user.text,
                                                 pass.text)
@@ -102,13 +118,23 @@ Page {
     }
 
     function validateInputs() {
+        if (apName.text == "") {
+            showPopupError(qsTr("Enter Access Point name"), errorPopupClick)
+            return false
+        }
+
+        if (apPass.text == "") {
+            showPopupError(qsTr("Enter Access Point password"), errorPopupClick)
+            return false
+        }
+
         if (user.text == "") {
-            showPopupError(qsTr("Enter user name"), errorPopupClick)
+            showPopupError(qsTr("Enter VPN user name"), errorPopupClick)
             return false
         }
 
         if (pass.text == "") {
-            showPopupError(qsTr("Enter user password"), errorPopupClick)
+            showPopupError(qsTr("Enter VPN password"), errorPopupClick)
             return false
         }
 

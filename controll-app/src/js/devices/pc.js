@@ -71,8 +71,9 @@ function setupAccessPoint(pc, ssid, mode, password) {
 }
 
 //-----------------------------------------------------------------------------
-function setupVPNRouter(pc, vpnProvider, user, password) {
+function setupVPNRouter(pc, apName, apPass, vpnProvider, user, password) {
     console.log("Setup VPN router:")
+    console.log("    AP name : ", apName)
     console.log("    provider: ", vpnProvider)
     console.log("    user    : ", user)
 
@@ -80,7 +81,7 @@ function setupVPNRouter(pc, vpnProvider, user, password) {
 
     json.command = "script"
     json.script = "setup-vpn-router.sh"
-    json.params = [vpnProvider, user, password]
+    json.params = [apName, apPass, vpnProvider, user, password]
 
     pc.invokeCommand(JSON.stringify(json))
 }
