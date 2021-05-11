@@ -30,6 +30,9 @@ extern "C" {
 vs_netif_t *
 ks_netif_ble(void);
 
+void
+ks_netif_ble_advertise(bool initialized);
+
 #ifdef __cplusplus
 }
 #endif

@@ -47,8 +47,8 @@ Page {
         readonly property int createUserIdx: 1
         readonly property int staticipIdx: 2
         readonly property int accessPointIdx: 3
-        readonly property int vpnRouterIdx: 4
-        readonly property int sshIdx: 5
+        readonly property int sshIdx: 4
+        readonly property int vpnRouterIdx: 5
 
         property int backPageIdx: listIdx
 
@@ -73,12 +73,12 @@ Page {
             id: accessPointPage
         }
 
-        VPNrouter {
-            id: vpnRouterPage
-        }
-
         SSHEnabler {
             id: sshPage
+        }
+
+        VPNrouter {
+            id: vpnRouterPage
         }
     }
 

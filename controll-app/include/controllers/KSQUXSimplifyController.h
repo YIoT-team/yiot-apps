@@ -68,6 +68,10 @@ private slots:
 private:
     QSharedPointer<VSQNetifBase> m_netif;
     VSQMac m_deviceMac;
+    QSet<QString> m_ignoredDevices;
+
+    void
+    requestProvisionUI(const QString &deviceName);
 };
 
 #endif // KSQ_UX_SIMPLIFY_CONTROLLER_H

@@ -34,7 +34,9 @@ KSQAndroid::hideSplashScreen() {
 //-----------------------------------------------------------------------------
 void
 KSQAndroid::requestPermissions() {
-    const QVector<QString> permissions({"android.permission.ACCESS_FINE_LOCATION",
+    const QVector<QString> permissions({"android.permission.BLUETOOTH",
+                                        "android.permission.BLUETOOTH_ADMIN",
+                                        "android.permission.ACCESS_FINE_LOCATION",
                                         "android.permission.ACCESS_WIFI_STATE",
                                         "android.permission.CHANGE_WIFI_STATE"});
 

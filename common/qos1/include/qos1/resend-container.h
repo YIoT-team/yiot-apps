@@ -71,6 +71,9 @@ private:
     std::list<KSMessage> m_container;
     std::mutex m_guard;
     std::function<vs_status_e(const uint8_t *, const uint16_t)> m_senderFunc;
+
+    bool
+    cleanQueue();
 };
 
 #endif // YIOT_RESEND_CONTAINER_H

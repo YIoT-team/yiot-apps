@@ -236,13 +236,16 @@ ApplicationWindow {
         swipeShow(swipeView.devicePageIdx)
     }
 
+    function showLastDevice() {
+        startDeviceSetup(deviceActionDialog.name)
+    }
+
     function showDevicesSetup() {
         swipeShow(swipeView.setupDevicePageIdx)
     }
 
     function showShared() {
         swipeShow(swipeView.sharePageIdx)
-
     }
 
     function showSettings() {

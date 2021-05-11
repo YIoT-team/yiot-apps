@@ -59,18 +59,19 @@ Page {
             //        showAccessPointPage()
             //    }
             //}
-            //ListElement {
-            //    name: qsTr("VPN Router")
-            //    image: "vpn-router"
-            //    property var action: function() {
-            //        showVPNrouterPage()
-            //    }
-            //}
             ListElement {
                 name: qsTr("Enable SSH")
                 image: "vpn-router"
                 property var action: function() {
                     showSSHPage()
+                }
+            }
+
+            ListElement {
+                name: qsTr("Create WiFi VPN bridge")
+                image: "vpn-router"
+                property var action: function() {
+                    showVPNrouterPage()
                 }
             }
         }

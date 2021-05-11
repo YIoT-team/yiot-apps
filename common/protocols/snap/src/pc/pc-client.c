@@ -164,7 +164,6 @@ _pc_client_request_processor(const struct vs_netif_t *netif,
 
     default:
         VS_LOG_ERROR("Unsupported PC command");
-        VS_IOT_ASSERT(false);
         return VS_CODE_COMMAND_NO_RESPONSE;
     }
 }
