@@ -71,8 +71,9 @@ function setupAccessPoint(pc, ssid, mode, password) {
 }
 
 //-----------------------------------------------------------------------------
-function setupVPNRouter(pc, vpnProvider, user, password) {
+function setupVPNRouter(pc, apName, apPass, vpnProvider, user, password) {
     console.log("Setup VPN router:")
+    console.log("    AP name : ", apName)
     console.log("    provider: ", vpnProvider)
     console.log("    user    : ", user)
 
@@ -80,9 +81,32 @@ function setupVPNRouter(pc, vpnProvider, user, password) {
 
     json.command = "script"
     json.script = "setup-vpn-router.sh"
-    json.params = [vpnProvider, user, password]
+    json.params = [apName, apPass, vpnProvider, user, password]
 
     pc.invokeCommand(JSON.stringify(json))
+}
+
+//-----------------------------------------------------------------------------
+function enableSSH(pc) {
+    console.log("Enable SSH:")
+
+    let json = {}
+
+    json.command = "script"
+    json.script = "enable-ssh.sh"
+    json.params = []
+
+    pc.invokeCommand(JSON.stringify(json))
+}
+
+//-----------------------------------------------------------------------------
+function gatewayFromIP(userIP, currentGatewayIP) {
+    var ipParts = userIP.split('.')
+    if (ipParts.length != 4) {
+        return currentGatewayIP
+    }
+    ipParts[3] = "1"
+    return ipParts.join('.')
 }
 
 //-----------------------------------------------------------------------------

@@ -58,7 +58,7 @@ Page {
 
     header: Header {
         id: h
-        title: qsTr("Credentials upload")
+        title: qsTr("Device initialisation")
         hideButtons: true
     }
 

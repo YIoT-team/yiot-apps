@@ -55,41 +55,33 @@ Form {
             InfoText { text: qsTr("Manufacturer:"); horizontalAlignment: Text.AlignRight }
             InfoText { text: deviceSetup.data.manufacturer }
 
-            InfoText { text: qsTr("Provision:"); horizontalAlignment: Text.AlignRight }
-            InfoText { text: deviceSetup.data.hasProvision ? qsTr("present") : qsTr("absent") }
+            InfoText { text: qsTr("Security is initialized:"); horizontalAlignment: Text.AlignRight }
+            InfoText { text: deviceSetup.data.hasProvision ? qsTr("yes") : qsTr("no") }
 
-            InfoText { text: qsTr("Owner:"); horizontalAlignment: Text.AlignRight }
-            InfoText { text: deviceSetup.data.hasOwner ? qsTr("present") : qsTr("absent") }
+            InfoText { text: qsTr("Owner is set:"); horizontalAlignment: Text.AlignRight }
+            InfoText { text: deviceSetup.data.hasOwner ? qsTr("yes") : qsTr("no") }
 
             // InfoText { text: qsTr("Owned by me:"); horizontalAlignment: Text.AlignRight }
             // InfoText { text: deviceSetup.data.ownerIsYou ? qsTr("yes") : qsTr("no") }
-
-            InfoText { text: qsTr("WiFi Credentials:"); horizontalAlignment: Text.AlignRight }
-            InfoText { text: deviceSetup.data.needCreds ? qsTr("required") : qsTr("present") }
         }
 
-//            InfoText {
-//                wrapMode: Text.WordWrap
-//                text: qsTr("Select WiFI:")
-//            }
+        InfoText {
+            visible: !deviceSetup.data.hasProvision
+            wrapMode: Text.WordWrap
+            text: qsTr("This device will be provisioned using your Root Of Trust")
+        }
 
-//        InfoText {
-//            visible: !deviceSetup.data.hasProvision
-//            wrapMode: Text.WordWrap
-//            text: qsTr("This device will be provisioned using your Root Of Trust")
-//        }
+        InfoText {
+            visible: true
+            wrapMode: Text.WordWrap
+            text: qsTr("WiFi credentials will be passed as an encrypted data.")
+        }
 
-//        InfoText {
-//            visible: !deviceSetup.data.hasOwner
-//            wrapMode: Text.WordWrap
-//            text: qsTr("There is no owner. So, you'll be set as an Owner for the device.")
-//        }
-
-//        InfoText {
-//            visible: deviceSetup.data.needCreds
-//            wrapMode: Text.WordWrap
-//            text: qsTr("This device requires WiFi credentials. Credentials will be passed as an encrypted data.")
-//        }
+        InfoText {
+            visible: deviceSetup.data.needCreds
+            wrapMode: Text.WordWrap
+            text: qsTr("This device requires WiFi credentials. Credentials will be passed as an encrypted data.")
+        }
 
         Item {
             Layout.fillHeight: true
@@ -115,7 +107,6 @@ Form {
                         true, cred.ssid, cred.pass)
 
                 } else {
-                    //showPopupError(qsTr("Need to set WiFi credentials"), showSettingsForWiFi)
                     showSettingsForWiFi("deviceSetup")
                 }
             }
