@@ -96,19 +96,22 @@ Form {
 
         FormPrimaryButton {
             Layout.bottomMargin: 10
-            text: qsTr("Setup Device")
+            text: qsTr("Next")
             onClicked: {
                 var cred = settings.getWiFiCredDefault()
-                if (1 == 0/*cred.ready*/) {
-
-                    deviceSetup.configure(
-                        !deviceSetup.data.hasProvision,
-                        !deviceSetup.data.hasOwner, "Me",
-                        true, cred.ssid, cred.pass)
-
-                } else {
+                // TODO: remove
+//                if (1 == 0/*cred.ready*/) {
+//
+//                    deviceSetup.configure(
+//                        !deviceSetup.data.hasProvision,
+//                        !deviceSetup.data.hasOwner, "Me",
+//                        true, cred.ssid, cred.pass)
+//
+//                } else {
+                    // TODO: Create a separate page to choose WiFi network
+                    // re-use password enter form, if possible
                     showSettingsForWiFi("deviceSetup")
-                }
+//                }
             }
         }
     }
