@@ -99,6 +99,11 @@ function enableSSH(pc) {
 }
 
 //-----------------------------------------------------------------------------
+function processingText() {
+    return "Hello YIoT!\nSecond line." // Sorry, I tried to take a value from C/C++, but nothing sensible came out. I need more time.
+}
+
+//-----------------------------------------------------------------------------
 function gatewayFromIP(userIP, currentGatewayIP) {
     var ipParts = userIP.split('.')
     if (ipParts.length != 4) {
