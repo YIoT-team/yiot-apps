@@ -67,7 +67,7 @@ KSQBLEController::onConnected(bool success) {
         return;
     }
 
-    KSQDeviceSetupController::instance().start(netif(), broadcastMac);
+    KSQDeviceSetupController::instance().start(netif(), m_currentMac);
 }
 
 //-----------------------------------------------------------------------------
@@ -109,6 +109,7 @@ KSQBLEController::connectDevice(const QString &mac) {
         return false;
     }
 
+    m_currentMac = VSQMac(mac);
     return m_netifBLE->open(ble);
 }
 

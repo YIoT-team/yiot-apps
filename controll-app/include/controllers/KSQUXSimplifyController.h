@@ -33,7 +33,7 @@ class KSQUXSimplifyController : public QObject {
     Q_OBJECT
 
 public:
-    KSQUXSimplifyController() = default;
+    KSQUXSimplifyController();
 
     KSQUXSimplifyController &
     operator=(KSQUXSimplifyController const &) = delete;
@@ -64,6 +64,8 @@ signals:
     fireRequestDeviceSetup(KSQDeviceBase *deviceName);
 
 private slots:
+    void
+    onNewSetup(const VSQMac &mac);
 
 private:
     QSharedPointer<VSQNetifBase> m_netif;

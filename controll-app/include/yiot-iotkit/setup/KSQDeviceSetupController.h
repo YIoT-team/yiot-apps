@@ -80,6 +80,9 @@ signals:
     void
     fireDeviceDataChanged();
 
+    void
+    fireDeviceSetupStarted(const VSQMac &mac);
+
 private slots:
     void
     onDeviceSecurityInfo(bool hasProvision, bool hasOwner, bool ownerIsYou, const KSQPublicKey &publicKey);

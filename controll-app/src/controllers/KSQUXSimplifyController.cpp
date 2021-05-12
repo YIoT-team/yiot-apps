@@ -24,6 +24,12 @@
 #include <virgil/iot/qt/VSQIoTKit.h>
 
 //-----------------------------------------------------------------------------
+KSQUXSimplifyController::KSQUXSimplifyController() {
+    connect(&KSQDeviceSetupController::instance(), &KSQDeviceSetupController::fireDeviceSetupStarted,
+            this, &KSQUXSimplifyController::onNewSetup);
+}
+
+//-----------------------------------------------------------------------------
 void
 KSQUXSimplifyController::onBLEDeviceIsClose(QString deviceName, bool requiresProvision) {
     if (requiresProvision) {
@@ -51,11 +57,15 @@ KSQUXSimplifyController::onNewProvisionedDevice(QSharedPointer<KSQDeviceBase> de
 }
 
 //-----------------------------------------------------------------------------
+void
+KSQUXSimplifyController::onNewSetup(const VSQMac &mac) {
+    qDebug() << "startDeviceProvision : " << mac.description();
+    m_provisionedDevices << mac;
+}
+
+//-----------------------------------------------------------------------------
 bool
 KSQUXSimplifyController::startDeviceProvision(QString name) {
-    qDebug() << "startDeviceProvision : " << name;
-
-    m_provisionedDevices << m_deviceMac;
     KSQDeviceSetupController::instance().start(m_netif, m_deviceMac);
     return true;
 }

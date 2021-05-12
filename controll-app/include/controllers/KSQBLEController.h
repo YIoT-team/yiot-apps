@@ -61,6 +61,7 @@ private slots:
     onSetupFinished(QSharedPointer<VSQNetifBase> netif);
 
 private:
+    VSQMac m_currentMac;
     VSQNetifBLEEnumerator m_bleEnumerator;
     QSharedPointer<VSQNetifBLE> m_netifBLE;
 
