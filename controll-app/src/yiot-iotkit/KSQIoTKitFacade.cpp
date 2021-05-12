@@ -122,6 +122,7 @@ KSQIoTKitFacade::initSnap() {
     if (vs_snap_init(m_impl.netifs().first().get()->lowLevelNetif(),
                      netifProcessCb,
                      needEncCb,
+                     NULL,
                      m_appConfig.manufactureId(),
                      m_appConfig.deviceType(),
                      m_appConfig.deviceSerial(),

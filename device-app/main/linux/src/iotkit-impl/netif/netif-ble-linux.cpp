@@ -200,7 +200,7 @@ _ble_thread_internal_func() {
     ReadOnlyCharacteristic::createFinal(srv1, "2A26", "0.0.1");            // fw rev
     ReadOnlyCharacteristic::createFinal(srv1, "2A27", "rev A");            // hw rev
     ReadOnlyCharacteristic::createFinal(srv1, "2A28", "1.0");              // sw rev
-    ReadOnlyCharacteristic::createFinal(srv1, "2A29", "Kutashenko PE");    // manufacturer
+    ReadOnlyCharacteristic::createFinal(srv1, "2A29", "YIoT");    // manufacturer
 
     auto srv_iotkit = std::make_shared<GattService1>(app, "IoTKit", IOTKIT_BLE_SERVICE_UUID);
     _tx_char = std::shared_ptr<TxCharacteristic>(new TxCharacteristic(srv_iotkit, IOTKIT_BLE_CHAR_TX_UUID));
@@ -332,9 +332,14 @@ _ble_mac(const struct vs_netif_t *netif, struct vs_mac_addr_t *mac_addr) {
 
 //-----------------------------------------------------------------------------
 vs_netif_t *
-ks_netif_ble(vs_mac_addr_t mac_addr) {
-    VS_IOT_MEMCPY(_mac.bytes, mac_addr.bytes, ETH_ADDR_LEN);
+ks_netif_ble(void) {
     return &_netif_ble;
+}
+
+//-----------------------------------------------------------------------------
+void
+ks_netif_ble_update_mac(vs_mac_addr_t mac_addr) {
+    VS_IOT_MEMCPY(_mac.bytes, mac_addr.bytes, ETH_ADDR_LEN);
 }
 
 //-----------------------------------------------------------------------------
@@ -379,14 +384,33 @@ ks_netif_ble_advertise(bool initialized, const char *device_name) {
         deviceName = std::string(device_name);
     }
 
+    // Create local name
+    char localName[18];
+    sprintf(localName, "%02X:%02X:%02X:%02X:%02X:%02X",
+            _mac.bytes[0],
+            _mac.bytes[1],
+            _mac.bytes[2],
+            _mac.bytes[3],
+            _mac.bytes[4],
+            _mac.bytes[5]);
+
+
     // Initialize
     std::map<uint16_t, sdbus::Variant> manufacturerData;
+
+    //    Fill initialization state
     std::vector<uint8_t> manData;
     manData.push_back(initialized ? 1 : 0);
+
+    static const int kSymbolsLimit = 16;
+    for (int i = 0; i < kSymbolsLimit; i++) {
+        manData.push_back(deviceName.c_str()[i]);
+    }
     sdbus::Variant val(manData);
     manufacturerData[MANUFACTURER_DATA] = val;
+
     _advController = LEAdvertisement1::create(*_connection, ADV_PATH)
-                      .withLocalName(deviceName)
+                      .withLocalName(localName)
                       .withServiceUUIDs(std::vector{std::string{IOTKIT_BLE_SERVICE_UUID}})
                       .withIncludes(std::vector{std::string{"tx-power"}})
                       .withManufacturerData(manufacturerData)

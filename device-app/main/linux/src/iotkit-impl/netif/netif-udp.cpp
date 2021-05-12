@@ -45,6 +45,9 @@
 #include <net/if.h>
 #include <netinet/in.h>
 
+#include <fstream>
+#include <streambuf>
+
 #include <atomic>
 
 #include <virgil/iot/protocols/snap.h>
@@ -88,6 +91,8 @@ static in_addr_t _dst_addr = INADDR_BROADCAST;
 static KSResendContainer *_resendContainer = nullptr;
 static std::atomic<bool> _ready = false;
 static std::atomic<bool> _connecting = false;
+
+static std::string _defaultNetif = "eth0";
 
 #define UDP_BCAST_PORT (4100)
 
@@ -332,8 +337,6 @@ _netif_udp_internal(void) {
 
     _prepare_dst_addr();
 
-    // TODO: Use MAC of certain network interface
-    memcpy(_mac_addr, ifr.ifr_hwaddr.sa_data, ETH_ADDR_LEN);
     return VS_CODE_OK == _udp_connect();
 }
 
@@ -456,8 +459,33 @@ _udp_mac(const struct vs_netif_t *netif, struct vs_mac_addr_t *mac_addr) {
 }
 
 //-----------------------------------------------------------------------------
+static void
+_update_mac(void) {
+    std::ifstream iface("/sys/class/net/" + _defaultNetif + "/address");
+    std::string str((std::istreambuf_iterator<char>(iface)), std::istreambuf_iterator<char>());
+    if (str.length() > 0) {
+        unsigned int bytes[ETH_ADDR_LEN];
+        if (std::sscanf(str.c_str(),
+                        "%02x:%02x:%02x:%02x:%02x:%02x",
+                        &bytes[0],
+                        &bytes[1],
+                        &bytes[2],
+                        &bytes[3],
+                        &bytes[4],
+                        &bytes[5]) != ETH_ADDR_LEN) {
+            throw std::runtime_error(std::string("Invalid MAC address"));
+        }
+
+        for (int i = 0; i < ETH_ADDR_LEN; i++) {
+            _mac_addr[i] = bytes[i];
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
 extern "C" vs_netif_t *
 vs_hal_netif_udp(void) {
+    _update_mac();
     return &_netif_udp_;
 }
 

@@ -46,6 +46,13 @@ need_enc_cb(vs_snap_service_id_t service_id, vs_snap_element_t element_id) {
 }
 
 //-----------------------------------------------------------------------------
+static vs_status_e
+name_change_cb(void) {
+    ks_netif_ble_advertise(vs_provision_is_ready(), vs_snap_device_name());
+    return VS_CODE_OK;
+}
+
+//-----------------------------------------------------------------------------
 vs_status_e
 ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
                vs_device_type_t device_type,
@@ -78,10 +85,13 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     }
 
     // SNAP module
-    STATUS_CHECK(vs_snap_init_device_name("My new RPi"), "Unable to set device name");
+
+    // TODO: Load device name
+    STATUS_CHECK(vs_snap_init_device_name("My new RPi", false), "Unable to set device name");
     STATUS_CHECK(vs_snap_init(netif_impl[0],
                               packet_preprocessor_cb,
                               need_enc_cb,
+                              name_change_cb,
                               manufacture_id,
                               device_type,
                               serial,
@@ -94,12 +104,15 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
         ++i;
     }
 
+    // Get main MAC address
+    vs_mac_addr_t default_mac;
+    vs_snap_mac_addr(netif_impl[0], &default_mac);
+
     // Start BLE advertising
+    ks_netif_ble_update_mac(default_mac);
     ks_netif_ble_advertise(vs_provision_is_ready(), vs_snap_device_name());
 
     // Security Session module
-    vs_mac_addr_t default_mac;
-    vs_snap_mac_addr(netif_impl[0], &default_mac);
     vs_session_init(secmodule_impl, default_mac.bytes);
 
     //

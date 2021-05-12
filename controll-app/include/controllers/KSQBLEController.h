@@ -45,7 +45,7 @@ signals:
 public slots:
 
     Q_INVOKABLE bool
-    connectDevice(const QString &deviceName);
+    connectDevice(const QString &mac);
 
 private slots:
     void

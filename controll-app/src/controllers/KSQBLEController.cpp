@@ -100,14 +100,14 @@ KSQBLEController::onSetupFinished(QSharedPointer<VSQNetifBase> netif) {
 
 //-----------------------------------------------------------------------------
 Q_INVOKABLE bool
-KSQBLEController::connectDevice(const QString &deviceName) {
+KSQBLEController::connectDevice(const QString &mac) {
     cleanConnections();
 
-    auto ble = m_bleEnumerator.devInfo(deviceName);
+    auto ble = m_bleEnumerator.devInfo(mac);
+
     if (!ble.isValid()) {
         return false;
     }
-
 
     return m_netifBLE->open(ble);
 }
