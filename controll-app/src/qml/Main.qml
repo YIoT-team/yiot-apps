@@ -321,7 +321,7 @@ ApplicationWindow {
     }
 
     function startDeviceSetup(name) {
-        var device = deviceActionDialog.ctx
+        var device = devicesPage.lastActiveDevice
         devicesPage.activateDeviceView("pc", device.name, device)
     }
 

@@ -27,6 +27,8 @@ import "../components/devices"
 
 Page {
 
+    property var lastActiveDevice: null
+
     background: Rectangle {
         color: "transparent"
     }
@@ -99,6 +101,7 @@ Page {
 
     // Show Big Controls view for device, by its type.
     function activateDeviceView(deviceType, deviceName, deviceController) {
+        lastActiveDevice = deviceController
         if (deviceType === "lampMono") {
             showLampMono(deviceName, deviceController)
             return
