@@ -188,6 +188,7 @@
 		<file>qml/pages/devices/pc/commands/VPNrouter.qml</file>
         <file>qml/pages/devices/pc/commands/SSHEnabler.qml</file>
         <file>qml/pages/devices/setup/SetupProcessingPage.qml</file>
+        <file>qml/components/devices/setup/DeviceSetupWiFiListForm.qml</file>
 
         <!-- QML Contributers and Sponsors -->
         <file>qml/doers/Contributors.qml</file>

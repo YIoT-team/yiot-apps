@@ -114,7 +114,6 @@ Page {
     function showWiFiPassword(ssid) {
         console.log("showWiFiPassword: ", ssid)
         wifiPassSettingsPage.prepare(ssid)
-        swipeSettingsShow(settingsSwipeView.wifiPassIdx)
     }
 
     function showEventsSettings() {

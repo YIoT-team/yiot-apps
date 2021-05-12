@@ -223,13 +223,13 @@ ApplicationWindow {
         w.state = "deviceSetupProcessing"
     }
 
+    function setCredLoadState(state) {
+        deviceSetupProcessing.state = state
+    }
+
     function showCmdProcessing(device) {
         cmdProcessingPage.device = device
         w.state = "cmdProcessing"
-    }
-
-    function showSetupProcessing() {
-        w.state = "deviceSetupProcessing"
     }
 
     function showMain() {
@@ -269,9 +269,14 @@ ApplicationWindow {
         settingsPage.swipeSettingsShow(idx)
     }
 
-    function showSettingsForWiFi(location) {
+    function setWiFiPassLocation(location) {
         settingsPage.setPassPageLocation(location)
-        showSettingsElement(settingsPage.wifiNetworksIdx)
+        //showSettingsElement(settingsPage.wifiNetworksIdx)
+    }
+
+    function showWiFiPassPage(ssid) {
+        settingsPage.showWiFiPassword(ssid)
+        showSettingsElement(settingsPage.wifiPassIdx)
     }
 
     // ------------------------------------------------------------------------

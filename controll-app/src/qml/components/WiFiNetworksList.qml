@@ -87,7 +87,7 @@ ListView {
             onClicked: {
                 wifiList.currentIndex = index
                 ssid = name
-                showWiFiPassword(name)
+                showWiFiPassPage(ssid)
             }
 
             onEntered: {

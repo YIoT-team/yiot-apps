@@ -38,7 +38,19 @@ Page {
     header: Header {
         id: header
         title: qsTr("Set WiFi password ") + ssid
-        backAction: function() { showWiFiSettings() }
+        backAction: function() {
+            switch (location) {
+            case "credentials":
+                showWiFiSettings()
+                break;
+            case "deviceSetup":
+                showCredLoad()
+                setCredLoadState("wifi-setup")
+                break;
+            default:
+                console.error("Error in the location of the call to the WiFi password page: '" + location + "' is not defined")
+            }
+        }
     }
 
     ColumnLayout {
@@ -76,7 +88,6 @@ Page {
             text: qsTr("Apply password")
             onClicked: {
                 useWiFiNetwork(ssid, password.text)
-                wifiNetworksList.ssid = ""
             }
         }
     }
@@ -106,7 +117,8 @@ Page {
             showDevicesSetup()
             break;
         case "deviceSetup":
-            showSetupProcessing()
+            showCredLoad()
+            setCredLoadState("wifi-setup")
             break;
         default:
             console.error("Error in the location of the call to the WiFi password page: '" + location + "' is not defined")

@@ -98,20 +98,8 @@ Form {
             Layout.bottomMargin: 10
             text: qsTr("Next")
             onClicked: {
-                var cred = settings.getWiFiCredDefault()
-                // TODO: remove
-//                if (1 == 0/*cred.ready*/) {
-//
-//                    deviceSetup.configure(
-//                        !deviceSetup.data.hasProvision,
-//                        !deviceSetup.data.hasOwner, "Me",
-//                        true, cred.ssid, cred.pass)
-//
-//                } else {
-                    // TODO: Create a separate page to choose WiFi network
-                    // re-use password enter form, if possible
-                    showSettingsForWiFi("deviceSetup")
-//                }
+                    setWiFiPassLocation("deviceSetup")
+                    setCredLoadState("wifi-setup")
             }
         }
     }
