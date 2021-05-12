@@ -40,6 +40,11 @@ Page {
         id: header
         title: qsTr("RPi Controll")
         backAction: function() { showDevices() }
+        textClickEnable: true
+
+        onTextClick: {
+            devicesPage.showDeviceRenameDialog(deviceName, controller)
+        }
     }
 
     SwipeView {
@@ -82,10 +87,22 @@ Page {
         }
     }
 
+    Connections {
+        id: connections
+
+        function onNameChanged() {
+            deviceName = controller.name
+        }
+    }
+
     onVisibleChanged: {
         if (visible) {
             showRPiSettings()
         }
+    }
+
+    onControllerChanged: {
+        connections.target = controller
     }
 
     function swipeSettingsShow(idx) {

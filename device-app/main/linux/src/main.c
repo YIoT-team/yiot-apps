@@ -115,7 +115,10 @@ main(int argc, char *argv[]) {
     bool wifi_ready = is_wifi_connected();
     vs_packets_queue_init(vs_snap_default_processor);  // Initialize Queue for incoming packets
     netifs_impl[0] = vs_hal_netif_udp();               // Initialize UDP-based transport
-    netifs_impl[1] = ks_netif_ble();                   //           BLE-based
+                                                       // Initialize BLE-based transport
+    CHECK_NOT_ZERO(netifs_impl[0]);
+    STATUS_CHECK(netifs_impl[0]->mac_addr(netifs_impl[0], &tmp), "Cannot get mac addr");
+    netifs_impl[1] = ks_netif_ble(tmp);
 
     // TrustList storage
     STATUS_CHECK(vs_app_storage_init_impl(&tl_storage_impl, vs_app_trustlist_dir(), VS_TL_STORAGE_MAX_PART_SIZE),

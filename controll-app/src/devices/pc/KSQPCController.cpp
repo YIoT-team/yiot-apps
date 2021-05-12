@@ -97,6 +97,7 @@ KSQPCController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
     auto pc = res.second;
     if (pc) {
         if (deviceInfo.m_hasGeneralInfo) {
+            pc->setName(deviceInfo.m_deviceName);
             pc->setDeviceID(deviceInfo.m_deviceRoles);
             pc->setManufacture(deviceInfo.m_manufactureId);
             pc->setDeviceID(deviceInfo.m_deviceType);
@@ -134,7 +135,8 @@ KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state
 
         beginInsertRows(QModelIndex(), m_pcs.size(), m_pcs.size());
 
-        auto newPC = QSharedPointer<KSQPC>::create(VSQMac(mac), QString("test-%1").arg(m_pcs.size()));
+        VSQMac qMac = VSQMac(mac);
+        auto newPC = QSharedPointer<KSQPC>::create(qMac, qMac.description());
         connect(newPC.get(), &KSQPC::fireInvokeCommand, this, &KSQPCController::onInvokeCommand);
         connect(newPC.get(), &KSQPC::fireSetNameToHardware, this, &KSQControllerBase::onSetDeviceName);
         connect(newPC.get(), &KSQPC::fireRequestSessionKey, this, &KSQControllerBase::onRequestSessionKey);

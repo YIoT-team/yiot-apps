@@ -77,13 +77,8 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
         goto terminate;
     }
 
-    // Security Session module
-    vs_mac_addr_t default_mac;
-    vs_snap_mac_addr(netif_impl[0], &default_mac);
-    vs_session_init(secmodule_impl, default_mac.bytes);
-
     // SNAP module
-    STATUS_CHECK(vs_snap_init_device_name("Test device"), "Unable to set device name");
+    STATUS_CHECK(vs_snap_init_device_name("My new RPi"), "Unable to set device name");
     STATUS_CHECK(vs_snap_init(netif_impl[0],
                               packet_preprocessor_cb,
                               need_enc_cb,
@@ -100,7 +95,12 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     }
 
     // Start BLE advertising
-    ks_netif_ble_advertise(vs_provision_is_ready());
+    ks_netif_ble_advertise(vs_provision_is_ready(), vs_snap_device_name());
+
+    // Security Session module
+    vs_mac_addr_t default_mac;
+    vs_snap_mac_addr(netif_impl[0], &default_mac);
+    vs_session_init(secmodule_impl, default_mac.bytes);
 
     //
     // ---------- Register SNAP services ----------
