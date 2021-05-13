@@ -143,11 +143,54 @@ build_app_linux() {
 }
 
 ############################################################################################
+build_app_windows() {
+    print_header "Building windows application"
+    
+    find_tool x86_64-w64-mingw32-gcc || FIND_RES=1
+    if [ "${FIND_RES}" == "1" ]; then
+     print_message "Please install required tools"
+     exit 127
+    else
+     print_message "OK".
+    fi
+
+    print_message " Remove old build directory"
+    rm -rf "${SOURCE_DIR}/build" || true
+    mkdir -p "${SOURCE_DIR}/build"
+    pushd "${SOURCE_DIR}/build"
+	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="windows" -DCMAKE_TOOLCHAIN_FILE=/usr/share/mingw/toolchain-mingw64.cmake ..
+	make yiot
+	exit 1
+	make deploy
+    popd
+    cp -f ${SOURCE_DIR}/build/common/iotkit/modules/crypto/converters/libconverters.so ${SOURCE_DIR}/build/yiot.dist/lib
+    if [ "${BUILD_PKG}" == "1" ]; then
+
+      find_tool pbuilder
+      if [ "${FIND_RES}" == "1" ]; then
+        print_message "Build DEB package skipping"
+      else
+        sudo ${SCRIPT_DIR}/pkg/prep-pkg.sh -b ${SOURCE_DIR}/build/yiot.dist -t app -p deb -n yiot-app -v $(cat ${SOURCE_DIR}/build/VERSION).${BUILD_NUMBER:-0}
+      fi
+
+      find_tool mock
+      if [ "${FIND_RES}" == "1" ]; then
+        print_message "Build RPM package skipping"
+      else
+        sudo ${SCRIPT_DIR}/pkg/prep-pkg.sh -b ${SOURCE_DIR}/build/yiot.dist -t app -p rpm -n yiot-app -v $(cat ${SOURCE_DIR}/build/VERSION).${BUILD_NUMBER:-0}
+      fi
+    fi
+}
+
+
+############################################################################################
 case "${TARGET_OS}" in
   dev-rpi)      build_dev_rpi
                 ;;
   app-linux)    build_app_linux
                 ;;
+  app-windows)  build_app_windows
+                ;;                
         *)      echo "Error build OS name"
                 exit 127
                 ;;
