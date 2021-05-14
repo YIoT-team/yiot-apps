@@ -82,6 +82,10 @@ KSQApplication::run() {
             &VSQNetifBLEEnumerator::fireDeviceIsClose,
             m_uxController.get(),
             &KSQUXSimplifyController::onBLEDeviceIsClose);
+    connect(m_bleController.get(),
+            &KSQBLEController::fireStartConnection,
+            m_uxController.get(),
+            &KSQUXSimplifyController::onBLEDeviceConnection);
 
     //      Get information about devices those require provision
     connect(m_localBlankDevicesController.get(),

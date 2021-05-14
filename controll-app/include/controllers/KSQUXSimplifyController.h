@@ -56,9 +56,12 @@ public slots:
     void
     onNewProvisionedDevice(QSharedPointer<KSQDeviceBase> device);
 
+    void
+    onBLEDeviceConnection(QString deviceMac);
+
 signals:
     void
-    fireRequestDeviceProvision(QString deviceName);
+    fireRequestDeviceProvision(QString deviceMac, QString deviceName);
 
     void
     fireRequestDeviceSetup(KSQDeviceBase *deviceName);

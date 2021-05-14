@@ -109,6 +109,8 @@ KSQBLEController::connectDevice(const QString &mac) {
         return false;
     }
 
+    fireStartConnection(mac);
+
     m_currentMac = VSQMac(mac);
     return m_netifBLE->open(ble);
 }

@@ -97,6 +97,8 @@ KSQPCController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
     auto pc = res.second;
     if (pc) {
         if (deviceInfo.m_hasGeneralInfo) {
+            bool nameIsOld(!pc->isUpdatedName());
+
             pc->setName(deviceInfo.m_deviceName);
             pc->setDeviceID(deviceInfo.m_deviceRoles);
             pc->setManufacture(deviceInfo.m_manufactureId);
@@ -106,6 +108,10 @@ KSQPCController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
 
             pc->setHasProvision(deviceInfo.m_hasProvision);
             pc->setHasOwner(deviceInfo.m_hasOwner);
+
+            if (nameIsOld && pc->isUpdatedName()) {
+                emit fireRequiredSetup(pc);
+            }
         }
 
         if (deviceInfo.m_hasStatistics) {
@@ -173,10 +179,6 @@ KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state
 
         const auto _idx = createIndex(res.first, 0);
         emit dataChanged(_idx, _idx);
-
-        if (added) {
-            emit fireRequiredSetup(pc);
-        }
     }
 }
 

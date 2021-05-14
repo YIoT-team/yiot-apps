@@ -58,9 +58,16 @@ KSQUXSimplifyController::onNewProvisionedDevice(QSharedPointer<KSQDeviceBase> de
 
 //-----------------------------------------------------------------------------
 void
+KSQUXSimplifyController::onBLEDeviceConnection(QString deviceMac) {
+    m_ignoredDevices << deviceMac;
+}
+
+//-----------------------------------------------------------------------------
+void
 KSQUXSimplifyController::onNewSetup(const VSQMac &mac) {
     qDebug() << "startDeviceProvision : " << mac.description();
     m_provisionedDevices << mac;
+    m_ignoredDevices << mac;
 }
 
 //-----------------------------------------------------------------------------
@@ -83,8 +90,8 @@ KSQUXSimplifyController::rejectDeviceProvision(QString name) {
 void
 KSQUXSimplifyController::requestProvisionUI(const QString &deviceMac, const QString &deviceName) {
     if (!m_ignoredDevices.contains(deviceMac)) {
-        emit fireRequestDeviceProvision(deviceName);
         m_ignoredDevices.insert(deviceMac);
+        emit fireRequestDeviceProvision(deviceMac, deviceName);
     }
 }
 

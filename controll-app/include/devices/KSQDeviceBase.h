@@ -131,6 +131,9 @@ public:
     bool
     operator<(const KSQDeviceBase &rhs) const;
 
+    bool
+    isUpdatedName();
+
     static const QString kCmdStateConnect;
     static const QString kCmdStateSend;
     static const QString kCmdStateReceive;
@@ -193,6 +196,7 @@ private:
     QDateTime m_lastUpdate;
     QString m_image;
     QString m_name;
+    bool m_nameUpdated;
     VSQMac m_mac;
 
     QString m_roles;

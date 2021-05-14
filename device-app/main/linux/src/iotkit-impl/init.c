@@ -26,6 +26,7 @@
 #include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/provision/provision.h>
 #include <virgil/iot/session/session.h>
+#include <virgil/iot/secbox/secbox.h>
 
 #include "iotkit-impl/init.h"
 
@@ -35,6 +36,12 @@ static void
 _file_ver_info_cb(vs_file_version_t ver);
 
 static vs_provision_events_t _provision_event = {_file_ver_info_cb};
+
+// Dev name
+static vs_storage_element_id_t _device_name_storage_id = {0};
+static const char *_defaultDevName = "My new RPi";
+
+#define BLE_DEVICE_NAME_LIMIT (16)
 
 //-----------------------------------------------------------------------------
 static bool
@@ -47,8 +54,51 @@ need_enc_cb(vs_snap_service_id_t service_id, vs_snap_element_t element_id) {
 
 //-----------------------------------------------------------------------------
 static vs_status_e
+init_name_storage_id(void) {
+    if (!_device_name_storage_id[0]) {
+        VS_IOT_MEMSET(_device_name_storage_id, 0, sizeof(_device_name_storage_id));
+        VS_IOT_STRCPY(_device_name_storage_id, "dev_name");
+    }
+}
+
+//-----------------------------------------------------------------------------
+static vs_status_e
 name_change_cb(void) {
+    vs_status_e res;
+    CHECK_NOT_ZERO_RET(vs_snap_device_name(), VS_CODE_ERR_INCORRECT_ARGUMENT);
+    res = vs_secbox_save(VS_SECBOX_SIGNED_AND_ENCRYPTED,
+                         _device_name_storage_id,
+                         (const uint8_t*)vs_snap_device_name(),
+                         strnlen(vs_snap_device_name(), DEVICE_NAME_SZ_MAX));
     ks_netif_ble_advertise(vs_provision_is_ready(), vs_snap_device_name());
+    return res;
+}
+
+//-----------------------------------------------------------------------------
+static vs_status_e
+init_dev_name(void) {
+    vs_status_e ret_code;
+    uint8_t name_buf[DEVICE_NAME_SZ_MAX];
+    size_t name_sz;
+    const char *name;
+
+    VS_IOT_MEMSET(name_buf, 0, DEVICE_NAME_SZ_MAX);
+    init_name_storage_id();
+
+    if (VS_CODE_OK == vs_secbox_load(_device_name_storage_id,
+                                     name_buf,
+                                     DEVICE_NAME_SZ_MAX,
+                                     &name_sz)) {
+        if (name_sz > BLE_DEVICE_NAME_LIMIT) {
+            name_sz = BLE_DEVICE_NAME_LIMIT;
+        }
+        name_buf[name_sz] = 0x00;
+        name = name_buf;
+    } else {
+        name = _defaultDevName;
+    }
+
+    STATUS_CHECK_RET(vs_snap_init_device_name(name, false), "Unable to set device name");
     return VS_CODE_OK;
 }
 
@@ -86,8 +136,7 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
 
     // SNAP module
 
-    // TODO: Load device name
-    STATUS_CHECK(vs_snap_init_device_name("My new RPi", false), "Unable to set device name");
+    STATUS_CHECK(init_dev_name(), "Cannot init device name");
     STATUS_CHECK(vs_snap_init(netif_impl[0],
                               packet_preprocessor_cb,
                               need_enc_cb,

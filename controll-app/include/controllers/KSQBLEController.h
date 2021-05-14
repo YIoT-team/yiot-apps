@@ -41,6 +41,8 @@ public:
     isProvisionRequired(const QString &deviceName);
 
 signals:
+    void
+    fireStartConnection(const QString &mac);
 
 public slots:
 

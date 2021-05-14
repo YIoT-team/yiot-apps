@@ -27,7 +27,7 @@ const QString KSQDeviceBase::kCmdStateDone = "done";
 const QString KSQDeviceBase::kCmdStateError = "error";
 
 //-----------------------------------------------------------------------------
-KSQDeviceBase::KSQDeviceBase() {
+KSQDeviceBase::KSQDeviceBase() : m_nameUpdated(false) {
 }
 
 //-----------------------------------------------------------------------------
@@ -35,6 +35,7 @@ KSQDeviceBase::KSQDeviceBase(VSQMac mac, QString name, QString img) {
     m_lastUpdate = QDateTime::currentDateTime();
     m_image = img;
     m_name = name;
+    m_nameUpdated = false;
     m_mac = mac;
     m_active = true;
     m_hasProvision = false;
@@ -48,6 +49,7 @@ KSQDeviceBase::KSQDeviceBase(const KSQDeviceBase &d) {
     m_lastUpdate = d.m_lastUpdate;
     m_image = d.m_image;
     m_name = d.m_name;
+    m_nameUpdated = d.m_nameUpdated;
     m_mac = d.m_mac;
     m_active = d.m_active;
     m_sessionKey = d.m_sessionKey;
@@ -55,6 +57,12 @@ KSQDeviceBase::KSQDeviceBase(const KSQDeviceBase &d) {
     m_hasOwner = d.m_hasOwner;
 
     startSessionConnection();
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQDeviceBase::isUpdatedName() {
+   return m_nameUpdated;
 }
 
 //-----------------------------------------------------------------------------
@@ -106,6 +114,7 @@ KSQDeviceBase::setName(QString name) {
         emit fireNameChanged();
     }
     emit fireSendNameUpdate();
+    m_nameUpdated = true;
 }
 
 //-----------------------------------------------------------------------------
