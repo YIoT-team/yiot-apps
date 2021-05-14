@@ -54,6 +54,7 @@ Popup {
             id: editName
             label: qsTr("Device name")
             placeholderText: qsTr("Enter device name")
+            maximumLength: 16
             validator: ValidatorDeviceName {}
         }
 
