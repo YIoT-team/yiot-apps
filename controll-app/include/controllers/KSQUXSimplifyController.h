@@ -48,7 +48,7 @@ public:
 
 public slots:
     void
-    onBLEDeviceIsClose(QString deviceName, bool requiresProvision);
+    onBLEDeviceIsClose(QString deviceMac, QString deviceName, bool requiresProvision);
 
     void
     onDeviceRequiresProvision(QString deviceName, QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
@@ -74,7 +74,7 @@ private:
     QSet<QString> m_provisionedDevices;
 
     void
-    requestProvisionUI(const QString &deviceName);
+    requestProvisionUI(const QString &deviceMac, const QString &deviceName);
 };
 
 #endif // KSQ_UX_SIMPLIFY_CONTROLLER_H

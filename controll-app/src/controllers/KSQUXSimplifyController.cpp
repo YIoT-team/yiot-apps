@@ -31,9 +31,9 @@ KSQUXSimplifyController::KSQUXSimplifyController() {
 
 //-----------------------------------------------------------------------------
 void
-KSQUXSimplifyController::onBLEDeviceIsClose(QString deviceName, bool requiresProvision) {
+KSQUXSimplifyController::onBLEDeviceIsClose(QString deviceMac, QString deviceName, bool requiresProvision) {
     if (requiresProvision) {
-        requestProvisionUI(deviceName);
+        requestProvisionUI(deviceMac, deviceName);
     }
 }
 
@@ -44,7 +44,7 @@ KSQUXSimplifyController::onDeviceRequiresProvision(QString deviceName,
                                                    VSQMac deviceMac) {
     m_netif = netif;
     m_deviceMac = deviceMac;
-    requestProvisionUI(deviceName);
+    requestProvisionUI(deviceMac.description(), deviceName);
 }
 
 //-----------------------------------------------------------------------------
@@ -81,10 +81,10 @@ KSQUXSimplifyController::rejectDeviceProvision(QString name) {
 
 //-----------------------------------------------------------------------------
 void
-KSQUXSimplifyController::requestProvisionUI(const QString &deviceName) {
-    if (!m_ignoredDevices.contains(deviceName)) {
+KSQUXSimplifyController::requestProvisionUI(const QString &deviceMac, const QString &deviceName) {
+    if (!m_ignoredDevices.contains(deviceMac)) {
         emit fireRequestDeviceProvision(deviceName);
-        m_ignoredDevices.insert(deviceName);
+        m_ignoredDevices.insert(deviceMac);
     }
 }
 
