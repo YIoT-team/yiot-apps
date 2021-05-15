@@ -159,11 +159,26 @@ build_app_windows() {
     mkdir -p "${SOURCE_DIR}/build"
     pushd "${SOURCE_DIR}/build"
 	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="windows" -DCMAKE_TOOLCHAIN_FILE=/usr/share/mingw/toolchain-mingw64.cmake ..
-	make yiot
+	make -10 yiot
 	make deploy
     popd
 
 }
+
+############################################################################################
+build_app_macos() {
+    print_header "Building macos"
+    print_message " Remove old build directory"
+    rm -rf "${SOURCE_DIR}/build" || true
+    mkdir -p "${SOURCE_DIR}/build"
+    pushd "${SOURCE_DIR}/build"
+	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="macos" ..
+	make -j10 yiot
+	make dmg_release
+    popd
+
+}
+
 
 
 ############################################################################################
@@ -173,7 +188,9 @@ case "${TARGET_OS}" in
   app-linux)    build_app_linux
                 ;;
   app-windows)  build_app_windows
-                ;;                
+                ;;
+  app-macos)  build_app_macos
+                ;;
         *)      echo "Error build OS name"
                 exit 127
                 ;;

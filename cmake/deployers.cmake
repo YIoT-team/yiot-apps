@@ -133,8 +133,8 @@ elseif(KS_PLATFORM STREQUAL "macos")
   add_custom_target(dmg_release
     COMMAND echo "Deploy MacOS bundle data..."
     COMMAND ${MAC_DEPLOY_QT}
-       ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app
-       -qmldir=${PROJECT_SOURCE_DIR}/src/qml        
+       ${CMAKE_BINARY_DIR}/controll-app/${PROJECT_NAME}.app
+       -qmldir=${PROJECT_SOURCE_DIR}/controll-app/src/qml
        -verbose=1  
 #    COMMAND echo "Signing sparkle [Autoupdate]"              
 #    COMMAND ${MAC_CODESIGN} --display --verbose=4 --force --deep --timestamp --options runtime -s "${VS_MACOS_IDENT}" ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app/Contents/MacOS/Autoupdate
@@ -157,8 +157,8 @@ elseif(KS_PLATFORM STREQUAL "macos")
 	-v
     COMMAND echo "Set DMG icon..."	
     COMMAND
-	${PROJECT_SOURCE_DIR}/qt/platforms/macos/tools/seticon
-	${VS_CUSTOMER_DIR}/qt/platforms/macos/pkg_resources/${MACOSX_BUNDLE_ICON_FILE}
+	${PROJECT_SOURCE_DIR}/controll-app/platforms/macos/tools/seticon
+	${PROJECT_SOURCE_DIR}/controll-app/platforms/macos/pkg_resources/MyIcon.icns
 	"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dmg"
     VERBATIM)
 
