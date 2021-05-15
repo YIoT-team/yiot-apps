@@ -127,7 +127,7 @@ elseif (KS_PLATFORM STREQUAL "windows")
 elseif(KS_PLATFORM STREQUAL "macos")
 
   find_program(MAC_DEPLOY_QT macdeployqt)
-  find_program(MAC_CODESIGN codesign)  
+#  find_program(MAC_CODESIGN codesign)  
   find_program(MAC_APPDMG appdmg)    
   
   add_custom_target(dmg_release
@@ -136,20 +136,20 @@ elseif(KS_PLATFORM STREQUAL "macos")
        ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app
        -qmldir=${PROJECT_SOURCE_DIR}/src/qml        
        -verbose=1  
-    COMMAND echo "Signing sparkle [Autoupdate]"              
-    COMMAND ${MAC_CODESIGN} --display --verbose=4 --force --deep --timestamp --options runtime -s "${VS_MACOS_IDENT}" ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app/Contents/MacOS/Autoupdate
-    COMMAND echo "Signing sparkle [fileop]"                  
-    COMMAND ${MAC_CODESIGN} --display --verbose=4 --force --deep --timestamp --options runtime -s "${VS_MACOS_IDENT}" ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app/Contents/MacOS/fileop
-    COMMAND echo "Signing bundle..."       
-    COMMAND ${MAC_CODESIGN}
-	--display
-	--verbose=4
-	--force
-	--deep
-	--timestamp
-	--options runtime
-	-s "${VS_MACOS_IDENT}"
-	"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app"
+#    COMMAND echo "Signing sparkle [Autoupdate]"              
+#    COMMAND ${MAC_CODESIGN} --display --verbose=4 --force --deep --timestamp --options runtime -s "${VS_MACOS_IDENT}" ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app/Contents/MacOS/Autoupdate
+#    COMMAND echo "Signing sparkle [fileop]"                  
+#    COMMAND ${MAC_CODESIGN} --display --verbose=4 --force --deep --timestamp --options runtime -s "${VS_MACOS_IDENT}" ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app/Contents/MacOS/fileop
+#    COMMAND echo "Signing bundle..."       
+#    COMMAND ${MAC_CODESIGN}
+#	--display
+#	--verbose=4
+#	--force
+#	--deep
+#	--timestamp
+#	--options runtime
+#	-s "${VS_MACOS_IDENT}"
+#	"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app"
     COMMAND echo "Create DMG..."       	
     COMMAND ${MAC_APPDMG} 
 	"${CMAKE_BINARY_DIR}/dmg.json"
