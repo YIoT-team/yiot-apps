@@ -95,6 +95,35 @@ elseif(KS_PLATFORM STREQUAL "linux")
        -qmake ${QT_QMAKE_EXECUTABLE} clear
     VERBATIM)
 
+elseif (KS_PLATFORM STREQUAL "windows")
+
+    find_program(LINUX_DEPLOY_QT cqtdeployer)
+
+    add_custom_target(deploy
+            COMMAND ${LINUX_DEPLOY_QT}
+            -bin ${PROJECT_NAME}.exe
+            -qmlDir ${PROJECT_SOURCE_DIR}/src/qml
+            -targetDir ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist
+            -qmake ${QT_QMAKE_EXECUTABLE} clear
+            COMMAND cp -f "${PROJECT_SOURCE_DIR}/controll-app/platforms/windows/MyIcon.ico"                   "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist"
+            COMMAND cp -f /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libcrypto-1_1-x64.dll                    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/lib/"
+            COMMAND cp -f /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libcurl-4.dll                            "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/lib/"
+            COMMAND cp -f /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libidn2-0.dll                            "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/lib/"
+            COMMAND cp -f /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libssh2-1.dll                            "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/lib/"
+            COMMAND cp -f /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libssl-1_1-x64.dll                       "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/lib/"
+            COMMAND cp -f /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libssp-0.dll                             "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/lib/"
+            COMMAND cp -f /usr/x86_64-w64-mingw32/sys-root/mingw/bin/zlib1.dll                                "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/lib/"
+            COMMAND bash -c "cp -rf ${CMAKE_BINARY_DIR}/common/iotkit/modules/crypto/converters/libconverters.dll ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/"
+            COMMAND sed -i "s!Prefix= ./../!Prefix= ./!g" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/bin/qt.conf"
+            COMMAND bash -c "cp -rf ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/bin/* ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/"
+            COMMAND bash -c "cp -rf ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/lib/* ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/"
+            COMMAND rm -f "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/yiot.bat"
+            COMMAND rm -rf "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/bin"
+            COMMAND rm -rf "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/lib"
+            COMMAND bash -c "cd ${CMAKE_BINARY_DIR} && makensis yiot.nsi"
+            VERBATIM)
+
+
 elseif(KS_PLATFORM STREQUAL "macos")
 
   find_program(MAC_DEPLOY_QT macdeployqt)
