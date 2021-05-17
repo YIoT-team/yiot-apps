@@ -29,10 +29,9 @@ import "../../settings"
 Page {
     property alias pageTitle: h.title
     property alias obj: connections.target
-    property bool wifiPassVisib: false
 
-    readonly property string defaultHeaderText: "Device initialisation"
-    readonly property string wifiSetupHeaderText: "WiFi setup wizard"
+    readonly property string defaultHeaderText: qsTr("Device initialisation")
+    readonly property string wifiSetupHeaderText: qsTr("Select WiFi network")
 
     id: p
     anchors.fill: parent
@@ -45,7 +44,7 @@ Page {
     header: Header {
         id: h
         title: qsTr(defaultHeaderText)
-        hideButtons: true
+        backAction: function() { deviceSetup.stop(); showDevicesSetup() }
     }
 
     ProcessingForm {
@@ -66,35 +65,35 @@ Page {
             PropertyChanges { target: processingForm; visible: true }
             PropertyChanges { target: paramsForm; visible: false }
             PropertyChanges { target: wifiList; visible: false }
-            PropertyChanges { target: h; title: qsTr(defaultHeaderText) }
+            PropertyChanges { target: h; title: defaultHeaderText }
         },
         State {
             name: "prepare-params"
             PropertyChanges { target: processingForm; visible: false }
             PropertyChanges { target: paramsForm; visible: true }
             PropertyChanges { target: wifiList; visible: false }
-            PropertyChanges { target: h; title: qsTr(defaultHeaderText) }
+            PropertyChanges { target: h; title: defaultHeaderText }
         },
         State {
             name: "wifi-setup"
             PropertyChanges { target: processingForm; visible: false }
             PropertyChanges { target: paramsForm; visible: false }
             PropertyChanges { target: wifiList; visible: true }
-            PropertyChanges { target: h; title: qsTr(wifiSetupHeaderText) }
+            PropertyChanges { target: h; title: wifiSetupHeaderText }
         },
         State {
             name: "upload-setup"
             PropertyChanges { target: processingForm; visible: true }
             PropertyChanges { target: paramsForm; visible: false }
             PropertyChanges { target: wifiList; visible: false }
-            PropertyChanges { target: h; title: qsTr(defaultHeaderText) }
+            PropertyChanges { target: h; title: defaultHeaderText }
         },
         State {
             name: "passwd"
             PropertyChanges { target: processingForm; visible: false }
             PropertyChanges { target: paramsForm; visible: false }
             PropertyChanges { target: wifiList; visible: false }
-            PropertyChanges { target: h; title: qsTr(defaultHeaderText) }
+            PropertyChanges { target: h; title: defaultHeaderText }
         }
     ]
 

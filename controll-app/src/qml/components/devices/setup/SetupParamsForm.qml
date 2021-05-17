@@ -88,13 +88,6 @@ Form {
         }
 
         FormSecondaryButton {
-            text: qsTr("Cancel")
-            onClicked: {
-                deviceSetup.stop()
-            }
-        }
-
-        FormPrimaryButton {
             Layout.bottomMargin: 10
             text: qsTr("Next")
             onClicked: {

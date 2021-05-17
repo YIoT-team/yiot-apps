@@ -278,7 +278,6 @@ ApplicationWindow {
 
     function setWiFiPassLocation(location) {
         settingsPage.setPassPageLocation(location)
-        //showSettingsElement(settingsPage.wifiNetworksIdx)
     }
 
     function showWiFiPassPage(ssid) {

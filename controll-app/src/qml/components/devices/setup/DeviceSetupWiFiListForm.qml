@@ -36,7 +36,7 @@ Form {
             Layout.fillHeight: true
         }
 
-        FormPrimaryButton {
+        FormSecondaryButton {
             Layout.bottomMargin: 30
             text: qsTr("Next")
             onClicked: {

@@ -58,7 +58,7 @@ Form {
             source: "qrc:/qml/resources/icons/%1/upload.gif".arg(Theme.state)
         }
 
-        FormPrimaryButton {
+        FormSecondaryButton {
             id: actionButton
             Layout.bottomMargin: 10
             onClicked: {

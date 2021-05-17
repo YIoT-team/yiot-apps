@@ -94,7 +94,7 @@ Page {
                     }
             }
 
-            FormPrimaryButton {
+            FormSecondaryButton {
                 id: actionButton
                 Layout.bottomMargin: 10
                 onClicked: {
