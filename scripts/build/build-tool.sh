@@ -119,9 +119,9 @@ build_app_linux() {
     rm -rf "${SOURCE_DIR}/build" || true
     mkdir -p "${SOURCE_DIR}/build"
     pushd "${SOURCE_DIR}/build"
-	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="linux" ..
-	make yiot
-	make deploy
+    cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="linux" ..
+    make yiot
+    make deploy
     popd
     cp -f ${SOURCE_DIR}/build/common/iotkit/modules/crypto/converters/libconverters.so ${SOURCE_DIR}/build/yiot.dist/lib
     if [ "${BUILD_PKG}" == "1" ]; then
@@ -158,9 +158,9 @@ build_app_windows() {
     rm -rf "${SOURCE_DIR}/build" || true
     mkdir -p "${SOURCE_DIR}/build"
     pushd "${SOURCE_DIR}/build"
-	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="windows" -DCMAKE_TOOLCHAIN_FILE=/usr/share/mingw/toolchain-mingw64.cmake ..
-	make -10 yiot
-	make deploy
+    cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="windows" -DCMAKE_TOOLCHAIN_FILE=/usr/share/mingw/toolchain-mingw64.cmake ..
+    make -j10 yiot
+    make deploy
     popd
 
 }
@@ -172,9 +172,9 @@ build_app_macos() {
     rm -rf "${SOURCE_DIR}/build" || true
     mkdir -p "${SOURCE_DIR}/build"
     pushd "${SOURCE_DIR}/build"
-	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="macos" ..
-	make -j10 yiot
-	make dmg_release
+    cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="macos" ..
+    make -j10 yiot
+    make dmg_release
     popd
 
 }
