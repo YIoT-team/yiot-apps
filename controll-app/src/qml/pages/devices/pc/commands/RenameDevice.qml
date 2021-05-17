@@ -21,81 +21,64 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../theme"
-import "../../components"
-import "../../components/devices"
-import "../../components/validators"
+import "../../../../components"
+import "../../../../components/validators"
+import "../../../../../js/devices/pc.js" as PCDevice
 
-Popup {
+Page {
+    id: createUserPage
+
     property var controller
-    property alias name: editName.text
-    property string oldName: ""
-
-    id: popup
-
-    anchors.centerIn: parent
-    width: parent.width * 0.9
-    height: 200
-    modal: true
-    focus: true
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     background: Rectangle {
-        border.color: Theme.primaryTextColor
-        border.width: 1
-        radius: 10
-        color: Theme.mainBackgroundColor
+        color: "transparent"
     }
 
-    ColumnLayout {
-        anchors.fill: parent
+    header: Header {
+        id: header
+        title: qsTr("Rename ") + controller.name
+        backAction: function() { showRPiSettings() }
+    }
 
-        InputTextField {
-            id: editName
-            label: qsTr("Device name")
-            placeholderText: qsTr("Enter device name")
-            maximumLength: 16
-            validator: ValidatorDeviceName {}
-        }
+    Form {
+            id: form
+            stretched: true
 
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 20
+            ColumnLayout {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.topMargin: 40
+                Layout.bottomMargin: 20
 
-            FormSecondaryButton {
-                Layout.topMargin: 20
-                Layout.bottomMargin: 10
-                text: qsTr("Ok")
-                onClicked: {
-                    if (editName.text != "") {
-                        if (oldName != editName.text) {
-                            controller.setNameToHardware(editName.text)
+                spacing: 15
+
+                InputTextField {
+                    id: editName
+                    label: qsTr("Device name")
+                    placeholderText: qsTr("Enter device name")
+                    text: controller.name
+                    maximumLength: 16
+                    validator: ValidatorDeviceName {}
+                }
+
+                FormSecondaryButton {
+                    Layout.topMargin: 20
+                    Layout.bottomMargin: 10
+                    text: qsTr("Save")
+                    onClicked: {
+                        if (editName.text != "") {
+                            if (controller.name != editName.text) {
+                                controller.setNameToHardware(editName.text)
+                            }
+                            header.backAction()
                         }
-                        popup.close()
                     }
                 }
-            }
 
-            FormSecondaryButton {
-                Layout.topMargin: 20
-                Layout.bottomMargin: 10
-                text: qsTr("Cancel")
-                onClicked: {
-                    popup.close()
+                Item {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
                 }
             }
         }
-    }
-
-    onVisibleChanged: {
-        oldName = editName.text
-    }
-
-    enter: Transition {
-        NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
-    }
-
-    exit: Transition {
-        NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
-    }
 }

@@ -38,11 +38,6 @@ Page {
         id: header
         title: qsTr("Lamp")
         backAction: function() { showDevices() }
-        textClickEnable: true
-
-        onTextClick: {
-            devicesPage.showDeviceRenameDialog(deviceName, controller)
-        }
     }
 
     Form {

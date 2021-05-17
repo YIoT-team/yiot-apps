@@ -44,10 +44,6 @@ Page {
         id: deviceInfo
     }
 
-    DeviceNameDialog {
-        id: deviceNameDialog
-    }
-
     AllDevicesList {
         id: list
         model: deviceControllers
@@ -66,13 +62,6 @@ Page {
         deviceInfo.mSent = model.sentBytes
         deviceInfo.mReceived = model.receivedBytes
         deviceInfo.open()
-    }
-
-    // Fill data and show device info.
-    function showDeviceRenameDialog(name, controller) {
-        deviceNameDialog.name = name
-        deviceNameDialog.controller = controller
-        deviceNameDialog.open()
     }
 
     //  Choose controls view for Category element.

@@ -27,6 +27,8 @@ import "../../../../components"
 Page {
     id: rpiSettingsPage
 
+    property var controller
+
     background: Rectangle {
         color: "transparent"
     }
@@ -39,30 +41,38 @@ Page {
 
         model: ListModel {
             ListElement {
+                name: qsTr("Rename device")
+                image: "create-user"
+                property var action: function(ctx) {
+                    showRenameDevicePage(ctx)
+                }
+            }
+
+            ListElement {
                 name: qsTr("Create User")
                 image: "create-user"
-                property var action: function() {
+                property var action: function(ctx) {
                     showCreateUserPage()
                 }
             }
             ListElement {
                 name: qsTr("Static IP")
                 image: "static-ip"
-                property var action: function() {
+                property var action: function(ctx) {
                     showStaticipPage()
                 }
             }
             //ListElement {
             //    name: qsTr("Access Point")
             //    image: "access-point"
-            //    property var action: function() {
+            //    property var action: function(ctx) {
             //        showAccessPointPage()
             //    }
             //}
             ListElement {
                 name: qsTr("Enable SSH")
                 image: "vpn-router"
-                property var action: function() {
+                property var action: function(ctx) {
                     showSSHPage()
                 }
             }
@@ -70,7 +80,7 @@ Page {
             ListElement {
                 name: qsTr("Create WiFi VPN bridge")
                 image: "vpn-router"
-                property var action: function() {
+                property var action: function(ctx) {
                     showVPNrouterPage()
                 }
             }
@@ -129,7 +139,8 @@ Page {
                 anchors.fill: parent
                 hoverEnabled: true
                 onClicked: {
-                    action()
+                    console.log(">>> ", rpiSettingsPage.controller)
+                    action(rpiSettingsPage.controller)
                 }
 
                 onEntered: {
