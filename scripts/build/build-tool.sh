@@ -119,9 +119,9 @@ build_app_linux() {
     rm -rf "${SOURCE_DIR}/build" || true
     mkdir -p "${SOURCE_DIR}/build"
     pushd "${SOURCE_DIR}/build"
-	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="linux" ..
-	make yiot
-	make deploy
+    cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="linux" ..
+    make yiot
+    make deploy
     popd
     cp -f ${SOURCE_DIR}/build/common/iotkit/modules/crypto/converters/libconverters.so ${SOURCE_DIR}/build/yiot.dist/lib
     if [ "${BUILD_PKG}" == "1" ]; then
@@ -143,10 +143,57 @@ build_app_linux() {
 }
 
 ############################################################################################
+build_app_windows() {
+    print_header "Building windows application"
+    
+    find_tool x86_64-w64-mingw32-gcc || FIND_RES=1
+    if [ "${FIND_RES}" == "1" ]; then
+     print_message "Please install required tools"
+     exit 127
+    else
+     print_message "OK".
+    fi
+
+    print_message " Remove old build directory"
+    rm -rf "${SOURCE_DIR}/build" || true
+    mkdir -p "${SOURCE_DIR}/build"
+    pushd "${SOURCE_DIR}/build"
+    cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="windows" -DCMAKE_TOOLCHAIN_FILE=/usr/share/mingw/toolchain-mingw64.cmake ..
+    make -j10 yiot
+    make deploy
+    popd
+
+}
+
+############################################################################################
+build_app_macos() {
+    print_header "Building macos"
+    print_message " Remove old build directory"
+    rm -rf "${SOURCE_DIR}/build" || true
+    mkdir -p "${SOURCE_DIR}/build"
+    pushd "${SOURCE_DIR}/build"
+    which cmake || true
+    ls -lah /usr/local/bin/cmake || true
+    local CMAKE_BIN=/usr/local/bin/cmake
+    ${CMAKE_BIN} --version || true
+    ${CMAKE_BIN} -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="macos" ..
+    make -j10 yiot
+    make dmg_release
+    popd
+
+}
+
+
+
+############################################################################################
 case "${TARGET_OS}" in
   dev-rpi)      build_dev_rpi
                 ;;
   app-linux)    build_app_linux
+                ;;
+  app-windows)  build_app_windows
+                ;;
+  app-macos)  build_app_macos
                 ;;
         *)      echo "Error build OS name"
                 exit 127

@@ -33,7 +33,7 @@ class KSQUXSimplifyController : public QObject {
     Q_OBJECT
 
 public:
-    KSQUXSimplifyController() = default;
+    KSQUXSimplifyController();
 
     KSQUXSimplifyController &
     operator=(KSQUXSimplifyController const &) = delete;
@@ -48,7 +48,7 @@ public:
 
 public slots:
     void
-    onBLEDeviceIsClose(QString deviceName, bool requiresProvision);
+    onBLEDeviceIsClose(QString deviceMac, QString deviceName, bool requiresProvision);
 
     void
     onDeviceRequiresProvision(QString deviceName, QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
@@ -56,22 +56,28 @@ public slots:
     void
     onNewProvisionedDevice(QSharedPointer<KSQDeviceBase> device);
 
+    void
+    onBLEDeviceConnection(QString deviceMac);
+
 signals:
     void
-    fireRequestDeviceProvision(QString deviceName);
+    fireRequestDeviceProvision(QString deviceMac, QString deviceName);
 
     void
-    fireRequestDeviceSetup(KSQDeviceBase *ydeviceName);
+    fireRequestDeviceSetup(KSQDeviceBase *deviceName);
 
 private slots:
+    void
+    onNewSetup(const VSQMac &mac);
 
 private:
     QSharedPointer<VSQNetifBase> m_netif;
     VSQMac m_deviceMac;
     QSet<QString> m_ignoredDevices;
+    QSet<QString> m_provisionedDevices;
 
     void
-    requestProvisionUI(const QString &deviceName);
+    requestProvisionUI(const QString &deviceMac, const QString &deviceName);
 };
 
 #endif // KSQ_UX_SIMPLIFY_CONTROLLER_H

@@ -91,7 +91,7 @@ ListView {
             anchors.rightMargin: 0
             onClicked: {
                 list.currentIndex = index
-                connectBLEDevice(name)
+                connectBLEDevice(mac)
             }
 
             onEntered: {
@@ -108,8 +108,8 @@ ListView {
     Component.onCompleted: {
     }
 
-    function connectBLEDevice(name) {
+    function connectBLEDevice(mac) {
         showCredLoad()
-        bleController.connectDevice(name)
+        bleController.connectDevice(mac)
     }
 }

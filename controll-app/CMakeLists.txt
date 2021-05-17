@@ -151,6 +151,12 @@ elseif(KS_PLATFORM STREQUAL "linux")
     add_executable(${KS_TARGET_NAME})
     # Add deployers targets
     include(deployers)
+    
+# Windows
+elseif(KS_PLATFORM STREQUAL "windows")
+    add_executable(${KS_TARGET_NAME})
+    include(deployers)    
+    configure_file( "${PROJECT_SOURCE_DIR}/controll-app/platforms/windows/yiot.nsi.in" "${CMAKE_BINARY_DIR}/yiot.nsi" "${VS_TEMPLATE_DST}" @ONLY)
 
 # MacOS
 elseif(KS_PLATFORM STREQUAL "macos")

@@ -98,7 +98,7 @@ Page {
                 id: actionButton
                 Layout.bottomMargin: 10
                 onClicked: {
-                    showLastDevice()
+                    startDeviceSetup(device)
                 }
             }
         }

@@ -139,7 +139,6 @@
         <file>qml/components/devices/GeneralCategoryControls.qml</file>
         <file>qml/components/devices/GeneralDeviceControls.qml</file>
         <file>qml/components/devices/DeviceViewSelector.qml</file>
-        <file>qml/components/devices/DeviceNameDialog.qml</file>
         <file>qml/components/devices/DeviceActionRequestDialog.qml</file>
         <file>qml/components/devices/lamp/LampControls.qml</file>
         <file>qml/components/devices/setup/BLEDevicesSetupList.qml</file>
@@ -183,6 +182,7 @@
         <file>qml/pages/devices/pc/PCRPiControl.qml</file>
 		<file>qml/pages/devices/pc/commands/AccessPoint.qml</file>
 		<file>qml/pages/devices/pc/commands/ControlsList.qml</file>
+        <file>qml/pages/devices/pc/commands/RenameDevice.qml</file>
 		<file>qml/pages/devices/pc/commands/CreateUser.qml</file>
 		<file>qml/pages/devices/pc/commands/StaticIP.qml</file>
 		<file>qml/pages/devices/pc/commands/VPNrouter.qml</file>
