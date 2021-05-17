@@ -24,10 +24,16 @@
 #include <virgil/iot/qt/VSQIoTKit.h>
 
 //-----------------------------------------------------------------------------
+KSQUXSimplifyController::KSQUXSimplifyController() {
+    connect(&KSQDeviceSetupController::instance(), &KSQDeviceSetupController::fireDeviceSetupStarted,
+            this, &KSQUXSimplifyController::onNewSetup);
+}
+
+//-----------------------------------------------------------------------------
 void
-KSQUXSimplifyController::onBLEDeviceIsClose(QString deviceName, bool requiresProvision) {
+KSQUXSimplifyController::onBLEDeviceIsClose(QString deviceMac, QString deviceName, bool requiresProvision) {
     if (requiresProvision) {
-        requestProvisionUI(deviceName);
+        requestProvisionUI(deviceMac, deviceName);
     }
 }
 
@@ -38,20 +44,35 @@ KSQUXSimplifyController::onDeviceRequiresProvision(QString deviceName,
                                                    VSQMac deviceMac) {
     m_netif = netif;
     m_deviceMac = deviceMac;
-    requestProvisionUI(deviceName);
+    requestProvisionUI(deviceMac.description(), deviceName);
 }
 
 //-----------------------------------------------------------------------------
 void
 KSQUXSimplifyController::onNewProvisionedDevice(QSharedPointer<KSQDeviceBase> device) {
-    emit fireRequestDeviceSetup(device.get());
+    if (m_provisionedDevices.contains(device->macAddr())) {
+        m_provisionedDevices.remove(device->macAddr());
+        emit fireRequestDeviceSetup(device.get());
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQUXSimplifyController::onBLEDeviceConnection(QString deviceMac) {
+    m_ignoredDevices << deviceMac;
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQUXSimplifyController::onNewSetup(const VSQMac &mac) {
+    qDebug() << "startDeviceProvision : " << mac.description();
+    m_provisionedDevices << mac;
+    m_ignoredDevices << mac;
 }
 
 //-----------------------------------------------------------------------------
 bool
 KSQUXSimplifyController::startDeviceProvision(QString name) {
-    qDebug() << "startDeviceProvision : " << name;
-
     KSQDeviceSetupController::instance().start(m_netif, m_deviceMac);
     return true;
 }
@@ -67,10 +88,10 @@ KSQUXSimplifyController::rejectDeviceProvision(QString name) {
 
 //-----------------------------------------------------------------------------
 void
-KSQUXSimplifyController::requestProvisionUI(const QString &deviceName) {
-    if (!m_ignoredDevices.contains(deviceName)) {
-        emit fireRequestDeviceProvision(deviceName);
-        m_ignoredDevices.insert(deviceName);
+KSQUXSimplifyController::requestProvisionUI(const QString &deviceMac, const QString &deviceName) {
+    if (!m_ignoredDevices.contains(deviceMac)) {
+        m_ignoredDevices.insert(deviceMac);
+        emit fireRequestDeviceProvision(deviceMac, deviceName);
     }
 }
 

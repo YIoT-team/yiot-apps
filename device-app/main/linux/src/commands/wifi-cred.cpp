@@ -47,7 +47,7 @@ ks_snap_cfg_wifi_cb(const vs_netif_t *netif,
     vs_provision_update();
 
     // Update BLE advertising
-    ks_netif_ble_advertise(vs_provision_is_ready());
+    ks_netif_ble_advertise(vs_provision_is_ready(), vs_snap_device_name());
     // ~ TODO: Move it IoTKit
 
     VS_LOG_DEBUG("ssid: %s", configuration->ssid);

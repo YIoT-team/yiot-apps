@@ -35,7 +35,7 @@ Page {
     }
 
     header: Header {
-        title: qsTr("Credentials upload")
+        title: qsTr("Device initialisation")
         hideButtons: true
     }
 
@@ -77,7 +77,7 @@ Page {
                 id: actionButton
                 Layout.bottomMargin: 10
                 onClicked: {
-                    showLastDevice()
+                    startDeviceSetup(device)
                 }
             }
         }

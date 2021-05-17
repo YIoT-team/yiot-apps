@@ -41,11 +41,13 @@ public:
     isProvisionRequired(const QString &deviceName);
 
 signals:
+    void
+    fireStartConnection(const QString &mac);
 
 public slots:
 
     Q_INVOKABLE bool
-    connectDevice(const QString &deviceName);
+    connectDevice(const QString &mac);
 
 private slots:
     void
@@ -61,6 +63,7 @@ private slots:
     onSetupFinished(QSharedPointer<VSQNetifBase> netif);
 
 private:
+    VSQMac m_currentMac;
     VSQNetifBLEEnumerator m_bleEnumerator;
     QSharedPointer<VSQNetifBLE> m_netifBLE;
 

@@ -27,6 +27,8 @@ import "../components/devices"
 
 Page {
 
+    property var lastActiveDevice: null
+
     background: Rectangle {
         color: "transparent"
     }
@@ -40,10 +42,6 @@ Page {
 
     DeviceInfoPopup {
         id: deviceInfo
-    }
-
-    DeviceNameDialog {
-        id: deviceNameDialog
     }
 
     AllDevicesList {
@@ -64,13 +62,6 @@ Page {
         deviceInfo.mSent = model.sentBytes
         deviceInfo.mReceived = model.receivedBytes
         deviceInfo.open()
-    }
-
-    // Fill data and show device info.
-    function showDeviceRenameDialog(name, controller) {
-        deviceNameDialog.name = name
-        deviceNameDialog.controller = controller
-        deviceNameDialog.open()
     }
 
     //  Choose controls view for Category element.
@@ -99,6 +90,7 @@ Page {
 
     // Show Big Controls view for device, by its type.
     function activateDeviceView(deviceType, deviceName, deviceController) {
+        lastActiveDevice = deviceController
         if (deviceType === "lampMono") {
             showLampMono(deviceName, deviceController)
             return

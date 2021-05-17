@@ -44,8 +44,8 @@ SwipeView {
         devicesSwipeView.currentIndex = idx
         for (var i = 0; i < devicesSwipeView.count; ++i) {
             var item = devicesSwipeView.itemAt(i)
-            item.deviceName = deviceName
             item.controller = deviceController
+            item.deviceName = deviceController.name
             item.visible = i == devicesSwipeView.currentIndex
         }
     }

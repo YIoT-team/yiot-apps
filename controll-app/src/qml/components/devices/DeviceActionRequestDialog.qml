@@ -27,6 +27,7 @@ import "../../components/devices"
 import "../../components/validators"
 
 Popup {
+    property string deviceMac: ""
     property alias name: deviceName.text
     property alias inform: informText.text
     property var actionOk: function(name) {  }
@@ -64,7 +65,7 @@ Popup {
                 Layout.bottomMargin: 10
                 text: qsTr("Ok")
                 onClicked: {
-                    actionOk(deviceName.text)
+                    actionOk(ctx)
                     popup.close()
                 }
             }
@@ -74,7 +75,7 @@ Popup {
                 Layout.bottomMargin: 10
                 text: qsTr("Cancel")
                 onClicked: {
-                    actionClose(deviceName.text)
+                    actionClose(ctx)
                     popup.close()
                 }
             }

@@ -26,11 +26,12 @@ import "./pages"
 import "./pages/devices"
 import "./pages/devices/setup"
 import "./pages/settings"
+import "./pages/devices/pc/"
 import "./components"
 import "./components/devices"
 import "./components/Popups"
 import "./theme"
-import "./pages/devices/pc/"
+import "./base"
 
 ApplicationWindow {
 
@@ -109,18 +110,21 @@ ApplicationWindow {
     SettingsStorage { id: settings }
 
     Component.onCompleted: {
+        Platform.detect()
         settings.loaded.connect(function() {
             app.updateDevices()
         })
-        showDevicesSetup()
+        showDevices()
     }
 
     Connections {
         target: uxSimplifier
 
-        function onFireRequestDeviceProvision(name) {
+        function onFireRequestDeviceProvision(mac, name) {
+            deviceActionDialog.deviceMac = mac
             deviceActionDialog.name = name
-            deviceActionDialog.inform = qsTr("Do you want to initialize a new device ?")
+            deviceActionDialog.ctx = mac
+            deviceActionDialog.inform = qsTr("Do you want to setup a new device ?")
             deviceActionDialog.actionOk = startDeviceProvision
             deviceActionDialog.actionClose = rejectDeviceProvision
             deviceActionDialog.open()
@@ -128,6 +132,7 @@ ApplicationWindow {
 
         function onFireRequestDeviceSetup(device) {
             console.log("Setup device: ", device.name)
+            deviceActionDialog.deviceMac = device.macAddr
             deviceActionDialog.name = device.name
             deviceActionDialog.ctx = device
             deviceActionDialog.inform = qsTr("Do you want to start work with a new device ?")
@@ -195,6 +200,12 @@ ApplicationWindow {
         ]
     }
 
+    onClosing: {
+        if (Platform.isAndroid) {
+            close.accepted = false
+        }
+    }
+
     function swipeShow(idx) {
         w.state = "main"
         swipeView.currentIndex = idx
@@ -234,10 +245,6 @@ ApplicationWindow {
 
     function showDevices() {
         swipeShow(swipeView.devicePageIdx)
-    }
-
-    function showLastDevice() {
-        startDeviceSetup(deviceActionDialog.name)
     }
 
     function showDevicesSetup() {
@@ -311,21 +318,20 @@ ApplicationWindow {
     //      User experience simplifier
     // ------------------------------------------------------------------------
 
-    function startDeviceProvision(name) {
+    function startDeviceProvision(mac) {
         showCredLoad()
-        devicesSetupPage.startBLEProvision(name)
+        devicesSetupPage.startBLEProvision(mac)
     }
 
-    function rejectDeviceProvision(name) {
-        uxSimplifier.rejectDeviceProvision(name)
+    function rejectDeviceProvision(mac) {
+        uxSimplifier.rejectDeviceProvision(mac)
     }
 
-    function startDeviceSetup(name) {
-        var device = deviceActionDialog.ctx
+    function startDeviceSetup(device) {
         devicesPage.activateDeviceView("pc", device.name, device)
     }
 
-    function rejectDeviceSetup(name) {
-        uxSimplifier.rejectDeviceProvision(name)
+    function rejectDeviceSetup(device) {
+        uxSimplifier.rejectDeviceProvision(device.name)
     }
 }
