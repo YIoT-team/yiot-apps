@@ -131,6 +131,9 @@ KSQApplication::run() {
     // Load UI theme
     qmlRegisterSingletonType(QUrl("qrc:/qml/theme/Theme.qml"), "Theme", 1, 0, "Theme");
 
+    // Load UI platform info
+    qmlRegisterSingletonType(QUrl("qrc:/qml/base/Platform.qml"), "Platform", 1, 0, "Platform");
+
     // QML entrypoint
     const QUrl url(QStringLiteral("qrc:/qml/Main.qml"));
 

@@ -26,11 +26,12 @@ import "./pages"
 import "./pages/devices"
 import "./pages/devices/setup"
 import "./pages/settings"
+import "./pages/devices/pc/"
 import "./components"
 import "./components/devices"
 import "./components/Popups"
 import "./theme"
-import "./pages/devices/pc/"
+import "./base"
 
 ApplicationWindow {
 
@@ -109,6 +110,7 @@ ApplicationWindow {
     SettingsStorage { id: settings }
 
     Component.onCompleted: {
+        Platform.detect()
         settings.loaded.connect(function() {
             app.updateDevices()
         })
@@ -196,6 +198,12 @@ ApplicationWindow {
                 PropertyChanges { target: leftSideMenu; enabled: false }
             }
         ]
+    }
+
+    onClosing: {
+        if (Platform.isAndroid) {
+            close.accepted = false
+        }
     }
 
     function swipeShow(idx) {
