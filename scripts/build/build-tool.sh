@@ -172,7 +172,11 @@ build_app_macos() {
     rm -rf "${SOURCE_DIR}/build" || true
     mkdir -p "${SOURCE_DIR}/build"
     pushd "${SOURCE_DIR}/build"
-    cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="macos" ..
+    which cmake || true
+    ls -lah /usr/local/bin/cmake || true
+    local CMAKE_BIN=/usr/local/bin/cmake
+    ${CMAKE_BIN} --version || true
+    ${CMAKE_BIN} -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="macos" ..
     make -j10 yiot
     make dmg_release
     popd
