@@ -82,6 +82,12 @@ KSQPCController::onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey) {
     if (pc) {
         pc->setSessionKey(sessionKey);
     }
+
+    if (!m_active) {
+        m_active = true;
+        emit fireAboutToActivate();
+        emit fireActivated();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -131,13 +137,6 @@ KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state
     auto pc = res.second;
     if (!pc) {
         // Add PC
-
-        bool activating = !m_pcs.size();
-
-        if (activating) {
-            emit fireAboutToActivate();
-        }
-
         beginInsertRows(QModelIndex(), m_pcs.size(), m_pcs.size());
 
         VSQMac qMac = VSQMac(mac);
@@ -145,13 +144,10 @@ KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state
         connect(newPC.get(), &KSQPC::fireInvokeCommand, this, &KSQPCController::onInvokeCommand);
         connect(newPC.get(), &KSQPC::fireSetNameToHardware, this, &KSQControllerBase::onSetDeviceName);
         connect(newPC.get(), &KSQPC::fireRequestSessionKey, this, &KSQControllerBase::onRequestSessionKey);
+
         m_pcs.push_back(newPC);
 
         endInsertRows();
-
-        if (activating) {
-            emit fireActivated();
-        }
     }
 
     res = findPC(mac);
@@ -241,6 +237,9 @@ KSQPCController::data(const QModelIndex &index, int role) const {
         case Element::Active:
             return l->active();
 
+        case Element::Secure:
+            return l->hasSessionKey();
+
         case Element::Device:
             QVariant res;
             res.setValue(const_cast<KSQPC *>(&(*l)));
@@ -259,6 +258,7 @@ KSQPCController::roleNames() const {
     roles[Type] = "deviceType";
     roles[Mac] = "mac";
     roles[Active] = "active";
+    roles[Secure] = "secure";
     roles[Device] = "deviceController";
     return roles;
 }

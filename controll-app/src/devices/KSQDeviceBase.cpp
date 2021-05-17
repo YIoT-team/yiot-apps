@@ -210,6 +210,7 @@ void
 KSQDeviceBase::setSessionKey(const KSQSessionKey &key) {
     m_sessionKey = key;
     m_sessionTimer.stop();
+    emit fireHasSessionKeyChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -294,6 +295,12 @@ KSQDeviceBase::hasOwner() const {
 bool
 KSQDeviceBase::hasProvision() const {
     return m_hasProvision;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQDeviceBase::hasSessionKey() const {
+    return m_sessionKey.isValid();
 }
 
 //-----------------------------------------------------------------------------

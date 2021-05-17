@@ -35,6 +35,7 @@ Rectangle {
     color: "transparent"
     height: topLevel ? 50 : 40
     width: commonWidth
+    visible: secure
 
     RowLayout {
         id: itemText
