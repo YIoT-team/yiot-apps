@@ -61,7 +61,7 @@ Page {
             //}
             ListElement {
                 name: qsTr("Enable SSH")
-                image: "vpn-router"
+                image: "ssh"
                 property var action: function() {
                     showSSHPage()
                 }
