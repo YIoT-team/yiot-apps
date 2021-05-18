@@ -98,6 +98,9 @@ done
 interface_ctl() {
    local PARAM_COMMAND="$1"
    if [ "${PARAM_COMMAND}" = "up" ]; then
+      echo "ACTION==\"add\", SUBSYSTEM==\"ieee80211\", KERNEL==\"phy0\", \\"      >/etc/udev/rules.d/55-ap.rules
+      echo "    RUN+=\"/usr/sbin/iw dev wlan0 interface add ap0 type __ap\", \\" >>/etc/udev/rules.d/55-ap.rules
+      echo "    RUN+=\"/usr/sbin/ip link set ap0 up\""                           >>/etc/udev/rules.d/55-ap.rules
       rfkill unblock wlan
       iw dev wlan0 interface add "${DEFAULT_IF_NAME}" type __ap
       ip link set "${DEFAULT_IF_NAME}" up
@@ -105,6 +108,7 @@ interface_ctl() {
       sysctl net.ipv4.ip_forward=1
    else
       rm -f /etc/sysctl.d/ap.conf
+      rm -f /etc/udev/rules.d/55-ap.rules
       iw dev "${DEFAULT_IF_NAME}" del
    fi
 }
