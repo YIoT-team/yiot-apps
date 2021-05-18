@@ -72,6 +72,11 @@ private:
     QTimer m_timer;
 #else
 
+#if defined(Q_OS_ANDROID)
+    KSQWiFiNetworks
+    wifi_enum();
+#endif
+
 #if 1
     // TODO: Remove after fixing of deprecated functionality
 #pragma GCC diagnostic push

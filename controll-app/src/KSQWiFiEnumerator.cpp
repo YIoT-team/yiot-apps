@@ -73,12 +73,10 @@ KSQWiFiEnumerator::stop() {
 }
 
 //-----------------------------------------------------------------------------
-#if !defined(Q_OS_MACOS) && !defined(Q_OS_LINUX) && !defined(Q_OS_WIN32)
+#if defined(Q_OS_ANDROID)
 KSQWiFiNetworks
 KSQWiFiEnumerator::wifi_enum() {
-#ifdef Q_OS_ANDROID
     return KSQAndroid::enumWifi();
-#endif
 }
 #endif
 
