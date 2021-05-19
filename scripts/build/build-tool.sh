@@ -89,8 +89,11 @@ build_dev_rpi() {
     cp -rf ${SOURCE_DIR}/build/device-app/main/linux/yiot-device-app-linux ${SOURCE_DIR}/build/dist
     cp -rf ${SOURCE_DIR}/build/device-app/main/linux/bluez-dbus/libbluez-dbus-cpp.so* ${SOURCE_DIR}/build/dist
     cp -rf ${SOURCE_DIR}/build/common/iotkit/modules/crypto/converters/libconverters.so ${SOURCE_DIR}/build/dist
-    cp -rf ${SOURCE_DIR}/build/depends/installed/lib/libsdbus-c++.so* ${SOURCE_DIR}/build/dist
-
+    if [ -f ${SOURCE_DIR}/build/depends/installed/lib/libsdbus-c++.so ]; then
+        cp -rf ${SOURCE_DIR}/build/depends/installed/lib/libsdbus-c++.so* ${SOURCE_DIR}/build/dist
+    else
+        cp -rf ${SOURCE_DIR}/build/depends/installed/lib64/libsdbus-c++.so* ${SOURCE_DIR}/build/dist
+    fi
     if [ "${BUILD_PKG}" == "1" ]; then
       find_tool dpkg-buildpackage
       if [ "${FIND_RES}" == "1" ]; then
