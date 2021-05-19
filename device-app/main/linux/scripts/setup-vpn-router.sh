@@ -74,7 +74,8 @@ echo "Download OVPN configuration"
 cd /tmp && wget https://files.ovpn.com/raspbian/ovpn-se-gothenburg.zip &&
     unzip ovpn-se-gothenburg.zip &&
     mkdir -p /etc/openvpn/client/ &&
-    mv config/* /etc/openvpn/client &&
+    mv config/* /etc/openvpn/ &&
+    mv /etc/openvpn/ovpn.conf /etc/openvpn/client/ &&
     chmod +x /etc/openvpn/update-resolv-conf &&
     rm -rf config &&
     rm -f ovpn-se-gothenburg.zip
@@ -92,7 +93,12 @@ echo "Connect to VPN"
 systemctl  enable openvpn-client@ovpn.service
 systemctl  start openvpn-client@ovpn.service
 
+#
+#   TODO: Check VPN connection Properly !!!
+#
+
 # Check for connection
+sleep 5s
 if ! wait_connection ${TEST_SERVER} ${TIMEOUT}; then
     echo "ERROR: Cannot connect. Restore original settings"
     systemctl  stop openvpn-client@ovpn.service
@@ -105,7 +111,6 @@ if ! wait_connection ${TEST_SERVER} ${TIMEOUT}; then
 fi
 
 echo "Check connection"
-sleep 10s
 curl https://www.ovpn.com/v2/api/client/ptr | python -m json.tool
 
 exit 0
