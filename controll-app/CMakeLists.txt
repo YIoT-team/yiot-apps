@@ -151,6 +151,12 @@ elseif(KS_PLATFORM STREQUAL "linux")
     add_executable(${KS_TARGET_NAME})
     # Add deployers targets
     include(deployers)
+    
+# Windows
+elseif(KS_PLATFORM STREQUAL "windows")
+    add_executable(${KS_TARGET_NAME})
+    include(deployers)    
+    configure_file( "${PROJECT_SOURCE_DIR}/controll-app/platforms/windows/yiot.nsi.in" "${CMAKE_BINARY_DIR}/yiot.nsi" "${VS_TEMPLATE_DST}" @ONLY)
 
 # MacOS
 elseif(KS_PLATFORM STREQUAL "macos")
@@ -270,6 +276,7 @@ target_sources(${KS_TARGET_NAME}
 
         $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
         $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
+        $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
         $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/include/android/KSQAndroid.h>
 
         # Sources
@@ -321,6 +328,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/setup/KSQDeviceSetupData.cpp
 
         $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/macos/KSMacWiFi.mm>
+        $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/src/linux/KSLinuxWiFi.cpp>
         $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/src/win/KSWinWiFi.cpp>
         $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/src/android/KSQAndroid.cpp>
 

@@ -65,7 +65,6 @@ static vs_netif_process_cb_t _netif_ble_process_cb = 0;
 
 class TxCharacteristic;
 static std::shared_ptr<TxCharacteristic> _tx_char;
-static std::string NAME;
 static const uint16_t MANUFACTURER_DATA = 0x1914;
 
 #if !defined(YIOT_DEBUG_BLE_TRAFIC)
@@ -180,26 +179,7 @@ _ble_thread_internal_func() {
         adapter1.DiscoverableTimeout(0);
         adapter1.Pairable(false);
 
-        NAME = "RPi " + adapter1.Address();
-
-        // Save MAC address
-        unsigned int bytes[ETH_ADDR_LEN];
-        if (std::sscanf(adapter1.Address().c_str(),
-                        "%02x:%02x:%02x:%02x:%02x:%02x",
-                        &bytes[0],
-                        &bytes[1],
-                        &bytes[2],
-                        &bytes[3],
-                        &bytes[4],
-                        &bytes[5]) != ETH_ADDR_LEN) {
-            throw std::runtime_error(std::string("Invalid MAC address"));
-        }
-
-        for (int i = 0; i < ETH_ADDR_LEN; i++) {
-            _mac.bytes[i] = bytes[i];
-        }
-
-        adapter1.Alias(NAME);
+        adapter1.Alias("___YIoT___");
 
         std::cout << "Found adapter '" << DEVICE0 << "'" << std::endl;
         std::cout << "  Name: " << adapter1.Name() << std::endl;
@@ -215,12 +195,12 @@ _ble_thread_internal_func() {
     GattManager1 gattMgr{_connection, BLUEZ_SERVICE, DEVICE0};
     auto app = std::make_shared<GattApplication1>(_connection, "/org/bluez/service");
     auto srv1 = std::make_shared<GattService1>(app, "deviceinfo", "180A");
-    ReadOnlyCharacteristic::createFinal(srv1, "2A24", NAME);               // model name
+    ReadOnlyCharacteristic::createFinal(srv1, "2A24", "YIoT");             // model name
     ReadOnlyCharacteristic::createFinal(srv1, "2A25", "000-11111111-222"); // serial number
     ReadOnlyCharacteristic::createFinal(srv1, "2A26", "0.0.1");            // fw rev
     ReadOnlyCharacteristic::createFinal(srv1, "2A27", "rev A");            // hw rev
     ReadOnlyCharacteristic::createFinal(srv1, "2A28", "1.0");              // sw rev
-    ReadOnlyCharacteristic::createFinal(srv1, "2A29", "Kutashenko PE");    // manufacturer
+    ReadOnlyCharacteristic::createFinal(srv1, "2A29", "YIoT");    // manufacturer
 
     auto srv_iotkit = std::make_shared<GattService1>(app, "IoTKit", IOTKIT_BLE_SERVICE_UUID);
     _tx_char = std::shared_ptr<TxCharacteristic>(new TxCharacteristic(srv_iotkit, IOTKIT_BLE_CHAR_TX_UUID));
@@ -358,7 +338,13 @@ ks_netif_ble(void) {
 
 //-----------------------------------------------------------------------------
 void
-ks_netif_ble_advertise(bool initialized) {
+ks_netif_ble_update_mac(vs_mac_addr_t mac_addr) {
+    VS_IOT_MEMCPY(_mac.bytes, mac_addr.bytes, ETH_ADDR_LEN);
+}
+
+//-----------------------------------------------------------------------------
+void
+ks_netif_ble_advertise(bool initialized, const char *device_name) {
     // Wait for BLE started
     std::unique_lock<std::mutex> lck(_mtx_start);
     _cv_start.wait(lck, []() -> bool { return _ready; });
@@ -385,18 +371,46 @@ ks_netif_ble_advertise(bool initialized) {
         if (error == nullptr) {
             std::cout << "Advertisement registered." << std::endl;
         } else {
-            std::cerr << "Error registering advertisment " << error->getName() << " with message "
+            std::cerr << "Error registering advertisement " << error->getName() << " with message "
                       << error->getMessage() << std::endl;
         }
     };
 
+    // Create device name
+    std::string deviceName;
+    if (!device_name || !device_name[0]) {
+        deviceName = "Raspberry Pi";
+    } else {
+        deviceName = std::string(device_name);
+    }
+
+    // Create local name
+    char localName[18];
+    sprintf(localName, "%02X:%02X:%02X:%02X:%02X:%02X",
+            _mac.bytes[0],
+            _mac.bytes[1],
+            _mac.bytes[2],
+            _mac.bytes[3],
+            _mac.bytes[4],
+            _mac.bytes[5]);
+
+
+    // Initialize
     std::map<uint16_t, sdbus::Variant> manufacturerData;
+
+    //    Fill initialization state
     std::vector<uint8_t> manData;
     manData.push_back(initialized ? 1 : 0);
+
+    static const int kSymbolsLimit = 16;
+    for (int i = 0; i < kSymbolsLimit; i++) {
+        manData.push_back(deviceName.c_str()[i]);
+    }
     sdbus::Variant val(manData);
     manufacturerData[MANUFACTURER_DATA] = val;
+
     _advController = LEAdvertisement1::create(*_connection, ADV_PATH)
-                      .withLocalName(NAME)
+                      .withLocalName(localName)
                       .withServiceUUIDs(std::vector{std::string{IOTKIT_BLE_SERVICE_UUID}})
                       .withIncludes(std::vector{std::string{"tx-power"}})
                       .withManufacturerData(manufacturerData)

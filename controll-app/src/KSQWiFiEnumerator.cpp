@@ -73,24 +73,10 @@ KSQWiFiEnumerator::stop() {
 }
 
 //-----------------------------------------------------------------------------
-#if !defined(Q_OS_MACOS) && !defined(Q_OS_WIN32)
+#if defined(Q_OS_ANDROID)
 KSQWiFiNetworks
 KSQWiFiEnumerator::wifi_enum() {
-#ifdef Q_OS_ANDROID
     return KSQAndroid::enumWifi();
-#else
-    KSQWiFiNetworks wifiList;
-    auto netcfgList = m_ncm.allConfigurations();
-    for (auto &x : netcfgList) {
-        // qDebug() << x.name() << " : " << x.bearerTypeName() << " : " << x.identifier();
-        if (x.bearerType() == QNetworkConfiguration::BearerWLAN) {
-            if (x.name() != "") {
-                wifiList[x.name()] = KSWiFiInfo();
-            }
-        }
-    }
-    return wifiList;
-#endif
 }
 #endif
 

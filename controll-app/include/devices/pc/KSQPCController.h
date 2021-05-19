@@ -33,7 +33,7 @@
 class KSQPCController : public KSQControllerBase {
     Q_OBJECT
 public:
-    enum Element { Name = Qt::UserRole, Type, Mac, Active, Device, ElementMax };
+    enum Element { Name = Qt::UserRole, Type, Mac, Active, Device, Secure, ElementMax };
 
     KSQPCController();
     virtual ~KSQPCController() = default;

@@ -164,6 +164,8 @@ KSQDeviceSetupController::start(QSharedPointer<VSQNetifBase> netif, VSQMac devic
 
     emit fireStateInfo(tr("Request device state"));
 
+    emit fireDeviceSetupStarted(deviceMac);
+
     m_valid = true;
     return m_valid;
 }

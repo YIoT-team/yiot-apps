@@ -23,11 +23,13 @@ import QtQuick.Layouts 1.12
 
 import "../../theme"
 import "../../components"
-
 Page {
     property string ssid: ""
+    property string location: "credentials"
 
     id: wifiSettingsPage
+
+    width: parent
 
     background: Rectangle {
         color: "transparent"
@@ -36,7 +38,19 @@ Page {
     header: Header {
         id: header
         title: qsTr("Set WiFi password ") + ssid
-        backAction: function() { showWiFiSettings() }
+        backAction: function() {
+            switch (location) {
+            case "credentials":
+                showWiFiSettings()
+                break;
+            case "deviceSetup":
+                showCredLoad()
+                setCredLoadState("wifi-setup")
+                break;
+            default:
+                console.error("Error in the location of the call to the WiFi password page: '" + location + "' is not defined")
+            }
+        }
     }
 
     ColumnLayout {
@@ -91,11 +105,23 @@ Page {
         })
     }
 
+    function prepareLocation(aLocation) { location = aLocation; }
+
     function useWiFiNetwork(ssid, pass) {
         // Set default WiFi Network in settings
         settings.setWiFiCredDefault(ssid, pass)
 
-        // Switch to devices page
-        showDevicesSetup()
+        // Switch back
+        switch (location) {
+        case "credentials":
+            showDevicesSetup()
+            break;
+        case "deviceSetup":
+            showCredLoad()
+            setCredLoadState("wifi-setup")
+            break;
+        default:
+            console.error("Error in the location of the call to the WiFi password page: '" + location + "' is not defined")
+        }
     }
 }

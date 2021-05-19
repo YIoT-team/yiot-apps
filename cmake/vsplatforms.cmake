@@ -153,7 +153,7 @@ if(KS_PLATFORM)
     
     # -- Windows
     elseif(KS_PLATFORM STREQUAL "windows")
-        set(QT_PREFIX_PATH "mingw32")
+        set(QT_PREFIX_PATH "mingw81_64")
         prepare_qt_sdk(CMAKE_PREFIX_PATH CMAKE_FIND_ROOT_PATH QT_QMAKE_EXECUTABLE)
     endif()
 endif()

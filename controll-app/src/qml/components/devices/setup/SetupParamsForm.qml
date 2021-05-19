@@ -55,17 +55,14 @@ Form {
             InfoText { text: qsTr("Manufacturer:"); horizontalAlignment: Text.AlignRight }
             InfoText { text: deviceSetup.data.manufacturer }
 
-            InfoText { text: qsTr("Provision:"); horizontalAlignment: Text.AlignRight }
-            InfoText { text: deviceSetup.data.hasProvision ? qsTr("present") : qsTr("absent") }
+            InfoText { text: qsTr("Security is initialized:"); horizontalAlignment: Text.AlignRight }
+            InfoText { text: deviceSetup.data.hasProvision ? qsTr("yes") : qsTr("no") }
 
-            InfoText { text: qsTr("Owner:"); horizontalAlignment: Text.AlignRight }
-            InfoText { text: deviceSetup.data.hasOwner ? qsTr("present") : qsTr("absent") }
+            InfoText { text: qsTr("Owner is set:"); horizontalAlignment: Text.AlignRight }
+            InfoText { text: deviceSetup.data.hasOwner ? qsTr("yes") : qsTr("no") }
 
             // InfoText { text: qsTr("Owned by me:"); horizontalAlignment: Text.AlignRight }
             // InfoText { text: deviceSetup.data.ownerIsYou ? qsTr("yes") : qsTr("no") }
-
-            InfoText { text: qsTr("WiFi Credentials:"); horizontalAlignment: Text.AlignRight }
-            InfoText { text: deviceSetup.data.needCreds ? qsTr("required") : qsTr("present") }
         }
 
         InfoText {
@@ -75,9 +72,9 @@ Form {
         }
 
         InfoText {
-            visible: !deviceSetup.data.hasOwner
+            visible: true
             wrapMode: Text.WordWrap
-            text: qsTr("There is no owner. So, you'll be set as an Owner for the device.")
+            text: qsTr("WiFi credentials will be passed as an encrypted data.")
         }
 
         InfoText {
@@ -91,27 +88,11 @@ Form {
         }
 
         FormSecondaryButton {
-            text: qsTr("Cancel")
-            onClicked: {
-                deviceSetup.stop()
-            }
-        }
-
-        FormPrimaryButton {
             Layout.bottomMargin: 10
-            text: qsTr("Setup Device")
+            text: qsTr("Next")
             onClicked: {
-                var cred = settings.getWiFiCredDefault()
-                if (cred.ready) {
-
-                    deviceSetup.configure(
-                        !deviceSetup.data.hasProvision,
-                        !deviceSetup.data.hasOwner, "Me",
-                        true, cred.ssid, cred.pass)
-
-                } else {
-                    showPopupError(qsTr("Need to set WiFi credentials"), showSettingsForWiFi)
-                }
+                    setWiFiPassLocation("deviceSetup")
+                    setCredLoadState("wifi-setup")
             }
         }
     }

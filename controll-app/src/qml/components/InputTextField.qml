@@ -11,6 +11,7 @@ ColumnLayout {
     property alias validator: formField.validator
     property alias echoMode: formField.echoMode
     property alias inputMethodHints: formField.inputMethodHints
+    property alias maximumLength: formField.maximumLength
 
     signal ready()
 

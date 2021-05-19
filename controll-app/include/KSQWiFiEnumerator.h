@@ -67,6 +67,11 @@ private slots:
 private:
     KSQWiFiNetworks m_wifiList;
 
+#if defined(Q_OS_ANDROID)
+    KSQWiFiNetworks
+    wifi_enum();
+#endif
+
 #if defined(Q_OS_MACOS) || defined(Q_OS_ANDROID)
     static const int kScanPeriodMs = 5000;
     QTimer m_timer;
@@ -83,11 +88,6 @@ private:
 #endif
     QStringList
     _findWiFiGeneral();
-#endif
-
-#if defined(Q_OS_LINUX)
-    KSQWiFiNetworks
-    wifi_enum();
 #endif
 };
 

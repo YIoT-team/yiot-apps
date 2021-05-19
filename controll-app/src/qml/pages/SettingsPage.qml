@@ -99,6 +99,7 @@ Page {
      }
 
     function showWiFiSettings() {
+        wifiPassSettingsPage.prepareLocation("credentials")
         swipeSettingsShow(settingsSwipeView.wifiNetworksIdx)
     }
 
@@ -113,7 +114,6 @@ Page {
     function showWiFiPassword(ssid) {
         console.log("showWiFiPassword: ", ssid)
         wifiPassSettingsPage.prepare(ssid)
-        swipeSettingsShow(settingsSwipeView.wifiPassIdx)
     }
 
     function showEventsSettings() {
@@ -126,5 +126,8 @@ Page {
 
     function backInSettings() {
         swipeSettingsShow(settingsSwipeView.backPageIdx)
+    }
+    function setPassPageLocation(location) {
+        wifiPassSettingsPage.prepareLocation(location)
     }
 }

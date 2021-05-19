@@ -17,67 +17,43 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef KSQ_UX_SIMPLIFY_CONTROLLER_H
-#define KSQ_UX_SIMPLIFY_CONTROLLER_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#include <QtCore>
-#include <QtNetwork>
-#include <QtBluetooth>
+import "../../../components"
 
-#include <QAbstractTableModel>
+Form {
+    id: form
+    stretched: true
 
-#include <virgil/iot/qt/VSQIoTKit.h>
-#include <devices/KSQDeviceBase.h>
+    ColumnLayout {
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        Layout.topMargin: 1
+        WiFiNetworksList {
+            id: wifiNetworksList
+            Layout.fillHeight: true
+        }
 
-class KSQUXSimplifyController : public QObject {
-    Q_OBJECT
+        FormSecondaryButton {
+            Layout.bottomMargin: 30
+            text: qsTr("Next")
+            onClicked: {
+                var cred = settings.getWiFiCredDefault()
+                if (cred.ready) {
 
-public:
-    KSQUXSimplifyController();
+                    deviceSetup.configure(
+                        !deviceSetup.data.hasProvision,
+                        !deviceSetup.data.hasOwner, "Me",
+                        true, cred.ssid, cred.pass)
 
-    KSQUXSimplifyController &
-    operator=(KSQUXSimplifyController const &) = delete;
+                    showCredLoad()
 
-    virtual ~KSQUXSimplifyController() = default;
-
-    Q_INVOKABLE bool
-    startDeviceProvision(QString name);
-
-    Q_INVOKABLE bool
-    rejectDeviceProvision(QString name);
-
-public slots:
-    void
-    onBLEDeviceIsClose(QString deviceMac, QString deviceName, bool requiresProvision);
-
-    void
-    onDeviceRequiresProvision(QString deviceName, QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
-
-    void
-    onNewProvisionedDevice(QSharedPointer<KSQDeviceBase> device);
-
-    void
-    onBLEDeviceConnection(QString deviceMac);
-
-signals:
-    void
-    fireRequestDeviceProvision(QString deviceMac, QString deviceName);
-
-    void
-    fireRequestDeviceSetup(KSQDeviceBase *deviceName);
-
-private slots:
-    void
-    onNewSetup(const VSQMac &mac);
-
-private:
-    QSharedPointer<VSQNetifBase> m_netif;
-    VSQMac m_deviceMac;
-    QSet<QString> m_ignoredDevices;
-    QSet<QString> m_provisionedDevices;
-
-    void
-    requestProvisionUI(const QString &deviceMac, const QString &deviceName);
-};
-
-#endif // KSQ_UX_SIMPLIFY_CONTROLLER_H
+                } else {
+                    showPopupError(qsTr("Need to set WiFi credentials"))
+                }
+            }
+        }
+    }
+}

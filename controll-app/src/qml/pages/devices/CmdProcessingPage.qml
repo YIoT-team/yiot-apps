@@ -24,6 +24,8 @@ import QtQuick.Layouts 1.12
 import "../../theme"
 import "../../components"
 
+import "../../../js/devices/pc.js" as PCDevice
+
 Page {
     property var device: null
 
@@ -35,7 +37,7 @@ Page {
     }
 
     header: Header {
-        title: qsTr("Credentials upload")
+        title: qsTr("Device initialisation")
         hideButtons: true
     }
 
@@ -73,11 +75,30 @@ Page {
                 source: "qrc:/qml/resources/icons/%1/upload.gif".arg(Theme.state)
             }
 
-            FormPrimaryButton {
+            ScrollView {
+                id: scrollProcessingText
+
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
+                Layout.bottomMargin: p.state == "done" ? 450 : 20 // will need to be redone or removed altogether
+
+                TextArea {
+                    id: processingTextArea
+
+                    font.family: Theme.mainFont
+                    color: Theme.primaryTextColor
+                    readOnly: true
+
+                    text: PCDevice.processingText()
+                    }
+            }
+
+            FormSecondaryButton {
                 id: actionButton
                 Layout.bottomMargin: 10
                 onClicked: {
-                    showLastDevice()
+                    startDeviceSetup(device)
                 }
             }
         }
@@ -101,7 +122,7 @@ Page {
         },
         State {
             name: "receive"
-            PropertyChanges { target: infoText; text: qsTr("Waiting for an answer") }
+            PropertyChanges { target: infoText; text: qsTr("Processing ...") }
             PropertyChanges { target: infoText; color: Theme.brandColor }
             PropertyChanges { target: animatedImage; visible: true }
             PropertyChanges { target: actionButton; text: qsTr("Stop") }

@@ -44,11 +44,12 @@ Page {
 
     SwipeView {
         readonly property int listIdx: 0
-        readonly property int createUserIdx: 1
-        readonly property int staticipIdx: 2
-        readonly property int accessPointIdx: 3
-        readonly property int sshIdx: 4
-        readonly property int vpnRouterIdx: 5
+        readonly property int renameDeviceIdx: 1
+        readonly property int createUserIdx: 2
+        readonly property int staticipIdx: 3
+        readonly property int accessPointIdx: 4
+        readonly property int sshIdx: 5
+        readonly property int vpnRouterIdx: 6
 
         property int backPageIdx: listIdx
 
@@ -59,6 +60,10 @@ Page {
 
         ControlsList {
             id: settingsListPage
+        }
+
+        RenameDevice {
+            id: renameDevicePage
         }
 
         CreateUser {
@@ -82,10 +87,23 @@ Page {
         }
     }
 
+    Connections {
+        id: connections
+
+        function onNameChanged() {
+            deviceName = controller.name
+        }
+    }
+
     onVisibleChanged: {
         if (visible) {
             showRPiSettings()
         }
+    }
+
+    onControllerChanged: {
+        connections.target = controller
+        settingsListPage.controller = controller
     }
 
     function swipeSettingsShow(idx) {
@@ -109,6 +127,11 @@ Page {
     function showCreateUserPage() {
         swipeSettingsShow(settingsSwipeView.createUserIdx)
     }
+
+    function showRenameDevicePage(controller) {
+            renameDevicePage.controller = controller
+            swipeSettingsShow(settingsSwipeView.renameDeviceIdx)
+        }
 
     function showStaticipPage() {
         swipeSettingsShow(settingsSwipeView.staticipIdx)

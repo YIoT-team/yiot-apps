@@ -42,6 +42,7 @@ class KSQDeviceBase : public QObject {
     Q_PROPERTY(QString commandState READ commandState WRITE setCommandState NOTIFY fireCommandStateChanged)
     Q_PROPERTY(bool hasOwner READ hasOwner NOTIFY fireHasOwnerChanged)
     Q_PROPERTY(bool hasProvision READ hasProvision NOTIFY fireHasProvisionChanged)
+    Q_PROPERTY(bool hasSessionKey READ hasSessionKey NOTIFY fireHasSessionKeyChanged)
     Q_PROPERTY(bool active READ active NOTIFY fireActiveChanged)
 
 public:
@@ -126,10 +127,15 @@ public:
     bool
     hasProvision() const;
     bool
+    hasSessionKey() const;
+    bool
     active() const;
 
     bool
     operator<(const KSQDeviceBase &rhs) const;
+
+    bool
+    isUpdatedName();
 
     static const QString kCmdStateConnect;
     static const QString kCmdStateSend;
@@ -176,6 +182,8 @@ signals:
     void
     fireHasOwnerChanged();
     void
+    fireHasSessionKeyChanged();
+    void
     fireHasProvisionChanged();
 
     void
@@ -193,6 +201,7 @@ private:
     QDateTime m_lastUpdate;
     QString m_image;
     QString m_name;
+    bool m_nameUpdated;
     VSQMac m_mac;
 
     QString m_roles;

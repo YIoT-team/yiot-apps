@@ -76,6 +76,9 @@ signals:
     void
     fireRequiredSetup(QSharedPointer<KSQDeviceBase> device);
 
+protected:
+    bool m_active = false;
+
 private:
     bool m_collapsed = false;
 };
