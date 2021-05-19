@@ -67,15 +67,15 @@ private slots:
 private:
     KSQWiFiNetworks m_wifiList;
 
-#if defined(Q_OS_MACOS) || defined(Q_OS_ANDROID)
-    static const int kScanPeriodMs = 5000;
-    QTimer m_timer;
-#else
-
 #if defined(Q_OS_ANDROID)
     KSQWiFiNetworks
     wifi_enum();
 #endif
+
+#if defined(Q_OS_MACOS) || defined(Q_OS_ANDROID)
+    static const int kScanPeriodMs = 5000;
+    QTimer m_timer;
+#else
 
 #if 1
     // TODO: Remove after fixing of deprecated functionality
@@ -89,7 +89,6 @@ private:
     QStringList
     _findWiFiGeneral();
 #endif
-
 };
 
 #endif // PROVISION_QT_WIFI_ENUM_H
