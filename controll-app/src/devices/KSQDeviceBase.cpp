@@ -62,7 +62,7 @@ KSQDeviceBase::KSQDeviceBase(const KSQDeviceBase &d) {
 //-----------------------------------------------------------------------------
 bool
 KSQDeviceBase::isUpdatedName() {
-   return m_nameUpdated;
+    return m_nameUpdated;
 }
 
 //-----------------------------------------------------------------------------

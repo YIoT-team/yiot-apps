@@ -25,8 +25,10 @@
 
 //-----------------------------------------------------------------------------
 KSQUXSimplifyController::KSQUXSimplifyController() {
-    connect(&KSQDeviceSetupController::instance(), &KSQDeviceSetupController::fireDeviceSetupStarted,
-            this, &KSQUXSimplifyController::onNewSetup);
+    connect(&KSQDeviceSetupController::instance(),
+            &KSQDeviceSetupController::fireDeviceSetupStarted,
+            this,
+            &KSQUXSimplifyController::onNewSetup);
 }
 
 //-----------------------------------------------------------------------------
