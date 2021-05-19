@@ -73,8 +73,8 @@ ${SCRIPT_FOLDER}/setup-access-point.sh up -essid "${AP_NAME}" -wpa "${AP_PASS}"
 echo "Download OVPN configuration"
 cd /tmp && wget https://files.ovpn.com/raspbian/ovpn-se-gothenburg.zip &&
     unzip ovpn-se-gothenburg.zip &&
-    mkdir -p /etc/openvpn &&
-    mv config/* /etc/openvpn &&
+    mkdir -p /etc/openvpn/client/ &&
+    mv config/* /etc/openvpn/client &&
     chmod +x /etc/openvpn/update-resolv-conf &&
     rm -rf config &&
     rm -f ovpn-se-gothenburg.zip
