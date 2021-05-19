@@ -122,7 +122,7 @@ Page {
         },
         State {
             name: "receive"
-            PropertyChanges { target: infoText; text: qsTr("Waiting for an answer") }
+            PropertyChanges { target: infoText; text: qsTr("Processing ...") }
             PropertyChanges { target: infoText; color: Theme.brandColor }
             PropertyChanges { target: animatedImage; visible: true }
             PropertyChanges { target: actionButton; text: qsTr("Stop") }
