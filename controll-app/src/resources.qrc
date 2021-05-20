@@ -60,6 +60,7 @@
         <file>qml/resources/icons/dark/static-ip.png</file>
         <file>qml/resources/icons/dark/vpn-router.png</file>
         <file>qml/resources/icons/dark/ssh.png</file>
+        <file>qml/resources/icons/dark/rename.png</file>
 
         <!-- Icons light theme -->
         <file>qml/resources/icons/light/devices/lamp/mono/off.png</file>
@@ -96,6 +97,7 @@
         <file>qml/resources/icons/light/static-ip.png</file>
         <file>qml/resources/icons/light/vpn-router.png</file>
         <file>qml/resources/icons/light/ssh.png</file>
+        <file>qml/resources/icons/light/rename.png</file>
 
         <!-- Fonts -->
         <file>qml/resources/fonts/Roboto-Medium.ttf</file>

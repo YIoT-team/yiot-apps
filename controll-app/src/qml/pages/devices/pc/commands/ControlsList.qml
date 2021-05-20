@@ -42,7 +42,7 @@ Page {
         model: ListModel {
             ListElement {
                 name: qsTr("Rename device")
-                image: "create-user"
+                image: "rename"
                 property var action: function(ctx) {
                     showRenameDevicePage(ctx)
                 }
