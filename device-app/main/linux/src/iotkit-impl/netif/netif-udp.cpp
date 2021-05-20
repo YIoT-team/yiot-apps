@@ -209,17 +209,49 @@ _udp_receive_processor(void *sock_desc) {
 }
 
 //-----------------------------------------------------------------------------
-static void
-_prepare_dst_addr(void) {
-    const char *_addr_str = getenv("VS_BCAST_SUBNET_ADDR");
-    if (!_addr_str) {
-        VS_LOG_INFO("VS_BCAST_SUBNET_ADDR = 255.255.255.255");
-        _dst_addr = INADDR_BROADCAST;
-        return;
+static in_addr_t
+_get_interface_bcast_addr(const char *name) {
+    int family;
+    struct ifreq ifreq;
+    char host[128];
+    memset(&ifreq, 0, sizeof ifreq);
+    strncpy(ifreq.ifr_name, name, IFNAMSIZ);
+
+    if(ioctl(fd, SIOCGIFBRDADDR, &ifreq) != 0)
+    {
+        fprintf(stderr, "Could not find interface named %s", name);
+        return INADDR_ANY;
     }
 
-    VS_LOG_INFO("VS_BCAST_SUBNET_ADDR = %s", _addr_str);
-    _dst_addr = inet_addr(_addr_str);
+    getnameinfo(&ifreq.ifr_broadaddr, sizeof(ifreq.ifr_broadaddr), host, sizeof(host), 0, 0, NI_NUMERICHOST);
+    return inet_addr(host);
+}
+
+//-----------------------------------------------------------------------------
+static void
+_prepare_dst_addr(void) {
+    in_addr_t res;
+    const char *_addr_str = getenv("VS_BCAST_SUBNET_ADDR");
+    if (!_addr_str) {
+
+        res = _get_interface_bcast_addr("eth0");
+        if (INADDR_ANY != res) {
+            _dst_addr = res;
+        } else {
+
+            res = _get_interface_bcast_addr("wlan0");
+            if (INADDR_ANY != res) {
+                _dst_addr = res;
+            } else {
+
+                _dst_addr = INADDR_BROADCAST;
+            }
+        }
+    } else {
+        _dst_addr = inet_addr(_addr_str);
+    }
+
+    VS_LOG_INFO("VS_BCAST_SUBNET_ADDR = %s", inet_ntoa(_dst_addr));
 }
 
 //-----------------------------------------------------------------------------
@@ -275,6 +307,9 @@ _udp_connect() {
     }
 
     VS_LOG_INFO("Opened connection for UDP broadcast\n");
+
+    // Get broadcast address
+    _prepare_dst_addr();
 
     // Start receive thread
     pthread_create(&receive_thread, NULL, _udp_receive_processor, NULL);
@@ -334,8 +369,6 @@ _netif_udp_internal(void) {
 #endif
         return false;
     }
-
-    _prepare_dst_addr();
 
     return VS_CODE_OK == _udp_connect();
 }
