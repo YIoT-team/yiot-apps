@@ -337,16 +337,15 @@ _netif_udp_internal(void) {
     bool success = false;
     bool res = false;
 
+    ifc.ifc_len = sizeof(buf);
+    ifc.ifc_buf = buf;
+    struct ifreq *it = ifc.ifc_req;
+    const struct ifreq *const end = it + (ifc.ifc_len / sizeof(struct ifreq));
+
     int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
 
     CHECK(sock >= 0, "Cannot init UDP netif. Socket error, AF_INET::SOCK_DGRAM::IPPROTO_IP");
-
-    ifc.ifc_len = sizeof(buf);
-    ifc.ifc_buf = buf;
     CHECK(ioctl(sock, SIOCGIFCONF, &ifc) != -1, "Cannot init UDP netif. SIOCGIFCONF error");
-
-    struct ifreq *it = ifc.ifc_req;
-    const struct ifreq *const end = it + (ifc.ifc_len / sizeof(struct ifreq));
 
     for (; it != end; ++it) {
         strcpy(ifr.ifr_name, it->ifr_name);
@@ -364,7 +363,7 @@ _netif_udp_internal(void) {
         res = VS_CODE_OK == _udp_connect();
     }
 
-    terminate:
+terminate:
 
     if (sock >= 0) {
         close(sock);
