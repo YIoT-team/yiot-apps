@@ -99,6 +99,9 @@ KSQApplication::run() {
             m_uxController.get(),
             &KSQUXSimplifyController::onNewProvisionedDevice);
 
+    // Device re-scan on provision finish
+    connect(m_bleController.get(), &KSQBLEController::fireProvisionDone, this, &KSQApplication::onProvisionDone);
+
     // Initialize IoTKit
     if (!KSQIoTKitFacade::instance().init(features, impl, appConfig)) {
         VS_LOG_CRITICAL("Unable to initialize IoTKIT");
@@ -149,6 +152,12 @@ KSQApplication::run() {
     });
 
     return QGuiApplication::instance()->exec();
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQApplication::onProvisionDone(QString mac) {
+    updateDevices();
 }
 
 //-----------------------------------------------------------------------------

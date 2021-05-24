@@ -96,6 +96,8 @@ KSQBLEController::onSetupFinished(QSharedPointer<VSQNetifBase> netif) {
     if (netif == m_netifBLE) {
         m_netifBLE->close();
     }
+
+    emit fireProvisionDone(m_currentMac);
 }
 
 //-----------------------------------------------------------------------------

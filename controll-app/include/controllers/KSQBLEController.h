@@ -44,6 +44,9 @@ signals:
     void
     fireStartConnection(const QString &mac);
 
+    void
+    fireProvisionDone(QString mac);
+
 public slots:
 
     Q_INVOKABLE bool
