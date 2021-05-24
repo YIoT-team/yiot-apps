@@ -44,6 +44,7 @@
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include <netinet/in.h>
+#include <netdb.h>
 
 #include <fstream>
 #include <streambuf>
@@ -217,8 +218,7 @@ _get_interface_bcast_addr(const char *name) {
     memset(&ifreq, 0, sizeof ifreq);
     strncpy(ifreq.ifr_name, name, IFNAMSIZ);
 
-    if(ioctl(fd, SIOCGIFBRDADDR, &ifreq) != 0)
-    {
+    if (ioctl(_udp_sock, SIOCGIFBRDADDR, &ifreq) != 0) {
         fprintf(stderr, "Could not find interface named %s", name);
         return INADDR_ANY;
     }
@@ -231,6 +231,9 @@ _get_interface_bcast_addr(const char *name) {
 static void
 _prepare_dst_addr(void) {
     in_addr_t res;
+    struct in_addr in;
+
+
     const char *_addr_str = getenv("VS_BCAST_SUBNET_ADDR");
     if (!_addr_str) {
 
@@ -251,7 +254,8 @@ _prepare_dst_addr(void) {
         _dst_addr = inet_addr(_addr_str);
     }
 
-    VS_LOG_INFO("VS_BCAST_SUBNET_ADDR = %s", inet_ntoa(_dst_addr));
+    in.s_addr = _dst_addr;
+    VS_LOG_INFO("VS_BCAST_SUBNET_ADDR = %s", inet_ntoa(in));
 }
 
 //-----------------------------------------------------------------------------
