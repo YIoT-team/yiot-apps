@@ -335,46 +335,41 @@ _netif_udp_internal(void) {
     struct ifconf ifc;
     char buf[1024];
     bool success = false;
+    bool res = false;
 
     int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
-    if (sock == -1) {
-        VS_LOG_ERROR("Cannot init UDP netif. Socket error, AF_INET::SOCK_DGRAM::IPPROTO_IP");
-        return false;
-    };
+
+    CHECK(sock >= 0, "Cannot init UDP netif. Socket error, AF_INET::SOCK_DGRAM::IPPROTO_IP");
 
     ifc.ifc_len = sizeof(buf);
     ifc.ifc_buf = buf;
-    if (ioctl(sock, SIOCGIFCONF, &ifc) == -1) {
-        VS_LOG_ERROR("Cannot init UDP netif. SIOCGIFCONF error");
-        return false;
-    }
+    CHECK(ioctl(sock, SIOCGIFCONF, &ifc) != -1, "Cannot init UDP netif. SIOCGIFCONF error");
 
     struct ifreq *it = ifc.ifc_req;
     const struct ifreq *const end = it + (ifc.ifc_len / sizeof(struct ifreq));
 
     for (; it != end; ++it) {
         strcpy(ifr.ifr_name, it->ifr_name);
-        if (ioctl(sock, SIOCGIFFLAGS, &ifr) == 0) {
-            if (!(ifr.ifr_flags & IFF_LOOPBACK)) { // don't count loopback
-                if (ioctl(sock, SIOCGIFHWADDR, &ifr) == 0) {
-                    success = true;
-                    break;
-                }
+        CHECK(ioctl(sock, SIOCGIFCONF, &ifc) == 0, "Cannot init UDP netif. SIOCGIFFLAGS error");
+
+        if (!(ifr.ifr_flags & IFF_LOOPBACK)) { // don't count loopback
+            if (ioctl(sock, SIOCGIFHWADDR, &ifr) == 0) {
+                success = true;
+                break;
             }
-        } else {
-            VS_LOG_ERROR("Cannot init UDP netif. SIOCGIFFLAGS error");
-            return false;
         }
     }
 
-    if (!success) {
-#if 0
-        VS_LOG_ERROR("Cannot init UDP netif. Cannot get MAC address.");
-#endif
-        return false;
+    if (success) {
+        res = VS_CODE_OK == _udp_connect();
     }
 
-    return VS_CODE_OK == _udp_connect();
+    terminate:
+
+    if (sock >= 0) {
+        close(sock);
+    }
+    return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -385,7 +380,7 @@ _udp_connection_processor(void *) {
     while (!_ready) {
         // Wait for a connection
         if (!_netif_udp_internal()) {
-            usleep(300 * 1000);
+            usleep(1000 * 1000);
             continue;
         } else {
             _connecting = false;
