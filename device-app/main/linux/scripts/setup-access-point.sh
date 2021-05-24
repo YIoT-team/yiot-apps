@@ -248,15 +248,15 @@ _down() {
    ERR_STR=$(configure_dhcpcd "down" 2>&1)
    print_ok
 
-   print_stage "Shudown dnsmasq"
+   print_stage "Shutdown dnsmasq"
    ERR_STR=$(configure_dnsmask "down" 2>&1)
    print_ok
 
-   print_stage "Shudown hostap"
+   print_stage "Shutdown hostap"
    ERR_STR=$(configure_hostap "down" 2>&1)
    print_ok
 
-   print_stage "Shudown Access point interface"
+   print_stage "Shutdown Access point interface"
    ERR_STR=$(interface_ctl "down" 2>&1)
    print_ok
 

@@ -90,8 +90,8 @@ iptables -t nat -A POSTROUTING -o tun+ -j MASQUERADE
 netfilter-persistent save
 
 echo "Connect to VPN"
-systemctl  enable openvpn-client@ovpn.service
-systemctl  start openvpn-client@ovpn.service
+systemctl enable openvpn-client@ovpn.service
+systemctl start openvpn-client@ovpn.service
 
 #
 #   TODO: Check VPN connection Properly !!!
