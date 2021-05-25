@@ -141,13 +141,7 @@ elseif(KS_PLATFORM STREQUAL "macos")
 #    COMMAND echo "Signing sparkle [fileop]"                  
 #    COMMAND ${MAC_CODESIGN} --display --verbose=4 --force --deep --timestamp --options runtime -s "${VS_MACOS_IDENT}" ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app/Contents/MacOS/fileop
     COMMAND echo "Signing bundle..."       
-    COMMAND ${MAC_CODESIGN} 
-      --display 
-      --verbose=4 
-      --force 
-      --deep 
-      --timestamp 
-      --options runtime -s "${VS_MACOS_IDENT}" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app"
+    COMMAND ${MAC_CODESIGN} --display --verbose=4 --force --deep --timestamp  --options runtime -s "${VS_MACOS_IDENT}" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app"
   
   COMMAND echo "Create DMG..."       	
   COMMAND ${MAC_APPDMG} 
