@@ -179,7 +179,7 @@ build_app_macos() {
     ls -lah /usr/local/bin/cmake || true
     local CMAKE_BIN=/usr/local/bin/cmake
     ${CMAKE_BIN} --version || true
-    ${CMAKE_BIN} -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="macos" ..
+    ${CMAKE_BIN} -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="macos" -DVS_MACOS_IDENT="7FD87844FA13BF5FCA51E9D32D0829BA632BF1EC" ..
     make -j10 yiot
     make dmg_release
     popd
