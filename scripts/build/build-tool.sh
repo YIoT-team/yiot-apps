@@ -1,4 +1,24 @@
 #!/bin/bash
+
+#  ────────────────────────────────────────────────────────────
+#                     ╔╗  ╔╗ ╔══╗      ╔════╗
+#                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
+#                     ╚╗╚╝╔╝  ║║  ╔══╗ ╚╝║║╚╝
+#                      ╚╗╔╝   ║║  ║╔╗║   ║║
+#                       ║║   ╔╣╠╗ ║╚╝║   ║║
+#                       ╚╝   ╚══╝ ╚══╝   ╚╝
+#    ╔╗╔═╗                    ╔╗                     ╔╗
+#    ║║║╔╝                   ╔╝╚╗                    ║║
+#    ║╚╝╝  ╔══╗ ╔══╗ ╔══╗  ╔╗╚╗╔╝  ╔══╗ ╔╗ ╔╗╔╗ ╔══╗ ║║  ╔══╗
+#    ║╔╗║  ║║═╣ ║║═╣ ║╔╗║  ╠╣ ║║   ║ ═╣ ╠╣ ║╚╝║ ║╔╗║ ║║  ║║═╣
+#    ║║║╚╗ ║║═╣ ║║═╣ ║╚╝║  ║║ ║╚╗  ╠═ ║ ║║ ║║║║ ║╚╝║ ║╚╗ ║║═╣
+#    ╚╝╚═╝ ╚══╝ ╚══╝ ║╔═╝  ╚╝ ╚═╝  ╚══╝ ╚╝ ╚╩╩╝ ║╔═╝ ╚═╝ ╚══╝
+#                    ║║                         ║║
+#                    ╚╝                         ╚╝
+#
+#    Lead Maintainer: YIoT team
+#  ────────────────────────────────────────────────────────────
+
 #
 #   Global variables
 #
@@ -40,6 +60,9 @@ print_usage() {
   echo
   echo "  -p < Package >"
   echo "  -t < Target OS  >"
+  echo "  -u < macOS user  >"
+  echo "  -w < macOS user password >"
+  echo "  -i < macOS identity >"
   echo "  -h"
   exit 0
 }
@@ -54,6 +77,10 @@ if [ "${TARGET_OS}" == "" ] || [ "${TARGET_OS}" == "help" ]; then
     exit 0
 fi
 
+MACOS_USER=""
+MACOS_PASSWORD=""
+MACOS_IDENTITY=""
+
 #
 # Parse parameters
 #
@@ -65,6 +92,15 @@ while [ -n "$1" ]
      -p) BUILD_PKG="0"
          ;;
      -t) TARGET_OS="$2"
+         shift
+         ;;
+     -u) MACOS_USER="$2"
+         shift
+         ;;
+     -w) MACOS_PASSWORD="$2"
+         shift
+         ;;
+     -i) MACOS_IDENTITY="$2"
          shift
          ;;
      *) print_usage
@@ -179,9 +215,10 @@ build_app_macos() {
     ls -lah /usr/local/bin/cmake || true
     local CMAKE_BIN=/usr/local/bin/cmake
     ${CMAKE_BIN} --version || true
-    ${CMAKE_BIN} -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="macos" ..
+    ${CMAKE_BIN} -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="macos" -DNOTARIZATION_LOGIN="${MACOS_USER}" -DNOTARIZATION_PASSWORD="${MACOS_PASSWORD}" -DVS_MACOS_IDENT="${MACOS_IDENTITY}" ..
     make -j10 yiot
     make dmg_release
+#    make dmg_notarization
     popd
 
 }
@@ -196,7 +233,7 @@ case "${TARGET_OS}" in
                 ;;
   app-windows)  build_app_windows
                 ;;
-  app-macos)  build_app_macos
+  app-macos)    build_app_macos
                 ;;
         *)      echo "Error build OS name"
                 exit 127
