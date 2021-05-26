@@ -102,7 +102,7 @@ elseif (KS_PLATFORM STREQUAL "windows")
     add_custom_target(deploy
             COMMAND ${LINUX_DEPLOY_QT}
             -bin ${PROJECT_NAME}.exe
-            -qmlDir ${PROJECT_SOURCE_DIR}/src/qml
+            -qmlDir ${PROJECT_SOURCE_DIR}/controll-app/src/qml
             -targetDir ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist
             -qmake ${QT_QMAKE_EXECUTABLE} clear
             COMMAND cp -f "${PROJECT_SOURCE_DIR}/controll-app/platforms/windows/MyIcon.ico" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist"
@@ -113,7 +113,7 @@ elseif (KS_PLATFORM STREQUAL "windows")
             COMMAND cp -f /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libssl-1_1-x64.dll "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/lib/"
             COMMAND cp -f /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libssp-0.dll "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/lib/"
             COMMAND cp -f /usr/x86_64-w64-mingw32/sys-root/mingw/bin/zlib1.dll "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/lib/"
-            COMMAND bash -c "cp -rf ${CMAKE_BINARY_DIR}/common/iotkit/modules/crypto/converters/libconverters.dll ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/"
+            COMMAND bash -c "cp -f ${CMAKE_BINARY_DIR}/common/iotkit/modules/crypto/converters/libconverters.dll ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/"
             COMMAND sed -i "s!Prefix= ./../!Prefix= ./!g" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/bin/qt.conf"
             COMMAND bash -c "cp -rf ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/bin/* ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/"
             COMMAND bash -c "cp -rf ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/lib/* ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.dist/"
