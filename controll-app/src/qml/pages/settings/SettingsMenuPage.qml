@@ -86,6 +86,22 @@ Page {
                     showThemeList()
                 }
             }
+
+            ListElement {
+                name: qsTr("Plugins")
+                image: "themes"
+                property var action: function() {
+                    showPluginsList()
+                }
+            }
+
+//            ListElement {
+//                name: qsTr("Test")
+//                image: "file:///Users/kutashenko/Downloads/docker.png"
+//                property var action: function() {
+//                    showDocker()
+//                }
+//            }
         }
 
         delegate: Rectangle {
@@ -101,7 +117,7 @@ Page {
 
                 Image {
                     id: icon
-                    source: "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(image)
+                    source: (image.indexOf("://") != -1) ? image : "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(image)
                     Layout.maximumHeight: listDelegate.height * 0.7
                     Layout.maximumWidth: Layout.maximumHeight
                     fillMode: Image.PreserveAspectFit

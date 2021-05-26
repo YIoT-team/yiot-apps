@@ -43,6 +43,8 @@ Page {
         readonly property int rotIdx: 4
         readonly property int networksIdx: 5
         readonly property int themeIdx: 6
+        readonly property int pluginsIdx: 7
+        readonly property int dockerIdx: 8
 
         property int backPageIdx: menuIdx
 
@@ -77,6 +79,16 @@ Page {
         
         ThemeListPage {
             id: themeListPage
+        }
+
+        PluginsListPage {
+            id: pluginsListPage
+        }
+
+        Loader {
+            id: dockerPage
+//            source: "settings/DockerPage.qml"
+            source: "file:///Users/kutashenko/extern.qml"
         }
     }
 
@@ -122,6 +134,14 @@ Page {
 
     function showThemeList() {
         swipeSettingsShow(settingsSwipeView.themeIdx)
+    }
+
+    function showPluginsList() {
+        swipeSettingsShow(settingsSwipeView.pluginsIdx)
+    }
+
+    function showDocker(location) {
+        swipeSettingsShow(settingsSwipeView.dockerIdx)
     }
 
     function backInSettings() {

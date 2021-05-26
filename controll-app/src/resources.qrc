@@ -126,6 +126,7 @@
         <file>qml/components/AppStatus.qml</file>
         <file>qml/components/FormPrimaryButton.qml</file>
         <file>qml/components/MainTabButton.qml</file>
+        <file>qml/components/TextTabButton.qml</file>
         <file>qml/components/SettingsStorage.qml</file>
         <file>qml/components/InfoText.qml</file>
         <file>qml/components/InputTextField.qml</file>
@@ -135,6 +136,8 @@
         <file>qml/components/RoT/RoTList.qml</file>
         <file>qml/components/RoT/RoTControls.qml</file>
         <file>qml/components/RoT/RoTInfoPopup.qml</file>
+        <file>qml/components/Plugins/PluginsAvailable.qml</file>
+        <file>qml/components/Plugins/PluginsInstalled.qml</file>
         <file>qml/components/FormThemeList.qml</file>
         <file>qml/components/SwitchableParam.qml</file>
         <file>qml/components/devices/DeviceInfoPopup.qml</file>
@@ -171,6 +174,7 @@
         <file>qml/pages/settings/RoTSettingsPage.qml</file>
         <file>qml/pages/settings/NetworksSettingsPage.qml</file>
         <file>qml/pages/settings/ThemeListPage.qml</file>
+        <file>qml/pages/settings/PluginsListPage.qml</file>
 
         <!-- QML Other pages -->
         <file>qml/pages/AboutPage.qml</file>
