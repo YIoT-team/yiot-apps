@@ -218,7 +218,7 @@ build_app_macos() {
     ${CMAKE_BIN} -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="macos" -DNOTARIZATION_LOGIN="${MACOS_USER}" -DNOTARIZATION_PASSWORD="${MACOS_PASSWORD}" -DVS_MACOS_IDENT="${MACOS_IDENTITY}" ..
     make -j10 yiot
     make dmg_release
-    make dmg_notarization
+#    make dmg_notarization
     popd
 
 }
