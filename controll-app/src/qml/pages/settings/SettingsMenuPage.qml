@@ -91,17 +91,17 @@ Page {
                 name: qsTr("Plugins")
                 image: "themes"
                 property var action: function() {
-                    showPluginsList()
+                    showPluginsList(true)
                 }
             }
 
-//            ListElement {
-//                name: qsTr("Test")
-//                image: "file:///Users/kutashenko/Downloads/docker.png"
-//                property var action: function() {
-//                    showDocker()
-//                }
-//            }
+            ListElement {
+                name: qsTr("Test")
+                image: "file:///Users/kutashenko/Downloads/docker.png"
+                property var action: function() {
+                    showDocker()
+                }
+            }
         }
 
         delegate: Rectangle {

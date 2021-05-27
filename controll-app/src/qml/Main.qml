@@ -68,13 +68,15 @@ ApplicationWindow {
         id: devicesSwipeView
     }
 
+    // Plugin page
+    PluginPage { id: pluginPage }
+
     // Main pages
     SwipeView {
         readonly property int devicePageIdx: 0
         readonly property int setupDevicePageIdx: 1
         // readonly property int sharePageIdx: 2
         readonly property int settingsPageIdx: 2
-        readonly property int rpiSettingsPageIdx: 3
 
         property int backPageIdx: devicePageIdx
 
@@ -87,7 +89,6 @@ ApplicationWindow {
         DevicesSetupPage { id: devicesSetupPage }
         // SharePage { id: sharePage }
         SettingsPage { id: settingsPage }
-        PCRPiControl { id: rpiSettingsPage }
     }
 
     // Manual switcher of main pages
@@ -152,6 +153,7 @@ ApplicationWindow {
                 PropertyChanges { target: aboutPage; visible: true }
                 PropertyChanges { target: deviceSetupProcessing; visible: false }
                 PropertyChanges { target: cmdProcessingPage; visible: false }
+                PropertyChanges { target: pluginPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: false }
                 PropertyChanges { target: tabBar; visible: false }
@@ -162,6 +164,7 @@ ApplicationWindow {
                 PropertyChanges { target: aboutPage; visible: false }
                 PropertyChanges { target: deviceSetupProcessing; visible: false }
                 PropertyChanges { target: cmdProcessingPage; visible: false }
+                PropertyChanges { target: pluginPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: true }
                 PropertyChanges { target: tabBar; visible: true }
@@ -172,6 +175,7 @@ ApplicationWindow {
                 PropertyChanges { target: aboutPage; visible: false }
                 PropertyChanges { target: deviceSetupProcessing; visible: true }
                 PropertyChanges { target: cmdProcessingPage; visible: false }
+                PropertyChanges { target: pluginPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: false }
                 PropertyChanges { target: tabBar; visible: false }
@@ -182,6 +186,7 @@ ApplicationWindow {
                 PropertyChanges { target: aboutPage; visible: false }
                 PropertyChanges { target: deviceSetupProcessing; visible: false }
                 PropertyChanges { target: cmdProcessingPage; visible: true }
+                PropertyChanges { target: pluginPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: false }
                 PropertyChanges { target: tabBar; visible: false }
@@ -192,7 +197,19 @@ ApplicationWindow {
                 PropertyChanges { target: aboutPage; visible: false }
                 PropertyChanges { target: deviceSetupProcessing; visible: false }
                 PropertyChanges { target: cmdProcessingPage; visible: false }
+                PropertyChanges { target: pluginPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: true }
+                PropertyChanges { target: swipeView; visible: false }
+                PropertyChanges { target: tabBar; visible: false }
+                PropertyChanges { target: leftSideMenu; enabled: false }
+            },
+            State {
+                name: "pluginPage"
+                PropertyChanges { target: aboutPage; visible: false }
+                PropertyChanges { target: deviceSetupProcessing; visible: false }
+                PropertyChanges { target: cmdProcessingPage; visible: false }
+                PropertyChanges { target: pluginPage; visible: true }
+                PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: false }
                 PropertyChanges { target: tabBar; visible: false }
                 PropertyChanges { target: leftSideMenu; enabled: false }
@@ -247,6 +264,12 @@ ApplicationWindow {
         w.state = "main"
     }
 
+    function showPluginPage(plugin, backAction) {
+        pluginPage.plugin = plugin
+        pluginPage.backAction = backAction
+        w.state = "pluginPage"
+    }
+
     function showDevices() {
         swipeShow(swipeView.devicePageIdx)
     }
@@ -261,11 +284,6 @@ ApplicationWindow {
 
     function showSettings() {
         swipeShow(swipeView.settingsPageIdx)
-    }
-
-    //------------------[FOR TESTING]------------------
-    function showRPiSettings(){
-        swipeShow(swipeView.rpiSettingsPageIdx)
     }
 
     // ------------------------------------------------------------------------

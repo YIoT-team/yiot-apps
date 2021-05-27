@@ -136,7 +136,12 @@ Page {
         swipeSettingsShow(settingsSwipeView.themeIdx)
     }
 
-    function showPluginsList() {
+    function showPluginsList(available) {
+        if (available) {
+            pluginsListPage.swipeShowPlugins(pluginsListPage.availableIdx)
+        } else {
+            pluginsListPage.swipeShowPlugins(pluginsListPage.installedIdx)
+        }
         swipeSettingsShow(settingsSwipeView.pluginsIdx)
     }
 
