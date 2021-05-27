@@ -41,7 +41,7 @@ Popup {
     height: 200
     modal: true
     focus: true
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    closePolicy: Popup.CloseOnEscape
 
     background: Rectangle {
         border.color: Theme.primaryTextColor

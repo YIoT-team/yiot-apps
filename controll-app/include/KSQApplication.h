@@ -62,6 +62,10 @@ public:
     Q_INVOKABLE void
     updateDevices();
 
+public slots:
+    void
+    onProvisionDone(QString mac);
+
 private:
     KSQWiFiEnumerator m_wifiEnumerator;
     QSharedPointer<KSQBLEController> m_bleController;

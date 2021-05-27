@@ -44,6 +44,7 @@
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include <netinet/in.h>
+#include <netdb.h>
 
 #include <fstream>
 #include <streambuf>
@@ -209,17 +210,52 @@ _udp_receive_processor(void *sock_desc) {
 }
 
 //-----------------------------------------------------------------------------
-static void
-_prepare_dst_addr(void) {
-    const char *_addr_str = getenv("VS_BCAST_SUBNET_ADDR");
-    if (!_addr_str) {
-        VS_LOG_INFO("VS_BCAST_SUBNET_ADDR = 255.255.255.255");
-        _dst_addr = INADDR_BROADCAST;
-        return;
+static in_addr_t
+_get_interface_bcast_addr(const char *name) {
+    int family;
+    struct ifreq ifreq;
+    char host[128];
+    memset(&ifreq, 0, sizeof ifreq);
+    strncpy(ifreq.ifr_name, name, IFNAMSIZ);
+
+    if (ioctl(_udp_sock, SIOCGIFBRDADDR, &ifreq) != 0) {
+        fprintf(stderr, "Could not find interface named %s", name);
+        return INADDR_ANY;
     }
 
-    VS_LOG_INFO("VS_BCAST_SUBNET_ADDR = %s", _addr_str);
-    _dst_addr = inet_addr(_addr_str);
+    getnameinfo(&ifreq.ifr_broadaddr, sizeof(ifreq.ifr_broadaddr), host, sizeof(host), 0, 0, NI_NUMERICHOST);
+    return inet_addr(host);
+}
+
+//-----------------------------------------------------------------------------
+static void
+_prepare_dst_addr(void) {
+    in_addr_t res;
+    struct in_addr in;
+
+
+    const char *_addr_str = getenv("VS_BCAST_SUBNET_ADDR");
+    if (!_addr_str) {
+
+        res = _get_interface_bcast_addr("eth0");
+        if (INADDR_ANY != res) {
+            _dst_addr = res;
+        } else {
+
+            res = _get_interface_bcast_addr("wlan0");
+            if (INADDR_ANY != res) {
+                _dst_addr = res;
+            } else {
+
+                _dst_addr = INADDR_BROADCAST;
+            }
+        }
+    } else {
+        _dst_addr = inet_addr(_addr_str);
+    }
+
+    in.s_addr = _dst_addr;
+    VS_LOG_INFO("VS_BCAST_SUBNET_ADDR = %s", inet_ntoa(in));
 }
 
 //-----------------------------------------------------------------------------
@@ -276,6 +312,9 @@ _udp_connect() {
 
     VS_LOG_INFO("Opened connection for UDP broadcast\n");
 
+    // Get broadcast address
+    _prepare_dst_addr();
+
     // Start receive thread
     pthread_create(&receive_thread, NULL, _udp_receive_processor, NULL);
 
@@ -296,48 +335,40 @@ _netif_udp_internal(void) {
     struct ifconf ifc;
     char buf[1024];
     bool success = false;
-
-    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
-    if (sock == -1) {
-        VS_LOG_ERROR("Cannot init UDP netif. Socket error, AF_INET::SOCK_DGRAM::IPPROTO_IP");
-        return false;
-    };
+    bool res = false;
 
     ifc.ifc_len = sizeof(buf);
     ifc.ifc_buf = buf;
-    if (ioctl(sock, SIOCGIFCONF, &ifc) == -1) {
-        VS_LOG_ERROR("Cannot init UDP netif. SIOCGIFCONF error");
-        return false;
-    }
-
     struct ifreq *it = ifc.ifc_req;
     const struct ifreq *const end = it + (ifc.ifc_len / sizeof(struct ifreq));
 
+    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
+
+    CHECK(sock >= 0, "Cannot init UDP netif. Socket error, AF_INET::SOCK_DGRAM::IPPROTO_IP");
+    CHECK(ioctl(sock, SIOCGIFCONF, &ifc) != -1, "Cannot init UDP netif. SIOCGIFCONF error");
+
     for (; it != end; ++it) {
         strcpy(ifr.ifr_name, it->ifr_name);
-        if (ioctl(sock, SIOCGIFFLAGS, &ifr) == 0) {
-            if (!(ifr.ifr_flags & IFF_LOOPBACK)) { // don't count loopback
-                if (ioctl(sock, SIOCGIFHWADDR, &ifr) == 0) {
-                    success = true;
-                    break;
-                }
+        CHECK(ioctl(sock, SIOCGIFCONF, &ifc) == 0, "Cannot init UDP netif. SIOCGIFFLAGS error");
+
+        if (!(ifr.ifr_flags & IFF_LOOPBACK)) { // don't count loopback
+            if (ioctl(sock, SIOCGIFHWADDR, &ifr) == 0) {
+                success = true;
+                break;
             }
-        } else {
-            VS_LOG_ERROR("Cannot init UDP netif. SIOCGIFFLAGS error");
-            return false;
         }
     }
 
-    if (!success) {
-#if 0
-        VS_LOG_ERROR("Cannot init UDP netif. Cannot get MAC address.");
-#endif
-        return false;
+    if (success) {
+        res = VS_CODE_OK == _udp_connect();
     }
 
-    _prepare_dst_addr();
+terminate:
 
-    return VS_CODE_OK == _udp_connect();
+    if (sock >= 0) {
+        close(sock);
+    }
+    return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -348,7 +379,7 @@ _udp_connection_processor(void *) {
     while (!_ready) {
         // Wait for a connection
         if (!_netif_udp_internal()) {
-            usleep(300 * 1000);
+            usleep(1000 * 1000);
             continue;
         } else {
             _connecting = false;

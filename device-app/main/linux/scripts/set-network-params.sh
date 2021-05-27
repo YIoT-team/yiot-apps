@@ -1,5 +1,24 @@
 #!/bin/bash
 
+#  ────────────────────────────────────────────────────────────
+#                     ╔╗  ╔╗ ╔══╗      ╔════╗
+#                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
+#                     ╚╗╚╝╔╝  ║║  ╔══╗ ╚╝║║╚╝
+#                      ╚╗╔╝   ║║  ║╔╗║   ║║
+#                       ║║   ╔╣╠╗ ║╚╝║   ║║
+#                       ╚╝   ╚══╝ ╚══╝   ╚╝
+#    ╔╗╔═╗                    ╔╗                     ╔╗
+#    ║║║╔╝                   ╔╝╚╗                    ║║
+#    ║╚╝╝  ╔══╗ ╔══╗ ╔══╗  ╔╗╚╗╔╝  ╔══╗ ╔╗ ╔╗╔╗ ╔══╗ ║║  ╔══╗
+#    ║╔╗║  ║║═╣ ║║═╣ ║╔╗║  ╠╣ ║║   ║ ═╣ ╠╣ ║╚╝║ ║╔╗║ ║║  ║║═╣
+#    ║║║╚╗ ║║═╣ ║║═╣ ║╚╝║  ║║ ║╚╗  ╠═ ║ ║║ ║║║║ ║╚╝║ ║╚╗ ║║═╣
+#    ╚╝╚═╝ ╚══╝ ╚══╝ ║╔═╝  ╚╝ ╚═╝  ╚══╝ ╚╝ ╚╩╩╝ ║╔═╝ ╚═╝ ╚══╝
+#                    ║║                         ║║
+#                    ╚╝                         ╚╝
+#
+#    Lead Maintainer:
+#  ────────────────────────────────────────────────────────────
+
 set -e
 
 echo "START: Network settings"
@@ -24,27 +43,26 @@ TIMEOUT=20
 
 restore_network_original() {
     if [ ! -f /etc/dhcpcd.conf.orig ]; then
-      echo "Backup original network settings file"
-      cp -f /etc/dhcpcd.conf /etc/dhcpcd.conf.orig
+        echo "Backup original network settings file"
+        cp -f /etc/dhcpcd.conf /etc/dhcpcd.conf.orig
     fi
     echo "Restore original network settings file"
     cp -f /etc/dhcpcd.conf.orig /etc/dhcpcd.conf
 }
 
-
 create_network_config() {
     if [ "${NET_MODE}" == "dhcp" ]; then
-	echo "Remove static IP settings file"
-	rm -f /etc/yiot/network/${NET_INTERFACE} || true
+        echo "Remove static IP settings file"
+        rm -f /etc/yiot/network/${NET_INTERFACE} || true
     else
-	echo                                          > /etc/yiot/network/${NET_INTERFACE}
-	echo "interface ${NET_INTERFACE}"            >> /etc/yiot/network/${NET_INTERFACE}
-	echo "static ip_address=${NET_IPADDR}"       >> /etc/yiot/network/${NET_INTERFACE}
-	echo "static routers=${NET_GATEWAY}"         >> /etc/yiot/network/${NET_INTERFACE}
-	echo "static domain_name_servers=${NET_DNS}" >> /etc/yiot/network/${NET_INTERFACE}
-	echo                                         >> /etc/yiot/network/${NET_INTERFACE}
+        echo >/etc/yiot/network/${NET_INTERFACE}
+        echo "interface ${NET_INTERFACE}" >>/etc/yiot/network/${NET_INTERFACE}
+        echo "static ip_address=${NET_IPADDR}" >>/etc/yiot/network/${NET_INTERFACE}
+        echo "static routers=${NET_GATEWAY}" >>/etc/yiot/network/${NET_INTERFACE}
+        echo "static domain_name_servers=${NET_DNS}" >>/etc/yiot/network/${NET_INTERFACE}
+        echo >>/etc/yiot/network/${NET_INTERFACE}
     fi
-    [ "$(ls -A /etc/yiot/network)" ] && cat /etc/yiot/network/* >> /etc/dhcpcd.conf || true
+    [ "$(ls -A /etc/yiot/network)" ] && cat /etc/yiot/network/* >>/etc/dhcpcd.conf || true
 }
 
 restart_network() {
@@ -59,9 +77,8 @@ wait_connection() {
     echo -n "Wait for ${PING_IP} ..."
     let "end_time=$(date +%s) + PING_TIMEOUT"
 
-    while :
-    do
-        if ! ping -c 1 -W 1 ${PING_IP} ; then
+    while :; do
+        if ! ping -c 1 -W 1 ${PING_IP}; then
             if [ "$(date +%s)" -gt "$end_time" ]; then
                 echo "ERROR TIMEOUT"
                 return 128
@@ -79,7 +96,7 @@ create_network_config
 restart_network
 
 # Check for connection
-if ! wait_connection ${NET_GATEWAY} ${TIMEOUT} ; then
+if ! wait_connection ${NET_GATEWAY} ${TIMEOUT}; then
     echo "ERROR: Cannot connect. Restore original settings"
     restore_network_original
     restart_network

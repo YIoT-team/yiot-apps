@@ -1,5 +1,24 @@
 #!/bin/bash
 
+#  ────────────────────────────────────────────────────────────
+#                     ╔╗  ╔╗ ╔══╗      ╔════╗
+#                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
+#                     ╚╗╚╝╔╝  ║║  ╔══╗ ╚╝║║╚╝
+#                      ╚╗╔╝   ║║  ║╔╗║   ║║
+#                       ║║   ╔╣╠╗ ║╚╝║   ║║
+#                       ╚╝   ╚══╝ ╚══╝   ╚╝
+#    ╔╗╔═╗                    ╔╗                     ╔╗
+#    ║║║╔╝                   ╔╝╚╗                    ║║
+#    ║╚╝╝  ╔══╗ ╔══╗ ╔══╗  ╔╗╚╗╔╝  ╔══╗ ╔╗ ╔╗╔╗ ╔══╗ ║║  ╔══╗
+#    ║╔╗║  ║║═╣ ║║═╣ ║╔╗║  ╠╣ ║║   ║ ═╣ ╠╣ ║╚╝║ ║╔╗║ ║║  ║║═╣
+#    ║║║╚╗ ║║═╣ ║║═╣ ║╚╝║  ║║ ║╚╗  ╠═ ║ ║║ ║║║║ ║╚╝║ ║╚╗ ║║═╣
+#    ╚╝╚═╝ ╚══╝ ╚══╝ ║╔═╝  ╚╝ ╚═╝  ╚══╝ ╚╝ ╚╩╩╝ ║╔═╝ ╚═╝ ╚══╝
+#                    ║║                         ║║
+#                    ╚╝                         ╚╝
+#
+#    Lead Maintainer:
+#  ────────────────────────────────────────────────────────────
+
 echo "Configuring wpa_suplicant"
 
 echo "SCRIPT: ${0}"
@@ -22,7 +41,7 @@ update_config=1
 country=GB
 
 EOF
-wpa_passphrase "${WIFI_ESSID}" "${WIFI_KEY}" >> /etc/wpa_supplicant/wpa_supplicant.conf
+wpa_passphrase "${WIFI_ESSID}" "${WIFI_KEY}" >>/etc/wpa_supplicant/wpa_supplicant.conf
 sed -i '/#psk=/d' /etc/wpa_supplicant/wpa_supplicant.conf
 
 echo "Unblock WiFi"
@@ -33,7 +52,7 @@ ifconfig wlan0 up
 
 echo "Restore network settings"
 if [ -f /etc/dhcpcd.conf.orig ]; then
-    cp -f /etc/dhcpcd.conf.orig /etc/dhcpcd.conf
+  cp -f /etc/dhcpcd.conf.orig /etc/dhcpcd.conf
 fi
 
 echo "Reconfiguring wpa_supplicant"
@@ -42,20 +61,19 @@ wpa_cli -i wlan0 reconfigure
 
 echo -n "Wait Wifi connection..."
 let "end_time=$(date +%s) + TIMEOUT"
-while :
- do
-   sleep 1
-   echo -n "."
-   WIFI_RES=$(iwgetid |cut -d':' -f2| sed 's/"//g')
-   if [ "${WIFI_RES}" == "${WIFI_ESSID}" ]; then
-      echo -e "\nWiFi configured done"
-      echo "Current ESSID: ${WIFI_RES}"
-      break
-   fi
-   if [ "$(date +%s)" -gt "$end_time" ]; then
+while :; do
+  sleep 1
+  echo -n "."
+  WIFI_RES=$(iwgetid | cut -d':' -f2 | sed 's/"//g')
+  if [ "${WIFI_RES}" == "${WIFI_ESSID}" ]; then
+    echo -e "\nWiFi configured done"
+    echo "Current ESSID: ${WIFI_RES}"
+    break
+  fi
+  if [ "$(date +%s)" -gt "$end_time" ]; then
     echo "ERROR TIMEOUT"
     exit 128
-   fi
+  fi
 done
 
 exit 0
