@@ -89,7 +89,7 @@ Page {
 
             ListElement {
                 name: qsTr("Plugins")
-                image: "themes"
+                image: "plugins"
                 property var action: function() {
                     showPluginsList(true)
                 }
