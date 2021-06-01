@@ -1,18 +1,32 @@
-**UNDER CONSTRUCTION**
-
-Contact me: kutashenko@gmail.com
-
+# YIoT - Your IoT platform
+[![GitHub license](https://img.shields.io/badge/license-BSD%202--Clause-blue.svg)](https://raw.githubusercontent.com/YIoT-team/yiot-apps/develop/LICENSE)
 
 
-# Table of Contents
+
+<a href="https://www.yiot-dev.io"><img width="230px" src="https://github.com/YIoT-team/yiot-apps/raw/develop/controll-app/platforms/macos/pkg_resources/MyIcon.png" align="left" hspace="1" vspace="3"></a>
+
+## Introduction
+[YIoT](https://www.yiot-dev.io) helps to create a complete solution that contains control application, embedded application, device schematics, and even device cases.
+As result, you can create, share, get, sell and buy complete solutions.
+
+Just imagine that you can download the control app, get Raspberry Pi with the required components, upload images, print device cases, and you'll get a finished device.
+
+And this all WITHOUT things like: "Now you have to insert your credentials and recompile firmware". Because you'll have everything required for convenient usage. 
+
+
+YIoT contains control application for the most used desktop and mobile platforms, applications for different embedded platforms, a set of libraries to create custom applications.
+
+You can use current implementations or you could create plugins for the existent control and embedded applications, or even you could create your own apps using libraries.
+
+And everything is under BSD-2.
+
+## Content
 1. [YIoT ideology](#ideology)
 1. [YIoT contains](#content)
 1. [Use-cases](#usecases)
     1. [Simple and safe usage of RPi](#rpi)
     1. [Share access to your IoT devices](#share)
     1. [Safe remote access to a door-lock, but with online statistics](#openandsafe)
-1. [Video](#video)
-1. [Images](#images)
 
 ## YIoT ideology <a name="ideology"></a>
 
@@ -97,15 +111,3 @@ After acceptation of entered data, you RPi will get:
 #### Benefits
 - safe access to sensitive devices
 - usage of power of IoT Cloud services
-
-## Video <a name="video"></a>
-
-[![IMAGE ALT TEXT HERE](https://i9.ytimg.com/vi/y1PAaAyR59Q/mq1.jpg?sqp=CPykzP8F&rs=AOn4CLCHxGCSaTHVMPwTn8F1udkaqQ_BjQ)](https://www.youtube.com/watch?v=y1PAaAyR59Q&feature=youtu.be)
-
-## Images <a name="images"></a>
-
-<img src="/doc/images/1.png" alt="drawing" width="200"/>
-<img src="/doc/images/2.png" alt="drawing" width="200"/>
-<img src="/doc/images/3.png" alt="drawing" width="200"/>
-<img src="/doc/images/4.png" alt="drawing" width="200"/>
-<img src="/doc/images/5.png" alt="drawing" width="200"/>
