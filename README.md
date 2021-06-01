@@ -21,14 +21,14 @@ You can use current implementations or you could create plugins for the existent
 And everything is under BSD-2.
 
 ## Content
-1. [YIoT ideology](#ideology)
-1. [YIoT contains](#content)
+1. [Ideology](#ideology)
+1. [Content](#content)
 1. [Use-cases](#usecases)
     1. [Simple and safe usage of RPi](#rpi)
     1. [Share access to your IoT devices](#share)
     1. [Safe remote access to a door-lock, but with online statistics](#openandsafe)
 
-## YIoT ideology <a name="ideology"></a>
+## Ideology <a name="ideology"></a>
 
 - Everyone can use it everywhere. BSD-2 licence. All source codes and schematics are open source.
 - Simplicity for end users. (Treat your control devices as a magic stick.)
@@ -36,7 +36,7 @@ And everything is under BSD-2.
 - Enable proprietary services only if you need it.
 
 
-## YIoT contains <a name="content"></a>
+## Content <a name="content"></a>
 
 - Control application for multiple OSes: Windows, macOS, Linux, Android, iOS (could be extended).
 - Library for devices, so you have only to create application-level data structures and commands. No need to worry  about  security, communication, logging etc, everything is inside already.
