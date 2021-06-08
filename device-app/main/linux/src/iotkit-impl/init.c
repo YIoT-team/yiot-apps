@@ -31,6 +31,7 @@
 #include "iotkit-impl/init.h"
 
 #include "iotkit-impl/netif/netif-ble-linux.h"
+#include "iotkit-impl/netif/netif-websock.h"
 
 static void
 _file_ver_info_cb(vs_file_version_t ver);
@@ -157,9 +158,12 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     vs_mac_addr_t default_mac;
     vs_snap_mac_addr(netif_impl[0], &default_mac);
 
-    // Start BLE advertising
+    // Set common MAC
     ks_netif_ble_update_mac(default_mac);
-    ks_netif_ble_advertise(vs_provision_is_ready(), vs_snap_device_name());
+    vs_netif_websock_update_mac(default_mac);
+
+    // Start BLE advertising
+//    ks_netif_ble_advertise(vs_provision_is_ready(), vs_snap_device_name());
 
     // Security Session module
     vs_session_init(secmodule_impl, default_mac.bytes);

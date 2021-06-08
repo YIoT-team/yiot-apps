@@ -62,6 +62,9 @@ signals:
     void
     fireDeviceReady();
 
+    void
+    fireSend(QByteArray data);
+
 protected:
     bool
     init() override;
@@ -87,6 +90,8 @@ private slots:
     onError(QAbstractSocket::SocketError error);
     void
     onMessageReceived(QString message);
+    void
+    onSend(QByteArray data);
 
 private:
     VSQMac m_mac;

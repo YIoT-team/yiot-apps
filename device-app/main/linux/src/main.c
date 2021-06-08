@@ -36,8 +36,9 @@
 #include <update-config.h>
 
 // Implementation Network interfaces
-#include "iotkit-impl/netif/netif-ble-linux.h" // Bluetooth Low Energy
-#include "iotkit-impl/netif/netif-udp.h"       // UDP networking
+#include "iotkit-impl/netif/netif-ble-linux.h"   // Bluetooth Low Energy
+#include "iotkit-impl/netif/netif-udp.h"         // UDP networking
+#include "iotkit-impl/netif/netif-websock.h"     // WebSocket networking
 
 // Software implementation of Security API
 #include <virgil/iot/vs-soft-secmodule/vs-soft-secmodule.h>
@@ -65,7 +66,7 @@ main(int argc, char *argv[]) {
     int res = -1;
 
     // Holder of Network interfaces list
-    vs_netif_t *netifs_impl[3] = {0};
+    vs_netif_t *netifs_impl[4] = {0};
 
     // Configuration server callbacks
     vs_snap_cfg_server_service_t cfg_server_cb = {ks_snap_cfg_wifi_cb, // Processing of received WiFi credentials
@@ -115,7 +116,8 @@ main(int argc, char *argv[]) {
     bool wifi_ready = is_wifi_connected();
     vs_packets_queue_init(vs_snap_default_processor);  // Initialize Queue for incoming packets
     netifs_impl[0] = vs_hal_netif_udp();               // Initialize UDP-based transport
-    netifs_impl[1] = ks_netif_ble();                   // Initialize BLE-based transport
+    netifs_impl[2] = ks_netif_ble();                   // Initialize BLE-based transport
+
 
     // TrustList storage
     STATUS_CHECK(vs_app_storage_init_impl(&tl_storage_impl, vs_app_trustlist_dir(), VS_TL_STORAGE_MAX_PART_SIZE),
@@ -134,6 +136,12 @@ main(int argc, char *argv[]) {
 
     // Secbox module
     STATUS_CHECK(vs_secbox_init(&secbox_storage_impl, secmodule_impl), "Unable to initialize Secbox module");
+
+    // Network interface
+    netifs_impl[1] = vs_hal_netif_websock("ws://192.168.0.175:8080/ws",
+                                          "test_account",
+                                          secmodule_impl,
+                                          tmp);        // Initialize WebSocket-based transport
 
     //
     // ---------- Initialize IoTKit internals ----------

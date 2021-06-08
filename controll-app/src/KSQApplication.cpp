@@ -53,7 +53,8 @@ KSQApplication::run() {
 
     m_bleController = QSharedPointer<KSQBLEController>::create();
     m_netifUdp = QSharedPointer<KSQUdp>::create();
-    m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create(m_netifUdp);
+    m_netifWebsock = QSharedPointer<KSQNetifWebsocket>::create(QUrl("ws://localhost:8080/ws"), "test_account");
+    m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create(/*m_netifUdp*/ m_netifWebsock);
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
 
     // Prepare IoTKit data
@@ -67,6 +68,7 @@ KSQApplication::run() {
 
     // TODO: Dynamic adding of supported network interfaces
     auto impl = VSQImplementations() << m_netifUdp                // Enables UDP communication
+                                     << m_netifWebsock            // Enable WebSocket communication
                                      << m_bleController->netif(); // Enables Bluetooth Low Energy communication
 
     // This is a control device

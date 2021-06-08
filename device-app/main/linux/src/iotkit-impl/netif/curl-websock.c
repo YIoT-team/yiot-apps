@@ -33,7 +33,7 @@
 #include <inttypes.h>
 #include <errno.h>
 
-#include "iotkit-impl/netif/curl-websocket.h"
+#include "iotkit-impl/netif/curl-websock.h"
 #include <virgil/iot/macros/macros.h>
 
 #define ERR(fmt, ...) fprintf(stderr, "ERROR: " fmt "\n", ##__VA_ARGS__)
@@ -1007,7 +1007,7 @@ cws_new(const char *url, const char *websocket_protocols, const struct cws_callb
      *     Expect: 100-continue
      * but we don't want that, rather 101. Then force: 101.
      */
-    priv->headers = curl_slist_append(priv->headers, "Expect: 101");
+//    priv->headers = curl_slist_append(priv->headers, "Expect: 101");
     /*
      * CURLOPT_UPLOAD=1 without a size implies in:
      *     Transfer-Encoding: chunked

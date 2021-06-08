@@ -51,6 +51,8 @@ KSQNetifWebsocket::KSQNetifWebsocket(const QUrl &url, const QString &account)
             SIGNAL(error(QAbstractSocket::SocketError)),
             this,
             SLOT(onError(QAbstractSocket::SocketError)));
+
+    connect(this, SIGNAL(fireSend(QByteArray)), this, SLOT(onSend(QByteArray)), Qt::QueuedConnection);
 }
 
 //******************************************************************************
@@ -77,12 +79,13 @@ KSQNetifWebsocket::deinit() {
 }
 
 //******************************************************************************
-bool
-KSQNetifWebsocket::tx(const QByteArray &data) {
-    if (!isActive())
-        return false;
+void
+KSQNetifWebsocket::onSend(QByteArray data) {
+    if (!isActive()) {
+        return;
+    }
 
-    qDebug() << "Send data lenght : " << data.size();
+    qDebug() << "Send data length : " << data.size();
 
     QJsonObject json;
     json[_accountIdTag] = m_account;
@@ -90,7 +93,12 @@ KSQNetifWebsocket::tx(const QByteArray &data) {
 
 
     m_webSocket.sendBinaryMessage(QJsonDocument(json).toJson());
+}
 
+//******************************************************************************
+bool
+KSQNetifWebsocket::tx(const QByteArray &data) {
+    emit fireSend(data);
     return true;
 }
 

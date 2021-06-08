@@ -69,8 +69,8 @@ target_sources(yiot-device-app-linux
         ${CMAKE_CURRENT_LIST_DIR}/include/iotkit-impl/init.h
         ${CMAKE_CURRENT_LIST_DIR}/include/iotkit-impl/netif/netif-ble-linux.h
         ${CMAKE_CURRENT_LIST_DIR}/include/iotkit-impl/netif/netif-udp.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/iotkit-impl/netif/curl-websocket.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/iotkit-impl/netif/netif-websocket.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/iotkit-impl/netif/curl-websock.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/iotkit-impl/netif/netif-websock.h
         ${CMAKE_CURRENT_LIST_DIR}/include/commands/device-info.h
         ${CMAKE_CURRENT_LIST_DIR}/include/commands/wifi-cred.h
         ${CMAKE_CURRENT_LIST_DIR}/include/commands/pc.h
@@ -93,8 +93,8 @@ target_sources(yiot-device-app-linux
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/init.c
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/netif/netif-ble-linux.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/netif/netif-udp.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/netif/curl-websocket.c
-        ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/netif/netif-websocket.c
+        ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/netif/curl-websock.c
+        ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-impl/netif/netif-websock.c
         )
 
 

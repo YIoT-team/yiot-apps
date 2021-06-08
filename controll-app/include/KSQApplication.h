@@ -34,6 +34,7 @@
 #include <virgil/iot/qt/VSQIoTKit.h>
 
 #include <yiot-iotkit/netif/KSQUdp.h>
+#include <yiot-iotkit/netif/KSQNetifWebsocket.h>
 #include <yiot-iotkit/root-of-trust/KSQRoTController.h>
 
 #include <yiot-iotkit/root-of-trust/KSQRoTController.h>
@@ -72,6 +73,7 @@ private:
     QSharedPointer<KSQBlankDevicesController> m_localBlankDevicesController;
     QSharedPointer<KSQUXSimplifyController> m_uxController;
     QSharedPointer<KSQUdp> m_netifUdp;
+    QSharedPointer<KSQNetifWebsocket> m_netifWebsock;
 
     KSQDevices m_deviceControllers;
 };

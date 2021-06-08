@@ -46,17 +46,14 @@
 
 #include <virgil/iot/protocols/snap/snap-structs.h>
 #include <virgil/iot/logger/logger.h>
-#include <virgil/iot/cloud/base64.h>
+#include <virgil/iot/base64/base64.h>
 #include <virgil/iot/json/json_parser.h>
 #include <virgil/iot/json/json_generator.h>
-#include "iotkit-impl/netif/curl-websocket.h"
+#include "iotkit-impl/netif/curl-websock.h"
 #include <mbedtls/sha1.h>
 
 #include <helpers/event-group-bits.h>
 #include <helpers/msg-queue.h>
-
-#define WS_QUEUE_SZ (100)
-static vs_msg_queue_ctx_t *_queue_ctx = 0;
 
 static vs_status_e
 _websock_init(struct vs_netif_t *netif, const vs_netif_rx_cb_t rx_cb, const vs_netif_process_cb_t process_cb);
@@ -162,7 +159,7 @@ struct cws_callbacks cbs = {
 #define VS_WB_PAYLOAD_FIELD "payload"
 #define VS_WB_ACCOUNT_ID_FIELD "account_id"
 #define VS_WB_SUBSCR_MESSAGE "\x30\x81\xA1"
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static void
 _cws_calc_sha1(const void *input, size_t input_len, void *output) {
     VS_IOT_ASSERT(input);
@@ -176,7 +173,7 @@ _cws_calc_sha1(const void *input, size_t input_len, void *output) {
     mbedtls_sha1_free(&ctx);
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static void
 _cws_encode_base64(const uint8_t *input, size_t input_len, char *output, size_t buf_sz) {
     int out_len = base64encode_len(input_len);
@@ -195,7 +192,7 @@ _cws_encode_base64(const uint8_t *input, size_t input_len, char *output, size_t 
     memcpy(output, enc, out_len - 1);
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static int
 _cws_get_random(void *buffer, size_t len) {
     vs_status_e ret;
@@ -207,7 +204,7 @@ _cws_get_random(void *buffer, size_t len) {
     return (VS_CODE_OK == ret) ? 0 : -1;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static void
 _process_recv_data(const uint8_t *received_data, size_t recv_sz) {
     const uint8_t *packet_data = NULL;
@@ -257,7 +254,7 @@ terminate:
     free(message);
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static void
 _cws_on_connect_cb(void *data, CURL *easy, const char *websocket_protocols) {
     (void)data;
@@ -266,7 +263,7 @@ _cws_on_connect_cb(void *data, CURL *easy, const char *websocket_protocols) {
     vs_event_group_set_bits(&_websocket_ctx.ws_events, WS_EVF_WS_CONNECTED);
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static void
 _cws_on_text_rcv_cb(void *data, CURL *easy, const char *text, size_t len) {
     (void)data;
@@ -276,7 +273,7 @@ _cws_on_text_rcv_cb(void *data, CURL *easy, const char *text, size_t len) {
     _process_recv_data((uint8_t *)text, len);
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static void
 _cws_on_binary_rcv_cb(void *data, CURL *easy, const void *mem, size_t len) {
     (void)data;
@@ -288,7 +285,7 @@ _cws_on_binary_rcv_cb(void *data, CURL *easy, const void *mem, size_t len) {
     _process_recv_data(mem, len);
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static void
 _cws_on_ping_rcv_cb(void *data, CURL *easy, const char *reason, size_t len) {
     (void)data;
@@ -297,17 +294,17 @@ _cws_on_ping_rcv_cb(void *data, CURL *easy, const char *reason, size_t len) {
     cws_pong(easy, reason, len);
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static void
 _cws_on_pong_rcv_cb(void *data, CURL *easy, const char *reason, size_t len) {
     (void)data;
     (void)easy;
     (void)reason;
     (void)len;
-    //    VS_LOG_DEBUG("INFO: PONG %zd bytes='%s'", len, reason);
+    VS_LOG_DEBUG("INFO: PONG %zd bytes='%s'", len, reason);
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static void
 _cws_on_close_cb(void *data,
                  CURL *easy,
@@ -324,7 +321,7 @@ _cws_on_close_cb(void *data,
     (void)easy;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static curl_socket_t
 _curl_opensocket_cb(void *clientp, curlsocktype purpose, struct curl_sockaddr *address) {
     (void)purpose;
@@ -353,7 +350,7 @@ _curl_opensocket_cb(void *clientp, curlsocktype purpose, struct curl_sockaddr *a
     return _websocket_ctx.sockfd;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static int
 _curl_socketopt_cb(void *clientp, curl_socket_t curlfd, curlsocktype purpose) {
     (void)clientp;
@@ -363,7 +360,7 @@ _curl_socketopt_cb(void *clientp, curl_socket_t curlfd, curlsocktype purpose) {
     return CURL_SOCKOPT_ALREADY_CONNECTED;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static CURL *
 _cws_config(void) {
     CURL *easy = cws_new(_url, NULL, &cbs);
@@ -373,7 +370,9 @@ _cws_config(void) {
 
     /* here you should do any extra sets, like cookies, auth... */
     curl_easy_setopt(easy, CURLOPT_FOLLOWLOCATION, 1L);
-    //    curl_easy_setopt(easy, CURLOPT_VERBOSE, 1L);
+#if 0
+    curl_easy_setopt(easy, CURLOPT_VERBOSE, 1L);
+#endif
     curl_easy_setopt(easy, CURLOPT_OPENSOCKETFUNCTION, _curl_opensocket_cb);
     curl_easy_setopt(easy, CURLOPT_OPENSOCKETDATA, &_websocket_ctx.sockfd);
     curl_easy_setopt(easy, CURLOPT_SOCKOPTFUNCTION, _curl_socketopt_cb);
@@ -382,7 +381,7 @@ _cws_config(void) {
     return easy;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static void
 _cws_cleanup_resources(void) {
     curl_multi_remove_handle(_websocket_ctx.multi, _websocket_ctx.easy);
@@ -393,7 +392,7 @@ _cws_cleanup_resources(void) {
     }
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static vs_status_e
 _websocket_connect(void) {
     vs_event_bits_t stat;
@@ -451,7 +450,7 @@ terminate:
     return VS_CODE_ERR_INIT_SNAP;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static vs_status_e
 _websocket_reconnect(vs_event_bits_t stat) {
     if (!(stat & WS_EVF_PERFORM_THREAD_EXIT)) {
@@ -465,7 +464,7 @@ _websocket_reconnect(vs_event_bits_t stat) {
     return _websocket_connect();
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static void *
 _websocket_curl_perform_loop_processor(void *param) {
     (void)param;
@@ -507,19 +506,14 @@ _websocket_curl_perform_loop_processor(void *param) {
     return NULL;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static vs_status_e
-_message_queue_processing(bool *is_subscr_msg_sent) {
+_start_processing(bool *is_subscr_msg_sent) {
     vs_event_bits_t stat;
     vs_netif_t *netif = 0;
     const uint8_t *data = 0;
     size_t data_sz = 0;
     vs_status_e ret;
-
-    VS_IOT_ASSERT(_queue_ctx);
-    if (!_queue_ctx) {
-        return VS_CODE_ERR_QUEUE;
-    }
 
     stat = vs_event_group_wait_bits(&_websocket_ctx.ws_events, WS_EVF_WS_CONNECTED, false, false, 0);
     if (!stat) {
@@ -541,26 +535,10 @@ _message_queue_processing(bool *is_subscr_msg_sent) {
         *is_subscr_msg_sent = true;
     }
 
-    while (vs_msg_queue_data_present(_queue_ctx)) {
-        bool result;
-        CHECK_RET(VS_CODE_OK == vs_msg_queue_pop(_queue_ctx, (const void **)&netif, &data, &data_sz),
-                  VS_CODE_ERR_QUEUE,
-                  "Error while reading message from queue");
-
-        //        VS_LOG_DEBUG("Send message = %s", (char *)data);
-        result = cws_send_text(_websocket_ctx.easy, (char *)data);
-        free((void *)data);
-
-        if (!result) {
-            vs_msg_queue_reset(_queue_ctx);
-            return VS_CODE_ERR_SOCKET;
-        }
-    }
-
     return VS_CODE_OK;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static void *
 _websocket_pool_socket_processor(void *param) {
     (void)param;
@@ -592,7 +570,7 @@ _websocket_pool_socket_processor(void *param) {
 
         while (is_poll && 0 == stat) {
             int poll_stat;
-            res = _message_queue_processing(&is_subscr_msg_sent);
+            res = _start_processing(&is_subscr_msg_sent);
             VS_IOT_ASSERT(VS_CODE_OK == res);
             // call poll with a timeout of 10 ms
             poll_stat = poll(&pfd, 1, 100);
@@ -640,7 +618,7 @@ terminate:
     return NULL;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static bool
 _make_message(char **message, const uint8_t *data, size_t data_sz, bool is_stat) {
 
@@ -674,7 +652,7 @@ _make_message(char **message, const uint8_t *data, size_t data_sz, bool is_stat)
     return true;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static vs_status_e
 _websock_tx(struct vs_netif_t *netif, const uint8_t *data, const uint16_t data_sz) {
     vs_status_e ret;
@@ -682,18 +660,16 @@ _websock_tx(struct vs_netif_t *netif, const uint8_t *data, const uint16_t data_s
 
     CHECK_RET(_websocket_ctx.is_initialized, VS_CODE_ERR_TX_SNAP, "Websocket iface is not initialized");
     CHECK_NOT_ZERO_RET(data, VS_CODE_ERR_NULLPTR_ARGUMENT);
-    // We will have to drop the message if a connection isn't established for a long time, so as not to block the thread
-    CHECK_RET(!vs_msg_queue_is_full(_queue_ctx), VS_CODE_ERR_TX_SNAP, "Can't send message because of a queue is full");
 
     CHECK_RET(_make_message(&msg, data, data_sz, false), VS_CODE_ERR_TX_SNAP, "[WS] Unable to create websocket frame");
     CHECK_NOT_ZERO_RET(msg, VS_CODE_ERR_TX_SNAP);
 
-    ret = vs_msg_queue_push(_queue_ctx, netif, (uint8_t *)msg, strlen(msg) + 1);
+    ret = cws_send_text(_websocket_ctx.easy, msg) ? VS_CODE_OK : VS_CODE_ERR_TX_SNAP;
     free(msg);
     return ret;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static vs_status_e
 _websock_init(struct vs_netif_t *netif, const vs_netif_rx_cb_t rx_cb, const vs_netif_process_cb_t process_cb) {
     (void)netif;
@@ -708,26 +684,18 @@ _websock_init(struct vs_netif_t *netif, const vs_netif_rx_cb_t rx_cb, const vs_n
     CHECK_RET(
             0 == vs_event_group_init(&_websocket_ctx.ws_events), VS_CODE_ERR_INIT_SNAP, "Can't initialize event group");
 
-    _queue_ctx = vs_msg_queue_init(WS_QUEUE_SZ, 1, 1);
-    if (!_queue_ctx) {
-        VS_LOG_ERROR("Cannot create message queue.");
-        vs_event_group_destroy(&_websocket_ctx.ws_events);
-        return VS_CODE_ERR_THREAD;
-    }
-
     // Start receive thread
     if (0 == pthread_create(&socket_pool_thread, NULL, _websocket_pool_socket_processor, NULL)) {
         _websocket_ctx.is_initialized = true;
         return VS_CODE_OK;
     }
 
-    vs_msg_queue_free(_queue_ctx);
     vs_event_group_destroy(&_websocket_ctx.ws_events);
 
     return VS_CODE_ERR_SOCKET;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static vs_status_e
 _websock_deinit(struct vs_netif_t *netif) {
     (void)netif;
@@ -744,8 +712,6 @@ _websock_deinit(struct vs_netif_t *netif) {
         pthread_join(socket_pool_thread, NULL);
         vs_event_group_destroy(&_websocket_ctx.ws_events);
 
-        vs_msg_queue_free(_queue_ctx);
-
         free(_url);
         _url = NULL;
         free(_account);
@@ -755,7 +721,7 @@ _websock_deinit(struct vs_netif_t *netif) {
     return VS_CODE_OK;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 static vs_status_e
 _websock_mac(const struct vs_netif_t *netif, struct vs_mac_addr_t *mac_addr) {
     (void)netif;
@@ -768,7 +734,7 @@ _websock_mac(const struct vs_netif_t *netif, struct vs_mac_addr_t *mac_addr) {
     return VS_CODE_ERR_NULLPTR_ARGUMENT;
 }
 
-/******************************************************************************/
+//-----------------------------------------------------------------------------
 vs_netif_t *
 vs_hal_netif_websock(const char *url,
                      const char *account,
@@ -798,4 +764,11 @@ vs_hal_netif_websock(const char *url,
 
     return &_netif_websock;
 }
-/******************************************************************************/
+
+//-----------------------------------------------------------------------------
+void
+vs_netif_websock_update_mac(vs_mac_addr_t mac_addr) {
+    VS_IOT_MEMCPY(_sim_mac_addr, mac_addr.bytes, ETH_ADDR_LEN);
+}
+
+//-----------------------------------------------------------------------------
