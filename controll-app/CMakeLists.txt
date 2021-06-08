@@ -122,7 +122,7 @@ endif()
 # ---------------------------------------------------------------------------
 #   Qt
 # ---------------------------------------------------------------------------
-find_package(Qt5 COMPONENTS Core Widgets Test Network Concurrent Qml ${KS_QT_EXTRA} REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets Test Network Concurrent WebSockets Qml ${KS_QT_EXTRA} REQUIRED)
 
 # ---------------------------------------------------------------------------
 #   Prepare for build target
@@ -248,6 +248,7 @@ target_sources(${KS_TARGET_NAME}
 
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/KSQIoTKitFacade.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQUdp.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQNetifWebsocket.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapLampClient.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapPCClient.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapPRVSClient.h
@@ -301,6 +302,7 @@ target_sources(${KS_TARGET_NAME}
 
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/KSQIoTKitFacade.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQUdp.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQNetifWebsocket.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapLampClient.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapPCClient.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapPRVSClient.cpp
@@ -378,6 +380,7 @@ target_link_libraries(${KS_TARGET_NAME}
         Qt5::Widgets
         Qt5::Test
         Qt5::Network
+        Qt5::WebSockets
         Qt5::Concurrent
         Qt5::Qml
 
