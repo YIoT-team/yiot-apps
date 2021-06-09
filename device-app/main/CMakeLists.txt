@@ -24,4 +24,13 @@ project(yiot-device-app VERSION 0.1.0 LANGUAGES C)
 #
 #	Linux app
 #
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/linux)
+if (BUILD_DEVICE_ENABLE)
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/linux)
+endif()
+
+#
+#	Device emulators
+#
+if (BUILD_EMULATORS_ENABLE)
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/emulator)
+endif()

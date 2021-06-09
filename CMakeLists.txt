@@ -28,6 +28,7 @@ set(KS_TARGET_VERSION "0.1.0")
 #   Options
 # ---------------------------------------------------------------------------
 option(BUILD_DEVICE_ENABLE "Enable building of Device app" ON)
+option(BUILD_EMULATORS_ENABLE "Enable building of Device emulators" ON)
 option(BUILD_APP_ENABLE "Enable building of Application" ON)
 
 # ---------------------------------------------------------------------------
@@ -96,9 +97,7 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/common)
 # ---------------------------------------------------------------------------
 #	Device Applications
 # ---------------------------------------------------------------------------
-if (BUILD_DEVICE_ENABLE)
-    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/device-app)
-endif()
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/device-app)
 
 # ---------------------------------------------------------------------------
 #	Cross-platform control applications

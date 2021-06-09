@@ -17,61 +17,53 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include "helpers/utils.h"
+#include <iostream>
+
+#include "common/helpers/timer.h"
+#include "common/helpers/command.h"
+#include "settings.h"
+
+#include "commands/reset.h"
+
+#include <virgil/iot/protocols/snap/cfg/cfg-private.h>
+
+static KSTimer _processingDelayer;
+static const auto kDelayMs = std::chrono::milliseconds(200);
 
 //-----------------------------------------------------------------------------
-static int
-_check_wireless(const char *ifname, char *protocol) {
-    int sock = -1;
-    struct iwreq pwrq;
-    memset(&pwrq, 0, sizeof(pwrq));
-    strncpy(pwrq.ifr_name, ifname, IFNAMSIZ);
+vs_status_e
+ks_snap_cfg_reset_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac) {
+    auto command = std::string(ks_settings_scripts_dir()) + "/yiot-reset-rpi.sh";
 
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-        perror("socket");
-        return 0;
-    }
+    bool res = _processingDelayer.add(kDelayMs, [netif, sender_mac, command]() -> void {
+        Command cmd;
+        cmd.Command = "bash -c \"" + command + "\"";
+        cmd.execute();
 
-    if (ioctl(sock, SIOCGIWNAME, &pwrq) != -1) {
-        if (protocol)
-            strncpy(protocol, pwrq.u.name, IFNAMSIZ);
-        close(sock);
-        return 1;
-    }
+        // TODO: Remove it
+        std::cout << cmd.StdOut;
+        std::cerr << cmd.StdErr;
+        std::cout << "Exit Status: " << cmd.ExitStatus << "\n";
+        // ~TODO: Remove it
 
-    close(sock);
-    return 0;
-}
-
-//-----------------------------------------------------------------------------
-bool
-is_wifi_connected(void) {
-    bool res = false;
-    struct ifaddrs *ifaddr, *ifa;
-
-    if (getifaddrs(&ifaddr) == -1) {
-        perror("getifaddrs");
-        return false;
-    }
-
-    /* Walk through linked list, maintaining head pointer so we
-       can free list later */
-    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-        char protocol[IFNAMSIZ] = {0};
-
-        if (ifa->ifa_addr == NULL || ifa->ifa_addr->sa_family != AF_PACKET) {
-            continue;
+        // Send response after complete processing
+        if (VS_CODE_OK != vs_snap_send_response(netif,
+                                                &sender_mac,
+                                                0, // TODO: Fill transaction ID
+                                                VS_CFG_SERVICE_ID,
+                                                VS_CFG_WIFI,
+                                                0 == cmd.ExitStatus,
+                                                NULL,
+                                                0)) {
+            VS_LOG_WARNING("Cannot set WiFi credentials.");
         }
+    });
 
-        if (_check_wireless(ifa->ifa_name, protocol)) {
-            res = true;
-            break;
-        }
+    if (!res) {
+        VS_LOG_WARNING("reset processor is busy");
     }
 
-    freeifaddrs(ifaddr);
-
-    return res;
+    return VS_CODE_COMMAND_NO_RESPONSE;
 }
 
 //-----------------------------------------------------------------------------

@@ -17,29 +17,21 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_UTILS_H
-#define YIOT_UTILS_H
-
-#include <stdbool.h>
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <ifaddrs.h>
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <linux/wireless.h>
+#ifndef YIOT_SETTINGS_H
+#define YIOT_SETTINGS_H
 
 #ifdef __cplusplus
-using namespace VirgilIoTKit;
 extern "C" {
 #endif
 
-bool
-is_wifi_connected(void);
+const char *
+ks_settings_installation_dir(void);
+
+const char *
+ks_settings_scripts_dir(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // YIOT_UTILS_H
+#endif // YIOT_SETTINGS_H

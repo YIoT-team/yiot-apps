@@ -33,7 +33,7 @@
 #include <inttypes.h>
 #include <errno.h>
 
-#include "iotkit-impl/netif/curl-websock.h"
+#include "common/iotkit-impl/netif/curl-websock.h"
 #include <virgil/iot/macros/macros.h>
 
 #define ERR(fmt, ...) fprintf(stderr, "ERROR: " fmt "\n", ##__VA_ARGS__)
@@ -307,7 +307,9 @@ _cws_send(struct cws_data *priv, enum cws_opcode opcode, const void *msg, size_t
             .fin = 1, /* TODO review if should fragment over some boundary */
             .opcode = opcode,
             .mask = 1,
-            .payload_len = ((msglen > UINT16_MAX) ? 127 : (msglen > 125) ? 126 : msglen),
+            .payload_len = ((msglen > UINT16_MAX) ? 127
+                            : (msglen > 125)      ? 126
+                                                  : msglen),
     };
     uint8_t mask[4];
 
@@ -1007,7 +1009,7 @@ cws_new(const char *url, const char *websocket_protocols, const struct cws_callb
      *     Expect: 100-continue
      * but we don't want that, rather 101. Then force: 101.
      */
-//    priv->headers = curl_slist_append(priv->headers, "Expect: 101");
+    //    priv->headers = curl_slist_append(priv->headers, "Expect: 101");
     /*
      * CURLOPT_UPLOAD=1 without a size implies in:
      *     Transfer-Encoding: chunked

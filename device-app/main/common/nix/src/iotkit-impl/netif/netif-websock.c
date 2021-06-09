@@ -49,8 +49,8 @@
 #include <virgil/iot/base64/base64.h>
 #include <virgil/iot/json/json_parser.h>
 #include <virgil/iot/json/json_generator.h>
-#include "iotkit-impl/netif/curl-websock.h"
-#include <mbedtls/sha1.h>
+#include "common/iotkit-impl/netif/curl-websock.h"
+//#include <mbedtls/sha1.h>
 
 #include <helpers/event-group-bits.h>
 #include <helpers/msg-queue.h>
@@ -165,12 +165,11 @@ _cws_calc_sha1(const void *input, size_t input_len, void *output) {
     VS_IOT_ASSERT(input);
     VS_IOT_ASSERT(output);
     VS_IOT_ASSERT(input_len);
-    mbedtls_sha1_context ctx;
+    VS_IOT_ASSERT(_secmodule_impl);
+    VS_IOT_ASSERT(_secmodule_impl->hash);
 
-    mbedtls_sha1_init(&ctx);
-    mbedtls_sha1(input, input_len, output);
-
-    mbedtls_sha1_free(&ctx);
+    uint16_t hash_sz;
+    _secmodule_impl->hash(VS_HASH_SHA_1, input, input_len, output, 20, &hash_sz);
 }
 
 //-----------------------------------------------------------------------------
