@@ -50,7 +50,6 @@
 #include <virgil/iot/json/json_parser.h>
 #include <virgil/iot/json/json_generator.h>
 #include "common/iotkit-impl/netif/curl-websock.h"
-//#include <mbedtls/sha1.h>
 
 #include <helpers/event-group-bits.h>
 #include <helpers/msg-queue.h>
@@ -82,6 +81,7 @@ static vs_netif_process_cb_t _websock_process_cb = 0;
 static char *_url = NULL;
 static char *_account = NULL;
 static const vs_secmodule_impl_t *_secmodule_impl;
+static vs_hal_netif_connected_cb_t _connect_cb = NULL;
 
 static void
 _cws_on_connect_cb(void *data, CURL *easy, const char *websocket_protocols);
@@ -118,7 +118,7 @@ static bool
 _make_message(char **message, const uint8_t *data, size_t data_sz, bool is_stat);
 
 // static pthread_t receive_thread;
-static uint8_t _sim_mac_addr[6] = {2, 2, 2, 2, 2, 2};
+static uint8_t _sim_mac_addr[6] = {0x32, 0x78, 0xAB, 0x23, 0x01, 0xEF};
 
 #define RX_BUF_SZ (2048)
 
@@ -522,15 +522,10 @@ _start_processing(bool *is_subscr_msg_sent) {
 
     // If we have just connected to broker then send subscribing message
     if (!(*is_subscr_msg_sent)) {
-        char *msg = NULL;
-
-        _make_message(&msg, (uint8_t *)VS_WB_SUBSCR_MESSAGE, strlen(VS_WB_SUBSCR_MESSAGE), false);
-        CHECK_RET(NULL != msg, VS_CODE_ERR_QUEUE, "Can't create subscribing message");
-
-        ret = cws_send_text(_websocket_ctx.easy, msg) ? VS_CODE_OK : VS_CODE_ERR_SOCKET;
-        VS_LOG_DEBUG("Subscribing message has been sent. %s", msg);
-        free(msg);
-        CHECK_RET(VS_CODE_OK == ret, VS_CODE_ERR_QUEUE, "Can't send subscribing message");
+        // Connection callback
+        if (_connect_cb) {
+            _connect_cb(&_netif_websock);
+        }
         *is_subscr_msg_sent = true;
     }
 
@@ -738,7 +733,8 @@ vs_netif_t *
 vs_hal_netif_websock(const char *url,
                      const char *account,
                      vs_secmodule_impl_t *secmodule_impl,
-                     vs_mac_addr_t mac_addr) {
+                     vs_mac_addr_t mac_addr,
+                     vs_hal_netif_connected_cb_t connect_cb) {
 
     VS_IOT_ASSERT(url);
     VS_IOT_ASSERT(account);
@@ -755,6 +751,7 @@ vs_hal_netif_websock(const char *url,
     _secmodule_impl = secmodule_impl;
     _url = strdup(url);
     _account = strdup(account);
+    _connect_cb = connect_cb;
 
     if (NULL == _url || NULL == _account) {
         VS_LOG_ERROR("[WS] Can't allocate memory for websocket creds");
