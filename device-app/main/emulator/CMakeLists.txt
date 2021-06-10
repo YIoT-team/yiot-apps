@@ -35,10 +35,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #   Ext projects path
 set(EXT_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../ext")
 
-#   JSON
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory("${EXT_PATH}/json" json)
-
 # ---------------------------------------------------------------------------
 #	YIoT device emulator
 # ---------------------------------------------------------------------------

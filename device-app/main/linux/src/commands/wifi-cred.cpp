@@ -20,9 +20,9 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "helpers/timer.h"
-#include "helpers/command.h"
-#include "helpers/settings.h"
+#include "common/helpers/timer.h"
+#include "common/helpers/command.h"
+#include "common/helpers/settings.h"
 
 #include "commands/wifi-cred.h"
 
@@ -30,7 +30,7 @@
 #include <virgil/iot/protocols/snap/cfg/cfg-private.h>
 #include <common/protocols/snap/pc/pc-server.h>
 
-#include "iotkit-impl/netif/netif-ble-linux.h"
+#include "common/iotkit-impl/netif/netif-ble-linux.h"
 
 static KSTimer _processingDelayer;
 static const auto kDelayMs = std::chrono::milliseconds(200);

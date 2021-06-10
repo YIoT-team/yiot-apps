@@ -28,10 +28,10 @@
 #include <virgil/iot/session/session.h>
 #include <virgil/iot/secbox/secbox.h>
 
-#include "iotkit-impl/init.h"
+#include "init.h"
 
-#include "iotkit-impl/netif/netif-ble-linux.h"
-#include "iotkit-impl/netif/netif-websock.h"
+#include "common/iotkit-impl/netif/netif-ble-linux.h"
+#include "common/iotkit-impl/netif/netif-websock.h"
 
 static void
 _file_ver_info_cb(vs_file_version_t ver);

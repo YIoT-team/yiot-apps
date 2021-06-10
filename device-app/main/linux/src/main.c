@@ -36,9 +36,9 @@
 #include <update-config.h>
 
 // Implementation Network interfaces
-#include "iotkit-impl/netif/netif-ble-linux.h"   // Bluetooth Low Energy
-#include "iotkit-impl/netif/netif-udp.h"         // UDP networking
-#include "iotkit-impl/netif/netif-websock.h"     // WebSocket networking
+#include "common/iotkit-impl/netif/netif-ble-linux.h"   // Bluetooth Low Energy
+#include "common/iotkit-impl/netif/netif-udp.h"         // UDP networking
+#include "common/iotkit-impl/netif/netif-websock.h"     // WebSocket networking
 
 // Software implementation of Security API
 #include <virgil/iot/vs-soft-secmodule/vs-soft-secmodule.h>
@@ -50,12 +50,12 @@
 
 // Platform-specific helpers
 #include "helpers/app-helpers.h" // Different helpers
-#include "helpers/utils.h"
+#include "common/helpers/utils.h"
 #include "helpers/app-storage.h" // Data Storage helpers
 #include "helpers/file-cache.h"  // File cache to speed-up file operations
 
 // High-level wrapper to simplify initialization/deinitialization
-#include "iotkit-impl/init.h"
+#include "init.h"
 
 static void
 _print_title(void);
@@ -141,7 +141,8 @@ main(int argc, char *argv[]) {
     netifs_impl[1] = vs_hal_netif_websock("ws://192.168.0.175:8080/ws",
                                           "test_account",
                                           secmodule_impl,
-                                          tmp);        // Initialize WebSocket-based transport
+                                          tmp,
+                                          NULL);        // Initialize WebSocket-based transport
 
     //
     // ---------- Initialize IoTKit internals ----------

@@ -18,7 +18,7 @@
 //  ────────────────────────────────────────────────────────────
 
 #include <iostream>
-#include <strings.h>
+#include <cstring>
 
 #include "common/helpers/settings.h"
 
