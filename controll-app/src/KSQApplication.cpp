@@ -36,7 +36,7 @@
 #include "keychain.h"
 
 #ifdef Q_OS_ANDROID
-#include "android/KSQAndroid.h"
+#include "os/android/KSQAndroid.h"
 #endif // Q_OS_ANDROID
 
 #define STRINGIFY(x) #x

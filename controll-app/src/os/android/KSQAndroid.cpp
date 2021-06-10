@@ -22,7 +22,7 @@
 #include <QAndroidJniObject>
 #include <QtAndroidExtras>
 
-#include "android/KSQAndroid.h"
+#include "os/android/KSQAndroid.h"
 
 //-----------------------------------------------------------------------------
 void
