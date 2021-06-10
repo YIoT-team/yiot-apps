@@ -56,6 +56,9 @@
 static void
 _print_title(void);
 
+static vs_status_e
+_on_ws_connected(vs_netif_t *netif);
+
 //-----------------------------------------------------------------------------
 int
 main(int argc, char *argv[]) {
@@ -99,7 +102,7 @@ main(int argc, char *argv[]) {
 
     // Prepare local storage
     vs_mac_addr_t tmp;
-    memset(&tmp, 0, sizeof(tmp));
+    memset(&tmp, 0xAB, sizeof(tmp));
     const char *home = getenv("HOME");
     const char *_yiot = "/yiot";
     char *storage_path = alloca(strlen(home) + strlen(_yiot) + 1);
@@ -137,7 +140,8 @@ main(int argc, char *argv[]) {
     netifs_impl[0] = vs_hal_netif_websock("ws://localhost:8080/ws",
                                           "test_account",
                                           secmodule_impl,
-                                          tmp); // Initialize WebSocket-based transport
+                                          tmp,
+                                          _on_ws_connected); // Initialize WebSocket-based transport
 
     //
     // ---------- Initialize IoTKit internals ----------
@@ -161,12 +165,7 @@ main(int argc, char *argv[]) {
     //
 
     // Inform about need of WiFi credentials
-    vs_snap_info_set_need_cred(false);
-
-    // Send broadcast notification about self start
-    const vs_netif_t *n = vs_snap_default_netif();
-    vs_snap_pc_start_notification(n);
-    vs_snap_info_start_notification(n);
+    vs_snap_info_set_need_cred(true);
 
     // Sleep until CTRL_C
     vs_app_sleep_until_stop();
@@ -233,6 +232,15 @@ _print_title(void) {
     printf("  Device type    = \"%s\"\n", str_dev_type);
     printf("  Device serial  = \"%s\"\n", str_dev_type);
     printf(" ──────────────────────────────────────────────────────────\n\n");
+}
+
+//-----------------------------------------------------------------------------
+static vs_status_e
+_on_ws_connected(vs_netif_t *netif) {
+    // Send broadcast notification about self presents
+    vs_snap_pc_start_notification(netif);
+    vs_snap_info_start_notification(netif);
+    return VS_CODE_OK;
 }
 
 //-----------------------------------------------------------------------------

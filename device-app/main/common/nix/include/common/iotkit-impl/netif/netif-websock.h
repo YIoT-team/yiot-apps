@@ -44,7 +44,11 @@ extern "C" {
 #endif
 
 vs_netif_t *
-vs_hal_netif_websock(const char *url, const char *account, vs_secmodule_impl_t *secmodule_impl, vs_mac_addr_t mac_addr);
+vs_hal_netif_websock(const char *url,
+                     const char *account,
+                     vs_secmodule_impl_t *secmodule_impl,
+                     vs_mac_addr_t mac_addr,
+                     vs_hal_netif_connected_cb_t connect_cb);
 
 void
 vs_netif_websock_update_mac(vs_mac_addr_t mac_addr);

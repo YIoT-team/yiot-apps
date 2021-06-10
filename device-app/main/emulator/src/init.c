@@ -154,9 +154,6 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     vs_mac_addr_t default_mac;
     vs_snap_mac_addr(netif_impl[0], &default_mac);
 
-    // Set common MAC
-    vs_netif_websock_update_mac(default_mac);
-
     // Security Session module
     vs_session_init(secmodule_impl, default_mac.bytes);
 
