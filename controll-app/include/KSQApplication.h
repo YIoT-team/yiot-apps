@@ -29,7 +29,7 @@
 #include <controllers/KSQBlankDevicesController.h>
 #include <controllers/KSQUXSimplifyController.h>
 
-#include <devices/KSQDevices.h>
+#include <controllers/devices/KSQDevices.h>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
 

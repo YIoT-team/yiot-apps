@@ -233,14 +233,14 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/include/ui/VSQUiHelper.h
         ${CMAKE_CURRENT_LIST_DIR}/include/KSQWiFiEnumerator.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQDevices.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQControllerBase.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQDeviceBase.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQDevices.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQControllerBase.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQDeviceBase.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/lamp/KSQLamp.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/lamp/KSQLampController.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/pc/KSQPC.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/pc/KSQPCController.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/lamp/KSQLamp.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/lamp/KSQLampController.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/pc/KSQPC.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/pc/KSQPCController.h
 
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQBlankDevicesController.h
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQBLEController.h
@@ -287,14 +287,14 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-hal.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQDevices.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQControllerBase.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQDeviceBase.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQDevices.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQControllerBase.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQDeviceBase.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/lamp/KSQLamp.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/lamp/KSQLampController.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/pc/KSQPC.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/pc/KSQPCController.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/lamp/KSQLamp.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/lamp/KSQLampController.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/pc/KSQPC.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/pc/KSQPCController.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQBlankDevicesController.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQBLEController.cpp

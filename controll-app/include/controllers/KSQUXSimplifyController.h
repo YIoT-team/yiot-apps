@@ -27,7 +27,7 @@
 #include <QAbstractTableModel>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
-#include <devices/KSQDeviceBase.h>
+#include <controllers/devices/KSQDeviceBase.h>
 
 class KSQUXSimplifyController : public QObject {
     Q_OBJECT

@@ -17,33 +17,90 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+#ifndef YIOT_PC_CONTROLLER_H
+#define YIOT_PC_CONTROLLER_H
 
-import "../../theme"
-import "../../components"
-import "../../components/devices"
+#include <set>
 
-SwipeView {
-    readonly property int lampMonoPageIdx: 0
-    readonly property int pcPageIdx: 1
+#include <QtCore>
+#include <QAbstractTableModel>
 
-    id: devicesSwipeView
-    anchors.fill: parent
-    interactive: false
-    currentIndex: lampMonoPageIdx
+#include <virgil/iot/qt/VSQIoTKit.h>
 
-//    LampMonoControl { id: lampMonoPage }
-//    PCRPiControl { id: rpiPage }
+#include <controllers/devices/KSQControllerBase.h>
+#include <controllers/devices/pc/KSQPC.h>
 
-    function show(idx, deviceName, deviceController) {
-        devicesSwipeView.currentIndex = idx
-        for (var i = 0; i < devicesSwipeView.count; ++i) {
-            var item = devicesSwipeView.itemAt(i)
-            item.controller = deviceController
-            item.deviceName = deviceController.name
-            item.visible = i == devicesSwipeView.currentIndex
-        }
+class KSQPCController : public KSQControllerBase {
+    Q_OBJECT
+public:
+    enum Element { Name = Qt::UserRole, Type, Mac, Active, Device, Secure, ElementMax };
+
+    KSQPCController();
+    virtual ~KSQPCController() = default;
+
+    virtual QString
+    name() const final {
+        return tr("PC");
     }
-}
+
+    virtual QString
+    type() const final {
+        return "pc";
+    }
+
+    virtual QString
+    image() const final {
+        return tr("pc");
+    }
+
+    /**
+     * QAbstractTableModel implementation
+     */
+    int
+    rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    int
+    columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    QVariant
+    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+    QHash<int, QByteArray>
+    roleNames() const override;
+
+public slots:
+
+signals:
+
+private slots:
+    // SNAP::INFO
+    void
+    onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo);
+
+    // SNAP::PC
+    void
+    onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state);
+
+    void
+    onPCError(const vs_mac_addr_t mac);
+
+    // SNAP::SCRT
+    void
+    onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey);
+
+    void
+    onSessionKeyError(VSQMac mac);
+
+    // UI
+    void
+    onInvokeCommand(QString mac, QString json);
+
+protected:
+    std::pair<int, QSharedPointer<KSQPC>>
+    findPC(const vs_mac_addr_t &mac);
+
+private:
+    std::list<QSharedPointer<KSQPC>> m_pcs;
+};
+
+#endif // YIOT_PC_CONTROLLER_H

@@ -17,33 +17,70 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+#ifndef YIOT_DEVICE_CONTROLLER_BASE_H
+#define YIOT_DEVICE_CONTROLLER_BASE_H
 
-import "../../theme"
-import "../../components"
-import "../../components/devices"
+#include <QtCore>
+#include <QHash>
+#include <QAbstractTableModel>
 
-SwipeView {
-    readonly property int lampMonoPageIdx: 0
-    readonly property int pcPageIdx: 1
+#include <virgil/iot/qt/VSQIoTKit.h>
+#include <controllers/devices/KSQDeviceBase.h>
 
-    id: devicesSwipeView
-    anchors.fill: parent
-    interactive: false
-    currentIndex: lampMonoPageIdx
+class KSQControllerBase : public QAbstractTableModel {
+    Q_OBJECT
+    Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed NOTIFY fireCollapsedChanged)
+public:
+    KSQControllerBase() = default;
+    virtual ~KSQControllerBase() = default;
 
-//    LampMonoControl { id: lampMonoPage }
-//    PCRPiControl { id: rpiPage }
+    virtual QString
+    name() const = 0;
 
-    function show(idx, deviceName, deviceController) {
-        devicesSwipeView.currentIndex = idx
-        for (var i = 0; i < devicesSwipeView.count; ++i) {
-            var item = devicesSwipeView.itemAt(i)
-            item.controller = deviceController
-            item.deviceName = deviceController.name
-            item.visible = i == devicesSwipeView.currentIndex
+    virtual QString
+    type() const = 0;
+
+    virtual QString
+    image() const = 0;
+
+    Q_INVOKABLE void
+    setCollapsed(bool c) {
+        if (m_collapsed != c) {
+            m_collapsed = c;
+            emit fireCollapsedChanged(m_collapsed);
         }
     }
-}
+
+    Q_INVOKABLE bool
+    collapsed() {
+        return m_collapsed;
+    }
+
+public slots:
+    void
+    onSetDeviceName(VSQMac mac, QString name);
+
+    void
+    onRequestSessionKey(VSQMac mac);
+
+signals:
+    void
+    fireCollapsedChanged(bool);
+
+    void
+    fireAboutToActivate();
+
+    void
+    fireActivated();
+
+    void
+    fireRequiredSetup(QSharedPointer<KSQDeviceBase> device);
+
+protected:
+    bool m_active = false;
+
+private:
+    bool m_collapsed = false;
+};
+
+#endif // YIOT_DEVICE_CONTROLLER_BASE_H

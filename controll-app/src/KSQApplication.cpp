@@ -28,8 +28,8 @@
 #include <yiot-iotkit/setup/KSQDeviceSetupController.h>
 #include <yiot-iotkit/snap/KSQSnapPCClient.h>
 
-#include <devices/lamp/KSQLampController.h>
-#include <devices/pc/KSQPCController.h>
+#include <controllers/devices/lamp/KSQLampController.h>
+#include <controllers/devices/pc/KSQPCController.h>
 
 #include <virgil/iot/qt/protocols/snap/VSQSnapCFGClient.h>
 

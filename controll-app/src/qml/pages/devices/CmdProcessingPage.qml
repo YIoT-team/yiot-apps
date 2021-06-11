@@ -24,8 +24,6 @@ import QtQuick.Layouts 1.12
 import "../../theme"
 import "../../components"
 
-import "../../../js/devices/pc.js" as PCDevice
-
 Page {
     property var device: null
 

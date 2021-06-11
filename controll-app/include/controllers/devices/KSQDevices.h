@@ -17,33 +17,56 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+#ifndef YIOT_DEVICES_H
+#define YIOT_DEVICES_H
 
-import "../../theme"
-import "../../components"
-import "../../components/devices"
+#include <QtCore>
+#include <QHash>
+#include <QAbstractTableModel>
 
-SwipeView {
-    readonly property int lampMonoPageIdx: 0
-    readonly property int pcPageIdx: 1
+#include <virgil/iot/qt/VSQIoTKit.h>
 
-    id: devicesSwipeView
-    anchors.fill: parent
-    interactive: false
-    currentIndex: lampMonoPageIdx
+#include <controllers/devices/KSQControllerBase.h>
+#include <controllers/devices/KSQDeviceBase.h>
 
-//    LampMonoControl { id: lampMonoPage }
-//    PCRPiControl { id: rpiPage }
+class KSQDevices : public QAbstractTableModel {
+    Q_OBJECT
+public:
+    enum Element { Name = Qt::UserRole, Type, Image, SubModel, ElementMax };
 
-    function show(idx, deviceName, deviceController) {
-        devicesSwipeView.currentIndex = idx
-        for (var i = 0; i < devicesSwipeView.count; ++i) {
-            var item = devicesSwipeView.itemAt(i)
-            item.controller = deviceController
-            item.deviceName = deviceController.name
-            item.visible = i == devicesSwipeView.currentIndex
-        }
-    }
-}
+    KSQDevices() = default;
+    virtual ~KSQDevices() = default;
+
+    /**
+     * QAbstractTableModel implementation
+     */
+    int
+    rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    int
+    columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    QVariant
+    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+    QHash<int, QByteArray>
+    roleNames() const override;
+
+    KSQDevices &
+    operator<<(KSQControllerBase *controller);
+
+signals:
+    void
+    fireNewProvisionedDevice(QSharedPointer<KSQDeviceBase> device);
+
+public slots:
+
+private slots:
+    void
+    onGroupActivated();
+
+private:
+    QList<QSharedPointer<KSQControllerBase>> m_elements;
+};
+
+#endif // YIOT_DEVICES_H

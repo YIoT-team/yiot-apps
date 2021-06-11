@@ -17,33 +17,47 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+#ifndef YIOT_PC_H
+#define YIOT_PC_H
 
-import "../../theme"
-import "../../components"
-import "../../components/devices"
+#include <QtCore>
+#include <common/protocols/snap/pc/pc-structs.h>
 
-SwipeView {
-    readonly property int lampMonoPageIdx: 0
-    readonly property int pcPageIdx: 1
+#include <controllers/devices/KSQDeviceBase.h>
 
-    id: devicesSwipeView
-    anchors.fill: parent
-    interactive: false
-    currentIndex: lampMonoPageIdx
+class KSQPCController;
 
-//    LampMonoControl { id: lampMonoPage }
-//    PCRPiControl { id: rpiPage }
+class KSQPC : public KSQDeviceBase {
+    Q_OBJECT
+    friend KSQPCController;
 
-    function show(idx, deviceName, deviceController) {
-        devicesSwipeView.currentIndex = idx
-        for (var i = 0; i < devicesSwipeView.count; ++i) {
-            var item = devicesSwipeView.itemAt(i)
-            item.controller = deviceController
-            item.deviceName = deviceController.name
-            item.visible = i == devicesSwipeView.currentIndex
-        }
+public:
+    KSQPC() : KSQDeviceBase() {
     }
-}
+
+    KSQPC(VSQMac mac, QString name, QString img = "");
+
+    KSQPC(const KSQPC &l);
+
+    virtual ~KSQPC() = default;
+
+    virtual QString
+    _deviceType() const final {
+        return "pc";
+    }
+
+signals:
+    void
+    fireInvokeCommand(QString mac, QString json);
+
+public slots:
+    Q_INVOKABLE void
+    invokeCommand(QString json);
+
+private:
+};
+
+Q_DECLARE_METATYPE(KSQPC)
+Q_DECLARE_METATYPE(KSQPC *)
+
+#endif // YIOT_PC_H
