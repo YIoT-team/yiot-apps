@@ -19,6 +19,7 @@ ColumnLayout {
     Title {
         id: t
         text: qsTr("Contributors")
+        Layout.fillWidth: true
     }
     ListView {
         id: l
