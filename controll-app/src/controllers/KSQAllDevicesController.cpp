@@ -17,21 +17,22 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include <controllers/devices/KSQDevices.h>
+#include <controllers/KSQAllDevicesController.h>
+#include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
 
 //-----------------------------------------------------------------------------
-KSQDevices &
-KSQDevices::operator<<(KSQControllerBase *controller) {
-    connect(controller, &KSQControllerBase::fireActivated, this, &KSQDevices::onGroupActivated);
-    connect(controller, &KSQControllerBase::fireRequiredSetup, this, &KSQDevices::fireNewProvisionedDevice);
-    QSharedPointer<KSQControllerBase> e(controller);
+KSQAllDevicesController &
+KSQAllDevicesController::operator<<(KSQDevicesType *devicesType) {
+    connect(devicesType, &KSQDevicesType::fireActivated, this, &KSQAllDevicesController::onGroupActivated);
+    connect(devicesType, &KSQDevicesType::fireRequiredSetup, this, &KSQAllDevicesController::fireNewProvisionedDevice);
+    QSharedPointer<KSQDevicesType> e(devicesType);
     m_elements.push_back(e);
     return *this;
 }
 
 //-----------------------------------------------------------------------------
 void
-KSQDevices::onGroupActivated() {
+KSQAllDevicesController::onGroupActivated() {
     // TODO: Use correct insertion
     beginResetModel();
     endResetModel();
@@ -39,7 +40,7 @@ KSQDevices::onGroupActivated() {
 
 //-----------------------------------------------------------------------------
 int
-KSQDevices::rowCount(const QModelIndex &parent) const {
+KSQAllDevicesController::rowCount(const QModelIndex &parent) const {
     int cnt = 0;
     for (const auto &el : m_elements) {
         if (el->rowCount()) {
@@ -51,13 +52,13 @@ KSQDevices::rowCount(const QModelIndex &parent) const {
 
 //-----------------------------------------------------------------------------
 int
-KSQDevices::columnCount(const QModelIndex &parent) const {
+KSQAllDevicesController::columnCount(const QModelIndex &parent) const {
     return 1;
 }
 
 //-----------------------------------------------------------------------------
 QVariant
-KSQDevices::data(const QModelIndex &index, int role) const {
+KSQAllDevicesController::data(const QModelIndex &index, int role) const {
     int cnt = 0;
     for (const auto &el : m_elements) {
         if (el->rowCount()) {
@@ -81,12 +82,12 @@ KSQDevices::data(const QModelIndex &index, int role) const {
             ++cnt;
         }
     }
-    return cnt;
+    return QVariant();
 }
 
 //-----------------------------------------------------------------------------
 QHash<int, QByteArray>
-KSQDevices::roleNames() const {
+KSQAllDevicesController::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[Name] = "name";
     roles[Type] = "categoryType";

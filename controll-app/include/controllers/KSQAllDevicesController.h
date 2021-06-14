@@ -17,41 +17,28 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_CONTROLLER_H
-#define YIOT_PC_CONTROLLER_H
-
-#include <set>
+#ifndef YIOT_DEVICES_H
+#define YIOT_DEVICES_H
 
 #include <QtCore>
+#include <QHash>
 #include <QAbstractTableModel>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
+#include <virgil/iot/qt/helpers/VSQMac.h>
 
-#include <controllers/devices/KSQControllerBase.h>
-#include <controllers/devices/pc/KSQPC.h>
+#include <yiot-iotkit/secmodule/KSQSessionKey.h>
 
-class KSQPCController : public KSQControllerBase {
+#include <common/protocols/snap/pc/pc-structs.h>
+#include <controllers/KSQDevicesType.h>
+
+class KSQAllDevicesController : public QAbstractTableModel {
     Q_OBJECT
 public:
-    enum Element { Name = Qt::UserRole, Type, Mac, Active, Device, Secure, ElementMax };
+    enum Element { Name = Qt::UserRole, Type, Image, SubModel, ElementMax };
 
-    KSQPCController();
-    virtual ~KSQPCController() = default;
-
-    virtual QString
-    name() const final {
-        return tr("PC");
-    }
-
-    virtual QString
-    type() const final {
-        return "pc";
-    }
-
-    virtual QString
-    image() const final {
-        return tr("pc");
-    }
+    KSQAllDevicesController() = default;
+    virtual ~KSQAllDevicesController() = default;
 
     /**
      * QAbstractTableModel implementation
@@ -68,39 +55,21 @@ public:
     QHash<int, QByteArray>
     roleNames() const override;
 
-public slots:
+    KSQAllDevicesController &
+    operator<<(KSQDevicesType *devicesType);
 
 signals:
+    void
+    fireNewProvisionedDevice(QSharedPointer<KSQDevice> device);
+
+public slots:
 
 private slots:
-    // SNAP::INFO
     void
-    onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo);
-
-    // SNAP::PC
-    void
-    onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state);
-
-    void
-    onPCError(const vs_mac_addr_t mac);
-
-    // SNAP::SCRT
-    void
-    onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey);
-
-    void
-    onSessionKeyError(VSQMac mac);
-
-    // UI
-    void
-    onInvokeCommand(QString mac, QString json);
-
-protected:
-    std::pair<int, QSharedPointer<KSQPC>>
-    findPC(const vs_mac_addr_t &mac);
+    onGroupActivated();
 
 private:
-    std::list<QSharedPointer<KSQPC>> m_pcs;
+    QList<QSharedPointer<KSQDevicesType>> m_elements;
 };
 
-#endif // YIOT_PC_CONTROLLER_H
+#endif // YIOT_DEVICES_H

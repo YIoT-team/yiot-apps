@@ -23,7 +23,7 @@ import QtQuick.Layouts 1.12
 
 import "../../../../components"
 import "../../../../components/validators"
-import "../../../../../js/devices/pc.js" as PCDevice
+//import "../../../../../js/devices/main.qml" as PCDevice
 
 Page {
     id: vpnRouterPage
@@ -98,12 +98,12 @@ Page {
                 onClicked: {
                     if(validateInputs()){
                         showCmdProcessing(rpiPage.controller)
-                        PCDevice.setupVPNRouter(rpiPage.controller,
-                                                apName.text,
-                                                apPass.text,
-                                                providerCb.text,
-                                                user.text,
-                                                pass.text)
+//                        PCDevice.setupVPNRouter(rpiPage.controller,
+//                                                apName.text,
+//                                                apPass.text,
+//                                                providerCb.text,
+//                                                user.text,
+//                                                pass.text)
                     }
                 }
             }

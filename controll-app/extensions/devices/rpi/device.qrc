@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="/device/0">
+        <!-- Java script -->
+        <file>js/main.qml</file>
+
+        <!-- Icons dark theme -->
+        <file>icons/dark/rpi.png</file>
+		<file>icons/dark/access-point.png</file>
+        <file>icons/dark/create-user.png</file>
+        <file>icons/dark/static-ip.png</file>
+        <file>icons/dark/vpn-router.png</file>
+        <file>icons/dark/ssh.png</file>
+        <file>icons/dark/pc.png</file>
+
+        <!-- Icons light theme -->
+        <file>icons/light/rpi.png</file>
+        <file>icons/light/access-point.png</file>
+        <file>icons/light/create-user.png</file>
+        <file>icons/light/static-ip.png</file>
+        <file>icons/light/vpn-router.png</file>
+        <file>icons/light/ssh.png</file>
+        <file>icons/light/pc.png</file>
+
+        <!-- QML Components -->
+        <file>qml/Control.qml</file>
+        <file>qml/commands/AccessPoint.qml</file>
+        <file>qml/commands/ControlsList.qml</file>
+        <file>qml/commands/RenameDevice.qml</file>
+        <file>qml/commands/CreateUser.qml</file>
+        <file>qml/commands/StaticIP.qml</file>
+        <file>qml/commands/VPNrouter.qml</file>
+        <file>qml/commands/SSHEnabler.qml</file>
+
+    </qresource>
+</RCC>

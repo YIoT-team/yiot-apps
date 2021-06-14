@@ -81,15 +81,15 @@ Page {
 
                 Layout.bottomMargin: p.state == "done" ? 450 : 20 // will need to be redone or removed altogether
 
-                TextArea {
-                    id: processingTextArea
-
-                    font.family: Theme.mainFont
-                    color: Theme.primaryTextColor
-                    readOnly: true
-
-                    text: PCDevice.processingText()
-                    }
+//                TextArea {
+//                    id: processingTextArea
+//
+//                    font.family: Theme.mainFont
+//                    color: Theme.primaryTextColor
+//                    readOnly: true
+//
+//                    text: //PCDevice.processingText()
+//                }
             }
 
             FormSecondaryButton {

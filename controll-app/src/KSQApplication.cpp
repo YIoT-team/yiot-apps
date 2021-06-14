@@ -28,9 +28,6 @@
 #include <yiot-iotkit/setup/KSQDeviceSetupController.h>
 #include <yiot-iotkit/snap/KSQSnapPCClient.h>
 
-#include <controllers/devices/lamp/KSQLampController.h>
-#include <controllers/devices/pc/KSQPCController.h>
-
 #include <virgil/iot/qt/protocols/snap/VSQSnapCFGClient.h>
 
 #include "keychain.h"
@@ -97,7 +94,7 @@ KSQApplication::run() {
 
     //      Get information about devices new but provisioned devices
     connect(&m_deviceControllers,
-            &KSQDevices::fireNewProvisionedDevice,
+            &KSQAllDevicesController::fireNewProvisionedDevice,
             m_uxController.get(),
             &KSQUXSimplifyController::onNewProvisionedDevice);
 
@@ -110,13 +107,9 @@ KSQApplication::run() {
         return -1;
     }
 
-    // Initialize devices controllers
-    //          TODO: Dynamic adding of supported devices
-    m_deviceControllers << new KSQLampController() // Possibility to control lamps
-                        << new KSQPCController();  // Possibility to control PSs, like Raspberry Pi
-
     // Initialize QML
     QQmlContext *context = engine.rootContext();
+
     context->setContextProperty("UiHelper", &uiHelper);
     context->setContextProperty("app", this); // Get app name, version, etc.
     context->setContextProperty("localBlankDevicesController", m_localBlankDevicesController.get());
@@ -144,6 +137,9 @@ KSQApplication::run() {
 
     // Start QML
     engine.load(url);
+
+    // Initialize devices controllers
+    m_deviceControllers << new KSQDevicesType(engine, 0);
 
     // Delayed actions
     QTimer::singleShot(200, []() {

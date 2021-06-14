@@ -17,47 +17,57 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_H
-#define YIOT_PC_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#include <QtCore>
-#include <common/protocols/snap/pc/pc-structs.h>
+import "../../../../components"
+//import "../../../../../js/devices/pc.js" as PCDevice
 
-#include <controllers/devices/KSQDeviceBase.h>
+Page {
+    id: sshPage
 
-class KSQPCController;
-
-class KSQPC : public KSQDeviceBase {
-    Q_OBJECT
-    friend KSQPCController;
-
-public:
-    KSQPC() : KSQDeviceBase() {
+    background: Rectangle {
+        color: "transparent"
     }
 
-    KSQPC(VSQMac mac, QString name, QString img = "");
-
-    KSQPC(const KSQPC &l);
-
-    virtual ~KSQPC() = default;
-
-    virtual QString
-    _deviceType() const final {
-        return "pc";
+    header: Header {
+        title: qsTr("SSH enable")
+        backAction: function() { showRPiSettings() }
     }
 
-signals:
-    void
-    fireInvokeCommand(QString mac, QString json);
+    Form {
+            id: form
+            stretched: true
 
-public slots:
-    Q_INVOKABLE void
-    invokeCommand(QString json);
+            ColumnLayout {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.topMargin: 40
+                Layout.bottomMargin: 20
 
-private:
-};
+                spacing: 15
 
-Q_DECLARE_METATYPE(KSQPC)
-Q_DECLARE_METATYPE(KSQPC *)
+                FormLabel {
+                    id: comboBoxLabel
+                    text: "   "
+                    Layout.leftMargin: 31
+                    Layout.bottomMargin: 0
+                }
 
-#endif // YIOT_PC_H
+                FormSecondaryButton {
+                    Layout.topMargin: 20
+                    Layout.bottomMargin: 10
+                    text: qsTr("Enable")
+                    onClicked: {
+                        showCmdProcessing(rpiPage.controller)
+//                        PCDevice.enableSSH(rpiPage.controller)
+                    }
+                }
+
+                Item {
+                    Layout.fillHeight: true
+                }
+            }
+        }
+}

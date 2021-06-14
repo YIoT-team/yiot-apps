@@ -17,31 +17,37 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_DEVICE_CONTROLLER_BASE_H
-#define YIOT_DEVICE_CONTROLLER_BASE_H
+#ifndef YIOT_DEVICES_TYPE_H
+#define YIOT_DEVICES_TYPE_H
 
 #include <QtCore>
 #include <QHash>
 #include <QAbstractTableModel>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
-#include <controllers/devices/KSQDeviceBase.h>
+#include <controllers/KSQDevice.h>
 
-class KSQControllerBase : public QAbstractTableModel {
+#include <yiot-iotkit/snap/KSQSnapPCClient.h>
+
+class KSQDevicesType : public QAbstractTableModel {
     Q_OBJECT
-    Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed NOTIFY fireCollapsedChanged)
+
 public:
-    KSQControllerBase() = default;
-    virtual ~KSQControllerBase() = default;
+    Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed NOTIFY fireCollapsedChanged)
 
-    virtual QString
-    name() const = 0;
+    enum Element { Name = Qt::UserRole, Type, Mac, Active, Device, Secure, ElementMax };
 
-    virtual QString
-    type() const = 0;
+    KSQDevicesType(QQmlApplicationEngine &engine, uint64_t deviceId);
+    virtual ~KSQDevicesType() = default;
 
-    virtual QString
-    image() const = 0;
+    QString
+    name() const;
+
+    QString
+    type() const;
+
+    QString
+    image() const;
 
     Q_INVOKABLE void
     setCollapsed(bool c) {
@@ -55,6 +61,21 @@ public:
     collapsed() {
         return m_collapsed;
     }
+
+    /**
+     * QAbstractTableModel implementation
+     */
+    int
+    rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    int
+    columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    QVariant
+    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+    QHash<int, QByteArray>
+    roleNames() const override;
 
 public slots:
     void
@@ -74,13 +95,42 @@ signals:
     fireActivated();
 
     void
-    fireRequiredSetup(QSharedPointer<KSQDeviceBase> device);
+    fireRequiredSetup(QSharedPointer<KSQDevice> device);
 
-protected:
-    bool m_active = false;
+private slots:
+    // SNAP::INFO
+    void
+    onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo);
+
+    //     SNAP::PC
+    void
+    onDeviceStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state);
+
+    void
+    onPCError(const vs_mac_addr_t mac);
+
+    // SNAP::SCRT
+    void
+    onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey);
+
+    void
+    onSessionKeyError(VSQMac mac);
+
+    // UI
+    void
+    onInvokeCommand(QString mac, QString json);
 
 private:
     bool m_collapsed = false;
+
+private:
+    bool m_active = false;
+    uint64_t m_deviceTypeId;
+    std::list<QSharedPointer<KSQDevice>> m_devices;
+    QSharedPointer<QObject> m_qmlProcessor;
+
+    std::pair<int, QSharedPointer<KSQDevice>>
+    findDevice(const vs_mac_addr_t &mac);
 };
 
-#endif // YIOT_DEVICE_CONTROLLER_BASE_H
+#endif // YIOT_DEVICES_TYPE_H

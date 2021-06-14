@@ -23,20 +23,17 @@ import QtQuick.Layouts 1.12
 
 import "../../../../components"
 import "../../../../components/validators"
-import "../../../../../js/devices/pc.js" as PCDevice
+//import "../../../../../js/devices/main.qml" as PCDevice
 
 Page {
     id: createUserPage
-
-    property var controller
 
     background: Rectangle {
         color: "transparent"
     }
 
     header: Header {
-        id: header
-        title: qsTr("Rename ") + controller.name
+        title: qsTr("Create User")
         backAction: function() { showRPiSettings() }
     }
 
@@ -53,12 +50,24 @@ Page {
                 spacing: 15
 
                 InputTextField {
-                    id: editName
-                    label: qsTr("Device name")
-                    placeholderText: qsTr("Enter device name")
-                    text: controller.name
-                    maximumLength: 16
-                    validator: ValidatorDeviceName {}
+                    id: userName
+                    label: qsTr("User name")
+                    placeholderText: qsTr("Enter new user name")
+                    validator: ValidatorUserName {}
+                }
+
+                Password {
+                    id: pass1
+                    label: qsTr("Password")
+                    placeholderText: qsTr("Enter new password")
+                    validator: ValidatorPassword {}
+                }
+
+                Password {
+                    id: pass2
+                    label: qsTr("Password check")
+                    placeholderText: qsTr("Enter the password again")
+                    validator: ValidatorPassword {}
                 }
 
                 FormSecondaryButton {
@@ -66,11 +75,9 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Save")
                     onClicked: {
-                        if (editName.text != "") {
-                            if (controller.name != editName.text) {
-                                controller.setNameToHardware(editName.text)
-                            }
-                            header.backAction()
+                        if(validateInputs()) {
+                            showCmdProcessing(rpiPage.controller)
+//                            PCDevice.createUser(rpiPage.controller, userName.text, pass1.text)
                         }
                     }
                 }
@@ -80,5 +87,27 @@ Page {
                     Layout.fillHeight: true
                 }
             }
+        }
+
+    function errorPopupClick() {
+        }
+
+        function validateInputs() {
+            if (userName.text == "") {
+                showPopupError(qsTr("Set new User name"), errorPopupClick)
+                return false
+            }
+
+            if (pass1.text == "") {
+                showPopupError(qsTr("Set new User password"), errorPopupClick)
+                return false
+            }
+
+            if (pass1.text != pass2.text) {
+                showPopupError(qsTr("Passwords are not equal"), errorPopupClick)
+                return false
+            }
+
+            return true
         }
 }

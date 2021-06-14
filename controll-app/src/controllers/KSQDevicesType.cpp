@@ -17,10 +17,9 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include <controllers/devices/pc/KSQPCController.h>
-
+#include <QtCore>
+#include <controllers/KSQDevicesType.h>
 #include <virgil/iot/qt/protocols/snap/VSQSnapINFOClient.h>
-#include <yiot-iotkit/snap/KSQSnapPCClient.h>
 #include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
 
 #if defined(Q_OS_WIN32)
@@ -31,53 +30,76 @@
 #endif
 
 //-----------------------------------------------------------------------------
-KSQPCController::KSQPCController() {
+KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, uint64_t deviceId) {
+    m_deviceTypeId = deviceId;
+    const QString js = "qrc:/device/" + QString::number(deviceId) + "/js/main.qml";
+    QQmlComponent component(&engine, QUrl(js));
+    QObject *object = component.create();
+    if (!object) {
+        VS_LOG_ERROR("Cannot create QML processor for device type : %llu", static_cast<unsigned long long>(deviceId));
+        return;
+    }
+
+    m_qmlProcessor.reset(object);
+
     // SNAP::INFO service
     connect(&VSQSnapInfoClient::instance(),
             &VSQSnapInfoClient::fireNewDevice,
             this,
-            &KSQPCController::onDeviceInfoUpdate,
+            &KSQDevicesType::onDeviceInfoUpdate,
             Qt::QueuedConnection);
 
     connect(&VSQSnapInfoClient::instance(),
             &VSQSnapInfoClient::fireDeviceInfo,
             this,
-            &KSQPCController::onDeviceInfoUpdate,
+            &KSQDevicesType::onDeviceInfoUpdate,
             Qt::QueuedConnection);
 
     // SNAP::PC service
     connect(&KSQSnapPCClient::instance(),
             &KSQSnapPCClient::fireStateUpdate,
             this,
-            &KSQPCController::onPCStateUpdate,
+            &KSQDevicesType::onDeviceStateUpdate,
             Qt::QueuedConnection);
 
     connect(&KSQSnapPCClient::instance(),
             &KSQSnapPCClient::fireStateError,
             this,
-            &KSQPCController::onPCError,
+            &KSQDevicesType::onPCError,
             Qt::QueuedConnection);
 
     // SNAP:SCRT
     connect(&KSQSnapSCRTClient::instance(),
             &KSQSnapSCRTClient::fireSessionKeyReady,
             this,
-            &KSQPCController::onSessionKeyReady,
+            &KSQDevicesType::onSessionKeyReady,
             Qt::QueuedConnection);
 
     connect(&KSQSnapSCRTClient::instance(),
             &KSQSnapSCRTClient::fireSessionKeyError,
             this,
-            &KSQPCController::onSessionKeyError,
+            &KSQDevicesType::onSessionKeyError,
             Qt::QueuedConnection);
 }
 
 //-----------------------------------------------------------------------------
 void
-KSQPCController::onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey) {
+KSQDevicesType::onSetDeviceName(VSQMac mac, QString name) {
+    VSQSnapInfoClient::instance().onSetName(mac, name);
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDevicesType::onRequestSessionKey(VSQMac mac) {
+    KSQSnapSCRTClient::instance().requestSessionKey(vs_snap_netif_routing(), mac);
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDevicesType::onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey) {
     qDebug() << "onSessionKeyReady: " << mac.description();
 
-    auto res = findPC(mac);
+    auto res = findDevice(mac);
     auto pc = res.second;
     if (pc) {
         pc->setSessionKey(sessionKey);
@@ -92,14 +114,14 @@ KSQPCController::onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey) {
 
 //-----------------------------------------------------------------------------
 void
-KSQPCController::onSessionKeyError(VSQMac mac) {
+KSQDevicesType::onSessionKeyError(VSQMac mac) {
     qDebug() << "onSessionKeyError: " << mac.description();
 }
 
 //-----------------------------------------------------------------------------
 void
-KSQPCController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
-    auto res = findPC(deviceInfo.m_mac);
+KSQDevicesType::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
+    auto res = findDevice(deviceInfo.m_mac);
     auto pc = res.second;
     if (pc) {
         if (deviceInfo.m_hasGeneralInfo) {
@@ -132,29 +154,29 @@ KSQPCController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
 
 //-----------------------------------------------------------------------------
 void
-KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state) {
-    auto res = findPC(mac);
+KSQDevicesType::onDeviceStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state) {
+    auto res = findDevice(mac);
     auto pc = res.second;
     if (!pc) {
         // Add PC
-        beginInsertRows(QModelIndex(), m_pcs.size(), m_pcs.size());
+        beginInsertRows(QModelIndex(), m_devices.size(), m_devices.size());
 
         VSQMac qMac = VSQMac(mac);
-        auto newPC = QSharedPointer<KSQPC>::create(qMac, qMac.description());
-        connect(newPC.get(), &KSQPC::fireInvokeCommand, this, &KSQPCController::onInvokeCommand);
-        connect(newPC.get(), &KSQPC::fireSetNameToHardware, this, &KSQControllerBase::onSetDeviceName);
-        connect(newPC.get(), &KSQPC::fireRequestSessionKey, this, &KSQControllerBase::onRequestSessionKey);
+        auto newPC = QSharedPointer<KSQDevice>::create(m_qmlProcessor, qMac, qMac.description());
+        connect(newPC.get(), &KSQDevice::fireInvokeCommand, this, &KSQDevicesType::onInvokeCommand);
+        connect(newPC.get(), &KSQDevice::fireSetNameToHardware, this, &KSQDevicesType::onSetDeviceName);
+        connect(newPC.get(), &KSQDevice::fireRequestSessionKey, this, &KSQDevicesType::onRequestSessionKey);
 
-        m_pcs.push_back(newPC);
+        m_devices.push_back(newPC);
 
         endInsertRows();
     }
 
-    res = findPC(mac);
+    res = findDevice(mac);
     pc = res.second;
     if (pc) {
 #if 0
-            if (deviceInfo.m_hasGeneralInfo) {
+        if (deviceInfo.m_hasGeneralInfo) {
                 pc->setDeviceID(deviceInfo.m_deviceRoles);
                 pc->setManufacture(deviceInfo.m_manufactureId);
                 pc->setDeviceID(deviceInfo.m_deviceType);
@@ -177,8 +199,8 @@ KSQPCController::onPCStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state
 
 //-----------------------------------------------------------------------------
 void
-KSQPCController::onPCError(const vs_mac_addr_t mac) {
-    auto res = findPC(mac);
+KSQDevicesType::onPCError(const vs_mac_addr_t mac) {
+    auto res = findDevice(mac);
     auto pc = res.second;
     if (pc) {
         qDebug() << "PC error: " << VSQMac(mac).description();
@@ -188,41 +210,41 @@ KSQPCController::onPCError(const vs_mac_addr_t mac) {
 
 //-----------------------------------------------------------------------------
 void
-KSQPCController::onInvokeCommand(QString mac, QString json) {
+KSQDevicesType::onInvokeCommand(QString mac, QString json) {
     KSQSnapPCClient::instance().sendCommand(mac, json);
 }
 
 //-----------------------------------------------------------------------------
-std::pair<int, QSharedPointer<KSQPC>>
-KSQPCController::findPC(const vs_mac_addr_t &mac) {
+std::pair<int, QSharedPointer<KSQDevice>>
+KSQDevicesType::findDevice(const vs_mac_addr_t &mac) {
     VSQMac qMac(mac);
     int pos = 0;
-    for (auto el : m_pcs) {
+    for (auto el : m_devices) {
         if (el->qMacAddr() == qMac) {
             return std::make_pair(pos, el);
         }
         ++pos;
     }
-    return std::make_pair(-1, QSharedPointer<KSQPC>(nullptr));
+    return std::make_pair(-1, QSharedPointer<KSQDevice>(nullptr));
 }
 
 //-----------------------------------------------------------------------------
 int
-KSQPCController::rowCount(const QModelIndex &parent) const {
-    return m_pcs.size();
+KSQDevicesType::rowCount(const QModelIndex &parent) const {
+    return m_devices.size();
 }
 
 //-----------------------------------------------------------------------------
 int
-KSQPCController::columnCount(const QModelIndex &parent) const {
+KSQDevicesType::columnCount(const QModelIndex &parent) const {
     return 1;
 }
 
 //-----------------------------------------------------------------------------
 QVariant
-KSQPCController::data(const QModelIndex &index, int role) const {
-    if (index.row() < static_cast<int>(m_pcs.size())) {
-        auto l = *std::next(m_pcs.begin(), index.row());
+KSQDevicesType::data(const QModelIndex &index, int role) const {
+    if (index.row() < static_cast<int>(m_devices.size())) {
+        auto l = *std::next(m_devices.begin(), index.row());
 
         switch (role) {
         case Element::Name:
@@ -242,7 +264,7 @@ KSQPCController::data(const QModelIndex &index, int role) const {
 
         case Element::Device:
             QVariant res;
-            res.setValue(const_cast<KSQPC *>(&(*l)));
+            res.setValue(const_cast<KSQDevice *>(&(*l)));
             return res;
         }
     }
@@ -252,7 +274,7 @@ KSQPCController::data(const QModelIndex &index, int role) const {
 
 //-----------------------------------------------------------------------------
 QHash<int, QByteArray>
-KSQPCController::roleNames() const {
+KSQDevicesType::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[Name] = "name";
     roles[Type] = "deviceType";
@@ -261,6 +283,57 @@ KSQPCController::roleNames() const {
     roles[Secure] = "secure";
     roles[Device] = "deviceController";
     return roles;
+}
+
+//-----------------------------------------------------------------------------
+QString
+KSQDevicesType::name() const {
+    static QString name;
+
+    if (name.isEmpty()) {
+        QVariant res;
+        if (QMetaObject::invokeMethod(m_qmlProcessor.get(), "deviceName", Q_RETURN_ARG(QVariant, res))) {
+            name = res.toString();
+        } else {
+            VS_LOG_ERROR("Cannot get device name");
+        }
+    }
+
+    return name;
+}
+
+//-----------------------------------------------------------------------------
+QString
+KSQDevicesType::type() const {
+    static QString type;
+
+    if (type.isEmpty()) {
+        QVariant res;
+        if (QMetaObject::invokeMethod(m_qmlProcessor.get(), "type", Q_RETURN_ARG(QVariant, res))) {
+            type = res.toString();
+        } else {
+            VS_LOG_ERROR("Cannot get device type");
+        }
+    }
+
+    return type;
+}
+
+//-----------------------------------------------------------------------------
+QString
+KSQDevicesType::image() const {
+    static QString image;
+
+    if (image.isEmpty()) {
+        QVariant res;
+        if (QMetaObject::invokeMethod(m_qmlProcessor.get(), "image", Q_RETURN_ARG(QVariant, res))) {
+            image = res.toString();
+        } else {
+            VS_LOG_ERROR("Cannot get device image");
+        }
+    }
+
+    return image;
 }
 
 //-----------------------------------------------------------------------------

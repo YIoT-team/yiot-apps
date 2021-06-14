@@ -72,7 +72,7 @@ Page {
             return "qrc:/qml/components/devices/GeneralCategoryControls.qml"
         }
 
-        console.error("Unknown Device Category")
+        console.error("Unknown Device Category : ", deviceCategory)
         return ""
     }
 

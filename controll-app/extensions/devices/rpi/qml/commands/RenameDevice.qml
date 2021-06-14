@@ -17,83 +17,68 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_LAMP_CONTROLLER_H
-#define YIOT_LAMP_CONTROLLER_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#include <set>
+import "../../../../components"
+import "../../../../components/validators"
+//import "../../../../../js/devices/pc.js" as PCDevice
 
-#include <QtCore>
-#include <QAbstractTableModel>
+Page {
+    id: createUserPage
 
-#include <virgil/iot/qt/VSQIoTKit.h>
+    property var controller
 
-#include <controllers/devices/KSQControllerBase.h>
-#include <controllers/devices/lamp/KSQLamp.h>
-
-class KSQLampController : public KSQControllerBase {
-    Q_OBJECT
-public:
-    enum Element { Name = Qt::UserRole, Type, Mac, Active, State, Device, ElementMax };
-
-    KSQLampController();
-    virtual ~KSQLampController() = default;
-
-    virtual QString
-    name() const final {
-        return tr("Lamps");
+    background: Rectangle {
+        color: "transparent"
     }
 
-    virtual QString
-    type() const final {
-        return "lamps";
+    header: Header {
+        id: header
+        title: qsTr("Rename ") + controller.name
+        backAction: function() { showRPiSettings() }
     }
 
-    virtual QString
-    image() const final {
-        return tr("bulb");
-    }
+    Form {
+            id: form
+            stretched: true
 
-    /**
-     * QAbstractTableModel implementation
-     */
-    int
-    rowCount(const QModelIndex &parent = QModelIndex()) const override;
+            ColumnLayout {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.topMargin: 40
+                Layout.bottomMargin: 20
 
-    int
-    columnCount(const QModelIndex &parent = QModelIndex()) const override;
+                spacing: 15
 
-    QVariant
-    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+                InputTextField {
+                    id: editName
+                    label: qsTr("Device name")
+                    placeholderText: qsTr("Enter device name")
+                    text: controller.name
+                    maximumLength: 16
+                    validator: ValidatorDeviceName {}
+                }
 
-    QHash<int, QByteArray>
-    roleNames() const override;
+                FormSecondaryButton {
+                    Layout.topMargin: 20
+                    Layout.bottomMargin: 10
+                    text: qsTr("Save")
+                    onClicked: {
+                        if (editName.text != "") {
+                            if (controller.name != editName.text) {
+                                controller.setNameToHardware(editName.text)
+                            }
+                            header.backAction()
+                        }
+                    }
+                }
 
-public slots:
-
-signals:
-
-private slots:
-    // SNAP::INFO
-    void
-    onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo);
-
-    // SNAP::LAMP
-    void
-    onLampStateUpdate(const vs_mac_addr_t mac, const vs_snap_lamp_state_t state);
-
-    void
-    onLampError(const vs_mac_addr_t mac);
-
-    // UI
-    void
-    onSetDeviceParams(const KSQLamp &lamp);
-
-protected:
-    std::pair<int, QSharedPointer<KSQLamp>>
-    findLamp(const vs_mac_addr_t &mac);
-
-private:
-    std::list<QSharedPointer<KSQLamp>> m_lamps;
-};
-
-#endif // YIOT_LAMP_CONTROLLER_H
+                Item {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+            }
+        }
+}

@@ -85,7 +85,6 @@ KSQNetifWebsocket::onSend(QByteArray data) {
         return;
     }
 
-    qDebug() << "Send data length : " << data.size();
 
     QJsonObject json;
     json[_accountIdTag] = m_account;
@@ -148,7 +147,6 @@ KSQNetifWebsocket::onDisconnected() {
 //******************************************************************************
 void
 KSQNetifWebsocket::onMessageReceived(QString message) {
-    qDebug() << "Message received:" << message;
 
     if (isActive()) {
         QJsonDocument jsonResponse = QJsonDocument::fromJson(message.toUtf8());

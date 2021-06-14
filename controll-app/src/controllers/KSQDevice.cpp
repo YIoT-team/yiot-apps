@@ -17,21 +17,21 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include <controllers/devices/KSQDeviceBase.h>
+#include <controllers/KSQDevice.h>
 
-const QString KSQDeviceBase::kCmdStateConnect = "connect";
-const QString KSQDeviceBase::kCmdStateSend = "send";
-const QString KSQDeviceBase::kCmdStateReceive = "receive";
-const QString KSQDeviceBase::kCmdStateDisconnect = "disconnect";
-const QString KSQDeviceBase::kCmdStateDone = "done";
-const QString KSQDeviceBase::kCmdStateError = "error";
+const QString KSQDevice::kCmdStateConnect = "connect";
+const QString KSQDevice::kCmdStateSend = "send";
+const QString KSQDevice::kCmdStateReceive = "receive";
+const QString KSQDevice::kCmdStateDisconnect = "disconnect";
+const QString KSQDevice::kCmdStateDone = "done";
+const QString KSQDevice::kCmdStateError = "error";
 
 //-----------------------------------------------------------------------------
-KSQDeviceBase::KSQDeviceBase() : m_nameUpdated(false) {
+KSQDevice::KSQDevice() : m_nameUpdated(false) {
 }
 
 //-----------------------------------------------------------------------------
-KSQDeviceBase::KSQDeviceBase(VSQMac mac, QString name, QString img) {
+KSQDevice::KSQDevice(QSharedPointer<QObject> js, VSQMac mac, QString name, QString img) {
     m_lastUpdate = QDateTime::currentDateTime();
     m_image = img;
     m_name = name;
@@ -40,12 +40,13 @@ KSQDeviceBase::KSQDeviceBase(VSQMac mac, QString name, QString img) {
     m_active = true;
     m_hasProvision = false;
     m_hasOwner = false;
+    m_js = js;
 
     startSessionConnection();
 }
 
 //-----------------------------------------------------------------------------
-KSQDeviceBase::KSQDeviceBase(const KSQDeviceBase &d) {
+KSQDevice::KSQDevice(const KSQDevice &d) {
     m_lastUpdate = d.m_lastUpdate;
     m_image = d.m_image;
     m_name = d.m_name;
@@ -55,32 +56,33 @@ KSQDeviceBase::KSQDeviceBase(const KSQDeviceBase &d) {
     m_sessionKey = d.m_sessionKey;
     m_hasProvision = d.m_hasProvision;
     m_hasOwner = d.m_hasOwner;
+    m_js = d.m_js;
 
     startSessionConnection();
 }
 
 //-----------------------------------------------------------------------------
 bool
-KSQDeviceBase::isUpdatedName() {
+KSQDevice::isUpdatedName() {
     return m_nameUpdated;
 }
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::startSessionConnection() {
+KSQDevice::startSessionConnection() {
     if (m_sessionTimer.isActive()) {
         return;
     }
 
     m_sessionTimer.setSingleShot(false);
     m_sessionTimer.setInterval(kSessionCheckPeriodMs);
-    connect(&m_sessionTimer, &QTimer::timeout, this, &KSQDeviceBase::onSessionTimer);
+    connect(&m_sessionTimer, &QTimer::timeout, this, &KSQDevice::onSessionTimer);
     m_sessionTimer.start();
 }
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::onSessionTimer() {
+KSQDevice::onSessionTimer() {
     if (!m_hasProvision || m_sessionKey.isValid()) {
         return;
     }
@@ -90,25 +92,25 @@ KSQDeviceBase::onSessionTimer() {
 
 //-----------------------------------------------------------------------------
 QString
-KSQDeviceBase::deviceType() const {
+KSQDevice::deviceType() const {
     return _deviceType();
 }
 
 //-----------------------------------------------------------------------------
 QString
-KSQDeviceBase::macAddr() const {
+KSQDevice::macAddr() const {
     return m_mac;
 }
 
 //-----------------------------------------------------------------------------
 VSQMac
-KSQDeviceBase::qMacAddr() const {
+KSQDevice::qMacAddr() const {
     return m_mac;
 }
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::setName(QString name) {
+KSQDevice::setName(QString name) {
     if (name != m_name) {
         m_name = name;
         emit fireNameChanged();
@@ -119,14 +121,14 @@ KSQDeviceBase::setName(QString name) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::setNameToHardware(QString name) {
+KSQDevice::setNameToHardware(QString name) {
     setName(name);
     emit fireSetNameToHardware(qMacAddr(), name);
 }
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::setRoles(QString val) {
+KSQDevice::setRoles(QString val) {
     if (val != m_roles) {
         m_roles = val;
         emit fireRolesChanged();
@@ -135,7 +137,7 @@ KSQDeviceBase::setRoles(QString val) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::setManufacture(QString val) {
+KSQDevice::setManufacture(QString val) {
     if (val != m_manufacture) {
         m_manufacture = val;
         emit fireManufactureChanged();
@@ -144,7 +146,7 @@ KSQDeviceBase::setManufacture(QString val) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::setDeviceID(QString val) {
+KSQDevice::setDeviceID(QString val) {
     if (val != m_deviceID) {
         m_deviceID = val;
         emit fireDeviceIDChanged();
@@ -153,7 +155,7 @@ KSQDeviceBase::setDeviceID(QString val) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::setFwVersion(QString val) {
+KSQDevice::setFwVersion(QString val) {
     if (val != m_fwVersion) {
         m_fwVersion = val;
         emit fireFwVersionChanged();
@@ -162,7 +164,7 @@ KSQDeviceBase::setFwVersion(QString val) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::setTlVersion(QString val) {
+KSQDevice::setTlVersion(QString val) {
     if (val != m_tlVer) {
         m_tlVer = val;
         emit fireTlVerChanged();
@@ -171,7 +173,7 @@ KSQDeviceBase::setTlVersion(QString val) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::setSentBytes(QString val) {
+KSQDevice::setSentBytes(QString val) {
     if (val != m_sentBytes) {
         m_sentBytes = val;
         emit fireSentBytesChanged();
@@ -180,7 +182,7 @@ KSQDeviceBase::setSentBytes(QString val) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::setReceivedBytes(QString val) {
+KSQDevice::setReceivedBytes(QString val) {
     if (val != m_receivedBytes) {
         m_receivedBytes = val;
         emit fireReceivedBytesChanged();
@@ -189,7 +191,7 @@ KSQDeviceBase::setReceivedBytes(QString val) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::setHasOwner(bool hasOwner) {
+KSQDevice::setHasOwner(bool hasOwner) {
     if (hasOwner != m_hasOwner) {
         m_hasOwner = hasOwner;
         emit fireHasOwnerChanged();
@@ -198,7 +200,7 @@ KSQDeviceBase::setHasOwner(bool hasOwner) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::setHasProvision(bool hasProvision) {
+KSQDevice::setHasProvision(bool hasProvision) {
     if (hasProvision != m_hasProvision) {
         m_hasProvision = hasProvision;
         emit fireHasProvisionChanged();
@@ -207,7 +209,7 @@ KSQDeviceBase::setHasProvision(bool hasProvision) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::setSessionKey(const KSQSessionKey &key) {
+KSQDevice::setSessionKey(const KSQSessionKey &key) {
     m_sessionKey = key;
     m_sessionTimer.stop();
     emit fireHasSessionKeyChanged();
@@ -215,109 +217,109 @@ KSQDeviceBase::setSessionKey(const KSQSessionKey &key) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::commandStart() {
+KSQDevice::commandStart() {
     setCommandState(kCmdStateReceive);
 }
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::commandError() {
+KSQDevice::commandError() {
     setCommandState(kCmdStateError);
 }
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::commandDone() {
+KSQDevice::commandDone() {
     setCommandState(kCmdStateDone);
 }
 
 //-----------------------------------------------------------------------------
 QString
-KSQDeviceBase::name() const {
+KSQDevice::name() const {
     return m_name;
 }
 
 //-----------------------------------------------------------------------------
 QString
-KSQDeviceBase::roles() const {
+KSQDevice::roles() const {
     return m_roles;
 }
 
 //-----------------------------------------------------------------------------
 QString
-KSQDeviceBase::manufacture() const {
+KSQDevice::manufacture() const {
     return m_manufacture;
 }
 
 //-----------------------------------------------------------------------------
 QString
-KSQDeviceBase::deviceID() const {
+KSQDevice::deviceID() const {
     return m_deviceID;
 }
 
 //-----------------------------------------------------------------------------
 QString
-KSQDeviceBase::fwVersion() const {
+KSQDevice::fwVersion() const {
     return m_fwVersion;
 }
 
 //-----------------------------------------------------------------------------
 QString
-KSQDeviceBase::tlVersion() const {
+KSQDevice::tlVersion() const {
     return m_tlVer;
 }
 
 //-----------------------------------------------------------------------------
 QString
-KSQDeviceBase::sentBytes() const {
+KSQDevice::sentBytes() const {
     return m_sentBytes;
 }
 
 //-----------------------------------------------------------------------------
 QString
-KSQDeviceBase::receivedBytes() const {
+KSQDevice::receivedBytes() const {
     return m_receivedBytes;
 }
 
 //-----------------------------------------------------------------------------
 QString
-KSQDeviceBase::commandState() const {
+KSQDevice::commandState() const {
     return m_commandState;
 }
 
 //-----------------------------------------------------------------------------
 bool
-KSQDeviceBase::hasOwner() const {
+KSQDevice::hasOwner() const {
     return m_hasOwner;
 }
 
 //-----------------------------------------------------------------------------
 bool
-KSQDeviceBase::hasProvision() const {
+KSQDevice::hasProvision() const {
     return m_hasProvision;
 }
 
 //-----------------------------------------------------------------------------
 bool
-KSQDeviceBase::hasSessionKey() const {
+KSQDevice::hasSessionKey() const {
     return m_sessionKey.isValid();
 }
 
 //-----------------------------------------------------------------------------
 bool
-KSQDeviceBase::active() const {
+KSQDevice::active() const {
     return m_active;
 }
 
 //-----------------------------------------------------------------------------
 bool
-KSQDeviceBase::operator<(const KSQDeviceBase &rhs) const {
+KSQDevice::operator<(const KSQDevice &rhs) const {
     return m_name < rhs.m_name;
 }
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::setCommandState(QString val) {
+KSQDevice::setCommandState(QString val) {
     if (val != m_commandState) {
         m_commandState = val;
         emit fireCommandStateChanged();
@@ -326,7 +328,7 @@ KSQDeviceBase::setCommandState(QString val) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceBase::_setRecivedName(QString name) {
+KSQDevice::_setRecivedName(QString name) {
     if (name != m_name) {
         m_name = name;
         emit fireNameChanged();
@@ -335,11 +337,34 @@ KSQDeviceBase::_setRecivedName(QString name) {
 
 //-----------------------------------------------------------------------------//-----------------------------------------------------------------------------
 void
-KSQDeviceBase::_setRecivedActivity(bool active) {
+KSQDevice::_setRecivedActivity(bool active) {
     if (active != m_active) {
         m_active = active;
         emit fireActiveChanged();
     }
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDevice::invokeCommand(QString json) {
+    commandStart();
+    emit fireInvokeCommand(macAddr(), json);
+}
+
+//-----------------------------------------------------------------------------
+QString
+KSQDevice::stateImage() {
+    QString stateImage;
+    QVariant res;
+    QVariant device;
+    device.setValue(this);
+    if (QMetaObject::invokeMethod(
+                m_js.get(), "deviceStateImage", Q_RETURN_ARG(QVariant, res), Q_ARG(QVariant, device))) {
+        stateImage = res.toString();
+    } else {
+        VS_LOG_ERROR("Cannot request device state image");
+    }
+    return stateImage;
 }
 
 //-----------------------------------------------------------------------------

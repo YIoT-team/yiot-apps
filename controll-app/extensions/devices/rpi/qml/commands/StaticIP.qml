@@ -21,20 +21,19 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../../../theme"
 import "../../../../components"
 import "../../../../components/validators"
-import "../../../../../js/devices/pc.js" as PCDevice
+//import "../../../../../js/devices/main.qml" as PCDevice
 
 Page {
-    id: accessPointPage
+    id: staticIpPage
 
     background: Rectangle {
         color: "transparent"
     }
 
     header: Header {
-        title: qsTr("Access Point")
+        title: qsTr("Static IP")
         backAction: function() { showRPiSettings() }
     }
 
@@ -50,32 +49,59 @@ Page {
 
                 spacing: 15
 
-                InputTextField {
-                    id: ssid
-                    label: qsTr("SSID")
-                    placeholderText: qsTr("Enter access point name")
-                    validator: ValidatorSSID {}
-                }
-
                 FormLabel {
                     id: comboBoxLabel
-                    text: "Select encryption mode:"
+                    text: "Select network interface:"
                     Layout.leftMargin: 31
                     Layout.bottomMargin: 0
                 }
 
                 FormComboBox {
-                    id: mode
+                    id: interfaceCb
                     Layout.leftMargin: 12
                     Layout.topMargin: 0
-                    items: ["WPA2", "WPA", "WEP"]
+                    items: ["wlan0", "eth0"]
                 }
 
-                Password {
-                    id: pass
-                    label: qsTr("Password")
-                    placeholderText: qsTr("Enter new password")
-                    validator: ValidatorPassword {}
+                InputTextField {
+                    id: deviceIP
+                    label: qsTr("Device IP")
+                    placeholderText: qsTr("Enter device static IP addres")
+                    validator: ValidatorIPv4 {}
+                    inputMethodHints: Qt.ImhDigitsOnly
+
+                    Connections {
+                        target: deviceIP
+                        function onReady() {
+//                            gatewayIP.text = PCDevice.gatewayFromIP(deviceIP.text, gatewayIP.text);
+                        }
+                    }
+                }
+
+                InputTextField {
+                    id: gatewayIP
+                    label: qsTr("Gateway IP")
+                    placeholderText: qsTr("Enter gateway IP addres")
+                    validator: ValidatorIPv4 {}
+                    inputMethodHints: Qt.ImhDigitsOnly
+                }
+
+                InputTextField {
+                    id: mask
+                    visible: false
+                    label: qsTr("Mask")
+                    placeholderText: qsTr("Enter network mask")
+                    text: "255.255.255.0"
+                    validator: ValidatorIPv4 {}
+                }
+
+                InputTextField {
+                    id: dns
+                    visible: false
+                    label: qsTr("DNS")
+                    placeholderText: qsTr("Enter DNS")
+                    text: "8.8.8.8"
+                    validator: ValidatorIPv4 {}
                 }
 
                 FormSecondaryButton {
@@ -85,10 +111,13 @@ Page {
                     onClicked: {
                         if(validateInputs()) {
                             showCmdProcessing(rpiPage.controller)
-                            PCDevice.setupAccessPoint(rpiPage.controller,
-                                                      ssid.text,
-                                                      mode.text,
-                                                      pass.text)
+//                            PCDevice.setNetworkParams(rpiPage.controller,
+//                                                      interfaceCb.text,
+//                                                      "true", // Force static
+//                                                      deviceIP.text,
+//                                                      gatewayIP.text,
+//                                                      dns.text,
+//                                                      mask.text)
                         }
                     }
                 }
@@ -103,13 +132,23 @@ Page {
         }
 
         function validateInputs() {
-            if (ssid.text == "") {
-                showPopupError(qsTr("Set SSID"), errorPopupClick)
+            if (deviceIP.text == "") {
+                showPopupError(qsTr("Set device static IP addres"), errorPopupClick)
                 return false
             }
 
-            if (pass.text == "") {
-                showPopupError(qsTr("Set new password"), errorPopupClick)
+            if (gatewayIP.text == "") {
+                showPopupError(qsTr("Set gateway IP addres"), errorPopupClick)
+                return false
+            }
+
+            if (mask.text == "") {
+                showPopupError(qsTr("Set network mask"), errorPopupClick)
+                return false
+            }
+
+            if (dns.text == "") {
+                showPopupError(qsTr("Set DNS"), errorPopupClick)
                 return false
             }
 

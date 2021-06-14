@@ -50,7 +50,7 @@ Rectangle {
             id: icon
             visible: true
             enabled: !topLevel || (image !== "")
-            source: "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(topLevel ? image : deviceStateImage(model))
+            source: topLevel ? image.arg(Theme.state) : model.deviceController.stateImage.arg(Theme.state)
             Layout.maximumHeight: itemText.height * 0.7
             Layout.maximumWidth: Layout.maximumHeight
             Layout.leftMargin: 5

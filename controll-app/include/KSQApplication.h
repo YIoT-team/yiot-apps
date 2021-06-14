@@ -28,15 +28,12 @@
 #include <controllers/KSQBLEController.h>
 #include <controllers/KSQBlankDevicesController.h>
 #include <controllers/KSQUXSimplifyController.h>
-
-#include <controllers/devices/KSQDevices.h>
+#include <controllers/KSQAllDevicesController.h>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
 
 #include <yiot-iotkit/netif/KSQUdp.h>
 #include <yiot-iotkit/netif/KSQNetifWebsocket.h>
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
-
 #include <yiot-iotkit/root-of-trust/KSQRoTController.h>
 
 class KSQApplication : public QObject {
@@ -75,7 +72,7 @@ private:
     QSharedPointer<KSQUdp> m_netifUdp;
     QSharedPointer<KSQNetifWebsocket> m_netifWebsock;
 
-    KSQDevices m_deviceControllers;
+    KSQAllDevicesController m_deviceControllers;
 };
 
 #endif // PROVISION_QT_APP_H

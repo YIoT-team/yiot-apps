@@ -17,8 +17,8 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_DEVICE_BASE_H
-#define YIOT_DEVICE_BASE_H
+#ifndef YIOT_DEVICE_H
+#define YIOT_DEVICE_H
 
 #include <QtCore>
 
@@ -26,7 +26,7 @@
 
 #include <yiot-iotkit/secmodule/KSQSessionKey.h>
 
-class KSQDeviceBase : public QObject {
+class KSQDevice : public QObject {
     Q_OBJECT
 
     Q_PROPERTY(QString deviceType READ deviceType)
@@ -40,21 +40,28 @@ class KSQDeviceBase : public QObject {
     Q_PROPERTY(QString sentBytes READ sentBytes WRITE setSentBytes NOTIFY fireSentBytesChanged)
     Q_PROPERTY(QString receivedBytes READ receivedBytes WRITE setReceivedBytes NOTIFY fireReceivedBytesChanged)
     Q_PROPERTY(QString commandState READ commandState WRITE setCommandState NOTIFY fireCommandStateChanged)
+    Q_PROPERTY(QString stateImage READ stateImage NOTIFY fireStateImageChanged)
     Q_PROPERTY(bool hasOwner READ hasOwner NOTIFY fireHasOwnerChanged)
     Q_PROPERTY(bool hasProvision READ hasProvision NOTIFY fireHasProvisionChanged)
     Q_PROPERTY(bool hasSessionKey READ hasSessionKey NOTIFY fireHasSessionKeyChanged)
     Q_PROPERTY(bool active READ active NOTIFY fireActiveChanged)
 
 public:
-    KSQDeviceBase();
-    KSQDeviceBase(VSQMac mac, QString name, QString img = "");
-    KSQDeviceBase(const KSQDeviceBase &d);
+    KSQDevice();
+    KSQDevice(QSharedPointer<QObject> js, VSQMac mac, QString name, QString img = "");
+    KSQDevice(const KSQDevice &d);
 
     Q_INVOKABLE QString
     deviceType() const;
 
     Q_INVOKABLE QString
     macAddr() const;
+
+    Q_INVOKABLE void
+    invokeCommand(QString json);
+
+    QString
+    stateImage();
 
     VSQMac
     qMacAddr() const;
@@ -132,7 +139,7 @@ public:
     active() const;
 
     bool
-    operator<(const KSQDeviceBase &rhs) const;
+    operator<(const KSQDevice &rhs) const;
 
     bool
     isUpdatedName();
@@ -154,8 +161,10 @@ protected:
     void
     _setRecivedActivity(bool active);
 
-    virtual QString
-    _deviceType() const = 0;
+    QString
+    _deviceType() const {
+        return "pc";
+    }
 
 signals:
     void
@@ -196,6 +205,12 @@ signals:
     void
     fireRequestSessionKey(VSQMac mac);
 
+    void
+    fireInvokeCommand(QString mac, QString json);
+
+    void
+    fireStateImageChanged();
+
 private:
     bool m_active;
     QDateTime m_lastUpdate;
@@ -216,6 +231,8 @@ private:
     bool m_hasProvision;
     bool m_hasOwner;
 
+    QSharedPointer<QObject> m_js;
+
     // TODO: Check if i need a separate class for Session
     QTimer m_sessionTimer;
     KSQSessionKey m_sessionKey;
@@ -223,9 +240,10 @@ private:
 
     void
     startSessionConnection();
+
 private slots:
     void
     onSessionTimer();
 };
 
-#endif // YIOT_DEVICE_BASE_H
+#endif // YIOT_DEVICE_H
