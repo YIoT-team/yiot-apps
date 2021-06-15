@@ -22,26 +22,41 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import "../../components"
-import "../../components/Plugins"
+import "../../components/Integrations"
 import "../../theme"
 
 Page {
-    readonly property int availableIdx: 0
-    readonly property int installedIdx: 1
+    readonly property int installedIdx: 0
+    readonly property int availableIdx: 1
 
-    id: eventsSettingsPage
+    id: integrationsListPage
 
     background: Rectangle {
         color: "transparent"
     }
 
     header: Header {
-        title: qsTr("Device types")
-        backAction: function() { showMenuSettings() }
+        title: pluginsInstalled.controlPageOpen ? qsTr("Integrations") : qsTr("Websocket")
+        backAction: function() {
+            if (pluginsInstalled.controlPageOpen) {
+                showMenuSettings()
+            } else {
+               pluginsInstalled.controlPageOpen = true
+            }
+        }
+    }
+
+    Loader {
+           id: myLoader
+           anchors.fill: parent
+           visible: !pluginsInstalled.controlPageOpen
+           source: "qrc:/integration/0/qml/ControlIntegrations.qml"
     }
 
     ColumnLayout {
         anchors.fill: parent
+
+        visible: pluginsInstalled.controlPageOpen
 
         spacing: 15
 
@@ -56,8 +71,8 @@ Page {
                 color: Theme.mainBackgroundColor
             }
 
-            TextTabButton { idx: 0; text: qsTr("Available") }
-            TextTabButton { idx: 1; text: qsTr("Installed") }
+            TextTabButton { idx: 0; text: qsTr("Installed") }
+            TextTabButton { idx: 1; text: qsTr("Available") }
         }
 
         SwipeView {
@@ -69,8 +84,8 @@ Page {
             interactive: false
             currentIndex: availableIdx
 
-            PluginsAvailable { id: pluginsAvailable }
-            PluginsInstalled { id: pluginsInstalled }
+            IntegrationsInstalled { id: pluginsInstalled }
+            IntegrationsAvailable { id: pluginsAvailable }
         }
 
         Item {
@@ -80,7 +95,7 @@ Page {
     }
 
     Component.onCompleted: {
-        swipeShowPlugins(availableIdx)
+        swipeShowPlugins(installedIdx)
     }
 
     function swipeShowPlugins(idx) {

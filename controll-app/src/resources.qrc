@@ -109,6 +109,8 @@
         <file>qml/components/RoT/RoTInfoPopup.qml</file>
         <file>qml/components/Plugins/PluginsAvailable.qml</file>
         <file>qml/components/Plugins/PluginsInstalled.qml</file>
+		<file>qml/components/Integrations/IntegrationsAvailable.qml</file>
+		<file>qml/components/Integrations/IntegrationsInstalled.qml</file>
         <file>qml/components/FormThemeList.qml</file>
         <file>qml/components/SwitchableParam.qml</file>
         <file>qml/components/devices/DeviceInfoPopup.qml</file>
@@ -144,6 +146,7 @@
         <file>qml/pages/settings/NetworksSettingsPage.qml</file>
         <file>qml/pages/settings/ThemeListPage.qml</file>
         <file>qml/pages/settings/PluginsListPage.qml</file>
+		<file>qml/pages/settings/IntegrationsListPage.qml</file>
 
         <!-- QML Other pages -->
         <file>qml/pages/AboutPage.qml</file>

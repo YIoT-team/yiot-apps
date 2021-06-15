@@ -21,73 +21,60 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../components"
-import "../../components/Plugins"
 import "../../theme"
+import "../../components/devices"
 
-Page {
-    readonly property int availableIdx: 0
-    readonly property int installedIdx: 1
+Item {
+    property bool controlPageOpen: true
 
-    id: eventsSettingsPage
+    id: p
 
-    background: Rectangle {
-        color: "transparent"
-    }
+    Layout.topMargin: 1
+    Layout.leftMargin: 10
 
-    header: Header {
-        title: qsTr("Device types")
-        backAction: function() { showMenuSettings() }
-    }
-
-    ColumnLayout {
+    ListView {
         anchors.fill: parent
+        Rectangle {
+            id: base
+            width: parent.width
+            height: 55
+            color: "transparent"
 
-        spacing: 15
+            RowLayout {
+                id: listDelegate
+                anchors.fill: parent
+                clip: true
 
-        TabBar {
-            id: tabBarPlugins
-            Layout.fillWidth: true
 
-            z: 5
-            currentIndex: swipeViewPlugins.currentIndex
+                Text {
+                    id: nameText
+                    text: qsTr("Websocket")
+                    color: Theme.primaryTextColor
+                    verticalAlignment: Text.AlignVCenter
+                    font.pointSize: UiHelper.fixFontSz(14)
 
-            background: Rectangle {
-                color: Theme.mainBackgroundColor
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Layout.leftMargin: 30
+                }
             }
 
-            TextTabButton { idx: 0; text: qsTr("Available") }
-            TextTabButton { idx: 1; text: qsTr("Installed") }
-        }
+            MouseArea {
+                //enabled: true
+                anchors.fill: parent
+                hoverEnabled: true
+                //anchors.rightMargin: 0
+                onClicked: { p.controlPageOpen = false }
 
-        SwipeView {
-            property int backPageIdx: availableIdx
+                onEntered: {
+                    base.color = Theme.contrastBackgroundColor
+                }
 
-            id: swipeViewPlugins
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            interactive: false
-            currentIndex: availableIdx
-
-            PluginsAvailable { id: pluginsAvailable }
-            PluginsInstalled { id: pluginsInstalled }
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
-    }
-
-    Component.onCompleted: {
-        swipeShowPlugins(availableIdx)
-    }
-
-    function swipeShowPlugins(idx) {
-        swipeViewPlugins.currentIndex = idx
-        for (var i = 0; i < swipeViewPlugins.count; ++i) {
-            var item = swipeViewPlugins.itemAt(i)
-            item.visible = i == swipeViewPlugins.currentIndex
+                onExited: {
+                    base.color = "transparent"
+                }
+            }
         }
     }
 }

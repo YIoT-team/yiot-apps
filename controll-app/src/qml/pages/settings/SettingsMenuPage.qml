@@ -88,7 +88,8 @@ Page {
             }
 
             ListElement {
-                name: qsTr("Plugins")
+                //name: qsTr("Plugins")
+                name: qsTr("Device types")
                 image: "plugins"
                 property var action: function() {
                     showPluginsList(true)
@@ -96,10 +97,11 @@ Page {
             }
 
             ListElement {
-                name: qsTr("Test")
-                image: "file:///Users/kutashenko/Downloads/docker.png"
+                //name: qsTr("Plugins")
+                name: qsTr("Integrations")
+                //image: "plugins"
                 property var action: function() {
-                    showDocker()
+                    showIntegrationsList()
                 }
             }
         }
