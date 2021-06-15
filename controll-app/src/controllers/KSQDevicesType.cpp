@@ -32,6 +32,8 @@
 //-----------------------------------------------------------------------------
 KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, uint64_t deviceId) {
     m_deviceTypeId = deviceId;
+
+    // Create JS processor
     const QString js = "qrc:/device/" + QString::number(deviceId) + "/js/main.qml";
     QQmlComponent component(&engine, QUrl(js));
     QObject *object = component.create();
@@ -39,8 +41,22 @@ KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, uint64_t deviceId)
         VS_LOG_ERROR("Cannot create QML processor for device type : %llu", static_cast<unsigned long long>(deviceId));
         return;
     }
-
     m_qmlProcessor.reset(object);
+
+    // Add Device control page
+    auto *rootObj = engine.rootObjects().first();
+    auto deviceControlContainer = rootObj->findChild<QObject *>("deviceControlContainer");
+    const QString controlPage = "qrc:/device/" + QString::number(deviceId) + "/qml/Control.qml";
+    QVariant res;
+    if (QMetaObject::invokeMethod(deviceControlContainer,
+                                  "addDeviceControl",
+                                  Q_RETURN_ARG(QVariant, res),
+                                  Q_ARG(QVariant, QVariant::fromValue(controlPage)))) {
+        object->setProperty("controlPageIdx", res);
+    } else {
+        VS_LOG_ERROR("Cannot register device control page");
+    }
+
 
     // SNAP::INFO service
     connect(&VSQSnapInfoClient::instance(),

@@ -21,9 +21,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../../../components"
-import "../../../../components/validators"
-//import "../../../../../js/devices/pc.js" as PCDevice
+import "qrc:/qml/components"
+import "qrc:/qml/components/validators"
 
 Page {
     id: createUserPage

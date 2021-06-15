@@ -26,16 +26,10 @@ import "../../components"
 import "../../components/devices"
 
 SwipeView {
-    readonly property int lampMonoPageIdx: 0
-    readonly property int pcPageIdx: 1
-
     id: devicesSwipeView
+    objectName: "deviceControlContainer"
     anchors.fill: parent
     interactive: false
-    currentIndex: lampMonoPageIdx
-
-//    LampMonoControl { id: lampMonoPage }
-//    PCRPiControl { id: rpiPage }
 
     function show(idx, deviceName, deviceController) {
         devicesSwipeView.currentIndex = idx
@@ -45,5 +39,21 @@ SwipeView {
             item.deviceName = deviceController.name
             item.visible = i == devicesSwipeView.currentIndex
         }
+    }
+
+    function addDeviceControl(qmlFile) {
+        console.log("addDeviceControl:", qmlFile)
+        var component = Qt.createComponent(qmlFile);
+        var controlPage = component.createObject(devicesSwipeView);
+
+        if (controlPage == null) {
+            console.log("Error creating object")
+        }
+
+        devicesSwipeView.addItem(controlPage)
+
+        console.log("addDeviceControl IDX:", devicesSwipeView.count - 1)
+
+        return devicesSwipeView.count - 1
     }
 }

@@ -21,8 +21,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../../../theme"
-import "../../../../components"
+import "qrc:/qml/theme"
+import "qrc:/qml/components"
 
 Page {
     id: rpiSettingsPage
@@ -99,7 +99,7 @@ Page {
 
                 Image {
                     id: icon
-                    source: "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(image)
+                    source: "qrc:/device/0/icons/%1/%2.png".arg(Theme.state).arg(image)
                     Layout.maximumHeight: listDelegate.height * 0.7
                     Layout.maximumWidth: Layout.maximumHeight
                     fillMode: Image.PreserveAspectFit

@@ -11,6 +11,7 @@
         <file>icons/dark/vpn-router.png</file>
         <file>icons/dark/ssh.png</file>
         <file>icons/dark/pc.png</file>
+        <file>icons/dark/rename.png</file>
 
         <!-- Icons light theme -->
         <file>icons/light/rpi.png</file>
@@ -20,6 +21,7 @@
         <file>icons/light/vpn-router.png</file>
         <file>icons/light/ssh.png</file>
         <file>icons/light/pc.png</file>
+        <file>icons/light/rename.png</file>
 
         <!-- QML Components -->
         <file>qml/Control.qml</file>

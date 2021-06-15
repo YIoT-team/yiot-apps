@@ -21,8 +21,9 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../../../components"
-//import "../../../../../js/devices/pc.js" as PCDevice
+import "../"
+import "../../js"
+import "qrc:/qml/components"
 
 Page {
     id: sshPage
@@ -60,8 +61,10 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Enable")
                     onClicked: {
+                        console.log(">>> rpiPage: ", rpiPage)
+                        console.log(">>> rpiPage.controller: ", rpiPage.controller)
                         showCmdProcessing(rpiPage.controller)
-//                        PCDevice.enableSSH(rpiPage.controller)
+                        device0.enableSSH(rpiPage.controller)
                     }
                 }
 

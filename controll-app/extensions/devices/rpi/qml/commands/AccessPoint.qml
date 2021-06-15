@@ -21,10 +21,9 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../../../theme"
-import "../../../../components"
-import "../../../../components/validators"
-//import "../../../../../js/devices/main.qml" as PCDevice
+import "qrc:/qml/theme"
+import "qrc:/qml/components"
+import "qrc:/qml/components/validators"
 
 Page {
     id: accessPointPage

@@ -22,9 +22,9 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import "./commands"
-import "../../../theme"
-import "../../../components"
-import "../../../components/validators"
+import "qrc:/qml/theme"
+import "qrc:/qml/components"
+import "qrc:/qml/components/validators"
 
 Page {
     property var controller
@@ -38,7 +38,7 @@ Page {
 
     header: Header {
         id: header
-        title: qsTr("RPi Controll")
+        title: qsTr("RPi Control")
         backAction: function() { showDevices() }
     }
 

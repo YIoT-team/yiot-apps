@@ -21,8 +21,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../../../components"
-import "../../../../components/validators"
+import "qrc:/qml/components"
+import "qrc:/qml/components/validators"
 //import "../../../../../js/devices/main.qml" as PCDevice
 
 Page {

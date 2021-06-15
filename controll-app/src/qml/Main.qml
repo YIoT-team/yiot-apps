@@ -326,17 +326,10 @@ ApplicationWindow {
     // ------------------------------------------------------------------------
     //      Show Per device Views
     // ------------------------------------------------------------------------
-    function showLampMono(deviceName, deviceController) {
+    function showDeviceControl(deviceController) {
         w.state = "deviceControl"
-        devicesSwipeView.show(devicesSwipeView.lampMonoPageIdx,
-                              deviceName,
-                              deviceController)
-    }
-
-    function showPC(deviceName, deviceController) {
-        w.state = "deviceControl"
-        devicesSwipeView.show(devicesSwipeView.pcPageIdx,
-                              deviceName,
+        devicesSwipeView.show(deviceController.js.controlPageIdx,
+                              deviceController.name,
                               deviceController)
     }
 
@@ -354,7 +347,7 @@ ApplicationWindow {
     }
 
     function startDeviceSetup(device) {
-        devicesPage.activateDeviceView("pc", device.name, device)
+        devicesPage.activateDeviceView(device)
     }
 
     function rejectDeviceSetup(device) {

@@ -127,7 +127,7 @@ Rectangle {
             if (topLevel) {
                 subModel.collapsed = !subModel.collapsed
             } else {
-                activateDeviceView(deviceType, name, deviceController)
+                activateDeviceView(deviceController)
             }
         }
 

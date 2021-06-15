@@ -65,16 +65,8 @@ Page {
     }
 
     // Show Big Controls view for device, by its type.
-    function activateDeviceView(deviceType, deviceName, deviceController) {
+    function activateDeviceView(deviceController) {
         lastActiveDevice = deviceController
-        if (deviceType === "lampMono") {
-            showLampMono(deviceName, deviceController)
-            return
-        } else if (deviceType === "pc") {
-            showPC(deviceName, deviceController)
-            return
-        }
-
-        console.error("Control page: Unknown Device Type")
+        showDeviceControl(deviceController)
     }
 }
