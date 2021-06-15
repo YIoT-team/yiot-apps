@@ -31,7 +31,7 @@ Item {
 
     ListView {
         anchors.fill: parent
-        //model: ListModel { id: model}
+        model: ListModel { id: model}
 
         delegate: Rectangle {
             id: base
@@ -44,15 +44,15 @@ Item {
                 anchors.fill: parent
                 clip: true
 
-//                Image {
-//                    id: icon
-//                    source: (image.indexOf("://") != -1) ? image : "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(image)
-//                    Layout.maximumHeight: listDelegate.height * 0.7
-//                    Layout.maximumWidth: Layout.maximumHeight
-//                    fillMode: Image.PreserveAspectFit
-//                    Layout.alignment: Qt.AlignLeft
-//                    Layout.leftMargin: 10
-//                }
+                Image {
+                    id: icon
+                    source: (image.indexOf("://") != -1) ? image : "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(image)
+                    Layout.maximumHeight: listDelegate.height * 0.7
+                    Layout.maximumWidth: Layout.maximumHeight
+                    fillMode: Image.PreserveAspectFit
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.leftMargin: 10
+                }
 
                 Text {
                     text: qsTr("")
@@ -73,10 +73,10 @@ Item {
                 hoverEnabled: true
                 anchors.rightMargin: 0
                 onClicked: {
-//                    showPluginPage(model, function() {
-//                       showSettings()
-//                       showPluginsList(true)
-//                    })
+                    showIntegrationPage(model, function() {
+                       showSettings()
+                       showIntegrationsList()
+                    })
                 }
 
                 onEntered: {
@@ -88,53 +88,53 @@ Item {
                 }
             }
         }
-//        Component.onCompleted: {
-//            loadAvailablePluginsInfo()
-//        }
+        Component.onCompleted: {
+            loadAvailableIntegrationsInfo()
+        }
     }
 
-//    function loadAvailablePluginsInfo() {
-//        let path = "https://raw.githubusercontent.com/YIoT-team/yiot-packages/feature/test"
-//        let lang = "en"
-//        let jsonData = readFile(path + "/yiot.json")
-//        var data = JSON.parse(jsonData)
-//        model.clear()
-//        var list = data[0]["plugins"]
-//        for (var i in list) {
-//            // Helper variables
-//            let packageUrl = path + "/packages/" + list[i]["dir"] + "/"
-//            let textsUrl = packageUrl + "texts/" + lang + "/"
+    function loadAvailableIntegrationsInfo() {
+        let path = "https://raw.githubusercontent.com/YIoT-team/yiot-packages/feature/test"
+        let lang = "en"
+        let jsonData = readFile(path + "/yiot.json")
+        var data = JSON.parse(jsonData)
+        model.clear()
+        var list = data[0]["plugins"]
+        for (var i in list) {
+            // Helper variables
+            let packageUrl = path + "/integrations/" + list[i]["dir"] + "/"
+            let textsUrl = packageUrl + "texts/" + lang + "/"
 
-//            // Logo
-//            let imageUrl = packageUrl + "logo/logo.png"
+            // Logo
+            let imageUrl = packageUrl + "logo/logo.png"
 
-//            // Texts
-//            let titleUrl = textsUrl + "title.txt"
-//            let linkUrl = textsUrl + "link.txt"
-//            let descriptionUrl = textsUrl + "description.md"
+            // Texts
+            let titleUrl = textsUrl + "title.txt"
+            let linkUrl = textsUrl + "link.txt"
+            let descriptionUrl = textsUrl + "description.md"
 
-//            // General info
-//            let infoJsonUrl = packageUrl + "/info.json"
-//            let infoData = JSON.parse(readFile(infoJsonUrl))
+            // General info
+            let infoJsonUrl = packageUrl + "/info.json"
+            let infoData = JSON.parse(readFile(infoJsonUrl))
 
-//            // Fill model data
-//            model.append({
-//                             pluginId: i,
-//                             image: imageUrl,
-//                             title: readFile(titleUrl),
-//                             link: readFile(linkUrl),
-//                             description: readFile(descriptionUrl),
-//                             info: infoData[0],
-//                             installed: false
-//                         })
-//        }
-//    }
+            // Fill model data
+            model.append({
+                             pluginId: i,
+                             image: imageUrl,
+                             title: readFile(titleUrl),
+                             link: readFile(linkUrl),
+                             description: readFile(descriptionUrl),
+                             info: infoData[0],
+                             installed: false
+                         })
+        }
+    }
 
-//    function readFile(fileUrl) {
-//        var request = new XMLHttpRequest()
-//        request.open("GET", fileUrl, false)
-//        request.send(null)
-//        return request.responseText
-//    }
+    function readFile(fileUrl) {
+        var request = new XMLHttpRequest()
+        request.open("GET", fileUrl, false)
+        request.send(null)
+        return request.responseText
+    }
 
 }

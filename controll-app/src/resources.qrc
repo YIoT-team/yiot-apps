@@ -156,6 +156,7 @@
         <file>qml/pages/QRReaderPage.qml</file>
         <file>qml/pages/SharePage.qml</file>
         <file>qml/pages/PluginPage.qml</file>
+        <file>qml/pages/IntegrationsPage.qml</file>
 
         <!-- QML Device pages -->
         <file>qml/pages/devices/CmdProcessingPage.qml</file>
