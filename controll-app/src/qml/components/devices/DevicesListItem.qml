@@ -50,7 +50,7 @@ Rectangle {
             id: icon
             visible: true
             enabled: !topLevel || (image !== "")
-            source: topLevel ? image.arg(Theme.state) : model.deviceController.stateImage.arg(Theme.state)
+            source: topLevel ? image.arg(Theme.state) : model.js.stateImage(model).arg(Theme.state)
             Layout.maximumHeight: itemText.height * 0.7
             Layout.maximumWidth: Layout.maximumHeight
             Layout.leftMargin: 5
@@ -61,7 +61,7 @@ Rectangle {
                 enabled: !topLevel
                 target: topLevel ? null : deviceController
                 function onFireStateChanged() {
-                    icon.source = "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(deviceStateImage(model))
+                    icon.source = model.js.stateImage(model).arg(Theme.state)
                 }
             }
         }

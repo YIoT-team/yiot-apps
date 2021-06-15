@@ -352,19 +352,3 @@ KSQDevice::invokeCommand(QString json) {
 }
 
 //-----------------------------------------------------------------------------
-QString
-KSQDevice::stateImage() {
-    QString stateImage;
-    QVariant res;
-    QVariant device;
-    device.setValue(this);
-    if (QMetaObject::invokeMethod(
-                m_js.get(), "deviceStateImage", Q_RETURN_ARG(QVariant, res), Q_ARG(QVariant, device))) {
-        stateImage = res.toString();
-    } else {
-        VS_LOG_ERROR("Cannot request device state image");
-    }
-    return stateImage;
-}
-
-//-----------------------------------------------------------------------------

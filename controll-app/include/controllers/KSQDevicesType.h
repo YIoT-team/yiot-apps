@@ -35,7 +35,7 @@ class KSQDevicesType : public QAbstractTableModel {
 public:
     Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed NOTIFY fireCollapsedChanged)
 
-    enum Element { Name = Qt::UserRole, Type, Mac, Active, Device, Secure, ElementMax };
+    enum Element { Name = Qt::UserRole, Type, Mac, Active, Device, Secure, Js, ElementMax };
 
     KSQDevicesType(QQmlApplicationEngine &engine, uint64_t deviceId);
     virtual ~KSQDevicesType() = default;
@@ -48,6 +48,9 @@ public:
 
     QString
     image() const;
+
+    QSharedPointer<QObject>
+    qmlProcessor() const;
 
     Q_INVOKABLE void
     setCollapsed(bool c) {

@@ -73,10 +73,17 @@ KSQAllDevicesController::data(const QModelIndex &index, int role) const {
                 case Element::Image:
                     return el->image();
 
-                case Element::SubModel:
+                case Element::SubModel: {
                     QVariant res;
                     res.setValue(el.get());
                     return res;
+                }
+
+                case Element::Js: {
+                    QVariant res;
+                    res.setValue(el->qmlProcessor().get());
+                    return res;
+                }
                 }
             }
             ++cnt;
@@ -93,6 +100,7 @@ KSQAllDevicesController::roleNames() const {
     roles[Type] = "categoryType";
     roles[Image] = "image";
     roles[SubModel] = "subModel";
+    roles[Js] = "js";
     return roles;
 }
 

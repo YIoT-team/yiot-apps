@@ -262,10 +262,18 @@ KSQDevicesType::data(const QModelIndex &index, int role) const {
         case Element::Secure:
             return l->hasSessionKey();
 
-        case Element::Device:
+        case Element::Device: {
             QVariant res;
             res.setValue(const_cast<KSQDevice *>(&(*l)));
             return res;
+        }
+
+
+        case Element::Js: {
+            QVariant resJs;
+            resJs.setValue(m_qmlProcessor.get());
+            return resJs;
+        }
         }
     }
 
@@ -282,7 +290,14 @@ KSQDevicesType::roleNames() const {
     roles[Active] = "active";
     roles[Secure] = "secure";
     roles[Device] = "deviceController";
+    roles[Js] = "js";
     return roles;
+}
+
+//-----------------------------------------------------------------------------
+QSharedPointer<QObject>
+KSQDevicesType::qmlProcessor() const {
+    return m_qmlProcessor;
 }
 
 //-----------------------------------------------------------------------------

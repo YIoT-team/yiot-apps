@@ -38,8 +38,27 @@ Item {
     }
 
     //-----------------------------------------------------------------------------
-    function deviceStateImage(model) {
+    function stateImage(model) {
         return "qrc:/device/0/icons/%1/rpi.png"
+    }
+
+    //-----------------------------------------------------------------------------
+    function
+    controlTiny(model) {
+        return "qrc:/qml/components/devices/GeneralDeviceControls.qml"
+    }
+
+    //-----------------------------------------------------------------------------
+    function
+    controlTypeTiny(model) {
+        return "qrc:/qml/components/devices/GeneralCategoryControls.qml"
+    }
+
+
+    //-----------------------------------------------------------------------------
+    function
+    controlPage(model) {
+
     }
 
     ////-----------------------------------------------------------------------------

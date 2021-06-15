@@ -41,7 +41,7 @@ Item {
                 id: subItemRepeater
                 delegate: DevicesListItem {
                     topLevel: false
-                    controlElementUrl: deviceActions(deviceType)
+                    controlElementUrl: model.js.controlTiny()
                 }
             }
         }
@@ -57,7 +57,7 @@ Item {
 
             DevicesListItem {
                 showControlsPermanent: true
-                controlElementUrl: deviceCategoryActions(categoryType)
+                controlElementUrl: model.js.controlTypeTiny()
             }
 
             Loader {

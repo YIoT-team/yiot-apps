@@ -40,7 +40,6 @@ class KSQDevice : public QObject {
     Q_PROPERTY(QString sentBytes READ sentBytes WRITE setSentBytes NOTIFY fireSentBytesChanged)
     Q_PROPERTY(QString receivedBytes READ receivedBytes WRITE setReceivedBytes NOTIFY fireReceivedBytesChanged)
     Q_PROPERTY(QString commandState READ commandState WRITE setCommandState NOTIFY fireCommandStateChanged)
-    Q_PROPERTY(QString stateImage READ stateImage NOTIFY fireStateImageChanged)
     Q_PROPERTY(bool hasOwner READ hasOwner NOTIFY fireHasOwnerChanged)
     Q_PROPERTY(bool hasProvision READ hasProvision NOTIFY fireHasProvisionChanged)
     Q_PROPERTY(bool hasSessionKey READ hasSessionKey NOTIFY fireHasSessionKeyChanged)
@@ -59,9 +58,6 @@ public:
 
     Q_INVOKABLE void
     invokeCommand(QString json);
-
-    QString
-    stateImage();
 
     VSQMac
     qMacAddr() const;
