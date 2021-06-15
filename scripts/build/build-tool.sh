@@ -32,8 +32,8 @@ find_tool() {
     local PARAM_CMD="${1}"
     RES_TMP="$(which ${PARAM_CMD} 2>&1)"
     if [ "${?}" != "0" ]; then
-<------>echo "Tools [${PARAM_CMD}] NOT FOUND (Please install first)"
-<------>return 127
+        echo "Tools [${PARAM_CMD}] NOT FOUND (Please install first)"
+        return 127
     fi
     return 0
 }
