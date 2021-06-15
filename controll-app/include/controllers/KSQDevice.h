@@ -44,6 +44,7 @@ class KSQDevice : public QObject {
     Q_PROPERTY(bool hasProvision READ hasProvision NOTIFY fireHasProvisionChanged)
     Q_PROPERTY(bool hasSessionKey READ hasSessionKey NOTIFY fireHasSessionKeyChanged)
     Q_PROPERTY(bool active READ active NOTIFY fireActiveChanged)
+    Q_PROPERTY(QObject *js READ js)
 
 public:
     KSQDevice();
@@ -161,6 +162,9 @@ protected:
     _deviceType() const {
         return "pc";
     }
+
+    QObject *
+    js() const;
 
 signals:
     void

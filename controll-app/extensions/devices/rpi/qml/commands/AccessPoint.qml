@@ -84,10 +84,10 @@ Page {
                     onClicked: {
                         if(validateInputs()) {
                             showCmdProcessing(rpiPage.controller)
-//                            PCDevice.setupAccessPoint(rpiPage.controller,
-//                                                      ssid.text,
-//                                                      mode.text,
-//                                                      pass.text)
+                            rpiPage.controller.js.protocol.setupAccessPoint(rpiPage.controller,
+                                                      ssid.text,
+                                                      mode.text,
+                                                      pass.text)
                         }
                     }
                 }

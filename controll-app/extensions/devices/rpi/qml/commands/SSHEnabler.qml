@@ -61,10 +61,8 @@ Page {
                     Layout.bottomMargin: 10
                     text: qsTr("Enable")
                     onClicked: {
-                        console.log(">>> rpiPage: ", rpiPage)
-                        console.log(">>> rpiPage.controller: ", rpiPage.controller)
                         showCmdProcessing(rpiPage.controller)
-                        device0.enableSSH(rpiPage.controller)
+                        rpiPage.controller.js.protocol.enableSSH(rpiPage.controller)
                     }
                 }
 

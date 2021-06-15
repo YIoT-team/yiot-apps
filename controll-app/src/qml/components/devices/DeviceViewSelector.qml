@@ -31,8 +31,8 @@ SwipeView {
     anchors.fill: parent
     interactive: false
 
-    function show(idx, deviceName, deviceController) {
-        devicesSwipeView.currentIndex = idx
+    function show(deviceController) {
+        devicesSwipeView.currentIndex = deviceController.js.controlPageIdx
         for (var i = 0; i < devicesSwipeView.count; ++i) {
             var item = devicesSwipeView.itemAt(i)
             item.controller = deviceController

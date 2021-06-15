@@ -23,7 +23,6 @@ import QtQuick.Layouts 1.12
 
 import "qrc:/qml/components"
 import "qrc:/qml/components/validators"
-//import "../../../../../js/devices/main.qml" as PCDevice
 
 Page {
     id: createUserPage
@@ -77,7 +76,7 @@ Page {
                     onClicked: {
                         if(validateInputs()) {
                             showCmdProcessing(rpiPage.controller)
-//                            PCDevice.createUser(rpiPage.controller, userName.text, pass1.text)
+                            rpiPage.controller.js.protocol.createUser(rpiPage.controller, userName.text, pass1.text)
                         }
                     }
                 }

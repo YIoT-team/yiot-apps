@@ -23,7 +23,6 @@ import QtQuick.Layouts 1.12
 
 import "qrc:/qml/components"
 import "qrc:/qml/components/validators"
-//import "../../../../../js/devices/main.qml" as PCDevice
 
 Page {
     id: staticIpPage
@@ -73,7 +72,7 @@ Page {
                     Connections {
                         target: deviceIP
                         function onReady() {
-//                            gatewayIP.text = PCDevice.gatewayFromIP(deviceIP.text, gatewayIP.text);
+                            gatewayIP.text = rpiPage.controller.js.helpers.gatewayFromIP(deviceIP.text, gatewayIP.text);
                         }
                     }
                 }
@@ -111,13 +110,13 @@ Page {
                     onClicked: {
                         if(validateInputs()) {
                             showCmdProcessing(rpiPage.controller)
-//                            PCDevice.setNetworkParams(rpiPage.controller,
-//                                                      interfaceCb.text,
-//                                                      "true", // Force static
-//                                                      deviceIP.text,
-//                                                      gatewayIP.text,
-//                                                      dns.text,
-//                                                      mask.text)
+                            rpiPage.controller.js.protocol.setNetworkParams(rpiPage.controller,
+                                                      interfaceCb.text,
+                                                      "true", // Force static
+                                                      deviceIP.text,
+                                                      gatewayIP.text,
+                                                      dns.text,
+                                                      mask.text)
                         }
                     }
                 }

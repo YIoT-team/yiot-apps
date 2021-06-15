@@ -36,6 +36,9 @@ KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, uint64_t deviceId)
     // Create JS processor
     const QString js = "qrc:/device/" + QString::number(deviceId) + "/js/main.qml";
     QQmlComponent component(&engine, QUrl(js));
+    if (component.isError()) {
+        qDebug() << component.errors();
+    }
     QObject *object = component.create();
     if (!object) {
         VS_LOG_ERROR("Cannot create QML processor for device type : %llu", static_cast<unsigned long long>(deviceId));

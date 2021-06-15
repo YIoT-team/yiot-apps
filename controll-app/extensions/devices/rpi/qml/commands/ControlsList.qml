@@ -139,7 +139,6 @@ Page {
                 anchors.fill: parent
                 hoverEnabled: true
                 onClicked: {
-                    console.log(">>> ", rpiSettingsPage.controller)
                     action(rpiSettingsPage.controller)
                 }
 

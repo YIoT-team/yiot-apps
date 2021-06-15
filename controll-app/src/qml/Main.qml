@@ -328,9 +328,7 @@ ApplicationWindow {
     // ------------------------------------------------------------------------
     function showDeviceControl(deviceController) {
         w.state = "deviceControl"
-        devicesSwipeView.show(deviceController.js.controlPageIdx,
-                              deviceController.name,
-                              deviceController)
+        devicesSwipeView.show(deviceController)
     }
 
     // ------------------------------------------------------------------------

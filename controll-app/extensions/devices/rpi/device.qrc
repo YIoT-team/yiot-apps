@@ -2,6 +2,8 @@
     <qresource prefix="/device/0">
         <!-- Java script -->
         <file>js/main.qml</file>
+        <file>js/protocol.js</file>
+        <file>js/helpers.js</file>
 
         <!-- Icons dark theme -->
         <file>icons/dark/rpi.png</file>
