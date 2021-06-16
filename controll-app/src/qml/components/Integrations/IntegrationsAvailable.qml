@@ -23,93 +23,20 @@ import QtQuick.Layouts 1.12
 
 import "../../theme"
 import "../../components"
+import "../../components/devices"
 
-Page {
-    id: settingsPage
-
-    property int darkMode: 1
-
-    background: Rectangle {
-        color: "transparent"
-    }
-
-    header: Header {
-        title: qsTr("Global Settings")
-        showBackButton: false
-        showMenuButton: true
-        showSettingsButton: true
-    }
+Item {
+    Layout.topMargin: 1
+    Layout.leftMargin: 10
 
     ListView {
-        id: list
         anchors.fill: parent
-
-        spacing: 1
-
-        model: ListModel {
-            //ListElement {
-            //    name: qsTr("Root of trust")
-            //    image: "secure-enclave"
-            //    property var action: function() {
-            //        showRoTSettings()
-            //    }
-            //}
-
-            //ListElement {
-            //    name: qsTr("IoT Networks")
-            //    image: "network"
-            //    property var action: function() {
-            //        showIoTNetworkSettings()
-            //    }
-            //}
-
-            ListElement {
-                name: qsTr("WiFi credentials")
-                image: "creds"
-                property var action: function() {
-                    showWiFiSettings()
-                }
-            }
-
-            //ListElement {
-            //    name: qsTr("Event settings")
-            //    image: "events"
-            //    property var action: function() {
-            //        showEventsSettings()
-            //    }
-            //}
-
-            ListElement {
-                name: qsTr("Theme")
-                image: "themes"
-                property var action: function() {
-                    showThemeList()
-                }
-            }
-
-            ListElement {
-                //name: qsTr("Plugins")
-                name: qsTr("Device types")
-                image: "plugins"
-                property var action: function() {
-                    showPluginsList(true)
-                }
-            }
-
-            ListElement {
-                //name: qsTr("Plugins")
-                name: qsTr("Integrations")
-                //image: "plugins"
-                property var action: function() {
-                    showIntegrationsList()
-                }
-            }
-        }
+        model: ListModel { id: model}
 
         delegate: Rectangle {
             id: base
             width: parent.width
-            height: 45
+            height: 55
             color: "transparent"
 
             RowLayout {
@@ -128,38 +55,28 @@ Page {
                 }
 
                 Text {
-                    id: nameText
-                    text: name
-                    color: Theme.primaryTextColor
-                    verticalAlignment: Text.AlignVCenter
-                    font.pointSize: UiHelper.fixFontSz(14)
-
-                    Layout.alignment: Qt.AlignLeft
-                    Layout.fillHeight: true
+                    text: qsTr("")
                     Layout.fillWidth: true
                 }
 
-                RowLayout {
-                    id: actionsBlock
-                    Layout.rightMargin: 10
-
-                    Image {
-                        id: iconAction
-                        source: "qrc:/qml/resources/icons/Arrow-Right.png"
-                        Layout.maximumHeight: listDelegate.height * 0.7
-                        Layout.maximumWidth: Layout.maximumHeight
-                        fillMode: Image.PreserveAspectFit
-                        Layout.alignment: Qt.AlignRight
-                        Layout.rightMargin: 10
-                    }
+                Text {
+                    text: info.version
+                    horizontalAlignment: Text.AlignRight
+                    Layout.rightMargin: 15
+                    Layout.fillWidth: true
                 }
             }
 
             MouseArea {
+                enabled: true
                 anchors.fill: parent
                 hoverEnabled: true
+                anchors.rightMargin: 0
                 onClicked: {
-                    action()
+                    showIntegrationPage(model, function() {
+                       showSettings()
+                       showIntegrationsList()
+                    })
                 }
 
                 onEntered: {
@@ -171,5 +88,53 @@ Page {
                 }
             }
         }
+        Component.onCompleted: {
+            loadAvailableIntegrationsInfo()
+        }
     }
+
+    function loadAvailableIntegrationsInfo() {
+        let path = "https://raw.githubusercontent.com/YIoT-team/yiot-packages/feature/test"
+        let lang = "en"
+        let jsonData = readFile(path + "/yiot.json")
+        var data = JSON.parse(jsonData)
+        model.clear()
+        var list = data[0]["plugins"]
+        for (var i in list) {
+            // Helper variables
+            let packageUrl = path + "/integrations/" + list[i]["dir"] + "/"
+            let textsUrl = packageUrl + "texts/" + lang + "/"
+
+            // Logo
+            let imageUrl = packageUrl + "logo/logo.png"
+
+            // Texts
+            let titleUrl = textsUrl + "title.txt"
+            let linkUrl = textsUrl + "link.txt"
+            let descriptionUrl = textsUrl + "description.md"
+
+            // General info
+            let infoJsonUrl = packageUrl + "/info.json"
+            let infoData = JSON.parse(readFile(infoJsonUrl))
+
+            // Fill model data
+            model.append({
+                             pluginId: i,
+                             image: imageUrl,
+                             title: readFile(titleUrl),
+                             link: readFile(linkUrl),
+                             description: readFile(descriptionUrl),
+                             info: infoData[0],
+                             installed: false
+                         })
+        }
+    }
+
+    function readFile(fileUrl) {
+        var request = new XMLHttpRequest()
+        request.open("GET", fileUrl, false)
+        request.send(null)
+        return request.responseText
+    }
+
 }

@@ -21,73 +21,63 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../components"
-import "../../components/Plugins"
-import "../../theme"
+import "qrc:/qml/theme"
+import "qrc:/qml/components"
+import "qrc:/qml/components/validators"
 
 Page {
-    readonly property int availableIdx: 0
-    readonly property int installedIdx: 1
-
-    id: eventsSettingsPage
+    id: websocketPage
+    anchors.fill: parent
 
     background: Rectangle {
         color: "transparent"
     }
 
-    header: Header {
-        title: qsTr("Device types")
-        backAction: function() { showMenuSettings() }
-    }
+//    header: Header {
+//        title: qsTr("Websocket")
+//        backAction: function() { /* todo */ }
+//    }
 
-    ColumnLayout {
-        anchors.fill: parent
+    Form {
+            id: form
+            stretched: true
 
-        spacing: 15
+            ColumnLayout {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.topMargin: 40
+                Layout.bottomMargin: 20
 
-        TabBar {
-            id: tabBarPlugins
-            Layout.fillWidth: true
+                spacing: 15
 
-            z: 5
-            currentIndex: swipeViewPlugins.currentIndex
+                InputTextField {
+                    id: ssid
+                    label: qsTr("Websocket Link")
+                    placeholderText: qsTr("Enter websocket link")
+                    //validator: todo
+                }
 
-            background: Rectangle {
-                color: Theme.mainBackgroundColor
+                FormPrimaryButton {
+                    Layout.topMargin: 20
+                    Layout.bottomMargin: 10
+
+                    text: qsTr("Enable")
+                    onClicked: { /* todo */ }
+                }
+
+                FormPrimaryButton {
+                    Layout.topMargin: 20
+                    Layout.bottomMargin: 10
+                    visible: false
+
+                    text: qsTr("Disable")
+                    onClicked: { /* todo */ }
+                }
+
+                Item {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
             }
-
-            TextTabButton { idx: 0; text: qsTr("Available") }
-            TextTabButton { idx: 1; text: qsTr("Installed") }
         }
-
-        SwipeView {
-            property int backPageIdx: availableIdx
-
-            id: swipeViewPlugins
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            interactive: false
-            currentIndex: availableIdx
-
-            PluginsAvailable { id: pluginsAvailable }
-            PluginsInstalled { id: pluginsInstalled }
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
-    }
-
-    Component.onCompleted: {
-        swipeShowPlugins(availableIdx)
-    }
-
-    function swipeShowPlugins(idx) {
-        swipeViewPlugins.currentIndex = idx
-        for (var i = 0; i < swipeViewPlugins.count; ++i) {
-            var item = swipeViewPlugins.itemAt(i)
-            item.visible = i == swipeViewPlugins.currentIndex
-        }
-    }
 }

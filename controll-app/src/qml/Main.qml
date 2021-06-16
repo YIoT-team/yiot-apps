@@ -70,6 +70,9 @@ ApplicationWindow {
     // Plugin page
     PluginPage { id: pluginPage }
 
+    // Integrations page
+    IntegrationsPage { id: integrationPage }
+
     // Main pages
     SwipeView {
         readonly property int devicePageIdx: 0
@@ -153,6 +156,7 @@ ApplicationWindow {
                 PropertyChanges { target: deviceSetupProcessing; visible: false }
                 PropertyChanges { target: cmdProcessingPage; visible: false }
                 PropertyChanges { target: pluginPage; visible: false }
+                PropertyChanges { target: integrationPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: false }
                 PropertyChanges { target: tabBar; visible: false }
@@ -164,6 +168,7 @@ ApplicationWindow {
                 PropertyChanges { target: deviceSetupProcessing; visible: false }
                 PropertyChanges { target: cmdProcessingPage; visible: false }
                 PropertyChanges { target: pluginPage; visible: false }
+                PropertyChanges { target: integrationPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: true }
                 PropertyChanges { target: tabBar; visible: true }
@@ -175,6 +180,7 @@ ApplicationWindow {
                 PropertyChanges { target: deviceSetupProcessing; visible: true }
                 PropertyChanges { target: cmdProcessingPage; visible: false }
                 PropertyChanges { target: pluginPage; visible: false }
+                PropertyChanges { target: integrationPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: false }
                 PropertyChanges { target: tabBar; visible: false }
@@ -186,6 +192,7 @@ ApplicationWindow {
                 PropertyChanges { target: deviceSetupProcessing; visible: false }
                 PropertyChanges { target: cmdProcessingPage; visible: true }
                 PropertyChanges { target: pluginPage; visible: false }
+                PropertyChanges { target: integrationPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: false }
                 PropertyChanges { target: tabBar; visible: false }
@@ -197,6 +204,7 @@ ApplicationWindow {
                 PropertyChanges { target: deviceSetupProcessing; visible: false }
                 PropertyChanges { target: cmdProcessingPage; visible: false }
                 PropertyChanges { target: pluginPage; visible: false }
+                PropertyChanges { target: integrationPage; visible: false }
                 PropertyChanges { target: devicesSwipeView; visible: true }
                 PropertyChanges { target: swipeView; visible: false }
                 PropertyChanges { target: tabBar; visible: false }
@@ -208,6 +216,19 @@ ApplicationWindow {
                 PropertyChanges { target: deviceSetupProcessing; visible: false }
                 PropertyChanges { target: cmdProcessingPage; visible: false }
                 PropertyChanges { target: pluginPage; visible: true }
+                PropertyChanges { target: integrationPage; visible: false }
+                PropertyChanges { target: devicesSwipeView; visible: false }
+                PropertyChanges { target: swipeView; visible: false }
+                PropertyChanges { target: tabBar; visible: false }
+                PropertyChanges { target: leftSideMenu; enabled: false }
+            },
+            State {
+                name: "integrationPage"
+                PropertyChanges { target: aboutPage; visible: false }
+                PropertyChanges { target: deviceSetupProcessing; visible: false }
+                PropertyChanges { target: cmdProcessingPage; visible: false }
+                PropertyChanges { target: pluginPage; visible: false }
+                PropertyChanges { target: integrationPage; visible: true }
                 PropertyChanges { target: devicesSwipeView; visible: false }
                 PropertyChanges { target: swipeView; visible: false }
                 PropertyChanges { target: tabBar; visible: false }
@@ -267,6 +288,12 @@ ApplicationWindow {
         pluginPage.plugin = plugin
         pluginPage.backAction = backAction
         w.state = "pluginPage"
+    }
+
+    function showIntegrationPage(integration, backAction) {
+        integrationPage.integration = integration
+        integrationPage.backAction = backAction
+        w.state = "integrationPage"
     }
 
     function showDevices() {

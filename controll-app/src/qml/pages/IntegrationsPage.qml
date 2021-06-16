@@ -21,73 +21,81 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../components"
-import "../../components/Plugins"
-import "../../theme"
+import "../theme"
+import "../components"
 
 Page {
-    readonly property int availableIdx: 0
-    readonly property int installedIdx: 1
+    id: p
+    property var integration: null
+    property var backAction: function() {  }
 
-    id: eventsSettingsPage
+    anchors.fill: parent
 
     background: Rectangle {
         color: "transparent"
     }
 
     header: Header {
-        title: qsTr("Device types")
-        backAction: function() { showMenuSettings() }
+        title: qsTr("YIoT integration")
+        showBackButton: true
+        showMenuButton: false
+        showSettingsButton: false
+        backAction: p.backAction
     }
 
-    ColumnLayout {
-        anchors.fill: parent
+    Form {
+        stretched: true
 
-        spacing: 15
+        Image {
+            Layout.maximumWidth: 100
+            Layout.maximumHeight: 100
 
-        TabBar {
-            id: tabBarPlugins
+            fillMode: Image.PreserveAspectFit
+            source: integration.image
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Text {
+            text: integration.title
+            font.weight: Font.Bold
+            font.capitalization: Font.Capitalize
+            font.family: Theme.mainFontBold
+            font.pointSize: UiHelper.fixFontSz(24)
+            color: Theme.brandColor
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Text {
+            width: 180
+            text: integration.info.version
+            lineHeight: 1
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
+
+            font.pointSize: UiHelper.fixFontSz(13)
+            font.letterSpacing: 0.3
+            color: Theme.brandColor
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Text {
             Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.leftMargin: 20
+            Layout.rightMargin: 20
+            verticalAlignment: Text.AlignVCenter
+            textFormat: TextEdit.MarkdownText
+            text: integration.description
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+        }
 
-            z: 5
-            currentIndex: swipeViewPlugins.currentIndex
+        FormSecondaryButton {
+            Layout.topMargin: 20
+            Layout.bottomMargin: 30
+            text: qsTr("Install")
+            onClicked: {
 
-            background: Rectangle {
-                color: Theme.mainBackgroundColor
             }
-
-            TextTabButton { idx: 0; text: qsTr("Available") }
-            TextTabButton { idx: 1; text: qsTr("Installed") }
-        }
-
-        SwipeView {
-            property int backPageIdx: availableIdx
-
-            id: swipeViewPlugins
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            interactive: false
-            currentIndex: availableIdx
-
-            PluginsAvailable { id: pluginsAvailable }
-            PluginsInstalled { id: pluginsInstalled }
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
-    }
-
-    Component.onCompleted: {
-        swipeShowPlugins(availableIdx)
-    }
-
-    function swipeShowPlugins(idx) {
-        swipeViewPlugins.currentIndex = idx
-        for (var i = 0; i < swipeViewPlugins.count; ++i) {
-            var item = swipeViewPlugins.itemAt(i)
-            item.visible = i == swipeViewPlugins.currentIndex
         }
     }
 }

@@ -44,7 +44,7 @@ Page {
         readonly property int networksIdx: 5
         readonly property int themeIdx: 6
         readonly property int pluginsIdx: 7
-        readonly property int dockerIdx: 8
+        readonly property int integrationsIdx: 8
 
         property int backPageIdx: menuIdx
 
@@ -83,6 +83,10 @@ Page {
 
         PluginsListPage {
             id: pluginsListPage
+        }
+
+        IntegrationsListPage {
+            id: integrationsListPage
         }
 
         Loader {
@@ -145,8 +149,8 @@ Page {
         swipeSettingsShow(settingsSwipeView.pluginsIdx)
     }
 
-    function showDocker(location) {
-        swipeSettingsShow(settingsSwipeView.dockerIdx)
+    function showIntegrationsList() {
+        swipeSettingsShow(settingsSwipeView.integrationsIdx)
     }
 
     function backInSettings() {
