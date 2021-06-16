@@ -1,6 +1,16 @@
 <RCC>
     <qresource prefix="/integration/0">
+	<!-- Java script -->
         <file>js/main.qml</file>
-        <file>qml/ControlIntegrations.qml</file>
+
+	<!-- Icons dark theme -->
+        <file>icons/dark/websocket.png</file>
+
+        <!-- Icons light theme -->
+        <file>icons/light/websocket.png</file>
+
+	<!-- QML Components -->
+	<file>qml/ControlIntegrations.qml</file>
+
     </qresource>
 </RCC>

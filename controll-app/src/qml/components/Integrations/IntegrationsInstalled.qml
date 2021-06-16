@@ -45,6 +45,15 @@ Item {
                 anchors.fill: parent
                 clip: true
 
+                Image {
+                    id: icon
+                    source: "qrc:/integration/0/icons/%1/websocket.png".arg(Theme.state)
+                    Layout.maximumHeight: listDelegate.height * 0.7
+                    Layout.maximumWidth: Layout.maximumHeight
+                    fillMode: Image.PreserveAspectFit
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.leftMargin: 10
+                }
 
                 Text {
                     id: nameText
