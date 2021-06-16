@@ -17,62 +17,6 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
+#include <controllers/extensions/device/KSQExtDevice.h>
 
-#include <QtCore>
-#include <QGuiApplication>
-
-#include <KSQWiFiEnumerator.h>
-
-#include <controllers/KSQBLEController.h>
-#include <controllers/KSQBlankDevicesController.h>
-#include <controllers/KSQUXSimplifyController.h>
-#include <controllers/devices/KSQAllDevicesController.h>
-
-#include <virgil/iot/qt/VSQIoTKit.h>
-
-#include <yiot-iotkit/netif/KSQUdp.h>
-#include <yiot-iotkit/netif/KSQNetifWebsocket.h>
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
-
-class KSQApplication : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
-public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
-
-    int
-    run();
-
-    QString
-    organizationDisplayName() const;
-
-    QString
-    applicationVersion() const;
-
-    QString
-    applicationDisplayName() const;
-
-    Q_INVOKABLE void
-    updateDevices();
-
-public slots:
-    void
-    onProvisionDone(QString mac);
-
-private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    QSharedPointer<KSQBLEController> m_bleController;
-    QSharedPointer<KSQBlankDevicesController> m_localBlankDevicesController;
-    QSharedPointer<KSQUXSimplifyController> m_uxController;
-    QSharedPointer<KSQUdp> m_netifUdp;
-    QSharedPointer<KSQNetifWebsocket> m_netifWebsock;
-
-    KSQAllDevicesController m_deviceControllers;
-};
-
-#endif // PROVISION_QT_APP_H
+//-----------------------------------------------------------------------------

@@ -17,62 +17,29 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
+#ifndef KSQ_EXTENSION_DEV_PLUGIN_H
+#define KSQ_EXTENSION_DEV_PLUGIN_H
 
 #include <QtCore>
-#include <QGuiApplication>
+#include <QAbstractTableModel>
 
-#include <KSQWiFiEnumerator.h>
-
-#include <controllers/KSQBLEController.h>
-#include <controllers/KSQBlankDevicesController.h>
-#include <controllers/KSQUXSimplifyController.h>
-#include <controllers/devices/KSQAllDevicesController.h>
-
-#include <virgil/iot/qt/VSQIoTKit.h>
-
-#include <yiot-iotkit/netif/KSQUdp.h>
-#include <yiot-iotkit/netif/KSQNetifWebsocket.h>
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
-
-class KSQApplication : public QObject {
+class KSQExtDevicePlugin : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
 public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
+    KSQExtDevicePlugin() = default;
 
-    int
-    run();
+    KSQExtDevicePlugin(KSQExtDevicePlugin const &) = delete;
 
-    QString
-    organizationDisplayName() const;
+    KSQExtDevicePlugin &
+    operator=(KSQExtDevicePlugin const &) = delete;
 
-    QString
-    applicationVersion() const;
+    virtual ~KSQExtDevicePlugin() = default;
 
-    QString
-    applicationDisplayName() const;
+signals:
 
-    Q_INVOKABLE void
-    updateDevices();
-
-public slots:
-    void
-    onProvisionDone(QString mac);
+private slots:
 
 private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    QSharedPointer<KSQBLEController> m_bleController;
-    QSharedPointer<KSQBlankDevicesController> m_localBlankDevicesController;
-    QSharedPointer<KSQUXSimplifyController> m_uxController;
-    QSharedPointer<KSQUdp> m_netifUdp;
-    QSharedPointer<KSQNetifWebsocket> m_netifWebsock;
-
-    KSQAllDevicesController m_deviceControllers;
 };
 
-#endif // PROVISION_QT_APP_H
+#endif // KSQ_EXTENSION_DEV_PLUGIN_H

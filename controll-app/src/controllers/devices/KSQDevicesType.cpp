@@ -18,7 +18,7 @@
 //  ────────────────────────────────────────────────────────────
 
 #include <QtCore>
-#include <controllers/KSQDevicesType.h>
+#include <controllers/devices/KSQDevicesType.h>
 #include <virgil/iot/qt/protocols/snap/VSQSnapINFOClient.h>
 #include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
 

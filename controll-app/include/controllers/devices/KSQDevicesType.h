@@ -25,7 +25,7 @@
 #include <QAbstractTableModel>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
-#include <controllers/KSQDevice.h>
+#include <controllers/devices/KSQDevice.h>
 
 #include <yiot-iotkit/snap/KSQSnapUSERClient.h>
 

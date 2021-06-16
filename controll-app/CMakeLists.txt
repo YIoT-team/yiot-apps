@@ -233,12 +233,24 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/include/ui/VSQUiHelper.h
         ${CMAKE_CURRENT_LIST_DIR}/include/KSQWiFiEnumerator.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQDevice.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQDevicesType.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQAllDevicesController.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQDevice.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQDevicesType.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQAllDevicesController.h
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQBlankDevicesController.h
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQBLEController.h
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQUXSimplifyController.h
+
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/device/KSQExtDevice.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/device/KSQExtDeviceAvailable.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/device/KSQExtDeviceInstalled.h
+
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/device-plugin/KSQExtDevPlugin.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/device-plugin/KSQExtDevPluginAvailable.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/device-plugin/KSQExtDevPluginInstalled.h
+
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/integration/KSQExtIntegration.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/integration/KSQExtIntegrationAvailable.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/integration/KSQExtIntegrationInstalled.h
 
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/KSQIoTKitFacade.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQUdp.h
@@ -280,12 +292,24 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-hal.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQDevice.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQDevicesType.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQAllDevicesController.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQDevice.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQDevicesType.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQAllDevicesController.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQBlankDevicesController.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQBLEController.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQUXSimplifyController.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/device/KSQExtDevice.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/device/KSQExtDeviceAvailable.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/device/KSQExtDeviceInstalled.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/device-plugin/KSQExtDevPlugin.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/device-plugin/KSQExtDevPluginAvailable.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/device-plugin/KSQExtDevPluginInstalled.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/integration/KSQExtIntegration.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/integration/KSQExtIntegrationAvailable.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/integration/KSQExtIntegrationInstalled.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/KSQIoTKitFacade.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQUdp.cpp

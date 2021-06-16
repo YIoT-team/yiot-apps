@@ -17,7 +17,7 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include <controllers/KSQDevice.h>
+#include <controllers/devices/KSQDevice.h>
 
 const QString KSQDevice::kCmdStateConnect = "connect";
 const QString KSQDevice::kCmdStateSend = "send";

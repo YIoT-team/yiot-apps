@@ -17,62 +17,59 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_QT_APP_H
-#define PROVISION_QT_APP_H
+#ifndef YIOT_DEVICES_H
+#define YIOT_DEVICES_H
 
 #include <QtCore>
-#include <QGuiApplication>
-
-#include <KSQWiFiEnumerator.h>
-
-#include <controllers/KSQBLEController.h>
-#include <controllers/KSQBlankDevicesController.h>
-#include <controllers/KSQUXSimplifyController.h>
-#include <controllers/devices/KSQAllDevicesController.h>
+#include <QHash>
+#include <QAbstractTableModel>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
+#include <virgil/iot/qt/helpers/VSQMac.h>
 
-#include <yiot-iotkit/netif/KSQUdp.h>
-#include <yiot-iotkit/netif/KSQNetifWebsocket.h>
-#include <yiot-iotkit/root-of-trust/KSQRoTController.h>
+#include <yiot-iotkit/secmodule/KSQSessionKey.h>
 
-class KSQApplication : public QObject {
+#include <common/protocols/snap/user/user-structs.h>
+#include <controllers/devices/KSQDevicesType.h>
+
+class KSQAllDevicesController : public QAbstractTableModel {
     Q_OBJECT
-    Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
-    Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
-    Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
 public:
-    KSQApplication() = default;
-    virtual ~KSQApplication() = default;
+    enum Element { Name = Qt::UserRole, Type, Image, SubModel, Js, ElementMax };
+
+    KSQAllDevicesController() = default;
+    virtual ~KSQAllDevicesController() = default;
+
+    /**
+     * QAbstractTableModel implementation
+     */
+    int
+    rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     int
-    run();
+    columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
-    QString
-    organizationDisplayName() const;
+    QVariant
+    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    QString
-    applicationVersion() const;
+    QHash<int, QByteArray>
+    roleNames() const override;
 
-    QString
-    applicationDisplayName() const;
+    KSQAllDevicesController &
+    operator<<(KSQDevicesType *devicesType);
 
-    Q_INVOKABLE void
-    updateDevices();
+signals:
+    void
+    fireNewProvisionedDevice(QSharedPointer<KSQDevice> device);
 
 public slots:
+
+private slots:
     void
-    onProvisionDone(QString mac);
+    onGroupActivated();
 
 private:
-    KSQWiFiEnumerator m_wifiEnumerator;
-    QSharedPointer<KSQBLEController> m_bleController;
-    QSharedPointer<KSQBlankDevicesController> m_localBlankDevicesController;
-    QSharedPointer<KSQUXSimplifyController> m_uxController;
-    QSharedPointer<KSQUdp> m_netifUdp;
-    QSharedPointer<KSQNetifWebsocket> m_netifWebsock;
-
-    KSQAllDevicesController m_deviceControllers;
+    QList<QSharedPointer<KSQDevicesType>> m_elements;
 };
 
-#endif // PROVISION_QT_APP_H
+#endif // YIOT_DEVICES_H
