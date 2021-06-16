@@ -50,7 +50,7 @@ KSQApplication::run() {
 
     m_bleController = QSharedPointer<KSQBLEController>::create();
     m_netifUdp = QSharedPointer<KSQUdp>::create();
-    m_netifWebsock = QSharedPointer<KSQNetifWebsocket>::create(QUrl("ws://localhost:8080/ws"), "test_account");
+    m_netifWebsock = QSharedPointer<KSQNetifWebsocket>::create(QUrl("ws://159.89.15.12:8080/ws"), "test_account");
     m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create(/*m_netifUdp*/ m_netifWebsock);
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
 
