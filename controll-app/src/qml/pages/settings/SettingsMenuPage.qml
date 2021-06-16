@@ -97,7 +97,7 @@ Page {
 
             ListElement {
                 name: qsTr("Integrations")
-                //image:
+                image: "integrations"
                 property var action: function() {
                     showIntegrationsList()
                 }

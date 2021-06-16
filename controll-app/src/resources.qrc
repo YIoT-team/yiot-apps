@@ -45,6 +45,7 @@
         <file>qml/resources/icons/dark/network.png</file>
 		<file>qml/resources/icons/dark/rename.png</file>
         <file>qml/resources/icons/dark/plugins.png</file>
+		<file>qml/resources/icons/dark/integrations.png</file>
 
         <!-- Icons light theme -->
         <file>qml/resources/icons/light/bt.png</file>
@@ -69,6 +70,7 @@
         <file>qml/resources/icons/light/network.png</file>
 		<file>qml/resources/icons/light/rename.png</file>
         <file>qml/resources/icons/light/plugins.png</file>
+		<file>qml/resources/icons/light/integrations.png</file>
 
         <!-- Fonts -->
         <file>qml/resources/fonts/Roboto-Medium.ttf</file>
