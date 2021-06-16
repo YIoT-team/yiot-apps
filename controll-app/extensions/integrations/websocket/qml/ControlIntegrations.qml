@@ -26,9 +26,6 @@ import "qrc:/qml/components"
 import "qrc:/qml/components/validators"
 
 Page {
-    property bool websockEnabled: false
-    property string websockLink: ""
-
     id: websocketPage
     anchors.fill: parent
 
@@ -57,30 +54,31 @@ Page {
                     id: link
                     label: qsTr("Websocket Link")
                     placeholderText: qsTr("Enter websocket link")
+                    text: settings.getWebsocketLink()
                     //validator: todo
                 }
 
                 FormPrimaryButton {
                     Layout.topMargin: 20
                     Layout.bottomMargin: 10
-                    visible: !websockEnabled
+                    visible: !settings.getWebsocketState()
 
                     text: qsTr("Enable")
                     onClicked: {
-                        websockEnabled = true
-                        websockLink = link.text
-                        console.log("WebSocket Link: " + websockLink)
+                        settings.setWebsocketState(true)
+                        settings.setWebsocketLink(link.text)
+                        console.log("WebSocket Link: " + settings.getWebsocketLink())
                     }
                 }
 
                 FormPrimaryButton {
                     Layout.topMargin: 20
                     Layout.bottomMargin: 10
-                    visible: websockEnabled
+                    visible: settings.getWebsocketState()
 
                     text: qsTr("Disable")
                     onClicked: {
-                        websockEnabled = false
+                        settings.setWebsocketState(false)
                     }
                 }
 
