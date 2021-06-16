@@ -19,8 +19,8 @@
 
 #if PC_CLIENT
 
-#include <common/protocols/snap/pc/pc-client.h>
-#include <common/protocols/snap/pc/pc-private.h>
+#include <common/protocols/snap/user/user-client.h>
+#include <common/protocols/snap/user/user-private.h>
 #include <virgil/iot/protocols/snap/generated/snap_cvt.h>
 #include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/status_code/status_code.h>
@@ -31,11 +31,11 @@
 
 // External functions for access to upper level implementations
 static vs_snap_service_t _pc_client = {0};
-static vs_snap_pc_client_service_t _impl = {0};
+static vs_snap_user_client_service_t _impl = {0};
 
 //-----------------------------------------------------------------------------
 vs_status_e
-vs_snap_pc_get_state(const vs_netif_t *netif, const vs_mac_addr_t *mac) {
+vs_snap_user_get_state(const vs_netif_t *netif, const vs_mac_addr_t *mac) {
     const vs_mac_addr_t *dst_mac;
     vs_status_e ret_code;
 
@@ -51,7 +51,7 @@ vs_snap_pc_get_state(const vs_netif_t *netif, const vs_mac_addr_t *mac) {
 
 //-----------------------------------------------------------------------------
 vs_status_e
-vs_snap_pc_command(const vs_netif_t *netif, const vs_mac_addr_t *mac, const char *json) {
+vs_snap_user_command(const vs_netif_t *netif, const vs_mac_addr_t *mac, const char *json) {
     vs_status_e ret_code;
     uint16_t sz;
 
@@ -170,7 +170,7 @@ _pc_client_request_processor(const struct vs_netif_t *netif,
 
 //-----------------------------------------------------------------------------
 const vs_snap_service_t *
-vs_snap_pc_client(vs_snap_pc_client_service_t impl) {
+vs_snap_user_client(vs_snap_user_client_service_t impl) {
     _pc_client.user_data = 0;
     _pc_client.id = VS_PC_SERVICE_ID;
     _pc_client.request_process = _pc_client_request_processor;

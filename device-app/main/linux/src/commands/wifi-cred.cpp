@@ -28,7 +28,7 @@
 
 #include <virgil/iot/protocols/snap/info/info-server.h>
 #include <virgil/iot/protocols/snap/cfg/cfg-private.h>
-#include <common/protocols/snap/pc/pc-server.h>
+#include <common/protocols/snap/user/user-server.h>
 
 #include "common/iotkit-impl/netif/netif-ble-linux.h"
 
@@ -86,7 +86,7 @@ ks_snap_cfg_wifi_cb(const vs_netif_t *netif,
         // TODO: Use callback from IoTKit
         sleep(1);
         const vs_netif_t *n = vs_snap_default_netif();
-        vs_snap_pc_start_notification(n);
+        vs_snap_user_start_notification(n);
     });
 
     if (!res) {

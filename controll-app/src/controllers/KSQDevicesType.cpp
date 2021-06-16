@@ -74,15 +74,15 @@ KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, uint64_t deviceId)
             &KSQDevicesType::onDeviceInfoUpdate,
             Qt::QueuedConnection);
 
-    // SNAP::PC service
-    connect(&KSQSnapPCClient::instance(),
-            &KSQSnapPCClient::fireStateUpdate,
+    // SNAP::USER service
+    connect(&KSQSnapUSERClient::instance(),
+            &KSQSnapUSERClient::fireStateUpdate,
             this,
             &KSQDevicesType::onDeviceStateUpdate,
             Qt::QueuedConnection);
 
-    connect(&KSQSnapPCClient::instance(),
-            &KSQSnapPCClient::fireStateError,
+    connect(&KSQSnapUSERClient::instance(),
+            &KSQSnapUSERClient::fireStateError,
             this,
             &KSQDevicesType::onPCError,
             Qt::QueuedConnection);
@@ -119,9 +119,9 @@ KSQDevicesType::onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey) {
     qDebug() << "onSessionKeyReady: " << mac.description();
 
     auto res = findDevice(mac);
-    auto pc = res.second;
-    if (pc) {
-        pc->setSessionKey(sessionKey);
+    auto device = res.second;
+    if (device) {
+        device->setSessionKey(sessionKey);
     }
 
     if (!m_active) {
@@ -141,29 +141,29 @@ KSQDevicesType::onSessionKeyError(VSQMac mac) {
 void
 KSQDevicesType::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
     auto res = findDevice(deviceInfo.m_mac);
-    auto pc = res.second;
-    if (pc) {
+    auto device = res.second;
+    if (device) {
         if (deviceInfo.m_hasGeneralInfo) {
-            bool nameIsOld(!pc->isUpdatedName());
+            bool nameIsOld(!device->isUpdatedName());
 
-            pc->setName(deviceInfo.m_deviceName);
-            pc->setDeviceID(deviceInfo.m_deviceRoles);
-            pc->setManufacture(deviceInfo.m_manufactureId);
-            pc->setDeviceID(deviceInfo.m_deviceType);
-            pc->setFwVersion(deviceInfo.m_fwVer);
-            pc->setTlVersion(deviceInfo.m_tlVer);
+            device->setName(deviceInfo.m_deviceName);
+            device->setDeviceID(deviceInfo.m_deviceRoles);
+            device->setManufacture(deviceInfo.m_manufactureId);
+            device->setDeviceID(deviceInfo.m_deviceType);
+            device->setFwVersion(deviceInfo.m_fwVer);
+            device->setTlVersion(deviceInfo.m_tlVer);
 
-            pc->setHasProvision(deviceInfo.m_hasProvision);
-            pc->setHasOwner(deviceInfo.m_hasOwner);
+            device->setHasProvision(deviceInfo.m_hasProvision);
+            device->setHasOwner(deviceInfo.m_hasOwner);
 
-            if (nameIsOld && pc->isUpdatedName()) {
-                emit fireRequiredSetup(pc);
+            if (nameIsOld && device->isUpdatedName()) {
+                emit fireRequiredSetup(device);
             }
         }
 
         if (deviceInfo.m_hasStatistics) {
-            pc->setSentBytes(QString("%1").arg(deviceInfo.m_sent));
-            pc->setReceivedBytes(QString("%1").arg(deviceInfo.m_received));
+            device->setSentBytes(QString("%1").arg(deviceInfo.m_sent));
+            device->setReceivedBytes(QString("%1").arg(deviceInfo.m_received));
         }
 
         const auto _idx = createIndex(res.first, 0);
@@ -173,27 +173,29 @@ KSQDevicesType::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDevicesType::onDeviceStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state) {
+KSQDevicesType::onDeviceStateUpdate(const vs_mac_addr_t mac, QString data) {
+    Q_UNUSED(data)
+
     auto res = findDevice(mac);
-    auto pc = res.second;
-    if (!pc) {
-        // Add PC
+    auto device = res.second;
+    if (!device) {
+        // Add Device
         beginInsertRows(QModelIndex(), m_devices.size(), m_devices.size());
 
         VSQMac qMac = VSQMac(mac);
-        auto newPC = QSharedPointer<KSQDevice>::create(m_qmlProcessor, qMac, qMac.description());
-        connect(newPC.get(), &KSQDevice::fireInvokeCommand, this, &KSQDevicesType::onInvokeCommand);
-        connect(newPC.get(), &KSQDevice::fireSetNameToHardware, this, &KSQDevicesType::onSetDeviceName);
-        connect(newPC.get(), &KSQDevice::fireRequestSessionKey, this, &KSQDevicesType::onRequestSessionKey);
+        auto newDevice = QSharedPointer<KSQDevice>::create(m_qmlProcessor, qMac, qMac.description());
+        connect(newDevice.get(), &KSQDevice::fireInvokeCommand, this, &KSQDevicesType::onInvokeCommand);
+        connect(newDevice.get(), &KSQDevice::fireSetNameToHardware, this, &KSQDevicesType::onSetDeviceName);
+        connect(newDevice.get(), &KSQDevice::fireRequestSessionKey, this, &KSQDevicesType::onRequestSessionKey);
 
-        m_devices.push_back(newPC);
+        m_devices.push_back(newDevice);
 
         endInsertRows();
     }
 
     res = findDevice(mac);
-    pc = res.second;
-    if (pc) {
+    device = res.second;
+    if (device) {
 #if 0
         if (deviceInfo.m_hasGeneralInfo) {
                 pc->setDeviceID(deviceInfo.m_deviceRoles);
@@ -209,7 +211,7 @@ KSQDevicesType::onDeviceStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_st
             }
 #endif
 
-        pc->commandDone();
+        device->commandDone();
 
         const auto _idx = createIndex(res.first, 0);
         emit dataChanged(_idx, _idx);
@@ -220,17 +222,17 @@ KSQDevicesType::onDeviceStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_st
 void
 KSQDevicesType::onPCError(const vs_mac_addr_t mac) {
     auto res = findDevice(mac);
-    auto pc = res.second;
-    if (pc) {
+    auto device = res.second;
+    if (device) {
         qDebug() << "PC error: " << VSQMac(mac).description();
-        pc->commandError();
+        device->commandError();
     }
 }
 
 //-----------------------------------------------------------------------------
 void
 KSQDevicesType::onInvokeCommand(QString mac, QString json) {
-    KSQSnapPCClient::instance().sendCommand(mac, json);
+    KSQSnapUSERClient::instance().sendCommand(mac, json);
 }
 
 //-----------------------------------------------------------------------------

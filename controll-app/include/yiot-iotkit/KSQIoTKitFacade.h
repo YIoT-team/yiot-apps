@@ -50,7 +50,6 @@
 
 //   YIoT Extension for IoTKit
 #include <yiot-iotkit/KSQFeatures.h>
-#include <yiot-iotkit/snap/KSQSnapLampClient.h>
 
 class KSQIoTKitFacade : public QObject, public VSQSingleton<KSQIoTKitFacade> {
     Q_OBJECT

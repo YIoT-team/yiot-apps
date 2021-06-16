@@ -26,7 +26,7 @@
 #include <virgil/iot/protocols/snap.h>                  // Common functionality of protocol
 #include <virgil/iot/protocols/snap/info/info-server.h> // Device information server
 #include <virgil/iot/protocols/snap/cfg/cfg-server.h>   // Device configuration server
-#include <common/protocols/snap/pc/pc-server.h>         // Specific command for RPi
+#include <common/protocols/snap/user/user-server.h>     // Specific command for RPi
 
 // Queue for packets to be processed
 #include "sdk-impl/netif/packets-queue.h"
@@ -74,8 +74,8 @@ main(int argc, char *argv[]) {
                                                   NULL};
 
     // RPi-specific callbacks
-    vs_snap_pc_server_service_t pc_server_cb = {ks_snap_pc_get_info_cb, // Get RPi information
-                                                ks_snap_pc_command_cb}; // Process RPi command
+    vs_snap_user_server_service_t user_server_cb = {ks_snap_pc_get_info_cb, // Get RPi information
+                                                    ks_snap_pc_command_cb}; // Process RPi command
 
     // Security API implementation
     vs_secmodule_impl_t *secmodule_impl = NULL;
@@ -154,7 +154,7 @@ main(int argc, char *argv[]) {
                                 VS_SNAP_DEV_THING,
                                 netifs_impl,   // Set Network interfaces
                                 cfg_server_cb, // Set protocol callbacks
-                                pc_server_cb,
+                                user_server_cb,
                                 vs_packets_queue_add, // Setup packets processing using queue
                                 secmodule_impl,       // Security API implementation
                                 &tl_storage_impl),    // TrustList storage
@@ -238,7 +238,7 @@ _print_title(void) {
 static vs_status_e
 _on_ws_connected(vs_netif_t *netif) {
     // Send broadcast notification about self presents
-    vs_snap_pc_start_notification(netif);
+    vs_snap_user_start_notification(netif);
     vs_snap_info_start_notification(netif);
     return VS_CODE_OK;
 }

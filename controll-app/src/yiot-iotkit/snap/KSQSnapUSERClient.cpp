@@ -17,35 +17,54 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_SNAP_SERVICES_LAMP_STRUCTS_H
-#define YIOT_SNAP_SERVICES_LAMP_STRUCTS_H
+#include <virgil/iot/qt/VSQIoTKit.h>
+#include <cstring>
 
-#include <stdint.h>
+#include <yiot-iotkit/snap/KSQSnapUSERClient.h>
 
-#ifdef __cplusplus
-namespace VirgilIoTKit {
-extern "C" {
-#endif
+using namespace VirgilIoTKit;
 
-typedef struct __attribute__((__packed__)) {
-    uint8_t is_rgb;
-    uint16_t cct_min;
-    uint16_t cct_max;
-} vs_snap_lamp_capabilities_t;
+//-----------------------------------------------------------------------------
+KSQSnapUSERClient::KSQSnapUSERClient() {
+    vs_snap_user_client_service_t impl;
+    memset(&impl, 0, sizeof(impl));
+    impl.device_state_update = &KSQSnapUSERClient::onUpdateState;
+    m_snapService = vs_snap_user_client(impl);
+}
 
-typedef struct __attribute__((__packed__)) {
-    uint8_t is_on;
-    uint16_t brightness;
-    uint16_t cct;
-    uint16_t red;
-    uint16_t green;
-    uint16_t blue;
-    vs_snap_lamp_capabilities_t caps;
-} vs_snap_lamp_state_t;
+//-----------------------------------------------------------------------------
+vs_status_e
+KSQSnapUSERClient::onUpdateState(vs_status_e res, const vs_mac_addr_t *mac, const char *json) {
+    bool isError = true;
+    if (VS_CODE_OK == res && json) {
+        emit KSQSnapUSERClient::instance().fireStateUpdate(*mac, QString::fromStdString(json));
+    }
 
-#ifdef __cplusplus
-} // extern "C"
-} // namespace VirgilIoTKit
-#endif
+    if (isError) {
+        emit KSQSnapUSERClient::instance().fireStateError(*mac);
+    }
 
-#endif // YIOT_SNAP_SERVICES_LAMP_STRUCTS_H
+    return VS_CODE_OK;
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQSnapUSERClient::requestState(const vs_mac_addr_t &mac) {
+    vs_snap_user_get_state(vs_snap_netif_routing(), &mac);
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQSnapUSERClient::sendCommand(QString mac, QString json) {
+    auto macVal = VSQMac(mac);
+
+    if (macVal == invalidMac) {
+        VS_LOG_WARNING("Cannot send command to an invalid MAC address");
+        return false;
+    }
+
+    vs_mac_addr_t macLowLevel = macVal;
+    return VS_CODE_OK == vs_snap_user_command(vs_snap_netif_routing(), &macLowLevel, json.toStdString().c_str());
+}
+
+//-----------------------------------------------------------------------------

@@ -22,7 +22,7 @@
 
 #include <virgil/iot/status_code/status_code.h>
 #include <virgil/iot/protocols/snap.h>
-#include <common/protocols/snap/pc/pc-structs.h>
+#include <common/protocols/snap/user/user-structs.h>
 
 #ifdef __cplusplus
 using namespace VirgilIoTKit;

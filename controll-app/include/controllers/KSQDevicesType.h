@@ -27,7 +27,7 @@
 #include <virgil/iot/qt/VSQIoTKit.h>
 #include <controllers/KSQDevice.h>
 
-#include <yiot-iotkit/snap/KSQSnapPCClient.h>
+#include <yiot-iotkit/snap/KSQSnapUSERClient.h>
 
 class KSQDevicesType : public QAbstractTableModel {
     Q_OBJECT
@@ -105,9 +105,9 @@ private slots:
     void
     onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo);
 
-    //     SNAP::PC
+    //     SNAP::USER
     void
-    onDeviceStateUpdate(const vs_mac_addr_t mac, const vs_snap_pc_state_t state);
+    onDeviceStateUpdate(const vs_mac_addr_t mac, QString data);
 
     void
     onPCError(const vs_mac_addr_t mac);

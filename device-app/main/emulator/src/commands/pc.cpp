@@ -28,7 +28,7 @@
 
 #include "commands/pc.h"
 
-#include <common/protocols/snap/pc/pc-private.h>
+#include <common/protocols/snap/user/user-private.h>
 
 #include <nlohmann/json.hpp>
 

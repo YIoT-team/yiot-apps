@@ -21,9 +21,9 @@
 
 #if PC_SERVER
 
-#include <common/protocols/snap/pc/pc-server.h>
-#include <common/protocols/snap/pc/pc-private.h>
-#include <common/protocols/snap/pc/pc-structs.h>
+#include <common/protocols/snap/user/user-server.h>
+#include <common/protocols/snap/user/user-private.h>
+#include <common/protocols/snap/user/user-structs.h>
 #include <virgil/iot/protocols/snap/generated/snap_cvt.h>
 #include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/status_code/status_code.h>
@@ -32,7 +32,7 @@
 #include <stdlib-config.h>
 #include <endian-config.h>
 
-static vs_snap_pc_server_service_t _impl = {0};
+static vs_snap_user_server_service_t _impl = {0};
 
 //-----------------------------------------------------------------------------
 static vs_status_e
@@ -91,7 +91,7 @@ _init_pc_cmd_request_processor(const struct vs_netif_t *netif,
 
 //-----------------------------------------------------------------------------
 vs_status_e
-vs_snap_pc_start_notification(const vs_netif_t *netif) {
+vs_snap_user_start_notification(const vs_netif_t *netif) {
     if (!vs_provision_is_ready()) {
         return VS_CODE_COMMAND_NO_RESPONSE;
     }
@@ -146,7 +146,7 @@ _pc_request_processor(const struct vs_netif_t *netif,
 
 //-----------------------------------------------------------------------------
 const vs_snap_service_t *
-vs_snap_pc_server(vs_snap_pc_server_service_t impl) {
+vs_snap_user_server(vs_snap_user_server_service_t impl) {
 
     static vs_snap_service_t _cfg;
 

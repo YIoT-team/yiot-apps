@@ -17,59 +17,27 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef _YIOT_QT_SNAP_LAMP_CLIENT_SERVICE_H_
-#define _YIOT_QT_SNAP_LAMP_CLIENT_SERVICE_H_
+#ifndef YIOT_SNAP_SERVICES_PC_PRIVATE_H
+#define YIOT_SNAP_SERVICES_PC_PRIVATE_H
 
-#include <QtCore>
+#include <common/protocols/snap/user/user-server.h>
+#include <common/protocols/snap/user/user-structs.h>
+#include <virgil/iot/protocols/snap.h>
+#include <virgil/iot/status_code/status_code.h>
+#include <virgil/iot/protocols/snap/snap-structs.h>
 
-#include <common/protocols/snap/lamp/lamp-structs.h>
-#include <common/protocols/snap/lamp/lamp-client.h>
-#include <virgil/iot/qt/helpers/VSQSingleton.h>
-#include <virgil/iot/qt/protocols/snap/VSQSnapServiceBase.h>
+// mute "error: multi-character character constant" message
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmultichar"
+typedef enum { VS_PC_SERVICE_ID = HTONL_IN_COMPILE_TIME('_PC_') } vs_pc_t;
 
-using namespace VirgilIoTKit;
+#define PC_JSON_SZ_MAX (768)
 
-class KSQSnapLampClient final : public QObject, public VSQSingleton<KSQSnapLampClient>, public VSQSnapServiceBase {
+typedef enum {
+    VS_PC_PCMD = HTONL_IN_COMPILE_TIME('PCMD'), /* PC comManD */
+    VS_PC_GPST = HTONL_IN_COMPILE_TIME('GPST'), /* Get Pc STate */
+    VS_PC_IPST = HTONL_IN_COMPILE_TIME('IPST'), /* Inform Pc STate */
+} vs_snap_user_element_e;
+#pragma GCC diagnostic pop
 
-    Q_OBJECT
-
-    friend VSQSingleton<KSQSnapLampClient>;
-
-public:
-    const VirgilIoTKit::vs_snap_service_t *
-    serviceInterface() override {
-        return m_snapService;
-    }
-
-    const QString &
-    serviceName() const override {
-        static QString name{"LAMP Client"};
-        return name;
-    }
-
-signals:
-    void
-    fireStateUpdate(const vs_mac_addr_t mac, const vs_snap_lamp_state_t state);
-
-    void
-    fireStateError(const vs_mac_addr_t mac);
-
-public slots:
-    void
-    requestState(const vs_mac_addr_t &mac);
-
-    void
-    setState(const vs_mac_addr_t &mac, const vs_snap_lamp_state_t &state);
-
-
-private:
-    const VirgilIoTKit::vs_snap_service_t *m_snapService;
-
-    KSQSnapLampClient();
-    virtual ~KSQSnapLampClient() = default;
-
-    static vs_status_e
-    onUpdateState(vs_status_e res, const vs_mac_addr_t *mac, const vs_snap_lamp_state_t *data);
-};
-
-#endif // _YIOT_QT_SNAP_LAMP_CLIENT_SERVICE_H_
+#endif // YIOT_SNAP_SERVICES_PC_PRIVATE_H

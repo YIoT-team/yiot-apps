@@ -26,7 +26,7 @@
 
 #include <yiot-iotkit/KSQIoTKitFacade.h>
 #include <yiot-iotkit/setup/KSQDeviceSetupController.h>
-#include <yiot-iotkit/snap/KSQSnapPCClient.h>
+#include <yiot-iotkit/snap/KSQSnapUSERClient.h>
 
 #include <virgil/iot/qt/protocols/snap/VSQSnapCFGClient.h>
 
@@ -60,7 +60,6 @@ KSQApplication::run() {
                           << KSQFeatures::SNAP_SCRT_CLIENT // Secure communication (DH, AES, etc)
                           << KSQFeatures::SNAP_INFO_CLIENT // Get/set device information (Type, Name, Versions)
                           << KSQFeatures::SNAP_CFG_CLIENT  // Configure device (Different credentials, WiFi for example)
-                          << KSQFeatures::SNAP_LAMP_CLIENT // Possibility to control Lamp
                           << KSQFeatures::SNAP_PC_CLIENT;  // Possibility to control PSs, Raspberry Pi for example
 
     // TODO: Dynamic adding of supported network interfaces

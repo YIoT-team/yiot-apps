@@ -29,7 +29,7 @@
 
 #include <yiot-iotkit/secmodule/KSQSessionKey.h>
 
-#include <common/protocols/snap/pc/pc-structs.h>
+#include <common/protocols/snap/user/user-structs.h>
 #include <controllers/KSQDevicesType.h>
 
 class KSQAllDevicesController : public QAbstractTableModel {
