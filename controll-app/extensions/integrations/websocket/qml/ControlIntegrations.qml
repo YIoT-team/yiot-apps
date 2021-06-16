@@ -26,6 +26,9 @@ import "qrc:/qml/components"
 import "qrc:/qml/components/validators"
 
 Page {
+    property bool websockEnabled: false
+    property string websockLink: ""
+
     id: websocketPage
     anchors.fill: parent
 
@@ -51,7 +54,7 @@ Page {
                 spacing: 15
 
                 InputTextField {
-                    id: ssid
+                    id: link
                     label: qsTr("Websocket Link")
                     placeholderText: qsTr("Enter websocket link")
                     //validator: todo
@@ -60,18 +63,25 @@ Page {
                 FormPrimaryButton {
                     Layout.topMargin: 20
                     Layout.bottomMargin: 10
+                    visible: !websockEnabled
 
                     text: qsTr("Enable")
-                    onClicked: { /* todo */ }
+                    onClicked: {
+                        websockEnabled = true
+                        websockLink = link.text
+                        console.log("WebSocket Link: " + websockLink)
+                    }
                 }
 
                 FormPrimaryButton {
                     Layout.topMargin: 20
                     Layout.bottomMargin: 10
-                    visible: false
+                    visible: websockEnabled
 
                     text: qsTr("Disable")
-                    onClicked: { /* todo */ }
+                    onClicked: {
+                        websockEnabled = false
+                    }
                 }
 
                 Item {

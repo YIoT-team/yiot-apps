@@ -76,13 +76,13 @@ Page {
         }
 
         SwipeView {
-            property int backPageIdx: availableIdx
+            property int backPageIdx: installedIdx
 
             id: swipeViewPlugins
             Layout.fillWidth: true
             Layout.fillHeight: true
             interactive: false
-            currentIndex: availableIdx
+            currentIndex: installedIdx
 
             IntegrationsInstalled { id: pluginsInstalled }
             IntegrationsAvailable { id: pluginsAvailable }

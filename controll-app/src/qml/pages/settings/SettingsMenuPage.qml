@@ -88,8 +88,7 @@ Page {
             }
 
             ListElement {
-                //name: qsTr("Plugins")
-                name: qsTr("Device types")
+                name: qsTr("Device types and plugins")
                 image: "plugins"
                 property var action: function() {
                     showPluginsList(true)
@@ -97,9 +96,8 @@ Page {
             }
 
             ListElement {
-                //name: qsTr("Plugins")
                 name: qsTr("Integrations")
-                //image: "plugins"
+                //image:
                 property var action: function() {
                     showIntegrationsList()
                 }

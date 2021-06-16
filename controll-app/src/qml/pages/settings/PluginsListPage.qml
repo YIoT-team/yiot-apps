@@ -26,9 +26,8 @@ import "../../components/Plugins"
 import "../../theme"
 
 Page {
-    readonly property int availableIdx: 0
-    readonly property int installedIdx: 1
-
+    readonly property int installedIdx: 0
+    readonly property int availableIdx: 1
     id: eventsSettingsPage
 
     background: Rectangle {
@@ -36,7 +35,7 @@ Page {
     }
 
     header: Header {
-        title: qsTr("Device types")
+        title: qsTr("Device types and plugins")
         backAction: function() { showMenuSettings() }
     }
 
@@ -56,21 +55,21 @@ Page {
                 color: Theme.mainBackgroundColor
             }
 
-            TextTabButton { idx: 0; text: qsTr("Available") }
             TextTabButton { idx: 1; text: qsTr("Installed") }
+            TextTabButton { idx: 0; text: qsTr("Available") }
         }
 
         SwipeView {
-            property int backPageIdx: availableIdx
+            property int backPageIdx: installedIdx
 
             id: swipeViewPlugins
             Layout.fillWidth: true
             Layout.fillHeight: true
             interactive: false
-            currentIndex: availableIdx
+            currentIndex: installedIdx
 
-            PluginsAvailable { id: pluginsAvailable }
             PluginsInstalled { id: pluginsInstalled }
+            PluginsAvailable { id: pluginsAvailable }
         }
 
         Item {
@@ -80,7 +79,7 @@ Page {
     }
 
     Component.onCompleted: {
-        swipeShowPlugins(availableIdx)
+        swipeShowPlugins(installedIdx)
     }
 
     function swipeShowPlugins(idx) {
