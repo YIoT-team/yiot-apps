@@ -43,6 +43,9 @@
 extern "C" {
 #endif
 
+#define WEBSOCK_URL_SZ_MAX 256
+#define WEBSOCK_ID_SZ_MAX 64
+
 vs_netif_t *
 vs_hal_netif_websock(const char *url,
                      const char *account,

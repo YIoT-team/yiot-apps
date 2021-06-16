@@ -59,10 +59,18 @@ _print_title(void);
 static vs_status_e
 _on_ws_connected(vs_netif_t *netif);
 
+static vs_status_e
+_get_websock_url(int argc,
+                 char *argv[],
+                 char websock_url[WEBSOCK_URL_SZ_MAX + 1],
+                 char websock_id[WEBSOCK_ID_SZ_MAX + 1]);
+
 //-----------------------------------------------------------------------------
 int
 main(int argc, char *argv[]) {
     int res = -1;
+    char websock_url[WEBSOCK_URL_SZ_MAX + 1];
+    char websock_id[WEBSOCK_ID_SZ_MAX + 1];
 
     // Holder of Network interfaces list
     vs_netif_t *netifs_impl[2] = {0};
@@ -96,6 +104,8 @@ main(int argc, char *argv[]) {
 
     // Initialize Logger module
     vs_logger_init(VS_LOGLEV_DEBUG);
+
+    STATUS_CHECK(_get_websock_url(argc, argv, websock_url, websock_id), "");
 
     // Print title
     _print_title();
@@ -137,8 +147,8 @@ main(int argc, char *argv[]) {
     STATUS_CHECK(vs_secbox_init(&secbox_storage_impl, secmodule_impl), "Unable to initialize Secbox module");
 
     // Network interface
-    netifs_impl[0] = vs_hal_netif_websock("ws://localhost:8080/ws",
-                                          "test_account",
+    netifs_impl[0] = vs_hal_netif_websock((char *)websock_url,
+                                          (char *)websock_id,
                                           secmodule_impl,
                                           tmp,
                                           _on_ws_connected); // Initialize WebSocket-based transport
@@ -240,6 +250,49 @@ _on_ws_connected(vs_netif_t *netif) {
     // Send broadcast notification about self presents
     vs_snap_user_start_notification(netif);
     vs_snap_info_start_notification(netif);
+    return VS_CODE_OK;
+}
+
+//-----------------------------------------------------------------------------
+static vs_status_e
+_get_websock_url(int argc,
+                 char *argv[],
+                 char websock_url[WEBSOCK_URL_SZ_MAX + 1],
+                 char websock_id[WEBSOCK_ID_SZ_MAX + 1]) {
+    static const char *WEBSOCK_SHORT = "-w";
+    static const char *WEBSOCK_FULL = "--websock";
+    char *path_to_str;
+    char *delim_pos;
+
+    VS_IOT_MEMSET(websock_url, 0, WEBSOCK_URL_SZ_MAX + 1);
+    VS_IOT_MEMSET(websock_id, 0, WEBSOCK_ID_SZ_MAX + 1);
+
+    if (!argv || !argc) {
+        VS_LOG_ERROR("Wrong input parameters.");
+        return VS_CODE_ERR_INCORRECT_ARGUMENT;
+    }
+
+    path_to_str = vs_app_get_commandline_arg(argc, argv, WEBSOCK_SHORT, WEBSOCK_FULL);
+
+    // Check input parameters
+    if (!path_to_str) {
+        VS_LOG_ERROR("usage: %s/%s <WebSocket router connections URL>", WEBSOCK_SHORT, WEBSOCK_FULL);
+        return VS_CODE_ERR_INCORRECT_ARGUMENT;
+    }
+
+    // Check for the correct WebSocket URL
+    size_t max_sz;
+    max_sz = WEBSOCK_URL_SZ_MAX + WEBSOCK_ID_SZ_MAX;
+    if (strnlen(path_to_str, max_sz) >= max_sz || (!strstr(path_to_str, "ws://") && !strstr(path_to_str, "wss://")) ||
+        !strstr(path_to_str, "&")) {
+        VS_LOG_ERROR("usage: %s/%s <WebSocket URL should start with 'ws://' or 'wss://'>", WEBSOCK_SHORT, WEBSOCK_FULL);
+        return VS_CODE_ERR_INCORRECT_ARGUMENT;
+    }
+
+    delim_pos = strstr(path_to_str, "&");
+    VS_IOT_MEMCPY(websock_url, path_to_str, delim_pos - path_to_str);
+    VS_IOT_STRCPY(websock_id, delim_pos + 1);
+
     return VS_CODE_OK;
 }
 
