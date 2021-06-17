@@ -5,7 +5,7 @@ import "../theme"
 
 Column {
 
-    anchors.fill: parent
+    //anchors.fill: parent
     Layout.fillWidth: true
     Layout.maximumWidth: Theme.formMaximumWidth
     Layout.alignment: Qt.AlignHCenter
