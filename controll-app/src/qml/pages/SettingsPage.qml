@@ -88,12 +88,6 @@ Page {
         IntegrationsListPage {
             id: integrationsListPage
         }
-
-        Loader {
-            id: dockerPage
-//            source: "settings/DockerPage.qml"
-            source: "file:///Users/kutashenko/extern.qml"
-        }
     }
 
     onVisibleChanged: {
