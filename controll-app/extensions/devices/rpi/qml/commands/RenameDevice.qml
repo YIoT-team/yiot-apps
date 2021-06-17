@@ -27,7 +27,7 @@ import "qrc:/qml/components/validators"
 Page {
     id: createUserPage
 
-    property var controller
+    property var controller: ({ name: "" })
 
     background: Rectangle {
         color: "transparent"

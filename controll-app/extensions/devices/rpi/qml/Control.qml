@@ -89,6 +89,7 @@ Page {
 
     Connections {
         id: connections
+        ignoreUnknownSignals: true
 
         function onNameChanged() {
             deviceName = controller.name

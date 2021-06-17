@@ -34,7 +34,8 @@ Rectangle {
     color: "transparent"
     height: topLevel ? 50 : 40
     width: commonWidth
-    visible: secure
+    //visible: secure
+    visible: true
 
     RowLayout {
         id: itemText
@@ -60,6 +61,7 @@ Rectangle {
             Connections {
                 enabled: !topLevel
                 target: topLevel ? null : deviceController
+                ignoreUnknownSignals: true
                 function onFireStateChanged() {
                     icon.source = model.js.stateImage(model).arg(Theme.state)
                 }
