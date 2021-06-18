@@ -21,88 +21,79 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../components"
-import "../../components/Integrations"
-import "../../theme"
+import "qrc:/qml/theme"
+import "qrc:/qml/components"
 
 Page {
-    readonly property int installedIdx: 0
-    readonly property int availableIdx: 1
-
-    id: integrationsListPage
+    id: p
+    property var plugin: null
+    property var backAction: function() {  }
 
     background: Rectangle {
         color: "transparent"
     }
 
     header: Header {
-        title: pluginsInstalled.controlPageOpen ? qsTr("Integrations") : qsTr("Websocket")
-        backAction: function() {
-            if (pluginsInstalled.controlPageOpen) {
-                showMenuSettings()
-            } else {
-               pluginsInstalled.controlPageOpen = true
-            }
-        }
+        title: qsTr("YIoT plugin")
+        showBackButton: true
+        showMenuButton: false
+        showSettingsButton: false
+        backAction: p.backAction
     }
 
-    Loader {
-           id: myLoader
-           anchors.fill: parent
-           visible: !pluginsInstalled.controlPageOpen
-           source: "qrc:/integration/0/qml/ControlIntegrations.qml"
-    }
+    Form {
+        stretched: true
 
-    ColumnLayout {
-        anchors.fill: parent
+        Image {
+            Layout.maximumWidth: 100
+            Layout.maximumHeight: 100
 
-        visible: pluginsInstalled.controlPageOpen
-
-        spacing: 15
-
-        TabBar {
-            id: tabBarPlugins
-            Layout.fillWidth: true
-
-            z: 5
-            currentIndex: swipeViewPlugins.currentIndex
-
-            background: Rectangle {
-                color: Theme.mainBackgroundColor
-            }
-
-            TextTabButton { idx: 0; text: qsTr("Installed") }
-            TextTabButton { idx: 1; text: qsTr("Available") }
+            fillMode: Image.PreserveAspectFit
+            source: plugin.image
+            Layout.alignment: Qt.AlignHCenter
         }
 
-        SwipeView {
-            property int backPageIdx: installedIdx
-
-            id: swipeViewPlugins
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            interactive: false
-            currentIndex: installedIdx
-
-            IntegrationsInstalled { id: pluginsInstalled }
-            IntegrationsAvailable { id: pluginsAvailable }
+        Text {
+            text: plugin.title
+            font.weight: Font.Bold
+            font.capitalization: Font.Capitalize
+            font.family: Theme.mainFontBold
+            font.pointSize: UiHelper.fixFontSz(24)
+            color: Theme.brandColor
+            Layout.alignment: Qt.AlignHCenter
         }
 
-        Item {
+        Text {
+            width: 180
+            text: plugin.info.version
+            lineHeight: 1
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
+
+            font.pointSize: UiHelper.fixFontSz(13)
+            font.letterSpacing: 0.3
+            color: Theme.brandColor
+            Layout.alignment: Qt.AlignHCenter
+        }
+
+        Text {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.leftMargin: 20
+            Layout.rightMargin: 20
+            verticalAlignment: Text.AlignVCenter
+            textFormat: TextEdit.MarkdownText
+            text: plugin.description
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         }
-    }
 
-    Component.onCompleted: {
-        swipeShowPlugins(installedIdx)
-    }
+        FormSecondaryButton {
+            Layout.topMargin: 20
+            Layout.bottomMargin: 30
+            text: qsTr("Install")
+            onClicked: {
 
-    function swipeShowPlugins(idx) {
-        swipeViewPlugins.currentIndex = idx
-        for (var i = 0; i < swipeViewPlugins.count; ++i) {
-            var item = swipeViewPlugins.itemAt(i)
-            item.visible = i == swipeViewPlugins.currentIndex
+            }
         }
     }
 }

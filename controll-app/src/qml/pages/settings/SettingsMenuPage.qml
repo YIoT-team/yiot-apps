@@ -91,7 +91,7 @@ Page {
                 name: qsTr("Device types and plugins")
                 image: "plugins"
                 property var action: function() {
-                    showPluginsList(true)
+                    showExtDevicesList(true)
                 }
             }
 

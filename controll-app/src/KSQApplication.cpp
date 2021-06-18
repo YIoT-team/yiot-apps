@@ -53,6 +53,8 @@ KSQApplication::run() {
     m_netifWebsock = QSharedPointer<KSQNetifWebsocket>::create(QUrl("ws://159.89.15.12:8080/ws"), "test_account");
     m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create(/*m_netifUdp*/ m_netifWebsock);
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
+    m_extensionDevices = QSharedPointer<KSQExtDevices>::create();
+    m_extensionIntegrations = QSharedPointer<KSQExtIntegrations>::create();
 
     // Prepare IoTKit data
     auto features =
@@ -124,6 +126,8 @@ KSQApplication::run() {
             &KSQDeviceSetupController::instance()); // Controller to setup device provision, the first owner etc.
     context->setContextProperty("rotModel", &KSQRoTController::instance()); // Container for all Roots of trust
     context->setContextProperty("uxSimplifier", m_uxController.get());      // User experience simplifier
+    context->setContextProperty("extensionDevices", m_extensionDevices.get());
+    context->setContextProperty("extensionIntegrations", m_extensionIntegrations.get());
 
     // Load UI theme
     qmlRegisterSingletonType(QUrl("qrc:/qml/theme/Theme.qml"), "Theme", 1, 0, "Theme");

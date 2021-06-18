@@ -30,6 +30,9 @@
 #include <controllers/KSQUXSimplifyController.h>
 #include <controllers/devices/KSQAllDevicesController.h>
 
+#include <controllers/extensions/device/KSQExtDevices.h>
+#include <controllers/extensions/integration/KSQExtIntegrations.h>
+
 #include <virgil/iot/qt/VSQIoTKit.h>
 
 #include <yiot-iotkit/netif/KSQUdp.h>
@@ -73,6 +76,9 @@ private:
     QSharedPointer<KSQNetifWebsocket> m_netifWebsock;
 
     KSQAllDevicesController m_deviceControllers;
+
+    QSharedPointer<KSQExtDevices> m_extensionDevices;
+    QSharedPointer<KSQExtIntegrations> m_extensionIntegrations;
 };
 
 #endif // PROVISION_QT_APP_H

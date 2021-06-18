@@ -75,7 +75,7 @@ Item {
                 onClicked: {
                     showPluginPage(model, function() {
                        showSettings()
-                       showPluginsList(true)
+                       showExtDevicesList(true)
                     })
                 }
 

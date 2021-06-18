@@ -241,7 +241,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQUXSimplifyController.h
 
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/device/KSQExtDevice.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/device/KSQExtDeviceAvailable.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/device/KSQExtDevices.h
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/device/KSQExtDeviceInstalled.h
 
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/device-plugin/KSQExtDevPlugin.h
@@ -249,7 +249,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/device-plugin/KSQExtDevPluginInstalled.h
 
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/integration/KSQExtIntegration.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/integration/KSQExtIntegrationAvailable.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/integration/KSQExtIntegrations.h
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/integration/KSQExtIntegrationInstalled.h
 
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/KSQIoTKitFacade.h
@@ -300,7 +300,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQUXSimplifyController.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/device/KSQExtDevice.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/device/KSQExtDeviceAvailable.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/device/KSQExtDevices.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/device/KSQExtDeviceInstalled.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/device-plugin/KSQExtDevPlugin.cpp
@@ -308,7 +308,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/device-plugin/KSQExtDevPluginInstalled.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/integration/KSQExtIntegration.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/integration/KSQExtIntegrationAvailable.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/integration/KSQExtIntegrations.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/integration/KSQExtIntegrationInstalled.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/KSQIoTKitFacade.cpp

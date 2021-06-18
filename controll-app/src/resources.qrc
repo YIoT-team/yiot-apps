@@ -147,8 +147,11 @@
         <file>qml/pages/settings/RoTSettingsPage.qml</file>
         <file>qml/pages/settings/NetworksSettingsPage.qml</file>
         <file>qml/pages/settings/ThemeListPage.qml</file>
-        <file>qml/pages/settings/PluginsListPage.qml</file>
-		<file>qml/pages/settings/IntegrationsListPage.qml</file>
+        <file>qml/pages/settings/extensions/ExtDevicesListPage.qml</file>
+        <file>qml/pages/settings/extensions/ExtDevicePage.qml</file>
+		<file>qml/pages/settings/extensions/ExtIntegrationsListPage.qml</file>
+        <file>qml/pages/settings/extensions/ExtPluginPage.qml</file>
+        <file>qml/pages/settings/extensions/ExtIntegrationPage.qml</file>
 
         <!-- QML Other pages -->
         <file>qml/pages/AboutPage.qml</file>
@@ -157,8 +160,6 @@
         <file>qml/pages/DevicesSetupPage.qml</file>
         <file>qml/pages/QRReaderPage.qml</file>
         <file>qml/pages/SharePage.qml</file>
-        <file>qml/pages/PluginPage.qml</file>
-        <file>qml/pages/IntegrationsPage.qml</file>
 
         <!-- QML Device pages -->
         <file>qml/pages/devices/CmdProcessingPage.qml</file>

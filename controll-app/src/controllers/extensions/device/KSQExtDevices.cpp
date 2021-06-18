@@ -17,76 +17,43 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+#include <controllers/extensions/device/KSQExtDevices.h>
 
-import "../../components"
-import "../../components/Plugins"
-import "../../theme"
-
-Page {
-    readonly property int installedIdx: 0
-    readonly property int availableIdx: 1
-    id: eventsSettingsPage
-
-    background: Rectangle {
-        color: "transparent"
-    }
-
-    header: Header {
-        title: qsTr("Device types and plugins")
-        backAction: function() { showMenuSettings() }
-    }
-
-    ColumnLayout {
-        anchors.fill: parent
-
-        spacing: 15
-
-        TabBar {
-            id: tabBarPlugins
-            Layout.fillWidth: true
-
-            z: 5
-            currentIndex: swipeViewPlugins.currentIndex
-
-            background: Rectangle {
-                color: Theme.mainBackgroundColor
-            }
-
-            TextTabButton { idx: 1; text: qsTr("Installed") }
-            TextTabButton { idx: 0; text: qsTr("Available") }
-        }
-
-        SwipeView {
-            property int backPageIdx: installedIdx
-
-            id: swipeViewPlugins
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            interactive: false
-            currentIndex: installedIdx
-
-            PluginsInstalled { id: pluginsInstalled }
-            PluginsAvailable { id: pluginsAvailable }
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
-    }
-
-    Component.onCompleted: {
-        swipeShowPlugins(installedIdx)
-    }
-
-    function swipeShowPlugins(idx) {
-        swipeViewPlugins.currentIndex = idx
-        for (var i = 0; i < swipeViewPlugins.count; ++i) {
-            var item = swipeViewPlugins.itemAt(i)
-            item.visible = i == swipeViewPlugins.currentIndex
-        }
-    }
+//-----------------------------------------------------------------------------
+int
+KSQExtDevices::rowCount(const QModelIndex &parent) const {
+    return 0;
 }
+
+//-----------------------------------------------------------------------------
+int
+KSQExtDevices::columnCount(const QModelIndex &parent) const {
+    return 1;
+}
+
+//-----------------------------------------------------------------------------
+QVariant
+KSQExtDevices::data(const QModelIndex &index, int role) const {
+    //    if (index.row() < m_devices.count()) {
+    //        auto key = m_devices.keys().at(index.row());
+    //
+    //        switch (role) {
+    //        case Element:::
+    //            return "";
+    //        }
+    //    }
+
+    return QVariant();
+}
+
+//-----------------------------------------------------------------------------
+QHash<int, QByteArray>
+KSQExtDevices::roleNames() const {
+    QHash<int, QByteArray> roles;
+    //    roles[Name] = "name";
+    //    roles[Type] = "type";
+    //    roles[Mac] = "mac";
+    return roles;
+}
+
+//-----------------------------------------------------------------------------

@@ -20,8 +20,9 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 
-import "./settings"
-import "../components"
+import "qrc:/qml/pages/settings/extensions"
+import "qrc:/qml/pages/settings"
+import "qrc:/qml/components"
 
 Page {
     readonly property int menuIdx: 0
@@ -43,8 +44,10 @@ Page {
         readonly property int rotIdx: 4
         readonly property int networksIdx: 5
         readonly property int themeIdx: 6
-        readonly property int pluginsIdx: 7
+        readonly property int extDevicesIdx: 7
         readonly property int integrationsIdx: 8
+        readonly property int onePluginIdx: 9
+        readonly property int oneIntegrationIdx: 10
 
         property int backPageIdx: menuIdx
 
@@ -81,12 +84,20 @@ Page {
             id: themeListPage
         }
 
-        PluginsListPage {
-            id: pluginsListPage
+        ExtDevicesListPage {
+            id: extDeviccesListPage
         }
 
-        IntegrationsListPage {
-            id: integrationsListPage
+        ExtIntegrationsListPage {
+            id: extIntegrationsListPage
+        }
+
+        ExtPluginPage {
+            id: extPluginPage
+        }
+
+        ExtIntegrationPage {
+            id: extIntegrationPage
         }
     }
 
@@ -134,17 +145,29 @@ Page {
         swipeSettingsShow(settingsSwipeView.themeIdx)
     }
 
-    function showPluginsList(available) {
+    function showExtDevicesList(available) {
         if (available) {
-            pluginsListPage.swipeShowPlugins(pluginsListPage.availableIdx)
+            extDeviccesListPage.swipeShowPlugins(extDeviccesListPage.availableIdx)
         } else {
-            pluginsListPage.swipeShowPlugins(pluginsListPage.installedIdx)
+            extDeviccesListPage.swipeShowPlugins(extDeviccesListPage.installedIdx)
         }
-        swipeSettingsShow(settingsSwipeView.pluginsIdx)
+        swipeSettingsShow(settingsSwipeView.extDevicesIdx)
     }
 
     function showIntegrationsList() {
         swipeSettingsShow(settingsSwipeView.integrationsIdx)
+    }
+
+    function showPluginPage(plugin, backAction) {
+        extPluginPage.plugin = plugin
+        extPluginPage.backAction = backAction
+        swipeSettingsShow(settingsSwipeView.onePluginIdx)
+    }
+
+    function showIntegrationPage(integration, backAction) {
+        extIntegrationPage.integration = integration
+        extIntegrationPage.backAction = backAction
+        swipeSettingsShow(settingsSwipeView.oneIntegrationIdx)
     }
 
     function backInSettings() {

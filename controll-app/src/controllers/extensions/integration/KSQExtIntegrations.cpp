@@ -17,42 +17,43 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef KSQ_EXTENSION_INTEGRATION_AVAILABLE_H
-#define KSQ_EXTENSION_INTEGRATION_AVAILABLE_H
+#include <controllers/extensions/integration/KSQExtIntegrations.h>
 
-#include <QtCore>
-#include <QAbstractTableModel>
+//-----------------------------------------------------------------------------
+int
+KSQExtIntegrations::rowCount(const QModelIndex &parent) const {
+    return 0;
+}
 
-class KSQExtIntegrationAvailable : public QAbstractTableModel {
-    Q_OBJECT
-public:
-    enum Element { ExtInfo = Qt::UserRole, ElementMax };
+//-----------------------------------------------------------------------------
+int
+KSQExtIntegrations::columnCount(const QModelIndex &parent) const {
+    return 1;
+}
 
-    KSQExtIntegrationAvailable() = default;
+//-----------------------------------------------------------------------------
+QVariant
+KSQExtIntegrations::data(const QModelIndex &index, int role) const {
+    //    if (index.row() < m_devices.count()) {
+    //        auto key = m_devices.keys().at(index.row());
+    //
+    //        switch (role) {
+    //        case Element:::
+    //            return "";
+    //        }
+    //    }
 
-    KSQExtIntegrationAvailable(KSQExtIntegrationAvailable const &) = delete;
+    return QVariant();
+}
 
-    KSQExtIntegrationAvailable &
-    operator=(KSQExtIntegrationAvailable const &) = delete;
+//-----------------------------------------------------------------------------
+QHash<int, QByteArray>
+KSQExtIntegrations::roleNames() const {
+    QHash<int, QByteArray> roles;
+    //    roles[Name] = "name";
+    //    roles[Type] = "type";
+    //    roles[Mac] = "mac";
+    return roles;
+}
 
-    virtual ~KSQExtIntegrationAvailable() = default;
-    /**
-     * QAbstractTableModel implementation
-     */
-    int
-    rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    int
-    columnCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant
-    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    QHash<int, QByteArray>
-    roleNames() const override;
-
-signals:
-
-private slots:
-
-private:
-};
-
-#endif // KSQ_EXTENSION_INTEGRATION_AVAILABLE_H
+//-----------------------------------------------------------------------------
