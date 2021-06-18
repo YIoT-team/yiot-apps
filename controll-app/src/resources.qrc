@@ -173,5 +173,10 @@
         <file>qml/theme/Theme.qml</file>
         <file>qml/base/Platform.qml</file>
 
+        <!-- Built-in extensions info -->
+        <file>qml/info/builtin-devices.json</file>
+        <file>qml/info/builtin-devices.json</file>
+        <file>qml/info/builtin-integrations.json</file>
+
     </qresource>
 </RCC>

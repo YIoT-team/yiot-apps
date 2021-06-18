@@ -1,0 +1,7 @@
+{
+  "plugin": [
+    {
+        "dir": "qrc:/plugin/0"
+    }
+  ]
+}

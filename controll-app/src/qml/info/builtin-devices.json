@@ -1,0 +1,7 @@
+{
+  "device": [
+    {
+        "dir": "qrc:/device/0"
+    }
+  ]
+}

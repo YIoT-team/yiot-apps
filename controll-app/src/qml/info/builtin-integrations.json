@@ -1,0 +1,7 @@
+{
+  "integrations": [
+    {
+        "dir": "qrc:/integration/0"
+    }
+  ]
+}
