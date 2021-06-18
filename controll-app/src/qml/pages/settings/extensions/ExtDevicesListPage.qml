@@ -44,7 +44,8 @@ Page {
         spacing: 15
 
         ListView {
-            anchors.fill: parent
+            Layout.fillHeight: true
+            Layout.fillWidth: true
             model: extensionDevices
 
             delegate: Rectangle {
