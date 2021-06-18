@@ -48,6 +48,7 @@ Page {
         readonly property int integrationsIdx: 8
         readonly property int onePluginIdx: 9
         readonly property int oneIntegrationIdx: 10
+        readonly property int oneDevicePageIdx: 11
 
         property int backPageIdx: menuIdx
 
@@ -99,6 +100,10 @@ Page {
         ExtIntegrationPage {
             id: extIntegrationPage
         }
+
+        ExtDevicePage {
+            id: extDevicePage
+        }
     }
 
     onVisibleChanged: {
@@ -145,13 +150,14 @@ Page {
         swipeSettingsShow(settingsSwipeView.themeIdx)
     }
 
-    function showExtDevicesList(available) {
-        if (available) {
-            extDeviccesListPage.swipeShowPlugins(extDeviccesListPage.availableIdx)
-        } else {
-            extDeviccesListPage.swipeShowPlugins(extDeviccesListPage.installedIdx)
-        }
+    function showExtDevicesList() {
         swipeSettingsShow(settingsSwipeView.extDevicesIdx)
+    }
+
+    function showExtDevice(device, backAction) {
+        extDevicePage.device = device
+        extDevicePage.backAction = backAction
+        swipeSettingsShow(settingsSwipeView.oneDevicePageIdx)
     }
 
     function showIntegrationsList() {

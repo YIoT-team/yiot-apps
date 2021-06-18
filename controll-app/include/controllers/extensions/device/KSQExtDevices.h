@@ -23,12 +23,14 @@
 #include <QtCore>
 #include <QAbstractTableModel>
 
+#include <controllers/extensions/device/KSQExtDevice.h>
+
 class KSQExtDevices : public QAbstractTableModel {
     Q_OBJECT
 public:
-    enum Element { ExtInfo = Qt::UserRole, ElementMax };
+    enum Element { Info = Qt::UserRole, ElementMax };
 
-    KSQExtDevices() = default;
+    KSQExtDevices();
 
     KSQExtDevices(KSQExtDevices const &) = delete;
 
@@ -53,6 +55,10 @@ signals:
 private slots:
 
 private:
+    QList<QSharedPointer<KSQExtDevice>> m_devices;
+
+    bool
+    loadBuiltinDevicesInfo();
 };
 
 #endif // KSQ_EXTENSION_DEVICES_H

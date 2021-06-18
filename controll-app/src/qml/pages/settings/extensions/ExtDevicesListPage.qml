@@ -41,35 +41,70 @@ Page {
 
     ColumnLayout {
         anchors.fill: parent
-
         spacing: 15
 
-        TabBar {
-            id: tabBarPlugins
-            Layout.fillWidth: true
+        ListView {
+            anchors.fill: parent
+            model: extensionDevices
 
-            z: 5
-            currentIndex: swipeViewPlugins.currentIndex
+            delegate: Rectangle {
+                id: base
+                width: parent.width
+                height: 55
+                color: "transparent"
 
-            background: Rectangle {
-                color: Theme.mainBackgroundColor
+                RowLayout {
+                    id: listDelegate
+                    anchors.fill: parent
+                    clip: true
+
+                    Image {
+                        id: icon
+                        source: info.logo
+                        Layout.maximumHeight: listDelegate.height * 0.7
+                        Layout.maximumWidth: Layout.maximumHeight
+                        fillMode: Image.PreserveAspectFit
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.leftMargin: 10
+                    }
+
+                    Text {
+                        text: info.name
+                        Layout.fillWidth: true
+                    }
+
+                    Text {
+                        text: info.version
+                        horizontalAlignment: Text.AlignRight
+                        Layout.rightMargin: 15
+                        Layout.fillWidth: true
+                    }
+                }
+
+                MouseArea {
+                    enabled: true
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    anchors.rightMargin: 0
+                    onClicked: {
+                        showExtDevice(info, function() {
+                            showSettings()
+                            showExtDevicesList()
+                        })
+                    }
+
+                    onEntered: {
+                        base.color = Theme.contrastBackgroundColor
+                    }
+
+                    onExited: {
+                        base.color = "transparent"
+                    }
+                }
             }
-
-            TextTabButton { idx: 1; text: qsTr("Installed") }
-            TextTabButton { idx: 0; text: qsTr("Available") }
-        }
-
-        SwipeView {
-            property int backPageIdx: installedIdx
-
-            id: swipeViewPlugins
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            interactive: false
-            currentIndex: installedIdx
-
-            PluginsInstalled { id: pluginsInstalled }
-            PluginsAvailable { id: pluginsAvailable }
+            Component.onCompleted: {
+                loadAvailablePluginsInfo()
+            }
         }
 
         Item {
@@ -79,14 +114,5 @@ Page {
     }
 
     Component.onCompleted: {
-        swipeShowPlugins(installedIdx)
-    }
-
-    function swipeShowPlugins(idx) {
-        swipeViewPlugins.currentIndex = idx
-        for (var i = 0; i < swipeViewPlugins.count; ++i) {
-            var item = swipeViewPlugins.itemAt(i)
-            item.visible = i == swipeViewPlugins.currentIndex
-        }
     }
 }

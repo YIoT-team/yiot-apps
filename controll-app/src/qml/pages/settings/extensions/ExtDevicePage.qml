@@ -26,7 +26,7 @@ import "qrc:/qml/components"
 
 Page {
     id: p
-    property var integration: null
+    property var device: null
     property var backAction: function() {  }
 
     background: Rectangle {
@@ -34,7 +34,7 @@ Page {
     }
 
     header: Header {
-        title: qsTr("YIoT integration")
+        title: qsTr("YIoT device")
         showBackButton: true
         showMenuButton: false
         showSettingsButton: false
@@ -49,12 +49,12 @@ Page {
             Layout.maximumHeight: 100
 
             fillMode: Image.PreserveAspectFit
-            source: integration.image
+            source: device.logo
             Layout.alignment: Qt.AlignHCenter
         }
 
         Text {
-            text: integration.title
+            text: device.name
             font.weight: Font.Bold
             font.capitalization: Font.Capitalize
             font.family: Theme.mainFontBold
@@ -65,7 +65,7 @@ Page {
 
         Text {
             width: 180
-            text: integration.info.version
+            text: device.version
             lineHeight: 1
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
@@ -84,11 +84,12 @@ Page {
             Layout.rightMargin: 20
             verticalAlignment: Text.AlignVCenter
             textFormat: TextEdit.MarkdownText
-            text: integration.description
+            text: device.description
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         }
 
         FormSecondaryButton {
+            visible: false
             Layout.topMargin: 20
             Layout.bottomMargin: 30
             text: qsTr("Install")
