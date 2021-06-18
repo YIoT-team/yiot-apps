@@ -18,7 +18,7 @@ Column {
         id: labelId
         textFormat: Text.RichText
         horizontalAlignment: Text.AlignHCenter
-        font.pointSize: UiHelper.fixFontSz(15)
+        font.pointSize: 15
         font.family: Theme.mainFont
     }
 }

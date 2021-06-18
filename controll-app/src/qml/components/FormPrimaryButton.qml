@@ -18,7 +18,7 @@ Button {
     contentItem: Text {
         text: button.text
         font.family: Theme.mainFont
-        font.pointSize: UiHelper.fixFontSz(15)
+        font.pointSize: 15
         font.letterSpacing: 0
         opacity: enabled ? 1.0 : 0.3
         color: inverted ? Theme.buttonInvertedTextColor : Theme.buttonPrimaryTextColor

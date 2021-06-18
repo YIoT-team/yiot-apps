@@ -26,7 +26,7 @@ import "../theme"
 Label {
     Layout.fillWidth: true
     font.family: Theme.mainFont
-    font.pointSize: UiHelper.fixFontSz(15)
+    font.pointSize: 15
     color: Theme.primaryTextColor
     horizontalAlignment: Text.AlignLeft
     elide: Text.ElideRight

@@ -39,7 +39,7 @@ ColumnLayout {
                     id: nameText
                     text: name
                     verticalAlignment: Text.AlignVCenter
-                    font.pointSize: UiHelper.fixFontSz(14)
+                    font.pointSize: 14
                     font.underline: ma.containsMouse
                     color: ma.containsMouse ? Theme.linkTextColor : Theme.primaryTextColor
 

@@ -30,7 +30,7 @@ ColumnLayout {
         Layout.preferredWidth: parent.width
         Layout.alignment: Qt.AlignHCenter
         color: Theme.primaryTextColor
-        font.pointSize: UiHelper.fixFontSz(14)
+        font.pointSize: 14
         leftPadding: 30
         background: Rectangle {
             implicitWidth: 200

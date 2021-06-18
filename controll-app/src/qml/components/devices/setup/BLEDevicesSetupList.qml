@@ -64,7 +64,7 @@ ListView {
                 text: name
                 color: Theme.primaryTextColor
                 verticalAlignment: Text.AlignVCenter
-                font.pointSize: UiHelper.fixFontSz(14)
+                font.pointSize: 14
 
                 Layout.alignment: Qt.AlignLeft
                 Layout.fillHeight: true
@@ -76,7 +76,7 @@ ListView {
                 text: rssi
                 color: Theme.primaryTextColor
                 verticalAlignment: Text.AlignVCenter
-                font.pointSize: UiHelper.fixFontSz(14)
+                font.pointSize: 14
 
                 Layout.alignment: Qt.AlignLeft
                 Layout.fillHeight: true

@@ -42,7 +42,7 @@ ImageButton {
             id: menuItem
             implicitWidth: parent.width
             implicitHeight: menuItemHeight
-            font.pointSize: UiHelper.fixFontSz(15)
+            font.pointSize: 15
 
             contentItem: Text {
                 leftPadding: menuItemPadding

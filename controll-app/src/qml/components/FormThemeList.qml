@@ -16,7 +16,7 @@ Button {
     contentItem: Text {
         text: button.text
         font.family: Theme.mainFont
-        font.pointSize: UiHelper.fixFontSz(15)
+        font.pointSize: 15
         font.letterSpacing: 0
         color: Theme.buttonPrimaryColor
         horizontalAlignment: Text.AlignHCenter

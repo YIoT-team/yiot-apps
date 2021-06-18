@@ -60,7 +60,7 @@ Page {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 font.family: Theme.mainFont
-                font.pointSize: UiHelper.fixFontSz(24)
+                font.pointSize: 24
             }
 
             AnimatedImage {

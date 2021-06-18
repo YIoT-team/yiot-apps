@@ -11,7 +11,7 @@ TabButton {
     contentItem: Text {
         text: btn.text
         font.family: Theme.mainFont
-        font.pointSize: UiHelper.fixFontSz(15)
+        font.pointSize: 15
         color: Theme.buttonPrimaryColor
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter

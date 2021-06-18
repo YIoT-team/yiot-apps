@@ -17,7 +17,7 @@ RowLayout {
         id: info
         Layout.alignment: Qt.AlignLeft
         text: infoText
-        font.pointSize: UiHelper.fixFontSz(12)
+        font.pointSize: 12
     }
 
     Switch {

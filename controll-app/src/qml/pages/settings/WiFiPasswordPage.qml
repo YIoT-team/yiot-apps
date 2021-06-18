@@ -63,7 +63,7 @@ Page {
             Layout.preferredWidth: parent.width - 20
             Layout.alignment: Qt.AlignHCenter
             color: Theme.primaryTextColor
-            font.pointSize: UiHelper.fixFontSz(14)
+            font.pointSize: 14
             leftPadding: 30
             echoMode: TextField.PasswordEchoOnEdit
             background: Rectangle {

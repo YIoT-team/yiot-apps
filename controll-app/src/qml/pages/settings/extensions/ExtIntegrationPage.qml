@@ -58,7 +58,7 @@ Page {
             font.weight: Font.Bold
             font.capitalization: Font.Capitalize
             font.family: Theme.mainFontBold
-            font.pointSize: UiHelper.fixFontSz(24)
+            font.pointSize: 24
             color: Theme.brandColor
             Layout.alignment: Qt.AlignHCenter
         }
@@ -70,7 +70,7 @@ Page {
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
 
-            font.pointSize: UiHelper.fixFontSz(13)
+            font.pointSize: 13
             font.letterSpacing: 0.3
             color: Theme.brandColor
             //anchors.horizontalCenter: parent.horizontalCenter
