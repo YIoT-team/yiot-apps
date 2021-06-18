@@ -52,7 +52,6 @@ Page {
 
             fillMode: Image.PreserveAspectFit
             source: integration.image
-            //anchors.horizontalCenter: parent.horizontalCenter
             Layout.alignment: Qt.AlignHCenter
         }
 
@@ -63,7 +62,6 @@ Page {
             font.family: Theme.mainFontBold
             font.pointSize: UiHelper.fixFontSz(24)
             color: Theme.brandColor
-            //anchors.horizontalCenter: parent.horizontalCenter
             Layout.alignment: Qt.AlignHCenter
         }
 
