@@ -21,7 +21,6 @@
 #include <QtQml>
 
 #include <KSQApplication.h>
-#include <ui/VSQUiHelper.h>
 #include <virgil/iot/logger/logger.h>
 
 #include <yiot-iotkit/KSQIoTKitFacade.h>
@@ -43,7 +42,6 @@
 int
 KSQApplication::run() {
     QQmlApplicationEngine engine;
-    VSQUiHelper uiHelper;
 
     // Early initialization of logger
     vs_logger_init(VirgilIoTKit::VS_LOGLEV_DEBUG);
@@ -111,7 +109,6 @@ KSQApplication::run() {
     // Initialize QML
     QQmlContext *context = engine.rootContext();
 
-    context->setContextProperty("UiHelper", &uiHelper);
     context->setContextProperty("app", this); // Get app name, version, etc.
     context->setContextProperty("localBlankDevicesController", m_localBlankDevicesController.get());
     context->setContextProperty("bleController",
