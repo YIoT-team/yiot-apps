@@ -16,7 +16,7 @@ ColumnLayout {
     signal ready()
 
     Layout.preferredHeight: 30
-    Layout.maximumWidth: parent.width - 60
+    Layout.maximumWidth: parent.width > 60 ? parent.width - 60 : parent.width
     Layout.alignment: Qt.AlignHCenter
 
     spacing: 0
