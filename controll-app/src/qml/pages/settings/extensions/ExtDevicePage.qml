@@ -26,7 +26,7 @@ import "qrc:/qml/components"
 
 Page {
     id: p
-    property var device: null
+    property var device: ({ logo: "", name: "", version: "", description: "" })
     property var backAction: function() {  }
 
     background: Rectangle {
