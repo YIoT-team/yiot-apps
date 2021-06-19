@@ -3,7 +3,7 @@
 Summary:          YIoT emulator
 Name:             yiot-emulator
 Version:          {{MAJOR_VER}}.{{MINOR_VER}}.{{SUB_VER}}
-Release:          {{BUILD_VER}}
+Release:          {{BUILD_VER}}%{?dist}
 Group:            IOT
 License:          BSD-3-Clause
 URL:              https://yiot-dev.io/

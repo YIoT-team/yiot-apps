@@ -3,6 +3,7 @@ set -o errtrace
 
 SCRIPT_DIR="$(cd $(dirname "$0") && pwd)"
 SOURCE_DIR="${SCRIPT_DIR}/../../.."
+BUILD_OS_DISTR="centos-8-x86_64"
 
 set -e
 ######################################################################
@@ -147,7 +148,7 @@ build_rpm() {
  print_message "Clean mock root dir"
  mock --clean
  print_message "Building binary RPM".
- mock ${BUILD_DIR}/*.src.rpm --resultdir=${BUILD_DIR}
+ mock -r ${BUILD_OS_DISTR} ${BUILD_DIR}/*.src.rpm --resultdir=${BUILD_DIR}
 }
 
 
