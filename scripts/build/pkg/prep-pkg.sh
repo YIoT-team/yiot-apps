@@ -136,7 +136,7 @@ create_srpm() {
   echo "------------- Create SPEC from template ------------------------------"
   j2 -f env -o ${PKG_NAME}.spec spkg/${SCRIPT_PATH}/${PKG_NAME}.spec.in
   rm -rf spkg/*.in
-  cp -rf spkg/* .
+  cp -rf spkg/* . || true
   rm -rf spkg
   mock --buildsrpm --spec ${BUILD_DIR}/${PKG_NAME}.spec --sources ${BUILD_DIR} --resultdir=${BUILD_DIR}
  popd
