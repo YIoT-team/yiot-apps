@@ -38,6 +38,10 @@ public:
     operator=(KSQExtDevices const &) = delete;
 
     virtual ~KSQExtDevices() = default;
+
+    QStringList
+    builtInDevices() const;
+
     /**
      * QAbstractTableModel implementation
      */
@@ -56,9 +60,19 @@ private slots:
 
 private:
     QList<QSharedPointer<KSQExtDevice>> m_devices;
+    QStringList m_builtIn;
+
+    QString
+    fixQrcQFile(const QString &resourceDir);
+
+    QString
+    readContent(const QString &fileName);
 
     bool
     loadBuiltinDevicesInfo();
+
+    bool
+    loadOneBuiltinDevice(const QString &resourceDir);
 };
 
 #endif // KSQ_EXTENSION_DEVICES_H

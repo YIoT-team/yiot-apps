@@ -30,18 +30,16 @@
 #endif
 
 //-----------------------------------------------------------------------------
-KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, uint64_t deviceId) {
-    m_deviceTypeId = deviceId;
-
+KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, const QString &deviceDir) {
     // Create JS processor
-    const QString js = "qrc:/device/" + QString::number(deviceId) + "/js/main.qml";
+    const QString js = deviceDir + "/js/main.qml";
     QQmlComponent component(&engine, QUrl(js));
     if (component.isError()) {
         qDebug() << component.errors();
     }
     QObject *object = component.create();
     if (!object) {
-        VS_LOG_ERROR("Cannot create QML processor for device type : %llu", static_cast<unsigned long long>(deviceId));
+        VS_LOG_ERROR("Cannot create QML processor for device type : %s", deviceDir.toStdString().c_str());
         return;
     }
     m_qmlProcessor.reset(object);
@@ -49,7 +47,7 @@ KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, uint64_t deviceId)
     // Add Device control page
     auto *rootObj = engine.rootObjects().first();
     auto deviceControlContainer = rootObj->findChild<QObject *>("deviceControlContainer");
-    const QString controlPage = "qrc:/device/" + QString::number(deviceId) + "/qml/Control.qml";
+    const QString controlPage = deviceDir + "/qml/Control.qml";
     QVariant res;
     if (QMetaObject::invokeMethod(deviceControlContainer,
                                   "addDeviceControl",

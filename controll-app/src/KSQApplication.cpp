@@ -139,7 +139,9 @@ KSQApplication::run() {
     engine.load(url);
 
     // Initialize devices controllers
-    m_deviceControllers << new KSQDevicesType(engine, 0);
+    for (const auto &devPath : m_extensionDevices->builtInDevices()) {
+        m_deviceControllers << new KSQDevicesType(engine, devPath);
+    }
 
     // Delayed actions
     QTimer::singleShot(200, []() {

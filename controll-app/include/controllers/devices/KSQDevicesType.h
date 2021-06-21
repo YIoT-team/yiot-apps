@@ -37,7 +37,7 @@ public:
 
     enum Element { Name = Qt::UserRole, Type, Mac, Active, Device, Secure, Js, ElementMax };
 
-    KSQDevicesType(QQmlApplicationEngine &engine, uint64_t deviceId);
+    KSQDevicesType(QQmlApplicationEngine &engine, const QString &deviceDir);
     virtual ~KSQDevicesType() = default;
 
     QString
@@ -128,7 +128,6 @@ private:
 
 private:
     bool m_active = false;
-    uint64_t m_deviceTypeId;
     std::list<QSharedPointer<KSQDevice>> m_devices;
     QSharedPointer<QObject> m_qmlProcessor;
 

@@ -1,5 +1,16 @@
 <RCC>
     <qresource prefix="/device/0">
+        <!-- Info JSON -->
+        <file>info.json</file>
+
+        <!-- Logo -->
+        <file>logo/logo.png</file>
+
+        <!-- Texts -->
+        <file>texts/en/description.md</file>
+        <file>texts/en/link.txt</file>
+        <file>texts/en/title.txt</file>
+
         <!-- Java script -->
         <file>js/main.qml</file>
         <file>js/protocol.js</file>
