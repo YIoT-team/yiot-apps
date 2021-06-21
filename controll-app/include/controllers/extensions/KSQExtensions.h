@@ -17,25 +17,31 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef KSQ_EXTENSION_INTEGRATION_INSTALLED_H
-#define KSQ_EXTENSION_INTEGRATION_INSTALLED_H
+#ifndef KSQ_EXTENSION_INTEGRATIONS_H
+#define KSQ_EXTENSION_INTEGRATIONS_H
 
 #include <QtCore>
 #include <QAbstractTableModel>
 
-class KSQExtIntegrationInstalled : public QAbstractTableModel {
+#include <controllers/extensions/KSQOneExtension.h>
+
+class KSQExtensions : public QAbstractTableModel {
     Q_OBJECT
 public:
-    enum Element { ExtInfo = Qt::UserRole, ElementMax };
+    enum Element { Info = Qt::UserRole, ElementMax };
 
-    KSQExtIntegrationInstalled() = default;
+    KSQExtensions(const QString &prefix);
 
-    KSQExtIntegrationInstalled(KSQExtIntegrationInstalled const &) = delete;
+    KSQExtensions(KSQExtensions const &) = delete;
 
-    KSQExtIntegrationInstalled &
-    operator=(KSQExtIntegrationInstalled const &) = delete;
+    KSQExtensions &
+    operator=(KSQExtensions const &) = delete;
 
-    virtual ~KSQExtIntegrationInstalled() = default;
+    virtual ~KSQExtensions() = default;
+
+    QStringList
+    builtInDevices() const;
+
     /**
      * QAbstractTableModel implementation
      */
@@ -53,6 +59,21 @@ signals:
 private slots:
 
 private:
+    QString m_prefix;
+    QList<QSharedPointer<KSQOneExtension>> m_extensions;
+    QStringList m_builtIn;
+
+    QString
+    fixQrcQFile(const QString &resourceDir);
+
+    QString
+    readContent(const QString &fileName);
+
+    bool
+    loadBuiltinDevicesInfo();
+
+    bool
+    loadOneBuiltinDevice(const QString &resourceDir);
 };
 
-#endif // KSQ_EXTENSION_INTEGRATION_INSTALLED_H
+#endif // KSQ_EXTENSION_INTEGRATIONS_H

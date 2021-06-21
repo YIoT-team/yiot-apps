@@ -22,87 +22,90 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import "qrc:/qml/components"
-import "qrc:/qml/components/Integrations"
+import "qrc:/qml/components/Plugins"
 import "qrc:/qml/theme"
 
 Page {
-    readonly property int installedIdx: 0
-    readonly property int availableIdx: 1
-
-    id: integrationsListPage
+    id: extensionDevicesListPage
 
     background: Rectangle {
         color: "transparent"
     }
 
     header: Header {
-        title: pluginsInstalled.controlPageOpen ? qsTr("Integrations") : qsTr("Websocket")
-        backAction: function() {
-            if (pluginsInstalled.controlPageOpen) {
-                showMenuSettings()
-            } else {
-               pluginsInstalled.controlPageOpen = true
-            }
-        }
-    }
-
-    Loader {
-           id: myLoader
-           anchors.fill: parent
-           visible: !pluginsInstalled.controlPageOpen
-           source: "qrc:/integration/0/qml/ControlIntegrations.qml"
+        title: qsTr("Integrations")
+        backAction: function() { showMenuSettings() }
     }
 
     ColumnLayout {
         anchors.fill: parent
-
-        visible: pluginsInstalled.controlPageOpen
-
         spacing: 15
 
-        TabBar {
-            id: tabBarPlugins
-            Layout.fillWidth: true
-
-            z: 5
-            currentIndex: swipeViewPlugins.currentIndex
-
-            background: Rectangle {
-                color: Theme.mainBackgroundColor
-            }
-
-            TextTabButton { idx: 0; text: qsTr("Installed") }
-            TextTabButton { idx: 1; text: qsTr("Available") }
-        }
-
-        SwipeView {
-            property int backPageIdx: installedIdx
-
-            id: swipeViewPlugins
-            Layout.fillWidth: true
+        ListView {
             Layout.fillHeight: true
-            interactive: false
-            currentIndex: installedIdx
+            Layout.fillWidth: true
+            model: extensionIntegrations
 
-            IntegrationsInstalled { id: pluginsInstalled }
-            IntegrationsAvailable { id: pluginsAvailable }
+            delegate: Rectangle {
+                id: base
+                width: parent.width
+                height: 55
+                color: "transparent"
+
+                RowLayout {
+                    id: listDelegate
+                    anchors.fill: parent
+                    clip: true
+
+                    Image {
+                        id: icon
+                        source: info.logo
+                        Layout.maximumHeight: listDelegate.height * 0.7
+                        Layout.maximumWidth: Layout.maximumHeight
+                        fillMode: Image.PreserveAspectFit
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.leftMargin: 10
+                    }
+
+                    Text {
+                        text: info.name
+                        Layout.fillWidth: true
+                    }
+
+                    Text {
+                        text: info.version
+                        horizontalAlignment: Text.AlignRight
+                        Layout.rightMargin: 15
+                        Layout.fillWidth: true
+                    }
+                }
+
+                MouseArea {
+                    enabled: true
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    anchors.rightMargin: 0
+                    onClicked: {
+                        showExtDevice(info, function() {
+                            showSettings()
+                            showIntegrationsList()
+                        })
+                    }
+
+                    onEntered: {
+                        base.color = Theme.contrastBackgroundColor
+                    }
+
+                    onExited: {
+                        base.color = "transparent"
+                    }
+                }
+            }
         }
 
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
-        }
-    }
-
-    Component.onCompleted: {
-        swipeShowPlugins(installedIdx)
-    }
-
-    function swipeShowPlugins(idx) {
-        swipeViewPlugins.currentIndex = idx
-        for (var i = 0; i < swipeViewPlugins.count; ++i) {
-            var item = swipeViewPlugins.itemAt(i)
-            item.visible = i == swipeViewPlugins.currentIndex
         }
     }
 }

@@ -26,9 +26,7 @@ import "qrc:/qml/components/Plugins"
 import "qrc:/qml/theme"
 
 Page {
-    readonly property int installedIdx: 0
-    readonly property int availableIdx: 1
-    id: eventsSettingsPage
+    id: extensionDevicesListPage
 
     background: Rectangle {
         color: "transparent"
@@ -103,17 +101,11 @@ Page {
                     }
                 }
             }
-            Component.onCompleted: {
-                loadAvailablePluginsInfo()
-            }
         }
 
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
-    }
-
-    Component.onCompleted: {
     }
 }

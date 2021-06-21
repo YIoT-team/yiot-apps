@@ -21,18 +21,18 @@
 
 #include "virgil/iot/logger/logger.h"
 
-#include <controllers/extensions/device/KSQExtDevices.h>
+#include <controllers/extensions/KSQExtensions.h>
 
 //-----------------------------------------------------------------------------
-KSQExtDevices::KSQExtDevices() {
-    qRegisterMetaType<KSQExtDevice>("KSQExtDevice");
+KSQExtensions::KSQExtensions(const QString &prefix) {
 
+    m_prefix = prefix;
     loadBuiltinDevicesInfo();
 }
 
 //-----------------------------------------------------------------------------
 QString
-KSQExtDevices::readContent(const QString &fileName) {
+KSQExtensions::readContent(const QString &fileName) {
     QFile file;
     file.setFileName(fixQrcQFile(fileName));
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -48,7 +48,7 @@ KSQExtDevices::readContent(const QString &fileName) {
 
 //-----------------------------------------------------------------------------
 QString
-KSQExtDevices::fixQrcQFile(const QString &resourceDir) {
+KSQExtensions::fixQrcQFile(const QString &resourceDir) {
     if (resourceDir.startsWith("qrc")) {
         return resourceDir.right(resourceDir.length() - 3);
     }
@@ -57,7 +57,7 @@ KSQExtDevices::fixQrcQFile(const QString &resourceDir) {
 
 //-----------------------------------------------------------------------------
 bool
-KSQExtDevices::loadOneBuiltinDevice(const QString &resourceDir) {
+KSQExtensions::loadOneBuiltinDevice(const QString &resourceDir) {
     QFile file;
     auto jsonFileName = fixQrcQFile(resourceDir + "/info.json");
     file.setFileName(jsonFileName);
@@ -87,7 +87,8 @@ KSQExtDevices::loadOneBuiltinDevice(const QString &resourceDir) {
 
     if (!version.isEmpty() && !languages.isEmpty() && !logo.isEmpty() && !name.isEmpty() && !description.isEmpty() &&
         !link.isEmpty()) {
-        m_devices << QSharedPointer<KSQExtDevice>::create(logo, name, version, description, link, size, languages);
+        m_extensions << QSharedPointer<KSQOneExtension>::create(
+                logo, name, version, description, link, size, languages);
         return true;
     }
 
@@ -96,9 +97,9 @@ KSQExtDevices::loadOneBuiltinDevice(const QString &resourceDir) {
 
 //-----------------------------------------------------------------------------
 bool
-KSQExtDevices::loadBuiltinDevicesInfo() {
+KSQExtensions::loadBuiltinDevicesInfo() {
     QFile file;
-    auto jsonFileName = fixQrcQFile("qrc:/qml/info/builtin-devices.json");
+    auto jsonFileName = fixQrcQFile(QString("qrc:/qml/info/builtin-%1.json").arg(m_prefix));
     file.setFileName(jsonFileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         VS_LOG_ERROR("Cannot read a list of built-in extensions");
@@ -110,7 +111,7 @@ KSQExtDevices::loadBuiltinDevicesInfo() {
 
     auto jsonDoc = QJsonDocument::fromJson(jsonData);
     auto jsonObject = jsonDoc.object();
-    auto devicesArray = jsonObject.value(QString("devices")).toArray();
+    auto devicesArray = jsonObject.value(QString(m_prefix)).toArray();
 
     for (const auto &val : devicesArray) {
         auto deviceInfoObject = val.toObject();
@@ -125,31 +126,31 @@ KSQExtDevices::loadBuiltinDevicesInfo() {
 
 //-----------------------------------------------------------------------------
 QStringList
-KSQExtDevices::builtInDevices() const {
+KSQExtensions::builtInDevices() const {
     return m_builtIn;
 }
 
 //-----------------------------------------------------------------------------
 int
-KSQExtDevices::rowCount(const QModelIndex &parent) const {
-    return m_devices.size();
+KSQExtensions::rowCount(const QModelIndex &parent) const {
+    return m_extensions.size();
 }
 
 //-----------------------------------------------------------------------------
 int
-KSQExtDevices::columnCount(const QModelIndex &parent) const {
+KSQExtensions::columnCount(const QModelIndex &parent) const {
     return 1;
 }
 
 //-----------------------------------------------------------------------------
 QVariant
-KSQExtDevices::data(const QModelIndex &index, int role) const {
-    if (index.row() < m_devices.count()) {
+KSQExtensions::data(const QModelIndex &index, int role) const {
+    if (index.row() < m_extensions.count()) {
 
         switch (role) {
         case Element::Info:
             QVariant res;
-            res.setValue(m_devices.at(index.row()).get());
+            res.setValue(m_extensions.at(index.row()).get());
             return res;
         }
     }
@@ -159,7 +160,7 @@ KSQExtDevices::data(const QModelIndex &index, int role) const {
 
 //-----------------------------------------------------------------------------
 QHash<int, QByteArray>
-KSQExtDevices::roleNames() const {
+KSQExtensions::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[Info] = "info";
     return roles;

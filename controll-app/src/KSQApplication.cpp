@@ -51,8 +51,8 @@ KSQApplication::run() {
     m_netifWebsock = QSharedPointer<KSQNetifWebsocket>::create(QUrl("ws://159.89.15.12:8080/ws"), "test_account");
     m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create(/*m_netifUdp*/ m_netifWebsock);
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
-    m_extensionDevices = QSharedPointer<KSQExtDevices>::create();
-    m_extensionIntegrations = QSharedPointer<KSQExtIntegrations>::create();
+    m_extensionDevices = QSharedPointer<KSQExtensions>::create("devices");
+    m_extensionIntegrations = QSharedPointer<KSQExtensions>::create("integrations");
 
     // Prepare IoTKit data
     auto features =

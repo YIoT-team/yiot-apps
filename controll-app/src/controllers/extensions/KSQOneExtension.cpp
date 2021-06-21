@@ -17,43 +17,72 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#include <controllers/extensions/device-plugin/KSQExtDevPluginAvailable.h>
+#include <controllers/extensions/KSQOneExtension.h>
 
 //-----------------------------------------------------------------------------
-int
-KSQExtDevPluginAvailable::rowCount(const QModelIndex &parent) const {
-    return 0;
+KSQOneExtension::KSQOneExtension(const QString &a_logo,
+                                 const QString &a_name,
+                                 const QString &a_version,
+                                 const QString &a_descr,
+                                 const QString &a_link,
+                                 size_t a_size,
+                                 const QStringList a_languages) {
+    m_logo = a_logo;
+    m_name = a_name;
+    m_version = a_version;
+    m_description = a_descr;
+}
+//-----------------------------------------------------------------------------
+
+KSQOneExtension::KSQOneExtension(KSQOneExtension const &) {
 }
 
 //-----------------------------------------------------------------------------
-int
-KSQExtDevPluginAvailable::columnCount(const QModelIndex &parent) const {
-    return 1;
+KSQOneExtension &
+KSQOneExtension::operator=(KSQOneExtension const &) {
+    return *this;
 }
 
 //-----------------------------------------------------------------------------
-QVariant
-KSQExtDevPluginAvailable::data(const QModelIndex &index, int role) const {
-    //    if (index.row() < m_devices.count()) {
-    //        auto key = m_devices.keys().at(index.row());
-    //
-    //        switch (role) {
-    //        case Element:::
-    //            return "";
-    //        }
-    //    }
-
-    return QVariant();
+QString
+KSQOneExtension::logo() const {
+    return m_logo;
 }
 
 //-----------------------------------------------------------------------------
-QHash<int, QByteArray>
-KSQExtDevPluginAvailable::roleNames() const {
-    QHash<int, QByteArray> roles;
-    //    roles[Name] = "name";
-    //    roles[Type] = "type";
-    //    roles[Mac] = "mac";
-    return roles;
+QString
+KSQOneExtension::name() const {
+    return m_name;
+}
+
+//-----------------------------------------------------------------------------
+QString
+KSQOneExtension::description() const {
+    return m_description;
+}
+
+//-----------------------------------------------------------------------------
+QString
+KSQOneExtension::version() const {
+    return m_version;
+}
+
+//-----------------------------------------------------------------------------
+size_t
+KSQOneExtension::size() const {
+    return m_size;
+}
+
+//-----------------------------------------------------------------------------
+QStringList
+KSQOneExtension::lanuages() const {
+    return m_languages;
+}
+
+//-----------------------------------------------------------------------------
+QString
+KSQOneExtension::link() const {
+    return m_link;
 }
 
 //-----------------------------------------------------------------------------

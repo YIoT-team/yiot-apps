@@ -17,14 +17,14 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef KSQ_EXTENSION_DEVICE_H
-#define KSQ_EXTENSION_DEVICE_H
+#ifndef KSQ_EXTENSION_INTEGRATION_H
+#define KSQ_EXTENSION_INTEGRATION_H
 
 #include <QtCore>
 
 #include <QAbstractTableModel>
 
-class KSQExtDevice : public QObject {
+class KSQOneExtension : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString logo READ logo NOTIFY fireLogoChanged)
     Q_PROPERTY(QString name READ name NOTIFY fireNameChanged)
@@ -34,22 +34,22 @@ class KSQExtDevice : public QObject {
     Q_PROPERTY(QStringList lanuages READ lanuages NOTIFY fireLanguagesChanged)
     Q_PROPERTY(QString link READ link NOTIFY fireLinkChanged)
 public:
-    KSQExtDevice() = default;
+    KSQOneExtension() = default;
 
-    KSQExtDevice(const QString &a_logo,
-                 const QString &a_name,
-                 const QString &a_version,
-                 const QString &a_descr,
-                 const QString &a_link,
-                 size_t a_size,
-                 const QStringList a_languages);
+    KSQOneExtension(const QString &a_logo,
+                    const QString &a_name,
+                    const QString &a_version,
+                    const QString &a_descr,
+                    const QString &a_link,
+                    size_t a_size,
+                    const QStringList a_languages);
 
-    KSQExtDevice(KSQExtDevice const &);
+    KSQOneExtension(KSQOneExtension const &);
 
-    KSQExtDevice &
-    operator=(KSQExtDevice const &);
+    KSQOneExtension &
+    operator=(KSQOneExtension const &);
 
-    virtual ~KSQExtDevice() = default;
+    virtual ~KSQOneExtension() = default;
 
     QString
     logo() const;
@@ -106,8 +106,9 @@ private:
     QStringList m_languages;
 };
 
-Q_DECLARE_METATYPE(KSQExtDevice)
-Q_DECLARE_METATYPE(KSQExtDevice *)
-Q_DECLARE_METATYPE(const KSQExtDevice *)
+Q_DECLARE_METATYPE(KSQOneExtension)
+Q_DECLARE_METATYPE(KSQOneExtension *)
+Q_DECLARE_METATYPE(const KSQOneExtension *)
 
-#endif // KSQ_EXTENSION_DEVICE_H
+
+#endif // KSQ_EXTENSION_INTEGRATION_H

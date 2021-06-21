@@ -30,8 +30,7 @@
 #include <controllers/KSQUXSimplifyController.h>
 #include <controllers/devices/KSQAllDevicesController.h>
 
-#include <controllers/extensions/device/KSQExtDevices.h>
-#include <controllers/extensions/integration/KSQExtIntegrations.h>
+#include <controllers/extensions/KSQExtensions.h>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
 
@@ -77,8 +76,8 @@ private:
 
     KSQAllDevicesController m_deviceControllers;
 
-    QSharedPointer<KSQExtDevices> m_extensionDevices;
-    QSharedPointer<KSQExtIntegrations> m_extensionIntegrations;
+    QSharedPointer<KSQExtensions> m_extensionDevices;
+    QSharedPointer<KSQExtensions> m_extensionIntegrations;
 };
 
 #endif // PROVISION_QT_APP_H

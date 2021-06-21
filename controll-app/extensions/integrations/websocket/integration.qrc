@@ -1,16 +1,27 @@
 <RCC>
-    <qresource prefix="/integration/0">
-	<!-- Java script -->
-        <file>js/main.qml</file>
+<qresource prefix="/integration/0">
+    <!-- Info JSON -->
+    <file>info.json</file>
 
-	<!-- Icons dark theme -->
-        <file>icons/dark/websocket.png</file>
+    <!-- Logo -->
+    <file>logo/logo.png</file>
 
-        <!-- Icons light theme -->
-        <file>icons/light/websocket.png</file>
+    <!-- Texts -->
+    <file>texts/en/description.md</file>
+    <file>texts/en/link.txt</file>
+    <file>texts/en/title.txt</file>
 
-	<!-- QML Components -->
-	<file>qml/ControlIntegrations.qml</file>
+    <!-- Java script -->
+    <file>js/main.qml</file>
 
-    </qresource>
+    <!-- Icons dark theme -->
+    <file>icons/dark/websocket.png</file>
+
+    <!-- Icons light theme -->
+    <file>icons/light/websocket.png</file>
+
+    <!-- QML Components -->
+    <file>qml/Control.qml</file>
+
+</qresource>
 </RCC>
