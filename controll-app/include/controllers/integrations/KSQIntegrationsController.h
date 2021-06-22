@@ -17,39 +17,26 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+#ifndef YIOT_INTEGRATIONS_H
+#define YIOT_INTEGRATIONS_H
 
-import "qrc:/qml/theme"
-import "qrc:/qml/components"
-import "qrc:/qml/components/devices"
+#include <QtCore>
 
-SwipeView {
-    id: integrationsSwipeView
-    objectName: "integrationControlContainer"
-    interactive: false
+#include <virgil/iot/qt/VSQIoTKit.h>
 
-    function show(integrationController) {
-        integrationsSwipeView.currentIndex = integrationController.js.controlPageIdx
-        for (var i = 0; i < integrationsSwipeView.count; ++i) {
-            var item = integrationsSwipeView.itemAt(i)
-            item.visible = i == integrationsSwipeView.currentIndex
-        }
-    }
+#include "controllers/extensions/KSQExtensionControllerBase.h"
 
-    function addIntegrationControl(qmlFile, controller) {
-        console.log("addIntegrationControl:", qmlFile)
-        var component = Qt.createComponent(qmlFile);
-        var controlPage = component.createObject(integrationsSwipeView);
+class KSQIntegrationsController : public KSQExtensionControllerBase {
+    Q_OBJECT
+public:
+    KSQIntegrationsController() = default;
+    virtual ~KSQIntegrationsController() = default;
 
-        if (controlPage == null) {
-            console.log("Error creating object")
-        }
+protected:
+    virtual bool
+    load(const QString &integrationDir, QSharedPointer<KSQOneExtension> extension) override final;
 
-        integrationsSwipeView.addItem(controlPage)
-        controlPage.controller = controller
-        console.log("addIntegrationControl IDX:", integrationsSwipeView.count - 1)
-        return integrationsSwipeView.count - 1
-    }
-}
+private:
+};
+
+#endif // YIOT_INTEGRATIONS_H

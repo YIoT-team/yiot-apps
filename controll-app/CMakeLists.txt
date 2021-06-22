@@ -241,6 +241,9 @@ target_sources(${KS_TARGET_NAME}
 
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/KSQOneExtension.h
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/KSQExtensions.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/KSQExtensionControllerBase.h
+
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/integrations/KSQIntegrationsController.h
 
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/KSQIoTKitFacade.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQUdp.h
@@ -290,6 +293,8 @@ target_sources(${KS_TARGET_NAME}
 
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/KSQOneExtension.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/KSQExtensions.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/integrations/KSQIntegrationsController.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/KSQIoTKitFacade.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQUdp.cpp

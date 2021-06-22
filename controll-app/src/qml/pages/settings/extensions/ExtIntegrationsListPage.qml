@@ -86,7 +86,7 @@ Page {
                     hoverEnabled: true
                     anchors.rightMargin: 0
                     onClicked: {
-                        showExtDevice(info, function() {
+                        showIntegrationPage(info, function() {
                             showSettings()
                             showIntegrationsList()
                         })

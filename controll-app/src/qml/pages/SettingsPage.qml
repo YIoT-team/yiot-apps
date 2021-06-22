@@ -171,9 +171,8 @@ Page {
     }
 
     function showIntegrationPage(integration, backAction) {
-        extIntegrationPage.integration = integration
-        extIntegrationPage.backAction = backAction
         swipeSettingsShow(settingsSwipeView.oneIntegrationIdx)
+        extIntegrationPage.show(integration)
     }
 
     function backInSettings() {

@@ -51,8 +51,9 @@ KSQApplication::run() {
     m_netifWebsock = QSharedPointer<KSQNetifWebsocket>::create(QUrl("ws://159.89.15.12:8080/ws"), "test_account");
     m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create(/*m_netifUdp*/ m_netifWebsock);
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
-    m_extensionDevices = QSharedPointer<KSQExtensions>::create("devices");
-    m_extensionIntegrations = QSharedPointer<KSQExtensions>::create("integrations");
+    m_integrations = QSharedPointer<KSQIntegrationsController>::create();
+    m_extensionDevices = QSharedPointer<KSQExtensions>::create("devices", nullptr);
+    m_extensionIntegrations = QSharedPointer<KSQExtensions>::create("integrations", m_integrations);
 
     // Prepare IoTKit data
     auto features =
@@ -116,6 +117,8 @@ KSQApplication::run() {
     context->setContextProperty("bleEnum",
                                 m_bleController->model()); // BLE device enumeration // TODO: Use from `bleController`
     context->setContextProperty("wifiEnum", &m_wifiEnumerator); // WiFi networks enumeration
+    context->setContextProperty("extensionDevices", m_extensionDevices.get());
+    context->setContextProperty("extensionIntegrations", m_extensionIntegrations.get());
     context->setContextProperty("deviceControllers",
                                 &m_deviceControllers); // Containers with controllers for all supported devices
     context->setContextProperty(
@@ -123,8 +126,6 @@ KSQApplication::run() {
             &KSQDeviceSetupController::instance()); // Controller to setup device provision, the first owner etc.
     context->setContextProperty("rotModel", &KSQRoTController::instance()); // Container for all Roots of trust
     context->setContextProperty("uxSimplifier", m_uxController.get());      // User experience simplifier
-    context->setContextProperty("extensionDevices", m_extensionDevices.get());
-    context->setContextProperty("extensionIntegrations", m_extensionIntegrations.get());
 
     // Load UI theme
     qmlRegisterSingletonType(QUrl("qrc:/qml/theme/Theme.qml"), "Theme", 1, 0, "Theme");
@@ -138,8 +139,12 @@ KSQApplication::run() {
     // Start QML
     engine.load(url);
 
+    // Initialize extensions
+    m_integrations->setQmlEngine(&engine);
+    m_extensionIntegrations->load();
+
     // Initialize devices controllers
-    for (const auto &devPath : m_extensionDevices->builtInDevices()) {
+    for (const auto &devPath : m_extensionDevices->builtInExtensions()) {
         m_deviceControllers << new KSQDevicesType(engine, devPath);
     }
 

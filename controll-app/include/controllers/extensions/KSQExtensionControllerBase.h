@@ -17,39 +17,45 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+#ifndef YIOT_EXTENSION_CONTROLLER_BASE_H
+#define YIOT_EXTENSION_CONTROLLER_BASE_H
 
-import "qrc:/qml/theme"
-import "qrc:/qml/components"
-import "qrc:/qml/components/devices"
+#include <QtCore>
+#include <QHash>
+#include <QAbstractTableModel>
 
-SwipeView {
-    id: integrationsSwipeView
-    objectName: "integrationControlContainer"
-    interactive: false
+#include <virgil/iot/qt/VSQIoTKit.h>
+#include <virgil/iot/qt/helpers/VSQMac.h>
 
-    function show(integrationController) {
-        integrationsSwipeView.currentIndex = integrationController.js.controlPageIdx
-        for (var i = 0; i < integrationsSwipeView.count; ++i) {
-            var item = integrationsSwipeView.itemAt(i)
-            item.visible = i == integrationsSwipeView.currentIndex
-        }
+#include <yiot-iotkit/secmodule/KSQSessionKey.h>
+
+#include <common/protocols/snap/user/user-structs.h>
+#include <controllers/devices/KSQDevicesType.h>
+#include <controllers/extensions/KSQOneExtension.h>
+
+class KSQExtensionControllerBase : public QObject {
+    Q_OBJECT
+public:
+    KSQExtensionControllerBase() = default;
+    virtual ~KSQExtensionControllerBase() = default;
+
+    virtual bool
+    load(const QString &integrationDir, QSharedPointer<KSQOneExtension> extension) = 0;
+
+    QSharedPointer<QObject>
+    qmlProcessor() {
+        return m_qmlProcessor;
     }
 
-    function addIntegrationControl(qmlFile, controller) {
-        console.log("addIntegrationControl:", qmlFile)
-        var component = Qt.createComponent(qmlFile);
-        var controlPage = component.createObject(integrationsSwipeView);
-
-        if (controlPage == null) {
-            console.log("Error creating object")
-        }
-
-        integrationsSwipeView.addItem(controlPage)
-        controlPage.controller = controller
-        console.log("addIntegrationControl IDX:", integrationsSwipeView.count - 1)
-        return integrationsSwipeView.count - 1
+    void
+    setQmlEngine(QQmlApplicationEngine *engine) {
+        m_engine = engine;
     }
-}
+
+protected:
+    QSharedPointer<QObject> m_qmlProcessor;
+
+    QQmlApplicationEngine *m_engine;
+};
+
+#endif // YIOT_EXTENSION_CONTROLLER_BASE_H

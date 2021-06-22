@@ -24,13 +24,14 @@
 #include <QAbstractTableModel>
 
 #include <controllers/extensions/KSQOneExtension.h>
+#include <controllers/extensions/KSQExtensionControllerBase.h>
 
 class KSQExtensions : public QAbstractTableModel {
     Q_OBJECT
 public:
-    enum Element { Info = Qt::UserRole, ElementMax };
+    enum Element { Info = Qt::UserRole, Js, ElementMax };
 
-    KSQExtensions(const QString &prefix);
+    KSQExtensions(const QString &prefix, QSharedPointer<KSQExtensionControllerBase> processor);
 
     KSQExtensions(KSQExtensions const &) = delete;
 
@@ -39,8 +40,11 @@ public:
 
     virtual ~KSQExtensions() = default;
 
+    bool
+    load();
+
     QStringList
-    builtInDevices() const;
+    builtInExtensions() const;
 
     /**
      * QAbstractTableModel implementation
@@ -61,6 +65,7 @@ private slots:
 private:
     QString m_prefix;
     QList<QSharedPointer<KSQOneExtension>> m_extensions;
+    QSharedPointer<KSQExtensionControllerBase> m_processor;
     QStringList m_builtIn;
 
     QString
@@ -70,10 +75,10 @@ private:
     readContent(const QString &fileName);
 
     bool
-    loadBuiltinDevicesInfo();
+    loadBuiltinExtensions();
 
     bool
-    loadOneBuiltinDevice(const QString &resourceDir);
+    loadOneExtension(const QString &resourceDir);
 };
 
 #endif // KSQ_EXTENSION_INTEGRATIONS_H

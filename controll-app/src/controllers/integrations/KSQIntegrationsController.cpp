@@ -17,39 +17,48 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+#include <controllers/integrations/KSQIntegrationsController.h>
 
-import "qrc:/qml/theme"
-import "qrc:/qml/components"
-import "qrc:/qml/components/devices"
+//-----------------------------------------------------------------------------
+bool
+KSQIntegrationsController::load(const QString &integrationDir, QSharedPointer<KSQOneExtension> extension) {
+    if (!m_engine) {
+        VS_LOG_WARNING("QML Engine is not set");
+        return false;
+    }
+    // Create JS processor
+    const QString js = integrationDir + "/js/main.qml";
+    QQmlComponent component(m_engine, QUrl(js));
+    if (component.isError()) {
+        qDebug() << component.errors();
+    }
+    QObject *object = component.create();
+    if (!object) {
+        VS_LOG_ERROR("Cannot create QML processor for device type : %s", integrationDir.toStdString().c_str());
+        return false;
+    }
+    m_qmlProcessor.reset(object);
 
-SwipeView {
-    id: integrationsSwipeView
-    objectName: "integrationControlContainer"
-    interactive: false
+    // Add Device control page
+    auto *rootObj = m_engine->rootObjects().first();
+    auto deviceControlContainer = rootObj->findChild<QObject *>("integrationControlContainer");
+    const QString controlPage = integrationDir + "/qml/Control.qml";
+    QVariant res;
+    if (QMetaObject::invokeMethod(deviceControlContainer,
+                                  "addIntegrationControl",
+                                  Q_RETURN_ARG(QVariant, res),
+                                  Q_ARG(QVariant, QVariant::fromValue(controlPage)),
+                                  Q_ARG(QVariant, QVariant::fromValue(extension.get())))) {
+        object->setProperty("controlPageIdx", res);
+        extension->setJs(object);
 
-    function show(integrationController) {
-        integrationsSwipeView.currentIndex = integrationController.js.controlPageIdx
-        for (var i = 0; i < integrationsSwipeView.count; ++i) {
-            var item = integrationsSwipeView.itemAt(i)
-            item.visible = i == integrationsSwipeView.currentIndex
-        }
+        QMetaObject::invokeMethod(object, "onLoad", Qt::QueuedConnection);
+
+    } else {
+        VS_LOG_ERROR("Cannot register device control page");
     }
 
-    function addIntegrationControl(qmlFile, controller) {
-        console.log("addIntegrationControl:", qmlFile)
-        var component = Qt.createComponent(qmlFile);
-        var controlPage = component.createObject(integrationsSwipeView);
-
-        if (controlPage == null) {
-            console.log("Error creating object")
-        }
-
-        integrationsSwipeView.addItem(controlPage)
-        controlPage.controller = controller
-        console.log("addIntegrationControl IDX:", integrationsSwipeView.count - 1)
-        return integrationsSwipeView.count - 1
-    }
+    return true;
 }
+
+//-----------------------------------------------------------------------------

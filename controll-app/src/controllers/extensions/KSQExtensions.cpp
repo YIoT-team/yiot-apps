@@ -24,12 +24,17 @@
 #include <controllers/extensions/KSQExtensions.h>
 
 //-----------------------------------------------------------------------------
-KSQExtensions::KSQExtensions(const QString &prefix) {
+KSQExtensions::KSQExtensions(const QString &prefix, QSharedPointer<KSQExtensionControllerBase> processor) {
 
     m_prefix = prefix;
-    loadBuiltinDevicesInfo();
+    m_processor = processor;
 }
 
+//-----------------------------------------------------------------------------
+bool
+KSQExtensions::load() {
+    return loadBuiltinExtensions();
+}
 //-----------------------------------------------------------------------------
 QString
 KSQExtensions::readContent(const QString &fileName) {
@@ -57,7 +62,7 @@ KSQExtensions::fixQrcQFile(const QString &resourceDir) {
 
 //-----------------------------------------------------------------------------
 bool
-KSQExtensions::loadOneBuiltinDevice(const QString &resourceDir) {
+KSQExtensions::loadOneExtension(const QString &resourceDir) {
     QFile file;
     auto jsonFileName = fixQrcQFile(resourceDir + "/info.json");
     file.setFileName(jsonFileName);
@@ -89,6 +94,9 @@ KSQExtensions::loadOneBuiltinDevice(const QString &resourceDir) {
         !link.isEmpty()) {
         m_extensions << QSharedPointer<KSQOneExtension>::create(
                 logo, name, version, description, link, size, languages);
+        if (!m_processor.isNull()) {
+            m_processor->load(resourceDir, m_extensions.last());
+        }
         return true;
     }
 
@@ -97,7 +105,7 @@ KSQExtensions::loadOneBuiltinDevice(const QString &resourceDir) {
 
 //-----------------------------------------------------------------------------
 bool
-KSQExtensions::loadBuiltinDevicesInfo() {
+KSQExtensions::loadBuiltinExtensions() {
     QFile file;
     auto jsonFileName = fixQrcQFile(QString("qrc:/qml/info/builtin-%1.json").arg(m_prefix));
     file.setFileName(jsonFileName);
@@ -116,7 +124,7 @@ KSQExtensions::loadBuiltinDevicesInfo() {
     for (const auto &val : devicesArray) {
         auto deviceInfoObject = val.toObject();
         auto resourcesDir = deviceInfoObject.value("dir").toString();
-        if (loadOneBuiltinDevice(resourcesDir)) {
+        if (loadOneExtension(resourcesDir)) {
             m_builtIn << resourcesDir;
         }
     }
@@ -126,7 +134,7 @@ KSQExtensions::loadBuiltinDevicesInfo() {
 
 //-----------------------------------------------------------------------------
 QStringList
-KSQExtensions::builtInDevices() const {
+KSQExtensions::builtInExtensions() const {
     return m_builtIn;
 }
 
@@ -148,10 +156,17 @@ KSQExtensions::data(const QModelIndex &index, int role) const {
     if (index.row() < m_extensions.count()) {
 
         switch (role) {
-        case Element::Info:
+        case Element::Info: {
             QVariant res;
             res.setValue(m_extensions.at(index.row()).get());
             return res;
+        }
+
+        case Element::Js: {
+            QVariant res;
+            res.setValue(m_processor->qmlProcessor().get());
+            return res;
+        }
         }
     }
 
@@ -163,6 +178,7 @@ QHash<int, QByteArray>
 KSQExtensions::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[Info] = "info";
+    roles[Js] = "js";
     return roles;
 }
 

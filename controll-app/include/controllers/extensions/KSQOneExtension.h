@@ -33,6 +33,7 @@ class KSQOneExtension : public QObject {
     Q_PROPERTY(int size READ size NOTIFY fireSizeChanged)
     Q_PROPERTY(QStringList lanuages READ lanuages NOTIFY fireLanguagesChanged)
     Q_PROPERTY(QString link READ link NOTIFY fireLinkChanged)
+    Q_PROPERTY(QObject *js READ js NOTIFY fireJsChanged)
 public:
     KSQOneExtension() = default;
 
@@ -72,6 +73,12 @@ public:
     QString
     link() const;
 
+    QObject *
+    js();
+
+    void
+    setJs(QObject *js);
+
 signals:
     void
     fireLogoChanged();
@@ -94,6 +101,9 @@ signals:
     void
     fireLinkChanged();
 
+    void
+    fireJsChanged();
+
 private slots:
 
 private:
@@ -104,6 +114,7 @@ private:
     QString m_link;
     size_t m_size;
     QStringList m_languages;
+    QObject *m_js;
 };
 
 Q_DECLARE_METATYPE(KSQOneExtension)

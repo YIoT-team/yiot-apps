@@ -29,6 +29,7 @@
 #include <controllers/KSQBlankDevicesController.h>
 #include <controllers/KSQUXSimplifyController.h>
 #include <controllers/devices/KSQAllDevicesController.h>
+#include <controllers/integrations/KSQIntegrationsController.h>
 
 #include <controllers/extensions/KSQExtensions.h>
 
@@ -76,6 +77,7 @@ private:
 
     KSQAllDevicesController m_deviceControllers;
 
+    QSharedPointer<KSQIntegrationsController> m_integrations;
     QSharedPointer<KSQExtensions> m_extensionDevices;
     QSharedPointer<KSQExtensions> m_extensionIntegrations;
 };
