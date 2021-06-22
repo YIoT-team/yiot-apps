@@ -27,8 +27,10 @@ import "qrc:/qml/components/validators"
 
 Page {
     property var controller
+    property bool isEnabled
 
     id: websocketPage
+    visible: false
 
     background: Rectangle {
         color: "transparent"
@@ -55,32 +57,29 @@ Page {
                 id: link
                 label: qsTr("Websocket Link")
                 placeholderText: qsTr("Enter websocket link")
-                text: settings.getWebsocketLink()
-                //validator: todo
+                text: ""
             }
 
             FormPrimaryButton {
                 Layout.topMargin: 20
                 Layout.bottomMargin: 10
-                visible: !settings.getWebsocketState()
+                visible: !websocketPage.isEnabled
 
                 text: qsTr("Enable")
                 onClicked: {
-                    settings.setWebsocketState(true)
-                    settings.setWebsocketLink(link.text)
-                    console.log("WebSocket Link: " + settings.getWebsocketLink())
-                    controller.js.activate()
+                    websocketPage.isEnabled = true
+                    controller.js.activate(link.text)
                 }
             }
 
             FormPrimaryButton {
                 Layout.topMargin: 20
                 Layout.bottomMargin: 10
-                visible: settings.getWebsocketState()
+                visible: websocketPage.isEnabled
 
                 text: qsTr("Disable")
                 onClicked: {
-                    settings.setWebsocketState(false)
+                    websocketPage.isEnabled = false
                     controller.js.deactivate()
                 }
             }
@@ -89,6 +88,12 @@ Page {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
             }
+        }
+    }
+    onVisibleChanged: {
+        if (visible) {
+            link.text = controller.js.getLink()
+            websocketPage.isEnabled = controller.js.integrationState()
         }
     }
 }
