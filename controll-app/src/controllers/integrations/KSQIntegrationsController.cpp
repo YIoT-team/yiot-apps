@@ -49,10 +49,20 @@ KSQIntegrationsController::load(const QString &integrationDir, QSharedPointer<KS
                                   Q_RETURN_ARG(QVariant, res),
                                   Q_ARG(QVariant, QVariant::fromValue(controlPage)),
                                   Q_ARG(QVariant, QVariant::fromValue(extension.get())))) {
+
+        // Let know to JS about view controller
         object->setProperty("controlPageIdx", res);
+
+        // Set JS processor for extension
         extension->setJs(object);
 
-        QMetaObject::invokeMethod(object, "onLoad", Qt::QueuedConnection);
+        // Connect QML signals
+        QObject::connect(object, SIGNAL(activated(QString, QString)), this, SIGNAL(fireActivate(QString, QString)));
+
+        QObject::connect(object, SIGNAL(deactivated(QString)), this, SIGNAL(fireDeactivate(QString)));
+
+        // Inform JS code about finish of integration load
+        //        QMetaObject::invokeMethod(object, "onLoad", Qt::QueuedConnection);
 
     } else {
         VS_LOG_ERROR("Cannot register device control page");

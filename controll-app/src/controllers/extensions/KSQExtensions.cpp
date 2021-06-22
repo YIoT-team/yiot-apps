@@ -33,7 +33,11 @@ KSQExtensions::KSQExtensions(const QString &prefix, QSharedPointer<KSQExtensionC
 //-----------------------------------------------------------------------------
 bool
 KSQExtensions::load() {
-    return loadBuiltinExtensions();
+    bool res;
+    beginResetModel();
+    res = loadBuiltinExtensions();
+    endResetModel();
+    return res;
 }
 //-----------------------------------------------------------------------------
 QString

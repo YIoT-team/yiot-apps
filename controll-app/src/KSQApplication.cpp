@@ -101,6 +101,17 @@ KSQApplication::run() {
     // Device re-scan on provision finish
     connect(m_bleController.get(), &KSQBLEController::fireProvisionDone, this, &KSQApplication::onProvisionDone);
 
+    // Connect Integrations signals
+    connect(m_integrations.get(),
+            &KSQIntegrationsController::fireActivate,
+            this,
+            &KSQApplication::onIntegrationActivate);
+    connect(m_integrations.get(),
+            &KSQIntegrationsController::fireDeactivate,
+            this,
+            &KSQApplication::onIntegrationDeactivate);
+
+
     // Initialize IoTKit
     if (!KSQIoTKitFacade::instance().init(features, impl, appConfig)) {
         VS_LOG_CRITICAL("Unable to initialize IoTKIT");
@@ -144,6 +155,7 @@ KSQApplication::run() {
     m_extensionIntegrations->load();
 
     // Initialize devices controllers
+    m_extensionDevices->load();
     for (const auto &devPath : m_extensionDevices->builtInExtensions()) {
         m_deviceControllers << new KSQDevicesType(engine, devPath);
     }
@@ -190,6 +202,18 @@ KSQApplication::applicationVersion() const {
 QString
 KSQApplication::applicationDisplayName() const {
     return tr("YIoT");
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQApplication::onIntegrationActivate(QString integrationIs, QString message) {
+    qDebug() << ">>> onIntegrationActivate : " << integrationIs << " message : " << message;
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQApplication::onIntegrationDeactivate(QString integrationIs) {
+    qDebug() << ">>> onIntegrationDeactivate : " << integrationIs;
 }
 
 //-----------------------------------------------------------------------------

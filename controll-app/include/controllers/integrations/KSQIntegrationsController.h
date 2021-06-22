@@ -32,6 +32,13 @@ public:
     KSQIntegrationsController() = default;
     virtual ~KSQIntegrationsController() = default;
 
+signals:
+    void
+    fireActivate(QString integrationName, QString message);
+
+    void
+    fireDeactivate(QString integrationName);
+
 protected:
     virtual bool
     load(const QString &integrationDir, QSharedPointer<KSQOneExtension> extension) override final;

@@ -67,6 +67,12 @@ public slots:
     void
     onProvisionDone(QString mac);
 
+    void
+    onIntegrationActivate(QString integrationIs, QString message);
+
+    void
+    onIntegrationDeactivate(QString integrationIs);
+
 private:
     KSQWiFiEnumerator m_wifiEnumerator;
     QSharedPointer<KSQBLEController> m_bleController;

@@ -21,9 +21,25 @@
 import QtQuick 2.12
 
 Item {
+    property var controlPageIdx: -1
+
+    signal activated(string integrationId, string msg)
+    signal deactivated(string integrationId)
+    readonly property string integrationId: "io.yiot-dev.websocketrouter"
+
     //-----------------------------------------------------------------------------
     function onLoad() {
         console.log("WebSocket Integration loaded")
+    }
+
+    //-----------------------------------------------------------------------------
+    function activate() {
+        activated(integrationId, "test")
+    }
+
+    //-----------------------------------------------------------------------------
+    function deactivate() {
+        deactivated(integrationId)
     }
 
     //-----------------------------------------------------------------------------

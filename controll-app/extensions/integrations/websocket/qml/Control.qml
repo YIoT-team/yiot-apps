@@ -69,6 +69,7 @@ Page {
                     settings.setWebsocketState(true)
                     settings.setWebsocketLink(link.text)
                     console.log("WebSocket Link: " + settings.getWebsocketLink())
+                    controller.js.activate()
                 }
             }
 
@@ -80,6 +81,7 @@ Page {
                 text: qsTr("Disable")
                 onClicked: {
                     settings.setWebsocketState(false)
+                    controller.js.deactivate()
                 }
             }
 
