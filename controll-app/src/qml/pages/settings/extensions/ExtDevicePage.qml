@@ -80,6 +80,8 @@ Page {
         Text {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.maximumHeight: 60
+
             Layout.leftMargin: 20
             Layout.rightMargin: 20
             verticalAlignment: Text.AlignVCenter
@@ -87,6 +89,101 @@ Page {
             text: device.description
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         }
+
+       //-----------------------------------------------------------------------
+
+        Text {
+            id: label
+            text: "Plugins:"
+            color: Theme.brandColor
+            font.weight: Font.Bold
+            font.pointSize: 14
+            verticalAlignment: Text.AlignBottom
+
+            Layout.leftMargin: 20
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.maximumHeight: 65
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignHCenter
+            Layout.bottomMargin: 20
+            spacing: 15
+            clip: true
+
+            ListView {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                model: ListModel {
+                    ListElement {
+                        name: "plugin_1"
+                        version: "ver_1"
+                    }
+                    ListElement {
+                        name: "plugin_2"
+                        version: "ver_2"
+                    }
+                    ListElement {
+                        name: "plugin_3"
+                        version: "ver_3"
+                    }
+                }
+
+                delegate: Rectangle {
+                    id: base
+                    width: parent.width
+                    height: 55
+                    color: "transparent"
+
+                    RowLayout {
+                        id: listDelegate
+                        anchors.fill: parent
+                        clip: true
+
+                        //Image { todo }
+
+                        Text {
+                            text: name
+                            Layout.fillWidth: true
+                            Layout.leftMargin: 10
+                        }
+
+                        Text {
+                            text: version
+                            horizontalAlignment: Text.AlignRight
+                            Layout.rightMargin: 15
+                            Layout.fillWidth: true
+                        }
+                    }
+
+                    MouseArea {
+                        enabled: true
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        anchors.rightMargin: 0
+                        onClicked: { /* todo */ }
+
+                        onEntered: {
+                            base.color = Theme.contrastBackgroundColor
+                        }
+
+                        onExited: {
+                            base.color = "transparent"
+                        }
+                    }
+                }
+            }
+
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.maximumHeight: 25
+            }
+        }
+        //-----------------------------------------------------------------------
 
         FormSecondaryButton {
             visible: false
