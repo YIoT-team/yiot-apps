@@ -10,3 +10,6 @@
 [submodule "ext/json"]
 	path = ext/json
 	url = https://github.com/nlohmann/json.git
+[submodule "controll-app/extensions"]
+	path = controll-app/extensions
+	url = https://github.com/YIoT-team/yiot-extensions.git
