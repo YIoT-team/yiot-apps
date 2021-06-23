@@ -60,18 +60,18 @@ public:
     QString
     applicationDisplayName() const;
 
-    Q_INVOKABLE void
-    updateDevices();
-
 public slots:
     void
     onProvisionDone(QString mac);
 
     void
-    onIntegrationActivate(QString integrationIs, QString message);
+    onIntegrationActivate(QString integrationId, QString message);
 
     void
-    onIntegrationDeactivate(QString integrationIs);
+    onIntegrationDeactivate(QString integrationId);
+
+    Q_INVOKABLE void
+    updateDevices();
 
 private:
     KSQWiFiEnumerator m_wifiEnumerator;
@@ -86,6 +86,8 @@ private:
     QSharedPointer<KSQIntegrationsController> m_integrations;
     QSharedPointer<KSQExtensions> m_extensionDevices;
     QSharedPointer<KSQExtensions> m_extensionIntegrations;
+
+    static const QString kWebSocketIntegrationID;
 };
 
 #endif // PROVISION_QT_APP_H

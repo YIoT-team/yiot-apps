@@ -42,7 +42,6 @@ SwipeView {
     }
 
     function addDeviceControl(qmlFile) {
-        console.log("addDeviceControl:", qmlFile)
         var component = Qt.createComponent(qmlFile);
         var controlPage = component.createObject(devicesSwipeView);
 
@@ -51,9 +50,6 @@ SwipeView {
         }
 
         devicesSwipeView.addItem(controlPage)
-
-        console.log("addDeviceControl IDX:", devicesSwipeView.count - 1)
-
         return devicesSwipeView.count - 1
     }
 }

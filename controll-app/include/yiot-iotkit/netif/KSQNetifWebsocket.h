@@ -46,7 +46,7 @@ class KSQNetifWebsocket final : public VSQNetifBase {
     Q_OBJECT
 
 public:
-    KSQNetifWebsocket(const QUrl &url, const QString &account);
+    KSQNetifWebsocket();
 
     KSQNetifWebsocket(KSQNetifWebsocket const &) = delete;
 
@@ -57,6 +57,12 @@ public:
 
     QAbstractSocket::SocketState
     connectionState() const override;
+
+    bool
+    connectWS(const QString &url);
+
+    void
+    disconnectWS();
 
 signals:
     void

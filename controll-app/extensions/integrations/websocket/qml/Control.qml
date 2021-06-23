@@ -72,7 +72,7 @@ Page {
                 }
             }
 
-            FormPrimaryButton {
+            FormSecondaryButton {
                 Layout.topMargin: 20
                 Layout.bottomMargin: 10
                 visible: websocketPage.isEnabled

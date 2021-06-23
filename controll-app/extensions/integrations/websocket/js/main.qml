@@ -17,7 +17,6 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-//pragma Singleton
 import QtQuick 2.12
 import Qt.labs.settings 1.0
 
@@ -29,21 +28,24 @@ Item {
     readonly property string integrationId: "io.yiot-dev.websocketrouter"
 
     Settings {
-                id: settings
-                property bool isEnabled
-                property string link: ""
+        id: settings
+        property bool isEnabled
+        property string link: ""
     }
 
     //-----------------------------------------------------------------------------
     function onLoad() {
         console.log("WebSocket Integration loaded")
+        if (integrationState()) {
+            activated(integrationId, getLink())
+        }
     }
 
     //-----------------------------------------------------------------------------
     function activate(link) {
-            settings.setValue("isEnabled", true)
-            settings.setValue("link", link)
-            activated(integrationId, link)
+        settings.setValue("isEnabled", true)
+        settings.setValue("link", link)
+        activated(integrationId, link)
     }
 
     //-----------------------------------------------------------------------------

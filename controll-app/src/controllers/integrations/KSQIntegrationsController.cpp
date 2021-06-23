@@ -62,7 +62,7 @@ KSQIntegrationsController::load(const QString &integrationDir, QSharedPointer<KS
         QObject::connect(object, SIGNAL(deactivated(QString)), this, SIGNAL(fireDeactivate(QString)));
 
         // Inform JS code about finish of integration load
-        //        QMetaObject::invokeMethod(object, "onLoad", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(object, "onLoad", Qt::QueuedConnection);
 
     } else {
         VS_LOG_ERROR("Cannot register device control page");

@@ -38,6 +38,8 @@
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
+const QString KSQApplication::kWebSocketIntegrationID = "io.yiot-dev.websocketrouter";
+
 //-----------------------------------------------------------------------------
 int
 KSQApplication::run() {
@@ -48,7 +50,7 @@ KSQApplication::run() {
 
     m_bleController = QSharedPointer<KSQBLEController>::create();
     m_netifUdp = QSharedPointer<KSQUdp>::create();
-    m_netifWebsock = QSharedPointer<KSQNetifWebsocket>::create(QUrl("ws://159.89.15.12:8080/ws"), "test_account");
+    m_netifWebsock = QSharedPointer<KSQNetifWebsocket>::create();
     m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create(/*m_netifUdp*/ m_netifWebsock);
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
     m_integrations = QSharedPointer<KSQIntegrationsController>::create();
@@ -100,6 +102,9 @@ KSQApplication::run() {
 
     // Device re-scan on provision finish
     connect(m_bleController.get(), &KSQBLEController::fireProvisionDone, this, &KSQApplication::onProvisionDone);
+
+    // Connect signals from network interfaces
+    connect(m_netifWebsock.get(), &KSQNetifWebsocket::fireDeviceReady, this, &KSQApplication::updateDevices);
 
     // Connect Integrations signals
     connect(m_integrations.get(),
@@ -206,14 +211,22 @@ KSQApplication::applicationDisplayName() const {
 
 //-----------------------------------------------------------------------------
 void
-KSQApplication::onIntegrationActivate(QString integrationIs, QString message) {
-    qDebug() << ">>> onIntegrationActivate : " << integrationIs << " message : " << message;
+KSQApplication::onIntegrationActivate(QString integrationId, QString message) {
+    qDebug() << "Integration Activate : " << integrationId << " message : " << message;
+
+    if (kWebSocketIntegrationID == integrationId) {
+        m_netifWebsock->connectWS(message);
+    }
 }
 
 //-----------------------------------------------------------------------------
 void
-KSQApplication::onIntegrationDeactivate(QString integrationIs) {
-    qDebug() << ">>> onIntegrationDeactivate : " << integrationIs;
+KSQApplication::onIntegrationDeactivate(QString integrationId) {
+    qDebug() << "Integration Deactivate : " << integrationId;
+
+    if (kWebSocketIntegrationID == integrationId) {
+        m_netifWebsock->disconnectWS();
+    }
 }
 
 //-----------------------------------------------------------------------------

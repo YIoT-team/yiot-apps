@@ -40,9 +40,8 @@
 const QString KSQNetifWebsocket::_accountIdTag("account_id");
 const QString KSQNetifWebsocket::_payloadTag("payload");
 
-//******************************************************************************
-KSQNetifWebsocket::KSQNetifWebsocket(const QUrl &url, const QString &account)
-    : m_canCommunicate(false), m_url(url), m_account(account) {
+//-----------------------------------------------------------------------------
+KSQNetifWebsocket::KSQNetifWebsocket() : m_canCommunicate(false) {
     connect(&m_webSocket, &QWebSocket::connected, this, &KSQNetifWebsocket::onConnected);
     connect(&m_webSocket, &QWebSocket::disconnected, this, &KSQNetifWebsocket::onDisconnected);
     connect(&m_webSocket, &QWebSocket::stateChanged, this, &KSQNetifWebsocket::onStateChanged);
@@ -55,87 +54,89 @@ KSQNetifWebsocket::KSQNetifWebsocket(const QUrl &url, const QString &account)
     connect(this, SIGNAL(fireSend(QByteArray)), this, SLOT(onSend(QByteArray)), Qt::QueuedConnection);
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 KSQNetifWebsocket::~KSQNetifWebsocket() {
-    m_canCommunicate = false;
-    m_webSocket.close();
+    disconnectWS();
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 bool
 KSQNetifWebsocket::init() {
     // TODO: Fix it
     m_mac = VSQMac("01:02:03:04:05:06");
-    m_canCommunicate = true;
-    m_webSocket.open(m_url);
+    if (!m_url.isEmpty()) {
+        m_canCommunicate = true;
+        m_webSocket.open(m_url);
+    }
     return true;
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 bool
 KSQNetifWebsocket::deinit() {
     m_canCommunicate = false;
     return true;
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 void
 KSQNetifWebsocket::onSend(QByteArray data) {
     if (!isActive()) {
         return;
     }
 
-
     QJsonObject json;
     json[_accountIdTag] = m_account;
     json[_payloadTag] = QString(data.toBase64());
 
-
     m_webSocket.sendBinaryMessage(QJsonDocument(json).toJson());
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 bool
 KSQNetifWebsocket::tx(const QByteArray &data) {
     emit fireSend(data);
     return true;
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 QString
 KSQNetifWebsocket::macAddr() const {
-
     return m_mac;
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 void
 KSQNetifWebsocket::registerReceiver() {
     tx(QByteArray());
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 void
 KSQNetifWebsocket::onStateChanged(QAbstractSocket::SocketState state) {
     qDebug() << "KSQNetifWebsocket::onStateChanged : " << state;
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 void
 KSQNetifWebsocket::onError(QAbstractSocket::SocketError error) {
     qDebug() << "KSQNetifWebsocket::onError : " << error;
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 void
 KSQNetifWebsocket::onConnected() {
     VS_LOG_DEBUG("WebSocket connected");
     registerReceiver();
 
     emit fireStateChanged(m_webSocket.state());
+
+    if (isActive()) {
+        emit fireDeviceReady();
+    }
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 void
 KSQNetifWebsocket::onDisconnected() {
     VS_LOG_DEBUG("WebSocket disconnected");
@@ -144,7 +145,7 @@ KSQNetifWebsocket::onDisconnected() {
     emit fireStateChanged(m_webSocket.state());
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 void
 KSQNetifWebsocket::onMessageReceived(QString message) {
 
@@ -157,16 +158,43 @@ KSQNetifWebsocket::onMessageReceived(QString message) {
     }
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 bool
 KSQNetifWebsocket::isActive() const {
     return QAbstractSocket::ConnectedState == m_webSocket.state() && m_canCommunicate;
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
 QAbstractSocket::SocketState
 KSQNetifWebsocket::connectionState() const {
     return m_webSocket.state();
 }
 
-//******************************************************************************
+//-----------------------------------------------------------------------------
+bool
+KSQNetifWebsocket::connectWS(const QString &url) {
+    if ((url.startsWith("ws:/") || url.startsWith("wss:/")) && url.contains("&")) {
+        auto parts = url.split("&", Qt::SkipEmptyParts);
+        if (parts.length() == 2) {
+            m_url = QUrl(parts.first());
+            m_account = parts.last();
+
+            m_canCommunicate = true;
+            m_webSocket.open(m_url);
+
+            return true;
+        }
+    }
+
+    disconnectWS();
+    return false;
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQNetifWebsocket::disconnectWS() {
+    m_canCommunicate = false;
+    m_webSocket.close();
+}
+
+//-----------------------------------------------------------------------------

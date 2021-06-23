@@ -39,7 +39,6 @@ SwipeView {
     }
 
     function addIntegrationControl(qmlFile, controller) {
-        console.log("addIntegrationControl:", qmlFile)
         var component = Qt.createComponent(qmlFile);
         var controlPage = component.createObject(integrationsSwipeView);
 
@@ -49,7 +48,6 @@ SwipeView {
 
         integrationsSwipeView.addItem(controlPage)
         controlPage.controller = controller
-        console.log("addIntegrationControl IDX:", integrationsSwipeView.count - 1)
         return integrationsSwipeView.count - 1
     }
 }
