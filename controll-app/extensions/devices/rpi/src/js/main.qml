@@ -41,12 +41,12 @@ Item {
 
     //-----------------------------------------------------------------------------
     function image() {
-        return "qrc:/device/0/icons/%1/pc.png"
+        return "qrc:/device/0/src/icons/%1/pc.png"
     }
 
     //-----------------------------------------------------------------------------
     function stateImage(model) {
-        return "qrc:/device/0/icons/%1/rpi.png"
+        return "qrc:/device/0/src/icons/%1/rpi.png"
     }
 
     //-----------------------------------------------------------------------------

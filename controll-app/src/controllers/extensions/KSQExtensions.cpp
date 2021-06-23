@@ -87,9 +87,9 @@ KSQExtensions::loadOneExtension(const QString &resourceDir) {
     foreach (QVariant v, jsonObject.value("languages").toArray().toVariantList()) { languages << v.value<QString>(); }
 
     const QString lang = "en";
-    const QString basePath = resourceDir + "/texts/" + lang;
+    const QString basePath = resourceDir + "/info/texts/" + lang;
 
-    QString logo = resourceDir + "/logo/logo.png";
+    QString logo = resourceDir + "/info/logo/logo.png";
     QString name = readContent(basePath + "/title.txt");
     QString description = readContent(basePath + "/description.md");
     QString link = readContent(basePath + "/link.txt");

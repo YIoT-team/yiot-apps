@@ -99,7 +99,7 @@ Page {
 
                 Image {
                     id: icon
-                    source: "qrc:/device/0/icons/%1/%2.png".arg(Theme.state).arg(image)
+                    source: "qrc:/device/0/src/icons/%1/%2.png".arg(Theme.state).arg(image)
                     Layout.maximumHeight: listDelegate.height * 0.7
                     Layout.maximumWidth: Layout.maximumHeight
                     fillMode: Image.PreserveAspectFit

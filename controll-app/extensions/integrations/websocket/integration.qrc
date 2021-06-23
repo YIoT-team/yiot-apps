@@ -4,24 +4,24 @@
     <file>info.json</file>
 
     <!-- Logo -->
-    <file>logo/logo.png</file>
+    <file>info/logo/logo.png</file>
 
     <!-- Texts -->
-    <file>texts/en/description.md</file>
-    <file>texts/en/link.txt</file>
-    <file>texts/en/title.txt</file>
+    <file>info/texts/en/description.md</file>
+    <file>info/texts/en/link.txt</file>
+    <file>info/texts/en/title.txt</file>
 
     <!-- Java script -->
-    <file>js/main.qml</file>
+    <file>src/js/main.qml</file>
 
     <!-- Icons dark theme -->
-    <file>icons/dark/websocket.png</file>
+    <file>src/icons/dark/websocket.png</file>
 
     <!-- Icons light theme -->
-    <file>icons/light/websocket.png</file>
+    <file>src/icons/light/websocket.png</file>
 
     <!-- QML Components -->
-    <file>qml/Control.qml</file>
+    <file>src/qml/Control.qml</file>
 
 </qresource>
 </RCC>

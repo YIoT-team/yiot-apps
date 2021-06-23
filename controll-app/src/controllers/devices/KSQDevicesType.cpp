@@ -32,7 +32,7 @@
 //-----------------------------------------------------------------------------
 KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, const QString &deviceDir) {
     // Create JS processor
-    const QString js = deviceDir + "/js/main.qml";
+    const QString js = deviceDir + "/src/js/main.qml";
     QQmlComponent component(&engine, QUrl(js));
     if (component.isError()) {
         qDebug() << component.errors();
@@ -47,7 +47,7 @@ KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, const QString &dev
     // Add Device control page
     auto *rootObj = engine.rootObjects().first();
     auto deviceControlContainer = rootObj->findChild<QObject *>("deviceControlContainer");
-    const QString controlPage = deviceDir + "/qml/Control.qml";
+    const QString controlPage = deviceDir + "/src/qml/Control.qml";
     QVariant res;
     if (QMetaObject::invokeMethod(deviceControlContainer,
                                   "addDeviceControl",

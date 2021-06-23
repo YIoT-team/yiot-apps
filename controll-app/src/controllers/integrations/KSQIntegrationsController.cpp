@@ -27,7 +27,7 @@ KSQIntegrationsController::load(const QString &integrationDir, QSharedPointer<KS
         return false;
     }
     // Create JS processor
-    const QString js = integrationDir + "/js/main.qml";
+    const QString js = integrationDir + "/src/js/main.qml";
     QQmlComponent component(m_engine, QUrl(js));
     if (component.isError()) {
         qDebug() << component.errors();
@@ -42,7 +42,7 @@ KSQIntegrationsController::load(const QString &integrationDir, QSharedPointer<KS
     // Add Device control page
     auto *rootObj = m_engine->rootObjects().first();
     auto deviceControlContainer = rootObj->findChild<QObject *>("integrationControlContainer");
-    const QString controlPage = integrationDir + "/qml/Control.qml";
+    const QString controlPage = integrationDir + "/src/qml/Control.qml";
     QVariant res;
     if (QMetaObject::invokeMethod(deviceControlContainer,
                                   "addIntegrationControl",

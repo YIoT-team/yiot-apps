@@ -4,47 +4,47 @@
         <file>info.json</file>
 
         <!-- Logo -->
-        <file>logo/logo.png</file>
+        <file>info/logo/logo.png</file>
 
         <!-- Texts -->
-        <file>texts/en/description.md</file>
-        <file>texts/en/link.txt</file>
-        <file>texts/en/title.txt</file>
+        <file>info/texts/en/description.md</file>
+        <file>info/texts/en/link.txt</file>
+        <file>info/texts/en/title.txt</file>
 
         <!-- Java script -->
-        <file>js/main.qml</file>
-        <file>js/protocol.js</file>
-        <file>js/helpers.js</file>
+        <file>src/js/main.qml</file>
+        <file>src/js/protocol.js</file>
+        <file>src/js/helpers.js</file>
 
         <!-- Icons dark theme -->
-        <file>icons/dark/rpi.png</file>
-		<file>icons/dark/access-point.png</file>
-        <file>icons/dark/create-user.png</file>
-        <file>icons/dark/static-ip.png</file>
-        <file>icons/dark/vpn-router.png</file>
-        <file>icons/dark/ssh.png</file>
-        <file>icons/dark/pc.png</file>
-        <file>icons/dark/rename.png</file>
+        <file>src/icons/dark/rpi.png</file>
+		<file>src/icons/dark/access-point.png</file>
+        <file>src/icons/dark/create-user.png</file>
+        <file>src/icons/dark/static-ip.png</file>
+        <file>src/icons/dark/vpn-router.png</file>
+        <file>src/icons/dark/ssh.png</file>
+        <file>src/icons/dark/pc.png</file>
+        <file>src/icons/dark/rename.png</file>
 
         <!-- Icons light theme -->
-        <file>icons/light/rpi.png</file>
-        <file>icons/light/access-point.png</file>
-        <file>icons/light/create-user.png</file>
-        <file>icons/light/static-ip.png</file>
-        <file>icons/light/vpn-router.png</file>
-        <file>icons/light/ssh.png</file>
-        <file>icons/light/pc.png</file>
-        <file>icons/light/rename.png</file>
+        <file>src/icons/light/rpi.png</file>
+        <file>src/icons/light/access-point.png</file>
+        <file>src/icons/light/create-user.png</file>
+        <file>src/icons/light/static-ip.png</file>
+        <file>src/icons/light/vpn-router.png</file>
+        <file>src/icons/light/ssh.png</file>
+        <file>src/icons/light/pc.png</file>
+        <file>src/icons/light/rename.png</file>
 
         <!-- QML Components -->
-        <file>qml/Control.qml</file>
-        <file>qml/commands/AccessPoint.qml</file>
-        <file>qml/commands/ControlsList.qml</file>
-        <file>qml/commands/RenameDevice.qml</file>
-        <file>qml/commands/CreateUser.qml</file>
-        <file>qml/commands/StaticIP.qml</file>
-        <file>qml/commands/VPNrouter.qml</file>
-        <file>qml/commands/SSHEnabler.qml</file>
+        <file>src/qml/Control.qml</file>
+        <file>src/qml/commands/AccessPoint.qml</file>
+        <file>src/qml/commands/ControlsList.qml</file>
+        <file>src/qml/commands/RenameDevice.qml</file>
+        <file>src/qml/commands/CreateUser.qml</file>
+        <file>src/qml/commands/StaticIP.qml</file>
+        <file>src/qml/commands/VPNrouter.qml</file>
+        <file>src/qml/commands/SSHEnabler.qml</file>
 
     </qresource>
 </RCC>
