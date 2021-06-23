@@ -23,7 +23,6 @@ import QtQuick.Layouts 1.12
 
 import "../../theme"
 import "../../components/devices"
-import "../../components/devices/lamp"
 
 Rectangle {
     property bool topLevel: true
@@ -35,7 +34,8 @@ Rectangle {
     color: "transparent"
     height: topLevel ? 50 : 40
     width: commonWidth
-    visible: secure
+    //visible: secure
+    visible: true
 
     RowLayout {
         id: itemText
@@ -51,7 +51,7 @@ Rectangle {
             id: icon
             visible: true
             enabled: !topLevel || (image !== "")
-            source: "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(topLevel ? image : deviceStateImage(model))
+            source: topLevel ? image.arg(Theme.state) : model.js.stateImage(model).arg(Theme.state)
             Layout.maximumHeight: itemText.height * 0.7
             Layout.maximumWidth: Layout.maximumHeight
             Layout.leftMargin: 5
@@ -61,8 +61,9 @@ Rectangle {
             Connections {
                 enabled: !topLevel
                 target: topLevel ? null : deviceController
+                ignoreUnknownSignals: true
                 function onFireStateChanged() {
-                    icon.source = "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(deviceStateImage(model))
+                    icon.source = model.js.stateImage(model).arg(Theme.state)
                 }
             }
         }
@@ -73,7 +74,7 @@ Rectangle {
             text: name
             color: Theme.primaryTextColor
             verticalAlignment: Qt.AlignVCenter
-            font.pointSize: UiHelper.fixFontSz(14)
+            font.pointSize: 14
 
             Layout.alignment: Qt.AlignLeft
             Layout.fillHeight: true
@@ -128,7 +129,7 @@ Rectangle {
             if (topLevel) {
                 subModel.collapsed = !subModel.collapsed
             } else {
-                activateDeviceView(deviceType, name, deviceController)
+                activateDeviceView(deviceController)
             }
         }
 

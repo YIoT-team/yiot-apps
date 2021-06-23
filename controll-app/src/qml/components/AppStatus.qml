@@ -11,6 +11,6 @@ Rectangle {
         id: label
         anchors.centerIn: parent
         color: "white"
-        font.pointSize: UiHelper.fixFontSz(12)
+        font.pointSize: 12
     }
 }

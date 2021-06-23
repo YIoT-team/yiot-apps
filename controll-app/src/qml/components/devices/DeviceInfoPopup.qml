@@ -24,7 +24,6 @@ import QtQuick.Layouts 1.12
 import "../../theme"
 import "../../components"
 import "../../components/devices"
-import "../../components/devices/lamp"
 
 Popup {
     property string mName: ""

@@ -77,7 +77,7 @@ ToolBar {
 
             font.underline: ma.containsMouse
             font.family: Theme.mainFont
-            font.pointSize: UiHelper.fixFontSz(15)
+            font.pointSize: 15
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment: Qt.AlignVCenter
             color: ma.containsMouse ? Theme.linkTextColor : Theme.primaryTextColor

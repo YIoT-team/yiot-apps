@@ -86,6 +86,22 @@ Page {
                     showThemeList()
                 }
             }
+
+            ListElement {
+                name: qsTr("Device types and plugins")
+                image: "plugins"
+                property var action: function() {
+                    showExtDevicesList()
+                }
+            }
+
+            ListElement {
+                name: qsTr("Integrations")
+                image: "integrations"
+                property var action: function() {
+                    showIntegrationsList()
+                }
+            }
         }
 
         delegate: Rectangle {
@@ -101,7 +117,7 @@ Page {
 
                 Image {
                     id: icon
-                    source: "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(image)
+                    source: (image.indexOf("://") != -1) ? image : "qrc:/qml/resources/icons/%1/%2.png".arg(Theme.state).arg(image)
                     Layout.maximumHeight: listDelegate.height * 0.7
                     Layout.maximumWidth: Layout.maximumHeight
                     fillMode: Image.PreserveAspectFit
@@ -114,7 +130,7 @@ Page {
                     text: name
                     color: Theme.primaryTextColor
                     verticalAlignment: Text.AlignVCenter
-                    font.pointSize: UiHelper.fixFontSz(14)
+                    font.pointSize: 14
 
                     Layout.alignment: Qt.AlignLeft
                     Layout.fillHeight: true

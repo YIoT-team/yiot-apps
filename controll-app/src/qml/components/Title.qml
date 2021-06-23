@@ -9,7 +9,7 @@ Label {
     Layout.preferredWidth: parent.width
     Layout.alignment: Qt.AlignHCenter
     color: Theme.primaryTextColor
-    font.pointSize: UiHelper.fixFontSz(24)
+    font.pointSize: 24
     horizontalAlignment: Text.AlignHCenter
     z: 100
     background: Rectangle {

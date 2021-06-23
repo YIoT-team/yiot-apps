@@ -16,7 +16,7 @@ ColumnLayout {
     signal ready()
 
     Layout.preferredHeight: 30
-    Layout.maximumWidth: parent.width - 60
+    Layout.maximumWidth: parent.width > 60 ? parent.width - 60 : parent.width
     Layout.alignment: Qt.AlignHCenter
 
     spacing: 0
@@ -30,7 +30,7 @@ ColumnLayout {
         Layout.preferredWidth: parent.width
         Layout.alignment: Qt.AlignHCenter
         color: Theme.primaryTextColor
-        font.pointSize: UiHelper.fixFontSz(14)
+        font.pointSize: 14
         leftPadding: 30
         background: Rectangle {
             implicitWidth: 200

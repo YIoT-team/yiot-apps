@@ -1,0 +1,34 @@
+%global debug_package %{nil}
+
+Summary:          YIoT emulator
+Name:             yiot-emulator
+Version:          {{MAJOR_VER}}.{{MINOR_VER}}.{{SUB_VER}}
+Release:          {{BUILD_VER}}%{?dist}
+Group:            IOT
+License:          BSD-3-Clause
+URL:              https://yiot-dev.io/
+Source0:         %{name}_%{version}.orig.tar.gz
+
+%description
+YIoT emulator application
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+
+%install
+
+install -d                                                                                                       %{buildroot}%{_datarootdir}/yiot
+install -d                                                                                                       %{buildroot}%{_bindir}
+install -d                                                                                                       %{buildroot}%{_libdir}
+
+%__install dist/libconverters.so                %{buildroot}%{_libdir}
+%__install dist/yiot-device-app-emulator             %{buildroot}%{_bindir}
+
+%files
+%{_datarootdir}/yiot
+%{_bindir}/*
+%{_libdir}/*
+
+%changelog

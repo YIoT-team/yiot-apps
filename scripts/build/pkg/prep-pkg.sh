@@ -3,6 +3,7 @@ set -o errtrace
 
 SCRIPT_DIR="$(cd $(dirname "$0") && pwd)"
 SOURCE_DIR="${SCRIPT_DIR}/../../.."
+BUILD_OS_DISTR="centos-8-x86_64"
 
 set -e
 ######################################################################
@@ -136,7 +137,7 @@ create_srpm() {
   echo "------------- Create SPEC from template ------------------------------"
   j2 -f env -o ${PKG_NAME}.spec spkg/${SCRIPT_PATH}/${PKG_NAME}.spec.in
   rm -rf spkg/*.in
-  cp -rf spkg/* .
+  cp -rf spkg/* . || true
   rm -rf spkg
   mock --buildsrpm --spec ${BUILD_DIR}/${PKG_NAME}.spec --sources ${BUILD_DIR} --resultdir=${BUILD_DIR}
  popd
@@ -147,7 +148,7 @@ build_rpm() {
  print_message "Clean mock root dir"
  mock --clean
  print_message "Building binary RPM".
- mock ${BUILD_DIR}/*.src.rpm --resultdir=${BUILD_DIR}
+ mock -r ${BUILD_OS_DISTR} ${BUILD_DIR}/*.src.rpm --resultdir=${BUILD_DIR}
 }
 
 

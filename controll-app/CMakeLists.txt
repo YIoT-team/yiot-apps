@@ -122,7 +122,7 @@ endif()
 # ---------------------------------------------------------------------------
 #   Qt
 # ---------------------------------------------------------------------------
-find_package(Qt5 COMPONENTS Core Widgets Test Network Concurrent Qml ${KS_QT_EXTRA} REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets Test Network Concurrent WebSockets Qml ${KS_QT_EXTRA} REQUIRED)
 
 # ---------------------------------------------------------------------------
 #   Prepare for build target
@@ -230,26 +230,25 @@ target_sources(${KS_TARGET_NAME}
 
         # Headers
         ${CMAKE_CURRENT_LIST_DIR}/include/KSQApplication.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/ui/VSQUiHelper.h
         ${CMAKE_CURRENT_LIST_DIR}/include/KSQWiFiEnumerator.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQDevices.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQControllerBase.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/KSQDeviceBase.h
-
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/lamp/KSQLamp.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/lamp/KSQLampController.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/pc/KSQPC.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/devices/pc/KSQPCController.h
-
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQDevice.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQDevicesType.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQAllDevicesController.h
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQBlankDevicesController.h
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQBLEController.h
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQUXSimplifyController.h
 
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/KSQOneExtension.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/KSQExtensions.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/KSQExtensionControllerBase.h
+
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/integrations/KSQIntegrationsController.h
+
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/KSQIoTKitFacade.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQUdp.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapLampClient.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapPCClient.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQNetifWebsocket.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapUSERClient.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapPRVSClient.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapSCRTClient.h
 
@@ -277,32 +276,30 @@ target_sources(${KS_TARGET_NAME}
         $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
         $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
         $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
-        $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/include/android/KSQAndroid.h>
+        $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/include/os/android/KSQAndroid.h>
 
         # Sources
         ${CMAKE_CURRENT_LIST_DIR}/src/KSQApplication.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/ui/VSQUiHelper.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/KSQWiFiEnumerator.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-hal.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQDevices.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQControllerBase.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/KSQDeviceBase.cpp
-
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/lamp/KSQLamp.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/lamp/KSQLampController.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/pc/KSQPC.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/devices/pc/KSQPCController.cpp
-
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQDevice.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQDevicesType.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQAllDevicesController.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQBlankDevicesController.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQBLEController.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQUXSimplifyController.cpp
 
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/KSQOneExtension.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/KSQExtensions.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/integrations/KSQIntegrationsController.cpp
+
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/KSQIoTKitFacade.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQUdp.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapLampClient.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapPCClient.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQNetifWebsocket.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapUSERClient.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapPRVSClient.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapSCRTClient.cpp
 
@@ -327,13 +324,16 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/setup/KSQDeviceSetupController.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/setup/KSQDeviceSetupData.cpp
 
-        $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/macos/KSMacWiFi.mm>
-        $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/src/linux/KSLinuxWiFi.cpp>
-        $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/src/win/KSWinWiFi.cpp>
-        $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/src/android/KSQAndroid.cpp>
+        $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/os/macos/KSMacWiFi.mm>
+        $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/src/os/linux/KSLinuxWiFi.cpp>
+        $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/src/os/win/KSWinWiFi.cpp>
+        $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/src/os/android/KSQAndroid.cpp>
 
         # Qt Resources
         ${CMAKE_CURRENT_LIST_DIR}/src/resources.qrc
+        ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/rpi/device.qrc
+        ${CMAKE_CURRENT_LIST_DIR}/extensions/integrations/websocket/integration.qrc
+        ${CMAKE_CURRENT_LIST_DIR}/extensions/plugins/rpi-vpn/plugin.qrc
         )
 
 
@@ -378,6 +378,7 @@ target_link_libraries(${KS_TARGET_NAME}
         Qt5::Widgets
         Qt5::Test
         Qt5::Network
+        Qt5::WebSockets
         Qt5::Concurrent
         Qt5::Qml
 

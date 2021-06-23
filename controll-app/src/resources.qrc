@@ -1,8 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <!-- Java script -->
-        <file>js/devices/pc.js</file>
-
         <!-- Icons all -->
         <file>qml/resources/icons/Logo-Big@3x.png</file>
         <file>qml/resources/icons/Plus.png</file>
@@ -33,57 +30,36 @@
         <file>qml/resources/icons/dark/setup-devices.png</file>
         <file>qml/resources/icons/dark/share-access.png</file>
         <file>qml/resources/icons/dark/settings.png</file>
-        <file>qml/resources/icons/dark/bulb.png</file>
-        <file>qml/resources/icons/dark/lock.png</file>
         <file>qml/resources/icons/dark/events.png</file>
-        <file>qml/resources/icons/dark/car.png</file>
-        <file>qml/resources/icons/dark/pc.png</file>
         <file>qml/resources/icons/dark/creds.png</file>
         <file>qml/resources/icons/dark/secure-enclave.png</file>
-        <file>qml/resources/icons/dark/wash-machine.png</file>
         <file>qml/resources/icons/dark/upload.gif</file>
         <file>qml/resources/icons/dark/info.png</file>
         <file>qml/resources/icons/dark/up.png</file>
         <file>qml/resources/icons/dark/down.png</file>
         <file>qml/resources/icons/dark/export.png</file>
         <file>qml/resources/icons/dark/delete.png</file>
-        <file>qml/resources/icons/dark/devices/lamp/mono/unknown.png</file>
-        <file>qml/resources/icons/dark/devices/lamp/mono/on.png</file>
-        <file>qml/resources/icons/dark/devices/lamp/mono/off.png</file>
-        <file>qml/resources/icons/dark/devices/pc/rpi.png</file>
         <file>qml/resources/icons/dark/themes.png</file>
         <file>qml/resources/icons/dark/moon.png</file>
         <file>qml/resources/icons/dark/sun.png</file>
         <file>qml/resources/icons/dark/network.png</file>
-		<file>qml/resources/icons/dark/access-point.png</file>
-        <file>qml/resources/icons/dark/create-user.png</file>
-        <file>qml/resources/icons/dark/static-ip.png</file>
-        <file>qml/resources/icons/dark/vpn-router.png</file>
-        <file>qml/resources/icons/dark/ssh.png</file>
-        <file>qml/resources/icons/dark/rename.png</file>
+		<file>qml/resources/icons/dark/rename.png</file>
+        <file>qml/resources/icons/dark/plugins.png</file>
+		<file>qml/resources/icons/dark/integrations.png</file>
 
         <!-- Icons light theme -->
-        <file>qml/resources/icons/light/devices/lamp/mono/off.png</file>
-        <file>qml/resources/icons/light/devices/lamp/mono/on.png</file>
-        <file>qml/resources/icons/light/devices/lamp/mono/unknown.png</file>
-        <file>qml/resources/icons/light/devices/pc/rpi.png</file>
         <file>qml/resources/icons/light/bt.png</file>
-        <file>qml/resources/icons/light/bulb.png</file>
-        <file>qml/resources/icons/light/car.png</file>
         <file>qml/resources/icons/light/control-devices.png</file>
         <file>qml/resources/icons/light/creds.png</file>
         <file>qml/resources/icons/light/down.png</file>
         <file>qml/resources/icons/light/events.png</file>
         <file>qml/resources/icons/light/info.png</file>
-        <file>qml/resources/icons/light/lock.png</file>
-        <file>qml/resources/icons/light/pc.png</file>
         <file>qml/resources/icons/light/secure-enclave.png</file>
         <file>qml/resources/icons/light/settings.png</file>
         <file>qml/resources/icons/light/setup-devices.png</file>
         <file>qml/resources/icons/light/share-access.png</file>
         <file>qml/resources/icons/light/up.png</file>
         <file>qml/resources/icons/light/upload.gif</file>
-        <file>qml/resources/icons/light/wash-machine.png</file>
         <file>qml/resources/icons/light/wifi-dimmed.png</file>
         <file>qml/resources/icons/light/wifi.png</file>
         <file>qml/resources/icons/light/delete.png</file>
@@ -92,12 +68,9 @@
         <file>qml/resources/icons/light/moon.png</file>
         <file>qml/resources/icons/light/sun.png</file>
         <file>qml/resources/icons/light/network.png</file>
-		<file>qml/resources/icons/light/access-point.png</file>
-        <file>qml/resources/icons/light/create-user.png</file>
-        <file>qml/resources/icons/light/static-ip.png</file>
-        <file>qml/resources/icons/light/vpn-router.png</file>
-        <file>qml/resources/icons/light/ssh.png</file>
-        <file>qml/resources/icons/light/rename.png</file>
+		<file>qml/resources/icons/light/rename.png</file>
+        <file>qml/resources/icons/light/plugins.png</file>
+		<file>qml/resources/icons/light/integrations.png</file>
 
         <!-- Fonts -->
         <file>qml/resources/fonts/Roboto-Medium.ttf</file>
@@ -126,6 +99,7 @@
         <file>qml/components/AppStatus.qml</file>
         <file>qml/components/FormPrimaryButton.qml</file>
         <file>qml/components/MainTabButton.qml</file>
+        <file>qml/components/TextTabButton.qml</file>
         <file>qml/components/SettingsStorage.qml</file>
         <file>qml/components/InfoText.qml</file>
         <file>qml/components/InputTextField.qml</file>
@@ -144,7 +118,6 @@
         <file>qml/components/devices/GeneralDeviceControls.qml</file>
         <file>qml/components/devices/DeviceViewSelector.qml</file>
         <file>qml/components/devices/DeviceActionRequestDialog.qml</file>
-        <file>qml/components/devices/lamp/LampControls.qml</file>
         <file>qml/components/devices/setup/BLEDevicesSetupList.qml</file>
         <file>qml/components/devices/setup/WiFiAPDevicesSetupList.qml</file>
         <file>qml/components/devices/setup/LocalDevicesSetupList.qml</file>
@@ -165,12 +138,16 @@
         <!-- QML Settings pages -->
         <file>qml/pages/settings/SettingsMenuPage.qml</file>
         <file>qml/pages/settings/WiFiSettingsPage.qml</file>
-        <file>qml/pages/settings/WiFiSettingsPage.qml</file>
         <file>qml/pages/settings/WiFiPasswordPage.qml</file>
         <file>qml/pages/settings/EventsSettingsPage.qml</file>
         <file>qml/pages/settings/RoTSettingsPage.qml</file>
         <file>qml/pages/settings/NetworksSettingsPage.qml</file>
         <file>qml/pages/settings/ThemeListPage.qml</file>
+        <file>qml/pages/settings/extensions/ExtDevicesListPage.qml</file>
+        <file>qml/pages/settings/extensions/ExtDevicePage.qml</file>
+		<file>qml/pages/settings/extensions/ExtIntegrationsListPage.qml</file>
+        <file>qml/pages/settings/extensions/ExtPluginPage.qml</file>
+        <file>qml/pages/settings/extensions/ExtIntegrationPage.qml</file>
 
         <!-- QML Other pages -->
         <file>qml/pages/AboutPage.qml</file>
@@ -182,15 +159,6 @@
 
         <!-- QML Device pages -->
         <file>qml/pages/devices/CmdProcessingPage.qml</file>
-        <file>qml/pages/devices/lamp/mono/LampMonoControl.qml</file>
-        <file>qml/pages/devices/pc/PCRPiControl.qml</file>
-		<file>qml/pages/devices/pc/commands/AccessPoint.qml</file>
-		<file>qml/pages/devices/pc/commands/ControlsList.qml</file>
-        <file>qml/pages/devices/pc/commands/RenameDevice.qml</file>
-		<file>qml/pages/devices/pc/commands/CreateUser.qml</file>
-		<file>qml/pages/devices/pc/commands/StaticIP.qml</file>
-		<file>qml/pages/devices/pc/commands/VPNrouter.qml</file>
-        <file>qml/pages/devices/pc/commands/SSHEnabler.qml</file>
         <file>qml/pages/devices/setup/SetupProcessingPage.qml</file>
         <file>qml/components/devices/setup/DeviceSetupWiFiListForm.qml</file>
 
@@ -201,6 +169,11 @@
         <!-- QML Themes -->
         <file>qml/theme/Theme.qml</file>
         <file>qml/base/Platform.qml</file>
+
+        <!-- Built-in extensions info -->
+        <file>qml/info/builtin-devices.json</file>
+        <file>qml/info/builtin-plugins.json</file>
+        <file>qml/info/builtin-integrations.json</file>
 
     </qresource>
 </RCC>

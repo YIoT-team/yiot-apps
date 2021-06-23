@@ -182,6 +182,40 @@ build_app_linux() {
 }
 
 ############################################################################################
+build_emulator_linux() {
+    print_header "Building linux emulator"
+    
+    find_tool mock || FIND_RES=1
+    if [ "${FIND_RES}" == "1" ]; then
+     print_message "Please install required tools"
+     exit 127
+    else
+     print_message "OK".
+    fi
+
+    print_message " Remove old build directory"
+    rm -rf "${SOURCE_DIR}/build" || true
+    mkdir -p "${SOURCE_DIR}/build"
+    pushd "${SOURCE_DIR}/build"
+       cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="linux" ..
+       make yiot-device-app-emulator
+    popd
+    
+    mkdir -p ${SOURCE_DIR}/build/yiot.dist
+    cp -f ${SOURCE_DIR}/build/device-app/main/emulator/yiot-device-app-emulator ${SOURCE_DIR}/build/yiot.dist/
+    cp -f ${SOURCE_DIR}/build/common/iotkit/modules/crypto/converters/libconverters.so ${SOURCE_DIR}/build/yiot.dist/
+    if [ "${BUILD_PKG}" == "1" ]; then
+      find_tool mock
+      if [ "${FIND_RES}" == "1" ]; then
+        print_message "Build RPM package skipping"
+      else
+        sudo ${SCRIPT_DIR}/pkg/prep-pkg.sh -b ${SOURCE_DIR}/build/yiot.dist -t app -p rpm -n yiot-emulator -v $(cat ${SOURCE_DIR}/build/VERSION).${BUILD_NUMBER:-0}
+      fi
+    fi
+}
+
+
+############################################################################################
 build_app_windows() {
     print_header "Building windows application"
     
@@ -227,15 +261,17 @@ build_app_macos() {
 
 ############################################################################################
 case "${TARGET_OS}" in
-  dev-rpi)      build_dev_rpi
-                ;;
-  app-linux)    build_app_linux
-                ;;
-  app-windows)  build_app_windows
-                ;;
-  app-macos)    build_app_macos
-                ;;
-        *)      echo "Error build OS name"
-                exit 127
-                ;;
+  dev-rpi)           build_dev_rpi
+                     ;;
+  app-linux)         build_app_linux
+                     ;;
+  app-windows)       build_app_windows
+                     ;;
+  app-macos)         build_app_macos
+                     ;;
+  emulator-linux)    build_emulator_linux
+                     ;;                
+        *)           echo "Error build OS name"
+                    exit 127
+                    ;;
 esac

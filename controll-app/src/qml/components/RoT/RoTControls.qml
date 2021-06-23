@@ -25,7 +25,7 @@ import "../../theme"
 import "../../components"
 
 RowLayout {
-    property variant modelData: none
+    property variant modelData
     property bool containsMouse: btnInfo.containsMouse
     //|| btnExport.containsMouse || btnDelete.containsMouse
     property int wSz: 50

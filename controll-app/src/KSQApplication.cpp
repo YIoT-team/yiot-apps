@@ -21,40 +21,42 @@
 #include <QtQml>
 
 #include <KSQApplication.h>
-#include <ui/VSQUiHelper.h>
 #include <virgil/iot/logger/logger.h>
 
 #include <yiot-iotkit/KSQIoTKitFacade.h>
 #include <yiot-iotkit/setup/KSQDeviceSetupController.h>
-#include <yiot-iotkit/snap/KSQSnapPCClient.h>
-
-#include <devices/lamp/KSQLampController.h>
-#include <devices/pc/KSQPCController.h>
+#include <yiot-iotkit/snap/KSQSnapUSERClient.h>
 
 #include <virgil/iot/qt/protocols/snap/VSQSnapCFGClient.h>
 
 #include "keychain.h"
 
 #ifdef Q_OS_ANDROID
-#include "android/KSQAndroid.h"
+#include "os/android/KSQAndroid.h"
 #endif // Q_OS_ANDROID
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
+const QString KSQApplication::kWebSocketIntegrationID = "io.yiot-dev.websocketrouter";
+
 //-----------------------------------------------------------------------------
 int
 KSQApplication::run() {
     QQmlApplicationEngine engine;
-    VSQUiHelper uiHelper;
 
     // Early initialization of logger
     vs_logger_init(VirgilIoTKit::VS_LOGLEV_DEBUG);
 
     m_bleController = QSharedPointer<KSQBLEController>::create();
     m_netifUdp = QSharedPointer<KSQUdp>::create();
-    m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create(m_netifUdp);
+    m_netifWebsock = QSharedPointer<KSQNetifWebsocket>::create();
+    m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create(/*m_netifUdp*/ m_netifWebsock);
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
+    m_integrations = QSharedPointer<KSQIntegrationsController>::create();
+    m_extensionDevices = QSharedPointer<KSQExtensions>::create("devices", nullptr);
+    m_extensionPlugins = QSharedPointer<KSQExtensions>::create("plugins", nullptr);
+    m_extensionIntegrations = QSharedPointer<KSQExtensions>::create("integrations", m_integrations);
 
     // Prepare IoTKit data
     auto features =
@@ -62,11 +64,11 @@ KSQApplication::run() {
                           << KSQFeatures::SNAP_SCRT_CLIENT // Secure communication (DH, AES, etc)
                           << KSQFeatures::SNAP_INFO_CLIENT // Get/set device information (Type, Name, Versions)
                           << KSQFeatures::SNAP_CFG_CLIENT  // Configure device (Different credentials, WiFi for example)
-                          << KSQFeatures::SNAP_LAMP_CLIENT // Possibility to control Lamp
                           << KSQFeatures::SNAP_PC_CLIENT;  // Possibility to control PSs, Raspberry Pi for example
 
     // TODO: Dynamic adding of supported network interfaces
     auto impl = VSQImplementations() << m_netifUdp                // Enables UDP communication
+                                     << m_netifWebsock            // Enable WebSocket communication
                                      << m_bleController->netif(); // Enables Bluetooth Low Energy communication
 
     // This is a control device
@@ -95,12 +97,26 @@ KSQApplication::run() {
 
     //      Get information about devices new but provisioned devices
     connect(&m_deviceControllers,
-            &KSQDevices::fireNewProvisionedDevice,
+            &KSQAllDevicesController::fireNewProvisionedDevice,
             m_uxController.get(),
             &KSQUXSimplifyController::onNewProvisionedDevice);
 
     // Device re-scan on provision finish
     connect(m_bleController.get(), &KSQBLEController::fireProvisionDone, this, &KSQApplication::onProvisionDone);
+
+    // Connect signals from network interfaces
+    connect(m_netifWebsock.get(), &KSQNetifWebsocket::fireDeviceReady, this, &KSQApplication::updateDevices);
+
+    // Connect Integrations signals
+    connect(m_integrations.get(),
+            &KSQIntegrationsController::fireActivate,
+            this,
+            &KSQApplication::onIntegrationActivate);
+    connect(m_integrations.get(),
+            &KSQIntegrationsController::fireDeactivate,
+            this,
+            &KSQApplication::onIntegrationDeactivate);
+
 
     // Initialize IoTKit
     if (!KSQIoTKitFacade::instance().init(features, impl, appConfig)) {
@@ -108,14 +124,9 @@ KSQApplication::run() {
         return -1;
     }
 
-    // Initialize devices controllers
-    //          TODO: Dynamic adding of supported devices
-    m_deviceControllers << new KSQLampController() // Possibility to control lamps
-                        << new KSQPCController();  // Possibility to control PSs, like Raspberry Pi
-
     // Initialize QML
     QQmlContext *context = engine.rootContext();
-    context->setContextProperty("UiHelper", &uiHelper);
+
     context->setContextProperty("app", this); // Get app name, version, etc.
     context->setContextProperty("localBlankDevicesController", m_localBlankDevicesController.get());
     context->setContextProperty("bleController",
@@ -123,6 +134,9 @@ KSQApplication::run() {
     context->setContextProperty("bleEnum",
                                 m_bleController->model()); // BLE device enumeration // TODO: Use from `bleController`
     context->setContextProperty("wifiEnum", &m_wifiEnumerator); // WiFi networks enumeration
+    context->setContextProperty("extensionDevices", m_extensionDevices.get());
+    context->setContextProperty("extensionPlugins", m_extensionPlugins.get());
+    context->setContextProperty("extensionIntegrations", m_extensionIntegrations.get());
     context->setContextProperty("deviceControllers",
                                 &m_deviceControllers); // Containers with controllers for all supported devices
     context->setContextProperty(
@@ -142,6 +156,19 @@ KSQApplication::run() {
 
     // Start QML
     engine.load(url);
+
+    // Initialize extensions
+    m_integrations->setQmlEngine(&engine);
+    m_extensionIntegrations->load();
+
+    // Initialize devices controllers
+    m_extensionDevices->load();
+    for (const auto &devPath : m_extensionDevices->builtInExtensions()) {
+        m_deviceControllers << new KSQDevicesType(engine, devPath);
+    }
+
+    // Initialize device plugins
+    m_extensionPlugins->load();
 
     // Delayed actions
     QTimer::singleShot(200, []() {
@@ -185,6 +212,26 @@ KSQApplication::applicationVersion() const {
 QString
 KSQApplication::applicationDisplayName() const {
     return tr("YIoT");
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQApplication::onIntegrationActivate(QString integrationId, QString message) {
+    qDebug() << "Integration Activate : " << integrationId << " message : " << message;
+
+    if (kWebSocketIntegrationID == integrationId) {
+        m_netifWebsock->connectWS(message);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQApplication::onIntegrationDeactivate(QString integrationId) {
+    qDebug() << "Integration Deactivate : " << integrationId;
+
+    if (kWebSocketIntegrationID == integrationId) {
+        m_netifWebsock->disconnectWS();
+    }
 }
 
 //-----------------------------------------------------------------------------

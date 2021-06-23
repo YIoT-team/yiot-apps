@@ -29,7 +29,7 @@
 KSQBlankDevicesController::KSQBlankDevicesController(QSharedPointer<VSQNetifBase> netif) {
     m_netif = netif;
 
-#if 0
+#if 1
     // SNAP::INFO service
     connect(&VSQSnapInfoClient::instance(),
             &VSQSnapInfoClient::fireNewDevice,

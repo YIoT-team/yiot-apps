@@ -22,13 +22,13 @@
 #include <iostream>
 #include <filesystem>
 
-#include "helpers/timer.h"
-#include "helpers/command.h"
-#include "helpers/settings.h"
+#include "common/helpers/timer.h"
+#include "common/helpers/command.h"
+#include "common/helpers/settings.h"
 
 #include "commands/pc.h"
 
-#include <common/protocols/snap/pc/pc-private.h>
+#include <common/protocols/snap/user/user-private.h>
 
 #include <nlohmann/json.hpp>
 

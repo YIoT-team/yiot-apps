@@ -23,7 +23,6 @@ import QtQuick.Layouts 1.12
 
 import "../../theme"
 import "../../components/devices"
-import "../../components/devices/lamp"
 
 Item {
     property alias model: list.model
@@ -42,7 +41,7 @@ Item {
                 id: subItemRepeater
                 delegate: DevicesListItem {
                     topLevel: false
-                    controlElementUrl: deviceActions(deviceType)
+                    controlElementUrl: model.js.controlTiny()
                 }
             }
         }
@@ -58,7 +57,7 @@ Item {
 
             DevicesListItem {
                 showControlsPermanent: true
-                controlElementUrl: deviceCategoryActions(categoryType)
+                controlElementUrl: model.js.controlTypeTiny()
             }
 
             Loader {

@@ -22,7 +22,7 @@
 #include <thread>
 
 #ifdef Q_OS_ANDROID
-#include "android/KSQAndroid.h"
+#include "os/android/KSQAndroid.h"
 #endif // Q_OS_ANDROID
 
 #if 1

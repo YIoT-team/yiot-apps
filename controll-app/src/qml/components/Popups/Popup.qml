@@ -42,7 +42,7 @@ Item {
         Text {
             id: message
             anchors.centerIn: parent
-            font.pointSize: UiHelper.fixFontSz(14)
+            font.pointSize: 14
         }
         onOpened: popupClose.start()
 

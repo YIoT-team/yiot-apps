@@ -27,7 +27,7 @@
 #include <QAbstractTableModel>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
-#include <devices/KSQDeviceBase.h>
+#include <controllers/devices/KSQDevice.h>
 
 class KSQUXSimplifyController : public QObject {
     Q_OBJECT
@@ -54,7 +54,7 @@ public slots:
     onDeviceRequiresProvision(QString deviceName, QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
 
     void
-    onNewProvisionedDevice(QSharedPointer<KSQDeviceBase> device);
+    onNewProvisionedDevice(QSharedPointer<KSQDevice> device);
 
     void
     onBLEDeviceConnection(QString deviceMac);
@@ -64,7 +64,7 @@ signals:
     fireRequestDeviceProvision(QString deviceMac, QString deviceName);
 
     void
-    fireRequestDeviceSetup(KSQDeviceBase *deviceName);
+    fireRequestDeviceSetup(KSQDevice *deviceName);
 
 private slots:
     void

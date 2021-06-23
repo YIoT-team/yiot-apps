@@ -26,7 +26,7 @@
 #include <virgil/iot/protocols/snap.h>                  // Common functionality of protocol
 #include <virgil/iot/protocols/snap/info/info-server.h> // Device information server
 #include <virgil/iot/protocols/snap/cfg/cfg-server.h>   // Device configuration server
-#include <common/protocols/snap/pc/pc-server.h>         // Specific command for RPi
+#include <common/protocols/snap/user/user-server.h>         // Specific command for RPi
 
 // Queue for packets to be processed
 #include "sdk-impl/netif/packets-queue.h"
@@ -36,8 +36,9 @@
 #include <update-config.h>
 
 // Implementation Network interfaces
-#include "iotkit-impl/netif/netif-ble-linux.h" // Bluetooth Low Energy
-#include "iotkit-impl/netif/netif-udp.h"       // UDP networking
+#include "common/iotkit-impl/netif/netif-ble-linux.h"   // Bluetooth Low Energy
+#include "common/iotkit-impl/netif/netif-udp.h"         // UDP networking
+#include "common/iotkit-impl/netif/netif-websock.h"     // WebSocket networking
 
 // Software implementation of Security API
 #include <virgil/iot/vs-soft-secmodule/vs-soft-secmodule.h>
@@ -49,12 +50,12 @@
 
 // Platform-specific helpers
 #include "helpers/app-helpers.h" // Different helpers
-#include "helpers/utils.h"
+#include "common/helpers/utils.h"
 #include "helpers/app-storage.h" // Data Storage helpers
 #include "helpers/file-cache.h"  // File cache to speed-up file operations
 
 // High-level wrapper to simplify initialization/deinitialization
-#include "iotkit-impl/init.h"
+#include "init.h"
 
 static void
 _print_title(void);
@@ -65,7 +66,7 @@ main(int argc, char *argv[]) {
     int res = -1;
 
     // Holder of Network interfaces list
-    vs_netif_t *netifs_impl[3] = {0};
+    vs_netif_t *netifs_impl[4] = {0};
 
     // Configuration server callbacks
     vs_snap_cfg_server_service_t cfg_server_cb = {ks_snap_cfg_wifi_cb, // Processing of received WiFi credentials
@@ -74,7 +75,7 @@ main(int argc, char *argv[]) {
                                                   NULL};
 
     // RPi-specific callbacks
-    vs_snap_pc_server_service_t pc_server_cb = {ks_snap_pc_get_info_cb, // Get RPi information
+    vs_snap_user_server_service_t user_server_cb = {ks_snap_pc_get_info_cb, // Get RPi information
                                                 ks_snap_pc_command_cb}; // Process RPi command
 
     // Security API implementation
@@ -115,7 +116,8 @@ main(int argc, char *argv[]) {
     bool wifi_ready = is_wifi_connected();
     vs_packets_queue_init(vs_snap_default_processor);  // Initialize Queue for incoming packets
     netifs_impl[0] = vs_hal_netif_udp();               // Initialize UDP-based transport
-    netifs_impl[1] = ks_netif_ble();                   // Initialize BLE-based transport
+    netifs_impl[2] = ks_netif_ble();                   // Initialize BLE-based transport
+
 
     // TrustList storage
     STATUS_CHECK(vs_app_storage_init_impl(&tl_storage_impl, vs_app_trustlist_dir(), VS_TL_STORAGE_MAX_PART_SIZE),
@@ -135,6 +137,11 @@ main(int argc, char *argv[]) {
     // Secbox module
     STATUS_CHECK(vs_secbox_init(&secbox_storage_impl, secmodule_impl), "Unable to initialize Secbox module");
 
+    // Network interface
+    netifs_impl[1] = vs_hal_netif_websock(secmodule_impl,
+                                          tmp,
+                                          NULL);        // Initialize WebSocket-based transport
+
     //
     // ---------- Initialize IoTKit internals ----------
     //
@@ -146,7 +153,7 @@ main(int argc, char *argv[]) {
                                 VS_SNAP_DEV_THING,
                                 netifs_impl,   // Set Network interfaces
                                 cfg_server_cb, // Set protocol callbacks
-                                pc_server_cb,
+                                user_server_cb,
                                 vs_packets_queue_add, // Setup packets processing using queue
                                 secmodule_impl,       // Security API implementation
                                 &tl_storage_impl),    // TrustList storage
@@ -161,7 +168,7 @@ main(int argc, char *argv[]) {
 
     // Send broadcast notification about self start
     const vs_netif_t *n = vs_snap_default_netif();
-    vs_snap_pc_start_notification(n);
+    vs_snap_user_start_notification(n);
     vs_snap_info_start_notification(n);
 
     // Sleep until CTRL_C

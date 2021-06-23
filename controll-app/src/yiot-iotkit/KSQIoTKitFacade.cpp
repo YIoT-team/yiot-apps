@@ -38,8 +38,7 @@
 #include <virgil/iot/qt/VSQIoTKit.h>
 
 #include <yiot-iotkit/KSQIoTKitFacade.h>
-#include <yiot-iotkit/snap/KSQSnapLampClient.h>
-#include <yiot-iotkit/snap/KSQSnapPCClient.h>
+#include <yiot-iotkit/snap/KSQSnapUSERClient.h>
 #include <yiot-iotkit/snap/KSQSnapPRVSClient.h>
 #include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
 #include <yiot-iotkit/provision/KSQProvision.h>
@@ -66,7 +65,6 @@ KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &imp
     qRegisterMetaType<QAbstractSocket::SocketState>();
     qRegisterMetaType<vs_mac_addr_t>("vs_mac_addr_t");
     qRegisterMetaType<VSQMac>("VSQMac");
-    qRegisterMetaType<vs_snap_pc_state_t>("vs_snap_pc_state_t");
 
     // Process events in separate thread
     m_snapProcessorThread = new QThread();
@@ -168,12 +166,8 @@ KSQIoTKitFacade::initSnap() {
         registerService(VSQSnapCfgClient::instance());
     }
 
-    if (m_features.hasFeature(KSQFeatures::SNAP_LAMP_CLIENT)) {
-        registerService(KSQSnapLampClient::instance());
-    }
-
     if (m_features.hasFeature(KSQFeatures::SNAP_PC_CLIENT)) {
-        registerService(KSQSnapPCClient::instance());
+        registerService(KSQSnapUSERClient::instance());
     }
 }
 
@@ -182,7 +176,7 @@ void
 KSQIoTKitFacade::updateAll() {
     qDebug() << "Get information about connected devices";
     if (m_features.hasFeature(KSQFeatures::SNAP_PC_CLIENT)) {
-        KSQSnapPCClient::instance().requestState(broadcastMac);
+        KSQSnapUSERClient::instance().requestState(broadcastMac);
     }
 
     if (m_features.hasFeature(KSQFeatures::SNAP_INFO_CLIENT)) {

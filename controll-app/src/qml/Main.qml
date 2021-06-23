@@ -26,7 +26,6 @@ import "./pages"
 import "./pages/devices"
 import "./pages/devices/setup"
 import "./pages/settings"
-import "./pages/devices/pc/"
 import "./components"
 import "./components/devices"
 import "./components/Popups"
@@ -74,7 +73,6 @@ ApplicationWindow {
         readonly property int setupDevicePageIdx: 1
         // readonly property int sharePageIdx: 2
         readonly property int settingsPageIdx: 2
-        readonly property int rpiSettingsPageIdx: 3
 
         property int backPageIdx: devicePageIdx
 
@@ -87,7 +85,6 @@ ApplicationWindow {
         DevicesSetupPage { id: devicesSetupPage }
         // SharePage { id: sharePage }
         SettingsPage { id: settingsPage }
-        PCRPiControl { id: rpiSettingsPage }
     }
 
     // Manual switcher of main pages
@@ -263,11 +260,6 @@ ApplicationWindow {
         swipeShow(swipeView.settingsPageIdx)
     }
 
-    //------------------[FOR TESTING]------------------
-    function showRPiSettings(){
-        swipeShow(swipeView.rpiSettingsPageIdx)
-    }
-
     // ------------------------------------------------------------------------
     //      Settings elements
     // ------------------------------------------------------------------------
@@ -309,18 +301,9 @@ ApplicationWindow {
     // ------------------------------------------------------------------------
     //      Show Per device Views
     // ------------------------------------------------------------------------
-    function showLampMono(deviceName, deviceController) {
+    function showDeviceControl(deviceController) {
         w.state = "deviceControl"
-        devicesSwipeView.show(devicesSwipeView.lampMonoPageIdx,
-                              deviceName,
-                              deviceController)
-    }
-
-    function showPC(deviceName, deviceController) {
-        w.state = "deviceControl"
-        devicesSwipeView.show(devicesSwipeView.pcPageIdx,
-                              deviceName,
-                              deviceController)
+        devicesSwipeView.show(deviceController)
     }
 
     // ------------------------------------------------------------------------
@@ -337,7 +320,7 @@ ApplicationWindow {
     }
 
     function startDeviceSetup(device) {
-        devicesPage.activateDeviceView("pc", device.name, device)
+        devicesPage.activateDeviceView(device)
     }
 
     function rejectDeviceSetup(device) {

@@ -27,7 +27,7 @@ Column {
         font.weight: Font.Bold
         font.capitalization: Font.Capitalize
         font.family: Theme.mainFontBold
-        font.pointSize: UiHelper.fixFontSz(48)
+        font.pointSize: 48
         color: Theme.brandColor
         anchors.horizontalCenter: parent.horizontalCenter
     }
@@ -40,7 +40,7 @@ Column {
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter
 
-        font.pointSize: UiHelper.fixFontSz(13)
+        font.pointSize: 13
         font.letterSpacing: 0.3
         color: Theme.brandColor
         anchors.horizontalCenter: parent.horizontalCenter

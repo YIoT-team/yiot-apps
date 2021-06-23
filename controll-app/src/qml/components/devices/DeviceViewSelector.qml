@@ -24,29 +24,32 @@ import QtQuick.Layouts 1.12
 import "../../theme"
 import "../../components"
 import "../../components/devices"
-import "../../components/devices/lamp"
-import "../../pages/devices/lamp/mono"
-import "../../pages/devices/pc"
 
 SwipeView {
-    readonly property int lampMonoPageIdx: 0
-    readonly property int pcPageIdx: 1
-
     id: devicesSwipeView
+    objectName: "deviceControlContainer"
     anchors.fill: parent
     interactive: false
-    currentIndex: lampMonoPageIdx
 
-    LampMonoControl { id: lampMonoPage }
-    PCRPiControl { id: rpiPage }
-
-    function show(idx, deviceName, deviceController) {
-        devicesSwipeView.currentIndex = idx
+    function show(deviceController) {
+        devicesSwipeView.currentIndex = deviceController.js.controlPageIdx
         for (var i = 0; i < devicesSwipeView.count; ++i) {
             var item = devicesSwipeView.itemAt(i)
             item.controller = deviceController
             item.deviceName = deviceController.name
             item.visible = i == devicesSwipeView.currentIndex
         }
+    }
+
+    function addDeviceControl(qmlFile) {
+        var component = Qt.createComponent(qmlFile);
+        var controlPage = component.createObject(devicesSwipeView);
+
+        if (controlPage == null) {
+            console.log("Error creating object")
+        }
+
+        devicesSwipeView.addItem(controlPage)
+        return devicesSwipeView.count - 1
     }
 }

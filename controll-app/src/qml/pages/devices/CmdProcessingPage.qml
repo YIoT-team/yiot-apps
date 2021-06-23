@@ -24,8 +24,6 @@ import QtQuick.Layouts 1.12
 import "../../theme"
 import "../../components"
 
-import "../../../js/devices/pc.js" as PCDevice
-
 Page {
     property var device: null
 
@@ -62,7 +60,7 @@ Page {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 font.family: Theme.mainFont
-                font.pointSize: UiHelper.fixFontSz(24)
+                font.pointSize: 24
             }
 
             AnimatedImage {
@@ -83,15 +81,15 @@ Page {
 
                 Layout.bottomMargin: p.state == "done" ? 450 : 20 // will need to be redone or removed altogether
 
-                TextArea {
-                    id: processingTextArea
-
-                    font.family: Theme.mainFont
-                    color: Theme.primaryTextColor
-                    readOnly: true
-
-                    text: PCDevice.processingText()
-                    }
+//                TextArea {
+//                    id: processingTextArea
+//
+//                    font.family: Theme.mainFont
+//                    color: Theme.primaryTextColor
+//                    readOnly: true
+//
+//                    text: //PCDevice.processingText()
+//                }
             }
 
             FormSecondaryButton {

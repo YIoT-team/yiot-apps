@@ -28,7 +28,7 @@ Column {
         height: 40
         leftPadding: 15
         rightPadding: 15
-        font.pointSize: UiHelper.fixFontSz(15)
+        font.pointSize: 15
         color: Theme.primaryTextColor
         echoMode: password ? TextField.Password : TextField.Normal
 

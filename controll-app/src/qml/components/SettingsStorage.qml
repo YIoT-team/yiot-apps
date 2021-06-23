@@ -34,6 +34,9 @@ Item {
     Settings {
         id: s
         property string defaultWiFi: ""
+
+        property bool websockEnabled: false
+        property string websockLink: ""
     }
 
     // KeyChain Writer
@@ -114,6 +117,22 @@ Item {
 
         // Set default WiFi Network in settings
         s.defaultWiFi = ssid
+    }
+
+    function setWebsocketState(state) {
+        s.websockEnabled = state
+    }
+
+    function setWebsocketLink(link) {
+        s.websockLink = link
+    }
+
+    function getWebsocketState() {
+        return s.websockEnabled
+    }
+
+    function getWebsocketLink() {
+        return s.websockLink
     }
 
     Component.onCompleted: {

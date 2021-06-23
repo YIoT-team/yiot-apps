@@ -12,7 +12,7 @@ Text {
     font.letterSpacing: 0.4
     font.bold: false
     font.family: Theme.mainFont
-    font.pointSize: UiHelper.fixFontSz(12)
+    font.pointSize: 12
     textFormat: Text.RichText
     linkColor: Theme.buttonPrimaryColor
     onLinkActivated: Qt.openUrlExternally(link)
