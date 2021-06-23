@@ -395,6 +395,10 @@ _cws_cleanup_resources(void) {
 static vs_status_e
 _websocket_connect(void) {
     vs_event_bits_t stat;
+
+    CHECK_NOT_ZERO_RET(_url, VS_CODE_ERR_NULLPTR_ARGUMENT);
+    CHECK_NOT_ZERO_RET(_account, VS_CODE_ERR_NULLPTR_ARGUMENT);
+
     _websocket_ctx.easy = _cws_config();
     CHECK_RET(_websocket_ctx.easy, VS_CODE_ERR_INIT_SNAP, "Can't create curl easy ctx");
 
@@ -729,19 +733,34 @@ _websock_mac(const struct vs_netif_t *netif, struct vs_mac_addr_t *mac_addr) {
 }
 
 //-----------------------------------------------------------------------------
+vs_status_e
+vs_netif_websock_start(const char *url, const char *account) {
+    VS_IOT_ASSERT(url);
+    VS_IOT_ASSERT(account);
+
+    CHECK_NOT_ZERO_RET(url, VS_CODE_ERR_NULLPTR_ARGUMENT);
+    CHECK_NOT_ZERO_RET(account, VS_CODE_ERR_NULLPTR_ARGUMENT);
+
+    free(_url);
+    free(_account);
+
+    _url = strdup(url);
+    _account = strdup(account);
+}
+
+//-----------------------------------------------------------------------------
+void
+vs_netif_websock_stop(void) {
+}
+
+//-----------------------------------------------------------------------------
 vs_netif_t *
-vs_hal_netif_websock(const char *url,
-                     const char *account,
-                     vs_secmodule_impl_t *secmodule_impl,
+vs_hal_netif_websock(vs_secmodule_impl_t *secmodule_impl,
                      vs_mac_addr_t mac_addr,
                      vs_hal_netif_connected_cb_t connect_cb) {
 
-    VS_IOT_ASSERT(url);
-    VS_IOT_ASSERT(account);
     VS_IOT_ASSERT(secmodule_impl);
 
-    CHECK_NOT_ZERO_RET(url, NULL);
-    CHECK_NOT_ZERO_RET(account, NULL);
     CHECK_NOT_ZERO_RET(secmodule_impl, NULL);
 
     _websock_deinit(&_netif_websock);
@@ -749,14 +768,7 @@ vs_hal_netif_websock(const char *url,
     memcpy(_sim_mac_addr, mac_addr.bytes, sizeof(vs_mac_addr_t));
 
     _secmodule_impl = secmodule_impl;
-    _url = strdup(url);
-    _account = strdup(account);
     _connect_cb = connect_cb;
-
-    if (NULL == _url || NULL == _account) {
-        VS_LOG_ERROR("[WS] Can't allocate memory for websocket creds");
-        return NULL;
-    }
 
     return &_netif_websock;
 }

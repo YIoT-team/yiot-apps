@@ -138,9 +138,7 @@ main(int argc, char *argv[]) {
     STATUS_CHECK(vs_secbox_init(&secbox_storage_impl, secmodule_impl), "Unable to initialize Secbox module");
 
     // Network interface
-    netifs_impl[1] = vs_hal_netif_websock("ws://192.168.0.175:8080/ws",
-                                          "test_account",
-                                          secmodule_impl,
+    netifs_impl[1] = vs_hal_netif_websock(secmodule_impl,
                                           tmp,
                                           NULL);        // Initialize WebSocket-based transport
 

@@ -35,12 +35,9 @@ KSQSnapUSERClient::KSQSnapUSERClient() {
 //-----------------------------------------------------------------------------
 vs_status_e
 KSQSnapUSERClient::onUpdateState(vs_status_e res, const vs_mac_addr_t *mac, const char *json) {
-    bool isError = true;
     if (VS_CODE_OK == res && json) {
         emit KSQSnapUSERClient::instance().fireStateUpdate(*mac, QString::fromStdString(json));
-    }
-
-    if (isError) {
+    } else {
         emit KSQSnapUSERClient::instance().fireStateError(*mac);
     }
 

@@ -47,14 +47,18 @@ extern "C" {
 #define WEBSOCK_ID_SZ_MAX 64
 
 vs_netif_t *
-vs_hal_netif_websock(const char *url,
-                     const char *account,
-                     vs_secmodule_impl_t *secmodule_impl,
+vs_hal_netif_websock(vs_secmodule_impl_t *secmodule_impl,
                      vs_mac_addr_t mac_addr,
                      vs_hal_netif_connected_cb_t connect_cb);
 
 void
 vs_netif_websock_update_mac(vs_mac_addr_t mac_addr);
+
+vs_status_e
+vs_netif_websock_start(const char *url, const char *account);
+
+void
+vs_netif_websock_stop(void);
 
 #ifdef __cplusplus
 }

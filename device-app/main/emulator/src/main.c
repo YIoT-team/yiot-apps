@@ -147,11 +147,11 @@ main(int argc, char *argv[]) {
     STATUS_CHECK(vs_secbox_init(&secbox_storage_impl, secmodule_impl), "Unable to initialize Secbox module");
 
     // Network interface
-    netifs_impl[0] = vs_hal_netif_websock((char *)websock_url,
-                                          (char *)websock_id,
-                                          secmodule_impl,
+    netifs_impl[0] = vs_hal_netif_websock(secmodule_impl,
                                           tmp,
                                           _on_ws_connected); // Initialize WebSocket-based transport
+
+    vs_netif_websock_start((char *)websock_url, (char *)websock_id);
 
     //
     // ---------- Initialize IoTKit internals ----------
