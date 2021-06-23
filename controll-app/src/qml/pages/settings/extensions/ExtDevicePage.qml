@@ -73,7 +73,6 @@ Page {
             font.pointSize: 13
             font.letterSpacing: 0.3
             color: Theme.brandColor
-            //anchors.horizontalCenter: parent.horizontalCenter
             Layout.alignment: Qt.AlignHCenter
         }
 
@@ -90,7 +89,7 @@ Page {
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         }
 
-       //-----------------------------------------------------------------------
+        //-----------------------------------------------------------------------
 
         Text {
             id: label
@@ -117,21 +116,7 @@ Page {
             ListView {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                model: ListModel {
-                    ListElement {
-                        name: "plugin_1"
-                        version: "ver_1"
-                    }
-                    ListElement {
-                        name: "plugin_2"
-                        version: "ver_2"
-                    }
-                    ListElement {
-                        name: "plugin_3"
-                        version: "ver_3"
-                    }
-                }
-
+                model: extensionPlugins
                 delegate: Rectangle {
                     id: base
                     width: parent.width
@@ -143,16 +128,23 @@ Page {
                         anchors.fill: parent
                         clip: true
 
-                        //Image { todo }
-
-                        Text {
-                            text: name
-                            Layout.fillWidth: true
+                        Image {
+                            id: icon
+                            source: info.logo
+                            Layout.maximumHeight: listDelegate.height * 0.7
+                            Layout.maximumWidth: Layout.maximumHeight
+                            fillMode: Image.PreserveAspectFit
+                            Layout.alignment: Qt.AlignLeft
                             Layout.leftMargin: 10
                         }
 
                         Text {
-                            text: version
+                            text: info.name
+                            Layout.fillWidth: true
+                        }
+
+                        Text {
+                            text: info.version
                             horizontalAlignment: Text.AlignRight
                             Layout.rightMargin: 15
                             Layout.fillWidth: true
@@ -164,7 +156,12 @@ Page {
                         anchors.fill: parent
                         hoverEnabled: true
                         anchors.rightMargin: 0
-                        onClicked: { /* todo */ }
+                        onClicked: {
+                            showPluginPage(info, function() {
+                                showSettings()
+                                showExtDevicesList()
+                            })
+                        }
 
                         onEntered: {
                             base.color = Theme.contrastBackgroundColor

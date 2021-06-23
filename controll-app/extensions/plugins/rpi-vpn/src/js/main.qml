@@ -23,54 +23,29 @@ import Qt.labs.settings 1.0
 Item {
     property var controlPageIdx: -1
 
-    signal activated(string integrationId, string msg)
-    signal deactivated(string integrationId)
-    readonly property string integrationId: "io.yiot-dev.websocketrouter"
-
-    Settings {
-        id: settings
-        property bool isEnabled
-        property string link: ""
-    }
+    signal activated(string pluginId, string msg)
+    signal deactivated(string pluginId)
+    readonly property string pluginId: "io.yiot-dev.rpi-vpn"
 
     //-----------------------------------------------------------------------------
     function onLoad() {
-        console.log("WebSocket Integration loaded")
-        if (integrationState()) {
-            activated(integrationId, getLink())
-        }
+        console.log("RPi VPN Plugin loaded")
     }
 
     //-----------------------------------------------------------------------------
-    function activate(link) {
-        settings.setValue("isEnabled", true)
-        settings.setValue("link", link)
-        activated(integrationId, link)
+    function activate() {
+        activated(pluginId, "")
     }
 
     //-----------------------------------------------------------------------------
     function deactivate() {
-        settings.setValue("isEnabled", false)
-        deactivated(integrationId)
-    }
-
-    //-----------------------------------------------------------------------------
-    function integrationState() {
-        return settings.isEnabled
-    }
-
-    //-----------------------------------------------------------------------------
-    function getLink() {
-        return settings.link
+        deactivated(pluginId)
     }
 
     //-----------------------------------------------------------------------------
     function image() {
-        return "qrc:/integration/0/src/icons/%1/pc.png"
+        return "qrc:/plugin/0/src/icons/%1/vpn-router.png"
     }
 
     //-----------------------------------------------------------------------------
-    function deviceStateImage(model) {
-        return "qrc:/integration/0/src/icons/%1/rpi.png"
-    }
 }

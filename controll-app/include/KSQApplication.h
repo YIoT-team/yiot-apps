@@ -86,6 +86,7 @@ private:
     QSharedPointer<KSQIntegrationsController> m_integrations;
     QSharedPointer<KSQExtensions> m_extensionDevices;
     QSharedPointer<KSQExtensions> m_extensionIntegrations;
+    QSharedPointer<KSQExtensions> m_extensionPlugins;
 
     static const QString kWebSocketIntegrationID;
 };

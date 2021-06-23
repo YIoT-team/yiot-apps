@@ -35,6 +35,7 @@ bool
 KSQExtensions::load() {
     bool res;
     beginResetModel();
+    m_extensions.clear();
     res = loadBuiltinExtensions();
     endResetModel();
     return res;

@@ -109,10 +109,6 @@
         <file>qml/components/RoT/RoTList.qml</file>
         <file>qml/components/RoT/RoTControls.qml</file>
         <file>qml/components/RoT/RoTInfoPopup.qml</file>
-        <file>qml/components/Plugins/PluginsAvailable.qml</file>
-        <file>qml/components/Plugins/PluginsInstalled.qml</file>
-		<file>qml/components/Integrations/IntegrationsAvailable.qml</file>
-		<file>qml/components/Integrations/IntegrationsInstalled.qml</file>
         <file>qml/components/FormThemeList.qml</file>
         <file>qml/components/SwitchableParam.qml</file>
         <file>qml/components/devices/DeviceInfoPopup.qml</file>
@@ -176,7 +172,7 @@
 
         <!-- Built-in extensions info -->
         <file>qml/info/builtin-devices.json</file>
-        <file>qml/info/builtin-devices.json</file>
+        <file>qml/info/builtin-plugins.json</file>
         <file>qml/info/builtin-integrations.json</file>
 
     </qresource>

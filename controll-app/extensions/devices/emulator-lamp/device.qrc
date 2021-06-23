@@ -138,8 +138,6 @@
         <file>qml/components/RoT/RoTList.qml</file>
         <file>qml/components/RoT/RoTControls.qml</file>
         <file>qml/components/RoT/RoTInfoPopup.qml</file>
-        <file>qml/components/Plugins/PluginsAvailable.qml</file>
-        <file>qml/components/Plugins/PluginsInstalled.qml</file>
         <file>qml/components/FormThemeList.qml</file>
         <file>qml/components/SwitchableParam.qml</file>
         <file>qml/components/devices/DeviceInfoPopup.qml</file>

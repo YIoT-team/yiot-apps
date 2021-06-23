@@ -55,6 +55,7 @@ KSQApplication::run() {
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
     m_integrations = QSharedPointer<KSQIntegrationsController>::create();
     m_extensionDevices = QSharedPointer<KSQExtensions>::create("devices", nullptr);
+    m_extensionPlugins = QSharedPointer<KSQExtensions>::create("plugins", nullptr);
     m_extensionIntegrations = QSharedPointer<KSQExtensions>::create("integrations", m_integrations);
 
     // Prepare IoTKit data
@@ -134,6 +135,7 @@ KSQApplication::run() {
                                 m_bleController->model()); // BLE device enumeration // TODO: Use from `bleController`
     context->setContextProperty("wifiEnum", &m_wifiEnumerator); // WiFi networks enumeration
     context->setContextProperty("extensionDevices", m_extensionDevices.get());
+    context->setContextProperty("extensionPlugins", m_extensionPlugins.get());
     context->setContextProperty("extensionIntegrations", m_extensionIntegrations.get());
     context->setContextProperty("deviceControllers",
                                 &m_deviceControllers); // Containers with controllers for all supported devices
@@ -164,6 +166,9 @@ KSQApplication::run() {
     for (const auto &devPath : m_extensionDevices->builtInExtensions()) {
         m_deviceControllers << new KSQDevicesType(engine, devPath);
     }
+
+    // Initialize device plugins
+    m_extensionPlugins->load();
 
     // Delayed actions
     QTimer::singleShot(200, []() {

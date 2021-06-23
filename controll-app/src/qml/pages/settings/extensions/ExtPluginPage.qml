@@ -49,12 +49,12 @@ Page {
             Layout.maximumHeight: 100
 
             fillMode: Image.PreserveAspectFit
-            source: plugin.image
+            source: plugin.logo
             Layout.alignment: Qt.AlignHCenter
         }
 
         Text {
-            text: plugin.title
+            text: plugin.name
             font.weight: Font.Bold
             font.capitalization: Font.Capitalize
             font.family: Theme.mainFontBold
@@ -65,7 +65,7 @@ Page {
 
         Text {
             width: 180
-            text: plugin.info.version
+            text: plugin.version
             lineHeight: 1
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
@@ -88,6 +88,7 @@ Page {
         }
 
         FormSecondaryButton {
+            visible: false
             Layout.topMargin: 20
             Layout.bottomMargin: 30
             text: qsTr("Install")
