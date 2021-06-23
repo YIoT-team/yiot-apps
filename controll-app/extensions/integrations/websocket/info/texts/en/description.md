@@ -1,3 +1,0 @@
-## WebSocket router connection
-
-Test
