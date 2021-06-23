@@ -1,15 +1,3 @@
-[submodule "ext/iotkit"]
-	path = ext/iotkit
-	url = https://github.com/kutashenko/virgil-iotkit.git
-[submodule "ext/bluez-dbus"]
-	path = ext/bluez-dbus
-	url = https://github.com/kutashenko/bluez-dbus-cpp.git
-[submodule "ext/qtkeychain"]
-	path = ext/qtkeychain
-	url = https://github.com/kutashenko/qtkeychain.git
-[submodule "ext/json"]
-	path = ext/json
-	url = https://github.com/nlohmann/json.git
 [submodule "controll-app/extensions"]
 	path = controll-app/extensions
 	url = https://github.com/YIoT-team/yiot-extensions.git
