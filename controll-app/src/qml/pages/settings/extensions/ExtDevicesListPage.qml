@@ -68,11 +68,13 @@ Page {
 
                     Text {
                         text: info.name
+                        color: Theme.primaryTextColor
                         Layout.fillWidth: true
                     }
 
                     Text {
                         text: info.version
+                        color: Theme.primaryTextColor
                         horizontalAlignment: Text.AlignRight
                         Layout.rightMargin: 15
                         Layout.fillWidth: true
