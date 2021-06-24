@@ -621,6 +621,7 @@ static bool
 _make_message(char **message, const uint8_t *data, size_t data_sz, bool is_stat) {
 
     *message = 0;
+
     CHECK_NOT_ZERO_RET(message, false);
     CHECK_NOT_ZERO_RET(_account, false);
 
@@ -655,6 +656,10 @@ static vs_status_e
 _websock_tx(struct vs_netif_t *netif, const uint8_t *data, const uint16_t data_sz) {
     vs_status_e ret;
     char *msg = NULL;
+
+    if (!_url || !_account) {
+        return VS_CODE_ERR_TX_SNAP;
+    }
 
     CHECK_RET(_websocket_ctx.is_initialized, VS_CODE_ERR_TX_SNAP, "Websocket iface is not initialized");
     CHECK_NOT_ZERO_RET(data, VS_CODE_ERR_NULLPTR_ARGUMENT);
@@ -746,6 +751,8 @@ vs_netif_websock_start(const char *url, const char *account) {
 
     _url = strdup(url);
     _account = strdup(account);
+
+    return VS_CODE_OK;
 }
 
 //-----------------------------------------------------------------------------

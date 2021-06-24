@@ -163,7 +163,7 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     vs_netif_websock_update_mac(default_mac);
 
     // Start BLE advertising
-//    ks_netif_ble_advertise(vs_provision_is_ready(), vs_snap_device_name());
+    ks_netif_ble_advertise(vs_provision_is_ready(), vs_snap_device_name());
 
     // Security Session module
     vs_session_init(secmodule_impl, default_mac.bytes);

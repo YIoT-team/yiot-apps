@@ -174,7 +174,6 @@ KSQIoTKitFacade::initSnap() {
 //-----------------------------------------------------------------------------
 void
 KSQIoTKitFacade::updateAll() {
-    qDebug() << "Get information about connected devices";
     if (m_features.hasFeature(KSQFeatures::SNAP_PC_CLIENT)) {
         KSQSnapUSERClient::instance().requestState(broadcastMac);
     }

@@ -332,6 +332,7 @@ target_sources(${KS_TARGET_NAME}
         # Qt Resources
         ${CMAKE_CURRENT_LIST_DIR}/src/resources.qrc
         ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/rpi/device.qrc
+        ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/emulator-lamp/device-1.qrc
         ${CMAKE_CURRENT_LIST_DIR}/extensions/integrations/websocket/integration.qrc
         ${CMAKE_CURRENT_LIST_DIR}/extensions/plugins/rpi-vpn/plugin.qrc
         )

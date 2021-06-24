@@ -49,9 +49,9 @@ target_sources(yiot-device-app-emulator
         # Headers
         ${CMAKE_CURRENT_LIST_DIR}/include/init.h
         ${CMAKE_CURRENT_LIST_DIR}/include/settings.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/commands/device-info.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/commands/pc.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/commands/reset.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/devices/device-base.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/devices/test-lamp.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/devices/test-door-lock.h
         ${COMMON_NIX_DIR}/include/common/helpers/timer.h
         ${COMMON_NIX_DIR}/include/common/helpers/command.h
         ${COMMON_NIX_DIR}/include/common/iotkit-impl/netif/curl-websock.h
@@ -61,9 +61,8 @@ target_sources(yiot-device-app-emulator
         ${CMAKE_CURRENT_LIST_DIR}/src/main.c
         ${CMAKE_CURRENT_LIST_DIR}/src/init.c
         ${CMAKE_CURRENT_LIST_DIR}/src/settings.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/commands/device-info.c
-        ${CMAKE_CURRENT_LIST_DIR}/src/commands/pc.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/commands/reset.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/devices/test-lamp.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/devices/test-door-lock.cpp
         ${COMMON_NIX_DIR}/src/helpers/timer.cpp
         ${COMMON_NIX_DIR}/src/iotkit-impl/helpers.c
         ${COMMON_NIX_DIR}/src/iotkit-impl/netif/curl-websock.c

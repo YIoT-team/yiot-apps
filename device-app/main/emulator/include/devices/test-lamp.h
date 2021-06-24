@@ -17,26 +17,25 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_PC_H
-#define YIOT_PC_H
+#ifndef YIOT_TEST_LAMP_H
+#define YIOT_TEST_LAMP_H
 
 #include <virgil/iot/status_code/status_code.h>
 #include <virgil/iot/protocols/snap.h>
+#include <virgil/iot/provision/provision-structs.h>
 #include <common/protocols/snap/user/user-structs.h>
+#include "devices/device-base.h"
 
 #ifdef __cplusplus
 using namespace VirgilIoTKit;
 extern "C" {
 #endif
 
-vs_status_e
-ks_snap_pc_get_info_cb(const vs_netif_t *netif, char *state, const uint16_t state_buf, uint16_t *state_sz);
-
-vs_status_e
-ks_snap_pc_command_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, const char *json);
+ks_test_device_t *
+ks_lamp(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // YIOT_PC_H
+#endif // YIOT_TEST_LAMP_H

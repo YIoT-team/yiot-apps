@@ -58,6 +58,17 @@ KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, const QString &dev
         VS_LOG_ERROR("Cannot register device control page");
     }
 
+    // Get device ID
+    auto parts = deviceDir.split("/", Qt::SkipEmptyParts);
+    if (parts.size()) {
+        bool ok;
+        auto val = parts.last().toInt(&ok);
+        if (ok) {
+            m_deviceId = val;
+        } else {
+            VS_LOG_ERROR("Cannot detect device ID");
+        }
+    }
 
     // SNAP::INFO service
     connect(&VSQSnapInfoClient::instance(),
@@ -82,7 +93,7 @@ KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, const QString &dev
     connect(&KSQSnapUSERClient::instance(),
             &KSQSnapUSERClient::fireStateError,
             this,
-            &KSQDevicesType::onPCError,
+            &KSQDevicesType::onDeviceError,
             Qt::QueuedConnection);
 
     // SNAP:SCRT
@@ -177,6 +188,22 @@ KSQDevicesType::onDeviceStateUpdate(const vs_mac_addr_t mac, QString data) {
     auto res = findDevice(mac);
     auto device = res.second;
     if (!device) {
+        bool needAdd = false;
+        try {
+            QJsonDocument jsonState = QJsonDocument::fromJson(data.toUtf8());
+            QJsonObject jsonObject = jsonState.object();
+            int type = jsonObject["type"].toInt();
+
+            if (type == m_deviceId) {
+                needAdd = true;
+            }
+        } catch (...) {
+        }
+
+        if (!needAdd) {
+            return;
+        }
+
         // Add Device
         beginInsertRows(QModelIndex(), m_devices.size(), m_devices.size());
 
@@ -218,11 +245,11 @@ KSQDevicesType::onDeviceStateUpdate(const vs_mac_addr_t mac, QString data) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDevicesType::onPCError(const vs_mac_addr_t mac) {
+KSQDevicesType::onDeviceError(const vs_mac_addr_t mac) {
     auto res = findDevice(mac);
     auto device = res.second;
     if (device) {
-        qDebug() << "PC error: " << VSQMac(mac).description();
+        qDebug() << "Device error: " << VSQMac(mac).description();
         device->commandError();
     }
 }

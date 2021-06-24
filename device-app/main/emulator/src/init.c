@@ -39,7 +39,7 @@ static vs_provision_events_t _provision_event = {_file_ver_info_cb};
 
 // Dev name
 static vs_storage_element_id_t _device_name_storage_id = {0};
-static const char *_defaultDevName = "My new RPi";
+static const char *_defaultDevName = "";
 
 #define BLE_DEVICE_NAME_LIMIT (16)
 
@@ -105,6 +105,7 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
                vs_device_type_t device_type,
                vs_device_serial_t serial,
                uint32_t device_roles,
+               const char *default_name,
                vs_netif_t *netif_impl[],
                vs_snap_cfg_server_service_t cfg_server_cb,
                vs_snap_user_server_service_t user_server_cb,
@@ -117,6 +118,7 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     vs_snap_scrt_server_service_t scrt_server_cb = {0};
     VS_IOT_ASSERT(netif_impl);
     VS_IOT_ASSERT(netif_impl[0]);
+    VS_IOT_ASSERT(default_name);
 
     //
     // ---------- Initialize Virgil SDK modules ----------
@@ -132,7 +134,7 @@ ks_iotkit_init(vs_device_manufacture_id_t manufacture_id,
     }
 
     // SNAP module
-
+    _defaultDevName = default_name;
     STATUS_CHECK(init_dev_name(), "Cannot init device name");
     STATUS_CHECK(vs_snap_init(netif_impl[0],
                               packet_preprocessor_cb,

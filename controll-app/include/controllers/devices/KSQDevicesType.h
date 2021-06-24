@@ -110,7 +110,7 @@ private slots:
     onDeviceStateUpdate(const vs_mac_addr_t mac, QString data);
 
     void
-    onPCError(const vs_mac_addr_t mac);
+    onDeviceError(const vs_mac_addr_t mac);
 
     // SNAP::SCRT
     void
@@ -128,6 +128,7 @@ private:
 
 private:
     bool m_active = false;
+    uint64_t m_deviceId;
     std::list<QSharedPointer<KSQDevice>> m_devices;
     QSharedPointer<QObject> m_qmlProcessor;
 

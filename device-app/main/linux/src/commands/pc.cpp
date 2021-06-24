@@ -43,6 +43,7 @@ ks_snap_pc_get_info_cb(const vs_netif_t *netif, char *state, const uint16_t stat
     CHECK_NOT_ZERO_RET(state_buf_sz, VS_CODE_ERR_ZERO_ARGUMENT);
 
     nlohmann::json stateJson;
+    stateJson["type"] = 0; // TODO: Get this value from common file
     stateJson["command"] = "info";
     stateJson["inet"] = false;
     stateJson["wifi"] = "sta";
