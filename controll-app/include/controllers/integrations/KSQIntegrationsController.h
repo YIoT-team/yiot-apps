@@ -24,9 +24,9 @@
 
 #include <virgil/iot/qt/VSQIoTKit.h>
 
-#include "controllers/extensions/KSQExtensionControllerBase.h"
+#include <controllers/extensions/KSQExtensionControllerBase.h>
 
-class KSQIntegrationsController : public KSQExtensionControllerBase {
+class KSQIntegrationsController : public QObject, public KSQExtensionControllerBase {
     Q_OBJECT
 public:
     KSQIntegrationsController() = default;
@@ -41,7 +41,7 @@ signals:
 
 protected:
     virtual bool
-    load(const QString &integrationDir, QSharedPointer<KSQOneExtension> extension) override final;
+    load(QSharedPointer<KSQOneExtension> extension) override final;
 
 private:
 };

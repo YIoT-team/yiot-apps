@@ -30,17 +30,15 @@
 #include <yiot-iotkit/secmodule/KSQSessionKey.h>
 
 #include <common/protocols/snap/user/user-structs.h>
-#include <controllers/devices/KSQDevicesType.h>
 #include <controllers/extensions/KSQOneExtension.h>
 
-class KSQExtensionControllerBase : public QObject {
-    Q_OBJECT
+class KSQExtensionControllerBase {
 public:
     KSQExtensionControllerBase() = default;
     virtual ~KSQExtensionControllerBase() = default;
 
     virtual bool
-    load(const QString &integrationDir, QSharedPointer<KSQOneExtension> extension) = 0;
+    load(QSharedPointer<KSQOneExtension> extension) = 0;
 
     QSharedPointer<QObject>
     qmlProcessor() {

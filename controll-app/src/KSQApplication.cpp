@@ -53,8 +53,9 @@ KSQApplication::run() {
     m_netifWebsock = QSharedPointer<KSQNetifWebsocket>::create();
     m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create(/*m_netifUdp*/ m_netifWebsock);
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
+    m_deviceControllers = QSharedPointer<KSQAllDevicesController>::create();
     m_integrations = QSharedPointer<KSQIntegrationsController>::create();
-    m_extensionDevices = QSharedPointer<KSQExtensions>::create("devices", nullptr);
+    m_extensionDevices = QSharedPointer<KSQExtensions>::create("devices", m_deviceControllers);
     m_extensionPlugins = QSharedPointer<KSQExtensions>::create("plugins", nullptr);
     m_extensionIntegrations = QSharedPointer<KSQExtensions>::create("integrations", m_integrations);
 
@@ -96,7 +97,7 @@ KSQApplication::run() {
             &KSQUXSimplifyController::onDeviceRequiresProvision);
 
     //      Get information about devices new but provisioned devices
-    connect(&m_deviceControllers,
+    connect(m_deviceControllers.get(),
             &KSQAllDevicesController::fireNewProvisionedDevice,
             m_uxController.get(),
             &KSQUXSimplifyController::onNewProvisionedDevice);
@@ -138,7 +139,7 @@ KSQApplication::run() {
     context->setContextProperty("extensionPlugins", m_extensionPlugins.get());
     context->setContextProperty("extensionIntegrations", m_extensionIntegrations.get());
     context->setContextProperty("deviceControllers",
-                                &m_deviceControllers); // Containers with controllers for all supported devices
+                                m_deviceControllers.get()); // Containers with controllers for all supported devices
     context->setContextProperty(
             "deviceSetup",                          // Device setup state-machine
             &KSQDeviceSetupController::instance()); // Controller to setup device provision, the first owner etc.
@@ -162,10 +163,8 @@ KSQApplication::run() {
     m_extensionIntegrations->load();
 
     // Initialize devices controllers
+    m_deviceControllers->setQmlEngine(&engine);
     m_extensionDevices->load();
-    for (auto extDevice : m_extensionDevices->builtInExtensions()) {
-        m_deviceControllers << new KSQDevicesType(engine, extDevice);
-    }
 
     // Initialize device plugins
     m_extensionPlugins->load();

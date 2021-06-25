@@ -100,7 +100,7 @@ KSQExtensions::loadOneExtension(const QString &resourceDir) {
         m_extensions << QSharedPointer<KSQOneExtension>::create(
                 logo, name, version, description, link, size, languages, true, resourceDir);
         if (!m_processor.isNull()) {
-            m_processor->load(resourceDir, m_extensions.last());
+            m_processor->load(m_extensions.last());
         }
         return true;
     }

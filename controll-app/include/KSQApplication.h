@@ -81,8 +81,7 @@ private:
     QSharedPointer<KSQUdp> m_netifUdp;
     QSharedPointer<KSQNetifWebsocket> m_netifWebsock;
 
-    KSQAllDevicesController m_deviceControllers;
-
+    QSharedPointer<KSQAllDevicesController> m_deviceControllers;
     QSharedPointer<KSQIntegrationsController> m_integrations;
     QSharedPointer<KSQExtensions> m_extensionDevices;
     QSharedPointer<KSQExtensions> m_extensionIntegrations;
