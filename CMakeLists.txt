@@ -88,6 +88,10 @@ if (NOT KS_PLATFORM STREQUAL "linux")
     set (BUILD_DEVICE_ENABLE OFF)
 endif()
 
+if ((NOT KS_PLATFORM STREQUAL "linux") AND (NOT KS_PLATFORM STREQUAL "macos"))
+    set (BUILD_EMULATORS_ENABLE OFF)
+endif()
+
 
 # ---------------------------------------------------------------------------
 #	Common libraries
