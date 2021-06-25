@@ -55,8 +55,9 @@ KSQApplication::run() {
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
     m_deviceControllers = QSharedPointer<KSQAllDevicesController>::create();
     m_integrations = QSharedPointer<KSQIntegrationsController>::create();
+    m_plugins = QSharedPointer<KSQPluginsController>::create();
     m_extensionDevices = QSharedPointer<KSQExtensions>::create("devices", m_deviceControllers);
-    m_extensionPlugins = QSharedPointer<KSQExtensions>::create("plugins", nullptr);
+    m_extensionPlugins = QSharedPointer<KSQExtensions>::create("plugins", m_plugins);
     m_extensionIntegrations = QSharedPointer<KSQExtensions>::create("integrations", m_integrations);
 
     // Prepare IoTKit data
