@@ -24,8 +24,10 @@
 
 static ks_test_device_t _door_lock = {0};
 
+static bool _is_locked = false;
+
 // clang-format off
-char lockedStateImage[] =
+static const char _locked_image[] =
 "                             **#######**                              \n"
 "                         *####*********####*                          \n"
 "                        ##*     *****     *##*                        \n"
@@ -58,7 +60,7 @@ char lockedStateImage[] =
 "            ##******************************************##            \n"
 "             *##########################################*             \n";
 
-char unlockedStateImage[] =
+static const char _unlocked_image[] =
 "                             **#######**                              \n"
 "                         *####*********####*                          \n"
 "                        ##*     *****     *##*                        \n"
@@ -123,7 +125,7 @@ _get_info_cb(const vs_netif_t *netif, char *state, const uint16_t state_buf_sz, 
     nlohmann::json stateJson;
     stateJson["type"] = 2; // TODO: Get this value from common file
     stateJson["command"] = "info";
-    stateJson["locked"] = false;
+    stateJson["state"] = _is_locked;
 
     auto jsonStr = stateJson.dump();
 
@@ -154,11 +156,13 @@ _command_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, const char *json)
 
         auto state = jsonObj["state"].get<bool>();
 
+        _is_locked = state;
         if (state) {
-            VS_LOG_INFO("Door is locked");
+            printf("%s", _locked_image);
         } else {
-            VS_LOG_INFO("Door is open");
+            printf("%s", _unlocked_image);
         }
+
 
         res = true;
     } catch (...) {
