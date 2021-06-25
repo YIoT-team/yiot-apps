@@ -26,6 +26,7 @@
 
 #include <virgil/iot/qt/VSQIoTKit.h>
 #include <controllers/devices/KSQDevice.h>
+#include <controllers/extensions/KSQOneExtension.h>
 
 #include <yiot-iotkit/snap/KSQSnapUSERClient.h>
 
@@ -37,7 +38,7 @@ public:
 
     enum Element { Name = Qt::UserRole, Type, Mac, Active, Device, Secure, Js, ElementMax };
 
-    KSQDevicesType(QQmlApplicationEngine &engine, const QString &deviceDir);
+    KSQDevicesType(QQmlApplicationEngine &engine, QSharedPointer<KSQOneExtension> device);
     virtual ~KSQDevicesType() = default;
 
     QString

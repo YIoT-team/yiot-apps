@@ -43,7 +43,7 @@ public:
     bool
     load();
 
-    QStringList
+    QList<QSharedPointer<KSQOneExtension>>
     builtInExtensions() const;
 
     /**
@@ -66,7 +66,6 @@ private:
     QString m_prefix;
     QList<QSharedPointer<KSQOneExtension>> m_extensions;
     QSharedPointer<KSQExtensionControllerBase> m_processor;
-    QStringList m_builtIn;
 
     QString
     fixQrcQFile(const QString &resourceDir);

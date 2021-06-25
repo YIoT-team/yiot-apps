@@ -43,7 +43,9 @@ public:
                     const QString &a_descr,
                     const QString &a_link,
                     size_t a_size,
-                    const QStringList a_languages);
+                    const QStringList a_languages,
+                    bool a_isBuiltIn,
+                    const QString &a_path);
 
     KSQOneExtension(KSQOneExtension const &);
 
@@ -78,6 +80,12 @@ public:
 
     void
     setJs(QObject *js);
+
+    bool
+    isBuiltIn() const;
+
+    QString
+    basePath() const;
 
 signals:
     void
@@ -115,6 +123,8 @@ private:
     size_t m_size;
     QStringList m_languages;
     QObject *m_js;
+    bool m_isBuiltIn;
+    QString m_path;
 };
 
 Q_DECLARE_METATYPE(KSQOneExtension)

@@ -98,7 +98,7 @@ KSQExtensions::loadOneExtension(const QString &resourceDir) {
     if (!version.isEmpty() && !languages.isEmpty() && !logo.isEmpty() && !name.isEmpty() && !description.isEmpty() &&
         !link.isEmpty()) {
         m_extensions << QSharedPointer<KSQOneExtension>::create(
-                logo, name, version, description, link, size, languages);
+                logo, name, version, description, link, size, languages, true, resourceDir);
         if (!m_processor.isNull()) {
             m_processor->load(resourceDir, m_extensions.last());
         }
@@ -129,8 +129,8 @@ KSQExtensions::loadBuiltinExtensions() {
     for (const auto &val : devicesArray) {
         auto deviceInfoObject = val.toObject();
         auto resourcesDir = deviceInfoObject.value("dir").toString();
-        if (loadOneExtension(resourcesDir)) {
-            m_builtIn << resourcesDir;
+        if (!loadOneExtension(resourcesDir)) {
+            VS_LOG_WARNING("Cannot load extension : %s", resourcesDir.toStdString().c_str());
         }
     }
 
@@ -138,9 +138,17 @@ KSQExtensions::loadBuiltinExtensions() {
 }
 
 //-----------------------------------------------------------------------------
-QStringList
+QList<QSharedPointer<KSQOneExtension>>
 KSQExtensions::builtInExtensions() const {
-    return m_builtIn;
+    QList<QSharedPointer<KSQOneExtension>> res;
+
+    for (auto el : m_extensions) {
+        if (el->isBuiltIn()) {
+            res << el;
+        }
+    }
+
+    return res;
 }
 
 //-----------------------------------------------------------------------------

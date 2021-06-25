@@ -163,8 +163,8 @@ KSQApplication::run() {
 
     // Initialize devices controllers
     m_extensionDevices->load();
-    for (const auto &devPath : m_extensionDevices->builtInExtensions()) {
-        m_deviceControllers << new KSQDevicesType(engine, devPath);
+    for (auto extDevice : m_extensionDevices->builtInExtensions()) {
+        m_deviceControllers << new KSQDevicesType(engine, extDevice);
     }
 
     // Initialize device plugins

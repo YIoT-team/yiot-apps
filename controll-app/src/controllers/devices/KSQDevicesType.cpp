@@ -30,7 +30,8 @@
 #endif
 
 //-----------------------------------------------------------------------------
-KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, const QString &deviceDir) {
+KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, QSharedPointer<KSQOneExtension> device) {
+    QString deviceDir(device->basePath());
     // Create JS processor
     const QString js = deviceDir + "/src/js/main.qml";
     QQmlComponent component(&engine, QUrl(js));
@@ -54,6 +55,7 @@ KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, const QString &dev
                                   Q_RETURN_ARG(QVariant, res),
                                   Q_ARG(QVariant, QVariant::fromValue(controlPage)))) {
         object->setProperty("controlPageIdx", res);
+        device->setJs(object);
     } else {
         VS_LOG_ERROR("Cannot register device control page");
     }
