@@ -24,8 +24,11 @@
 
 static ks_test_device_t _lamp = {0};
 
+static bool _is_on = false;
+
 // clang-format off
-char offStateImage[] =
+static const char _off_image[] =
+"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 "                              **#######**                             \n"
 "                          *######*****######*                         \n"
 "                       *####*             *####*                      \n"
@@ -51,33 +54,8 @@ char offStateImage[] =
 "                            *              *                          \n"
 "                             **************                           \n";
 
-char onStateImage[] =
-"                              **#######**                             \n"
-"                          *#################*                         \n"
-"                       *#######################*                      \n"
-"                     *###########################*                    \n"
-"                   #################################                  \n"
-"                  ###################################                 \n"
-"                 *###################################*                \n"
-"                 #####################################                \n"
-"                 #####################################                \n"
-"                 *###################################*                \n"
-"                   #################################*                 \n"
-"                    ###############################*                  \n"
-"                     #############################                    \n"
-"                      *#########################*                     \n"
-"                       #########################                      \n"
-"                       #########################                      \n"
-"                        #######################*                      \n"
-"                         #####################                        \n"
-"                           *###############*                          \n"
-"                          *******************                         \n"
-"                          *#################*                         \n"
-"                          *******************                         \n"
-"                            *              *                          \n"
-"                             **************                           \n";
-
-char unknownStateImage[] =
+static const char _on_image[] =
+"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 "                              **#######**                             \n"
 "                          *#################*                         \n"
 "                       *#####*************#####*                      \n"
@@ -135,7 +113,7 @@ _info_cb(const vs_netif_t *netif, char *state, const uint16_t state_buf_sz, uint
     nlohmann::json stateJson;
     stateJson["type"] = 1; // TODO: Get this value from common file
     stateJson["command"] = "info";
-    stateJson["state"] = false;
+    stateJson["state"] = _is_on;
 
     auto jsonStr = stateJson.dump();
 
@@ -166,10 +144,11 @@ _command_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, const char *json)
 
         auto state = jsonObj["state"].get<bool>();
 
+        _is_on = state;
         if (state) {
-            VS_LOG_INFO("Lamp is turned on");
+            printf("%s", _on_image);
         } else {
-            VS_LOG_INFO("Lamp is turned off");
+            printf("%s", _off_image);
         }
 
         res = true;
