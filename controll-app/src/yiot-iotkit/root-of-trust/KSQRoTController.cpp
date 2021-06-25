@@ -125,12 +125,12 @@ KSQRoTController::prepare() {
 
     // Load all available RoTs
     for (auto &rotId : idsList) {
-        m_rots.push_back(QSharedPointer<KSQRoT>::create(rotId, "secure-enclave"));
+        m_rots.push_back(QSharedPointer<KSQRoT>::create(rotId, "qrc:/qml/resources/icons/%1/secure-enclave"));
     }
 
     // Check if local is present
     if (!idsList.contains(KSQRoT::kLocalID)) {
-        auto localRoT = QSharedPointer<KSQRoT>::create(KSQRoT::kLocalID, "secure-enclave");
+        auto localRoT = QSharedPointer<KSQRoT>::create(KSQRoT::kLocalID, "qrc:/qml/resources/icons/%1/secure-enclave");
         if (!localRoT->isValid()) {
             return false;
         }
