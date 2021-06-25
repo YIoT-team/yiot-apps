@@ -5,6 +5,9 @@
     },
     {
       "dir": "qrc:/device/1"
+    },
+    {
+      "dir": "qrc:/device/2"
     }
   ]
 }
