@@ -168,6 +168,7 @@ KSQApplication::run() {
     m_extensionDevices->load();
 
     // Initialize device plugins
+    m_plugins->setQmlEngine(&engine);
     m_extensionPlugins->load();
 
     // Delayed actions
