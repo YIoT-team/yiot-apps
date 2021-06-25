@@ -124,6 +124,8 @@ Page {
                     height: 55
                     color: "transparent"
 
+                    visible: js.isSupportedDevice(device.js.type())
+
                     RowLayout {
                         id: listDelegate
                         anchors.fill: parent
