@@ -196,7 +196,7 @@ KSQDevicesType::onDeviceStateUpdate(const vs_mac_addr_t mac, QString data) {
             QJsonObject jsonObject = jsonState.object();
             int type = jsonObject["type"].toInt();
 
-            if (type == m_deviceId) {
+            if (static_cast<uint64_t>(type) == m_deviceId) {
                 needAdd = true;
             }
         } catch (...) {
