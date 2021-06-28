@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "prvs-server.h": "c",
+        "provision.h": "c",
+        "info-server.h": "c"
+    }
+}
