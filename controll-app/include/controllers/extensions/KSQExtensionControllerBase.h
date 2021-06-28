@@ -20,14 +20,8 @@
 #ifndef YIOT_EXTENSION_CONTROLLER_BASE_H
 #define YIOT_EXTENSION_CONTROLLER_BASE_H
 
-#include <QtCore>
-#include <QHash>
+#include <QQmlApplicationEngine>
 #include <QAbstractTableModel>
-
-#include <virgil/iot/qt/VSQIoTKit.h>
-#include <virgil/iot/qt/helpers/VSQMac.h>
-
-#include <yiot-iotkit/secmodule/KSQSessionKey.h>
 
 #include <common/protocols/snap/user/user-structs.h>
 #include <controllers/extensions/KSQOneExtension.h>

@@ -20,8 +20,6 @@
 #ifndef KSQ_EXTENSION_INTEGRATION_H
 #define KSQ_EXTENSION_INTEGRATION_H
 
-#include <QtCore>
-
 #include <QAbstractTableModel>
 
 class KSQOneExtension : public QObject {

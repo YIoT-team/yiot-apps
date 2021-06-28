@@ -20,7 +20,6 @@
 #ifndef KSQ_EXTENSION_INTEGRATIONS_H
 #define KSQ_EXTENSION_INTEGRATIONS_H
 
-#include <QtCore>
 #include <QAbstractTableModel>
 
 #include <controllers/extensions/KSQOneExtension.h>
