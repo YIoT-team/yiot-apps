@@ -203,7 +203,7 @@ main(int argc, char *argv[]) {
     //
 
     // Inform about need of WiFi credentials
-    vs_snap_info_set_need_cred(true);
+    vs_snap_info_set_need_cred(false);
 
     // Sleep until CTRL_C
     vs_app_sleep_until_stop();
