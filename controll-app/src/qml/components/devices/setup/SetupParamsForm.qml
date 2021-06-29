@@ -89,10 +89,20 @@ Form {
 
         FormSecondaryButton {
             Layout.bottomMargin: 10
-            text: qsTr("Next")
+            text: deviceSetup.data.needCreds ? qsTr("Next") : qsTr("Setup Device")
             onClicked: {
+                if (deviceSetup.data.needCreds) {
                     setWiFiPassLocation("deviceSetup")
                     setCredLoadState("wifi-setup")
+                } else {
+                    var cred = settings.getWiFiCredDefault()
+                    deviceSetup.configure(
+                        !deviceSetup.data.hasProvision,
+                        !deviceSetup.data.hasOwner, "Me",
+                        true, cred.ssid, cred.pass)
+
+                    showCredLoad()
+                }
             }
         }
     }
