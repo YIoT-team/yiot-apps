@@ -52,6 +52,7 @@ Page {
             fillMode: Image.PreserveAspectFit
             source: device.logo
             Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: 30
         }
 
         Text {
