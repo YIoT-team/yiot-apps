@@ -452,3 +452,15 @@ if (KS_PLATFORM STREQUAL "macos")
 #   macdeployqt(${KS_TARGET_NAME} "${CMAKE_CURRENT_LIST_DIR}/src/qml")
 endif ()
 
+if (KS_PLATFORM STREQUAL "ios")
+    #
+    #   Configure plist file
+    #
+    set_target_properties(${KS_TARGET_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_LIST_DIR}/platforms/ios/ios-info.plist)
+    set (PLIST_DST "${CMAKE_CURRENT_LIST_DIR}/platforms/ios/ios-info.plist")
+    set (PLIST_TMPL "${PLIST_DST}.in")
+    configure_file(${PLIST_TMPL} ${PLIST_DST})
+
+    #   macdeployqt(${KS_TARGET_NAME} "${CMAKE_CURRENT_LIST_DIR}/src/qml")
+endif ()
+
