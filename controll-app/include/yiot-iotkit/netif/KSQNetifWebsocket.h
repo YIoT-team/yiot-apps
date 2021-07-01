@@ -108,6 +108,8 @@ private:
     QUrl m_url;
     QString m_account;
 
+    QList<QMetaObject::Connection> m_objConnections;
+
     static const QString _accountIdTag;
     static const QString _payloadTag;
 
