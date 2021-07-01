@@ -28,6 +28,7 @@ static bool _is_locked = false;
 
 // clang-format off
 static const char _locked_image[] =
+"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 "                             **#######**                              \n"
 "                         *####*********####*                          \n"
 "                        ##*     *****     *##*                        \n"
@@ -61,6 +62,7 @@ static const char _locked_image[] =
 "             *##########################################*             \n";
 
 static const char _unlocked_image[] =
+"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 "                             **#######**                              \n"
 "                         *####*********####*                          \n"
 "                        ##*     *****     *##*                        \n"
@@ -162,6 +164,7 @@ _command_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, const char *json)
         } else {
             printf("%s", _unlocked_image);
         }
+        fflush(stdout);
 
 
         res = true;

@@ -150,6 +150,7 @@ _command_cb(const vs_netif_t *netif, vs_mac_addr_t sender_mac, const char *json)
         } else {
             printf("%s", _off_image);
         }
+        fflush(stdout);
 
         res = true;
     } catch (...) {

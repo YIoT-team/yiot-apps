@@ -268,6 +268,7 @@ _print_title(void) {
     printf("  Manufacture ID = \"%s\"\n", str_manufacturer);
     printf("  Device type    = \"%s\"\n", _test_device->get_description());
     printf(" ──────────────────────────────────────────────────────────\n\n");
+    fflush(stdout);
 }
 
 //-----------------------------------------------------------------------------
