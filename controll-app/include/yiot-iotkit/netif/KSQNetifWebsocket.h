@@ -55,8 +55,13 @@ public:
 
     virtual ~KSQNetifWebsocket() override;
 
-    QAbstractSocket::SocketState
+    virtual QAbstractSocket::SocketState
     connectionState() const override;
+
+    virtual bool
+    requiresAdditionalActivation() const override {
+        return false;
+    }
 
     bool
     connectWS(const QString &url);

@@ -61,7 +61,7 @@ public slots:
 
 signals:
     void
-    fireRequestDeviceProvision(QString deviceMac, QString deviceName);
+    fireRequestDeviceProvision(QString deviceMac, QString deviceName, bool requiresAdditionalActication);
 
     void
     fireRequestDeviceSetup(KSQDevice *deviceName);
@@ -77,7 +77,7 @@ private:
     QSet<QString> m_provisionedDevices;
 
     void
-    requestProvisionUI(const QString &deviceMac, const QString &deviceName);
+    requestProvisionUI(const QString &deviceMac, const QString &deviceName, bool requiresAdditionalActivation);
 };
 
 #endif // KSQ_UX_SIMPLIFY_CONTROLLER_H

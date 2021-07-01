@@ -53,9 +53,14 @@ public:
 
     virtual ~KSQUdp() = default;
 
-    QAbstractSocket::SocketState
+    virtual QAbstractSocket::SocketState
     connectionState() const override {
         return m_socket.state();
+    }
+
+    virtual bool
+    requiresAdditionalActivation() const override {
+        return false;
     }
 
     void
