@@ -244,6 +244,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/KSQExtensionControllerBase.h
 
         ${CMAKE_CURRENT_LIST_DIR}/include/controllers/integrations/KSQIntegrationsController.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/plugins/KSQPluginsController.h
 
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/KSQIoTKitFacade.h
         ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQUdp.h
@@ -295,6 +296,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/KSQExtensions.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/controllers/integrations/KSQIntegrationsController.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/plugins/KSQPluginsController.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/KSQIoTKitFacade.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQUdp.cpp
@@ -332,6 +334,8 @@ target_sources(${KS_TARGET_NAME}
         # Qt Resources
         ${CMAKE_CURRENT_LIST_DIR}/src/resources.qrc
         ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/rpi/device.qrc
+        ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/emulator-lamp/lamp.qrc
+        ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/emulator-doorlock/doorlock.qrc
         ${CMAKE_CURRENT_LIST_DIR}/extensions/integrations/websocket/integration.qrc
         ${CMAKE_CURRENT_LIST_DIR}/extensions/plugins/rpi-vpn/plugin.qrc
         )
@@ -446,5 +450,17 @@ if (KS_PLATFORM STREQUAL "macos")
    configure_file(${PLIST_TMPL} ${PLIST_DST})
 
 #   macdeployqt(${KS_TARGET_NAME} "${CMAKE_CURRENT_LIST_DIR}/src/qml")
+endif ()
+
+if (KS_PLATFORM STREQUAL "ios")
+    #
+    #   Configure plist file
+    #
+    set_target_properties(${KS_TARGET_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_LIST_DIR}/platforms/ios/ios-info.plist)
+    set (PLIST_DST "${CMAKE_CURRENT_LIST_DIR}/platforms/ios/ios-info.plist")
+    set (PLIST_TMPL "${PLIST_DST}.in")
+    configure_file(${PLIST_TMPL} ${PLIST_DST})
+
+    #   macdeployqt(${KS_TARGET_NAME} "${CMAKE_CURRENT_LIST_DIR}/src/qml")
 endif ()
 

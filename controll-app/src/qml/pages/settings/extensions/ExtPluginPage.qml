@@ -26,7 +26,7 @@ import "qrc:/qml/components"
 
 Page {
     id: p
-    property var plugin: null
+    property var plugin: ({ logo: "", name: "", version: "", description: "" })
     property var backAction: function() {  }
 
     background: Rectangle {

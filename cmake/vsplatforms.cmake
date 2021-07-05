@@ -149,6 +149,8 @@ if(KS_PLATFORM)
         set(CMAKE_SYSTEM_NAME "iOS")
         set(CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH NO)
         set(CMAKE_IOS_INSTALL_COMBINED YES)
+        set(APPLE_PLATFORM "IOS")
+        set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/ext/iotkit/sdk/cmake/toolchain/apple.cmake")
         prepare_qt_sdk(CMAKE_PREFIX_PATH CMAKE_FIND_ROOT_PATH QT_QMAKE_EXECUTABLE)
     
     # -- Windows

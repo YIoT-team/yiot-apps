@@ -83,7 +83,7 @@ KSQSnapPRVSClient::getDevicePublicKey(QSharedPointer<VSQNetifBase> netif, VSQMac
     pubKey.resize(sizeof(vs_pubkey_dated_t) + kPubKeyBufMax);
 
     vs_mac_addr_t mac = deviceMac;
-    if (VS_CODE_OK != vs_snap_prvs_save_provision(netif->lowLevelNetif(),
+    if (VS_CODE_OK != vs_snap_prvs_save_provision(netif.isNull() ? vs_snap_netif_routing() : netif->lowLevelNetif(),
                                                   &mac,
                                                   reinterpret_cast<uint8_t *>(pubKey.data()),
                                                   pubKey.size(),
@@ -102,10 +102,8 @@ KSQSnapPRVSClient::uploadData(QSharedPointer<VSQNetifBase> netif,
                               VSQMac deviceMac,
                               vs_snap_prvs_element_e prvsElement,
                               const QByteArray &data) {
-    CHECK_NOT_ZERO_RET(!netif.isNull(), false);
-
     vs_mac_addr_t mac = deviceMac;
-    if (VS_CODE_OK != vs_snap_prvs_set(netif->lowLevelNetif(),
+    if (VS_CODE_OK != vs_snap_prvs_set(netif.isNull() ? vs_snap_netif_routing() : netif->lowLevelNetif(),
                                        &mac,
                                        prvsElement,
                                        reinterpret_cast<const uint8_t *>(data.data()),
@@ -212,13 +210,13 @@ KSQSnapPRVSClient::uploadTrustList(QSharedPointer<VSQNetifBase> netif,
                                    QSharedPointer<KSQRoT> rootOfTrust) {
 
     // Check input parameters
-    if (netif.isNull() || !rootOfTrust->trustList().isValid() || !rootOfTrust->trustList().keysCount()) {
+    if (!rootOfTrust->trustList().isValid() || !rootOfTrust->trustList().keysCount()) {
         emit fireProvisionError(tr("Wrong parameters to upload TrustList"));
         return false;
     }
 
     vs_mac_addr_t mac = deviceMac;
-    auto lowLevelNetif = netif->lowLevelNetif();
+    auto lowLevelNetif = netif.isNull() ? vs_snap_netif_routing() : netif->lowLevelNetif();
 
     QString prefix(tr("Upload TrustList  "));
     int pos = 1;

@@ -21,13 +21,19 @@
 #include <yiot-iotkit/snap/KSQSnapSCRTClient.h>
 
 //-----------------------------------------------------------------------------
-KSQAllDevicesController &
-KSQAllDevicesController::operator<<(KSQDevicesType *devicesType) {
+void
+KSQAllDevicesController::add(KSQDevicesType *devicesType) {
     connect(devicesType, &KSQDevicesType::fireActivated, this, &KSQAllDevicesController::onGroupActivated);
     connect(devicesType, &KSQDevicesType::fireRequiredSetup, this, &KSQAllDevicesController::fireNewProvisionedDevice);
     QSharedPointer<KSQDevicesType> e(devicesType);
     m_elements.push_back(e);
-    return *this;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQAllDevicesController::load(QSharedPointer<KSQOneExtension> extension) {
+    add(new KSQDevicesType(*m_engine, extension));
+    return true;
 }
 
 //-----------------------------------------------------------------------------

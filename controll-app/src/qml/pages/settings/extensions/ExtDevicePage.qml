@@ -26,7 +26,8 @@ import "qrc:/qml/components"
 
 Page {
     id: p
-    property var device: ({ logo: "", name: "", version: "", description: "" })
+    property var js: ({ type: function(){} })
+    property var device: ({ logo: "", name: "", version: "", description: "", js })
     property var backAction: function() {  }
 
     background: Rectangle {
@@ -51,6 +52,7 @@ Page {
             fillMode: Image.PreserveAspectFit
             source: device.logo
             Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: 30
         }
 
         Text {
@@ -86,6 +88,7 @@ Page {
             verticalAlignment: Text.AlignVCenter
             textFormat: TextEdit.MarkdownText
             text: device.description
+            color: Theme.primaryTextColor
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         }
 
@@ -123,6 +126,8 @@ Page {
                     height: 55
                     color: "transparent"
 
+                    visible: js.isSupportedDevice(device.js.type())
+
                     RowLayout {
                         id: listDelegate
                         anchors.fill: parent
@@ -140,11 +145,13 @@ Page {
 
                         Text {
                             text: info.name
+                            color: Theme.primaryTextColor
                             Layout.fillWidth: true
                         }
 
                         Text {
                             text: info.version
+                            color: Theme.primaryTextColor
                             horizontalAlignment: Text.AlignRight
                             Layout.rightMargin: 15
                             Layout.fillWidth: true

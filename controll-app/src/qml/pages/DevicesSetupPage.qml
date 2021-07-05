@@ -60,6 +60,10 @@ Page {
         bleDevicesSetupList.connectBLEDevice(name)
     }
 
+    function startStandartProvision(name) {
+        localBlankDevicesController.provisionDevice(name)
+    }
+
     function terminateProvision() {
         showDevicesSetup()
     }

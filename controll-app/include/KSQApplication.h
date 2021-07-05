@@ -30,6 +30,7 @@
 #include <controllers/KSQUXSimplifyController.h>
 #include <controllers/devices/KSQAllDevicesController.h>
 #include <controllers/integrations/KSQIntegrationsController.h>
+#include <controllers/plugins/KSQPluginsController.h>
 
 #include <controllers/extensions/KSQExtensions.h>
 
@@ -81,9 +82,9 @@ private:
     QSharedPointer<KSQUdp> m_netifUdp;
     QSharedPointer<KSQNetifWebsocket> m_netifWebsock;
 
-    KSQAllDevicesController m_deviceControllers;
-
+    QSharedPointer<KSQAllDevicesController> m_deviceControllers;
     QSharedPointer<KSQIntegrationsController> m_integrations;
+    QSharedPointer<KSQPluginsController> m_plugins;
     QSharedPointer<KSQExtensions> m_extensionDevices;
     QSharedPointer<KSQExtensions> m_extensionIntegrations;
     QSharedPointer<KSQExtensions> m_extensionPlugins;

@@ -59,28 +59,51 @@
 #define UDP_BROADCAST_PORT 4100
 #define GPIO_LED GPIO_NUM_2
 
-static void
-_initializer_exec_task(void *pvParameters);
+        static void
+        _initializer_exec_task(void *pvParameters);
 
 #define TWDT_TIMEOUT_S 5
 
-static vs_status_e
-vs_snap_cfg_config(const vs_cfg_wifi_configuration_t *configuration);
+        static vs_status_e
+        vs_snap_cfg_config(const vs_netif_t *netif,
+                           vs_mac_addr_t sender_mac,
+                           const vs_cfg_wifi_configuration_t *configuration);
 
-static void
-wifi_status_cb(bool ready);
+        static void
+        wifi_status_cb(bool ready);
 
-static vs_status_e
-start_wifi(void);
+        static vs_status_e
+        start_wifi(void);
 
-vs_snap_cfg_server_service_t cfg_server_cb = {vs_snap_cfg_config, NULL, NULL, NULL};
+        vs_snap_cfg_server_service_t cfg_server_cb = {vs_snap_cfg_config, NULL, NULL, NULL, NULL};
+
+        //-----------------------------------------------------------------------------
+        void
+        app_main(void) {
+            xTaskCreate(_initializer_exec_task, "_initializer_task", 20 * 4096, NULL, 5, NULL);
+            while (1)
+                ;
+}
 
 //-----------------------------------------------------------------------------
-void
-app_main(void) {
-    xTaskCreate(_initializer_exec_task, "_initializer_task", 20 * 4096, NULL, 5, NULL);
-    while (1)
-        ;
+static bool
+need_enc_cb(vs_snap_service_id_t service_id, vs_snap_element_t element_id) {
+    // if (VS_PC_SERVICE_ID == service_id && VS_PC_PCMD == element_id) {
+    //     return true;
+    // }
+    return false;
+}
+
+//-----------------------------------------------------------------------------
+static vs_status_e
+name_change_cb(void) {
+    vs_status_e res = VS_CODE_ERR_FILE;
+    // CHECK_NOT_ZERO_RET(vs_snap_device_name(), VS_CODE_ERR_INCORRECT_ARGUMENT);
+    // res = vs_secbox_save(VS_SECBOX_SIGNED_AND_ENCRYPTED,
+    //                      _device_name_storage_id,
+    //                      (const uint8_t *)vs_snap_device_name(),
+    //                      strnlen(vs_snap_device_name(), DEVICE_NAME_SZ_MAX));
+    return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -182,7 +205,15 @@ _initializer_exec_task(void *pvParameters) {
 
         VS_LOG_DEBUG("Initialization snap");
         STATUS_CHECK(
-                vs_snap_init(netif_udp_impl, vs_packets_queue_add, manufacture_id, device_type, serial, device_roles),
+
+                vs_snap_init(netif_udp_impl,
+                             vs_packets_queue_add,
+                             need_enc_cb,
+                             name_change_cb,
+                             manufacture_id,
+                             device_type,
+                             serial,
+                             device_roles),
                 "Unable to initialize SNAP module");
 
         VS_LOG_DEBUG("Add BLE network interface");
@@ -250,7 +281,9 @@ start_wifi(void) {
 
 //-----------------------------------------------------------------------------
 static vs_status_e
-vs_snap_cfg_config(const vs_cfg_wifi_configuration_t *configuration) {
+vs_snap_cfg_config(const vs_netif_t *netif,
+                   vs_mac_addr_t sender_mac,
+                   const vs_cfg_wifi_configuration_t *configuration) {
     CHECK_NOT_ZERO_RET(configuration, VS_CODE_ERR_INCORRECT_ARGUMENT);
     VS_LOG_DEBUG("Configure :");
     VS_LOG_DEBUG("     ssid : %s", configuration->ssid);

@@ -17,18 +17,25 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef PROVISION_DEVICE_INFO_H
-#define PROVISION_DEVICE_INFO_H
+#ifndef YIOT_TEST_LOCK_H
+#define YIOT_TEST_LOCK_H
 
+#include <virgil/iot/status_code/status_code.h>
+#include <virgil/iot/protocols/snap.h>
 #include <virgil/iot/provision/provision-structs.h>
+#include <common/protocols/snap/user/user-structs.h>
+#include "devices/device-base.h"
 
-void
-ks_devinfo_manufacturer(vs_device_manufacture_id_t manufacture_id);
+#ifdef __cplusplus
+using namespace VirgilIoTKit;
+extern "C" {
+#endif
 
-void
-ks_devinfo_device_type(vs_device_type_t device_type);
+ks_test_device_t *
+ks_door_lock(void);
 
-void
-ks_devinfo_device_serial(vs_device_serial_t serial);
+#ifdef __cplusplus
+}
+#endif
 
-#endif // PROVISION_DEVICE_INFO_H
+#endif // YIOT_TEST_LOCK_H

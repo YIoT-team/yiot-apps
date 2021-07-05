@@ -21,7 +21,8 @@
 
 //-----------------------------------------------------------------------------
 bool
-KSQIntegrationsController::load(const QString &integrationDir, QSharedPointer<KSQOneExtension> extension) {
+KSQIntegrationsController::load(QSharedPointer<KSQOneExtension> extension) {
+    QString integrationDir(extension->basePath());
     if (!m_engine) {
         VS_LOG_WARNING("QML Engine is not set");
         return false;

@@ -20,7 +20,6 @@
 #ifndef KSQ_EXTENSION_INTEGRATIONS_H
 #define KSQ_EXTENSION_INTEGRATIONS_H
 
-#include <QtCore>
 #include <QAbstractTableModel>
 
 #include <controllers/extensions/KSQOneExtension.h>
@@ -43,7 +42,7 @@ public:
     bool
     load();
 
-    QStringList
+    QList<QSharedPointer<KSQOneExtension>>
     builtInExtensions() const;
 
     /**
@@ -66,7 +65,6 @@ private:
     QString m_prefix;
     QList<QSharedPointer<KSQOneExtension>> m_extensions;
     QSharedPointer<KSQExtensionControllerBase> m_processor;
-    QStringList m_builtIn;
 
     QString
     fixQrcQFile(const QString &resourceDir);

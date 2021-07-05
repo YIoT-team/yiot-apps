@@ -31,8 +31,9 @@
 
 #include <common/protocols/snap/user/user-structs.h>
 #include <controllers/devices/KSQDevicesType.h>
+#include <controllers/extensions/KSQExtensionControllerBase.h>
 
-class KSQAllDevicesController : public QAbstractTableModel {
+class KSQAllDevicesController : public QAbstractTableModel, public KSQExtensionControllerBase {
     Q_OBJECT
 public:
     enum Element { Name = Qt::UserRole, Type, Image, SubModel, Js, ElementMax };
@@ -55,14 +56,15 @@ public:
     QHash<int, QByteArray>
     roleNames() const override;
 
-    KSQAllDevicesController &
-    operator<<(KSQDevicesType *devicesType);
-
 signals:
     void
     fireNewProvisionedDevice(QSharedPointer<KSQDevice> device);
 
 public slots:
+
+protected:
+    virtual bool
+    load(QSharedPointer<KSQOneExtension> extension) override final;
 
 private slots:
     void
@@ -70,6 +72,9 @@ private slots:
 
 private:
     QList<QSharedPointer<KSQDevicesType>> m_elements;
+
+    void
+    add(KSQDevicesType *devicesType);
 };
 
 #endif // YIOT_DEVICES_H

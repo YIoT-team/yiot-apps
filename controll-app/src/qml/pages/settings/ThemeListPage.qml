@@ -49,6 +49,7 @@ Page {
             ListElement {
                 name: qsTr("Dark")
                 image: "moon"
+                index: "dark"
                 property var action: function() {
                     Theme.getTheme(1)
                 }
@@ -56,6 +57,7 @@ Page {
             ListElement {
                 name: qsTr("Light")
                 image: "sun"
+                index: "light"
                 property var action: function() {
                     Theme.getTheme(0)
                 }
@@ -66,7 +68,7 @@ Page {
             id: base
             width: parent.width
             height: 45
-            color: "transparent"
+            color: (Theme.state === index) ? Theme.contrastBackgroundColor : "transparent"
 
             RowLayout {
                 id: listDelegate
@@ -96,11 +98,14 @@ Page {
                 }
             }
 
+            onVisibleChanged: { color = (Theme.state === index) ? Theme.contrastBackgroundColor : "transparent" }
+
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
                 onClicked: {
                     action()
+                    showMenuSettings()
                 }
 
                 onEntered: {
@@ -108,7 +113,7 @@ Page {
                 }
 
                 onExited: {
-                    base.color = "transparent"
+                    base.color = (Theme.state === index) ? Theme.contrastBackgroundColor : "transparent"
                 }
             }
         }

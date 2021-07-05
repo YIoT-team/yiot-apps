@@ -26,11 +26,15 @@ KSQOneExtension::KSQOneExtension(const QString &a_logo,
                                  const QString &a_descr,
                                  const QString &a_link,
                                  size_t a_size,
-                                 const QStringList a_languages) {
+                                 const QStringList a_languages,
+                                 bool a_isBuiltIn,
+                                 const QString &a_path) {
     m_logo = a_logo;
     m_name = a_name;
     m_version = a_version;
     m_description = a_descr;
+    m_isBuiltIn = a_isBuiltIn;
+    m_path = a_path;
 }
 //-----------------------------------------------------------------------------
 
@@ -41,6 +45,18 @@ KSQOneExtension::KSQOneExtension(KSQOneExtension const &) {
 KSQOneExtension &
 KSQOneExtension::operator=(KSQOneExtension const &) {
     return *this;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQOneExtension::isBuiltIn() const {
+    return m_isBuiltIn;
+}
+
+//-----------------------------------------------------------------------------
+QString
+KSQOneExtension::basePath() const {
+    return m_path;
 }
 
 //-----------------------------------------------------------------------------

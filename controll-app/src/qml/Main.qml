@@ -117,10 +117,10 @@ ApplicationWindow {
     Connections {
         target: uxSimplifier
 
-        function onFireRequestDeviceProvision(mac, name) {
+        function onFireRequestDeviceProvision(mac, name, isBLE) {
             deviceActionDialog.deviceMac = mac
             deviceActionDialog.name = name
-            deviceActionDialog.ctx = mac
+            deviceActionDialog.ctx = [mac, isBLE]
             deviceActionDialog.inform = qsTr("Do you want to setup a new device ?")
             deviceActionDialog.actionOk = startDeviceProvision
             deviceActionDialog.actionClose = rejectDeviceProvision
@@ -310,9 +310,16 @@ ApplicationWindow {
     //      User experience simplifier
     // ------------------------------------------------------------------------
 
-    function startDeviceProvision(mac) {
+    function startDeviceProvision(ctx) {
+        let mac = ctx[0]
+        let isBLE = ctx[1]
+
         showCredLoad()
-        devicesSetupPage.startBLEProvision(mac)
+        if (isBLE) {
+            devicesSetupPage.startBLEProvision(mac)
+        } else {
+            devicesSetupPage.startStandartProvision(mac)
+        }
     }
 
     function rejectDeviceProvision(mac) {

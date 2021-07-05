@@ -42,20 +42,25 @@ const QString KSQNetifWebsocket::_payloadTag("payload");
 
 //-----------------------------------------------------------------------------
 KSQNetifWebsocket::KSQNetifWebsocket() : m_canCommunicate(false) {
-    connect(&m_webSocket, &QWebSocket::connected, this, &KSQNetifWebsocket::onConnected);
-    connect(&m_webSocket, &QWebSocket::disconnected, this, &KSQNetifWebsocket::onDisconnected);
-    connect(&m_webSocket, &QWebSocket::stateChanged, this, &KSQNetifWebsocket::onStateChanged);
-    connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &KSQNetifWebsocket::onMessageReceived);
-    connect(&m_webSocket,
-            SIGNAL(error(QAbstractSocket::SocketError)),
-            this,
-            SLOT(onError(QAbstractSocket::SocketError)));
+    m_objConnections << connect(&m_webSocket, &QWebSocket::connected, this, &KSQNetifWebsocket::onConnected);
+    m_objConnections << connect(&m_webSocket, &QWebSocket::disconnected, this, &KSQNetifWebsocket::onDisconnected);
+    m_objConnections << connect(&m_webSocket, &QWebSocket::stateChanged, this, &KSQNetifWebsocket::onStateChanged);
+    m_objConnections << connect(
+            &m_webSocket, &QWebSocket::textMessageReceived, this, &KSQNetifWebsocket::onMessageReceived);
+    m_objConnections << connect(&m_webSocket,
+                                SIGNAL(error(QAbstractSocket::SocketError)),
+                                this,
+                                SLOT(onError(QAbstractSocket::SocketError)));
 
-    connect(this, SIGNAL(fireSend(QByteArray)), this, SLOT(onSend(QByteArray)), Qt::QueuedConnection);
+    m_objConnections << connect(
+            this, SIGNAL(fireSend(QByteArray)), this, SLOT(onSend(QByteArray)), Qt::QueuedConnection);
 }
 
 //-----------------------------------------------------------------------------
 KSQNetifWebsocket::~KSQNetifWebsocket() {
+    for (auto &conn : m_objConnections) {
+        disconnect(conn);
+    }
     disconnectWS();
 }
 
@@ -121,6 +126,8 @@ KSQNetifWebsocket::onStateChanged(QAbstractSocket::SocketState state) {
 void
 KSQNetifWebsocket::onError(QAbstractSocket::SocketError error) {
     qDebug() << "KSQNetifWebsocket::onError : " << error;
+    m_webSocket.open(m_url);
+    emit fireStateChanged(m_webSocket.state());
 }
 
 //-----------------------------------------------------------------------------
@@ -140,9 +147,6 @@ KSQNetifWebsocket::onConnected() {
 void
 KSQNetifWebsocket::onDisconnected() {
     VS_LOG_DEBUG("WebSocket disconnected");
-    m_webSocket.open(m_url);
-
-    emit fireStateChanged(m_webSocket.state());
 }
 
 //-----------------------------------------------------------------------------

@@ -42,8 +42,9 @@
 #include <virgil/iot/vs-soft-secmodule/vs-soft-secmodule.h>
 
 // Command processing modules
-#include "commands/device-info.h"
-#include "commands/pc.h"
+#include "devices/device-base.h"
+#include "devices/test-door-lock.h"
+#include "devices/test-lamp.h"
 
 // Platform-specific helpers
 #include "helpers/app-helpers.h" // Different helpers
@@ -65,12 +66,18 @@ _get_websock_url(int argc,
                  char websock_url[WEBSOCK_URL_SZ_MAX + 1],
                  char websock_id[WEBSOCK_ID_SZ_MAX + 1]);
 
+static vs_status_e
+_get_device_type(int argc, char *argv[], char **device_type_str);
+
+static ks_test_device_t *_test_device = NULL;
+
 //-----------------------------------------------------------------------------
 int
 main(int argc, char *argv[]) {
     int res = -1;
     char websock_url[WEBSOCK_URL_SZ_MAX + 1];
     char websock_id[WEBSOCK_ID_SZ_MAX + 1];
+    char *device_type_str = NULL;
 
     // Holder of Network interfaces list
     vs_netif_t *netifs_impl[2] = {0};
@@ -82,8 +89,7 @@ main(int argc, char *argv[]) {
                                                   NULL};
 
     // RPi-specific callbacks
-    vs_snap_user_server_service_t user_server_cb = {ks_snap_pc_get_info_cb, // Get RPi information
-                                                    ks_snap_pc_command_cb}; // Process RPi command
+    vs_snap_user_server_service_t user_server_cb = {0};
 
     // Security API implementation
     vs_secmodule_impl_t *secmodule_impl = NULL;
@@ -98,14 +104,35 @@ main(int argc, char *argv[]) {
     vs_device_type_t device_type;
     vs_device_serial_t serial;
 
-    ks_devinfo_manufacturer(manufacture_id); // Get device manufacturer
-    ks_devinfo_device_type(device_type);     // Get device type
-    ks_devinfo_device_serial(serial);        // Get device serial
-
     // Initialize Logger module
-    vs_logger_init(VS_LOGLEV_DEBUG);
+    vs_logger_init(VS_LOGLEV_INFO);
 
+    STATUS_CHECK(_get_device_type(argc, argv, &device_type_str), "");
     STATUS_CHECK(_get_websock_url(argc, argv, websock_url, websock_id), "");
+
+    // Get test device by type
+    if (0 == strcmp(device_type_str, "lock")) {
+        _test_device = ks_door_lock();
+    } else {
+        _test_device = ks_lamp();
+    }
+
+    // Check device correctness
+    CHECK_NOT_ZERO(_test_device);
+    CHECK_NOT_ZERO(_test_device->info_cb);
+    CHECK_NOT_ZERO(_test_device->command_cb);
+    CHECK_NOT_ZERO(_test_device->get_manufacturer);
+    CHECK_NOT_ZERO(_test_device->get_serial);
+    CHECK_NOT_ZERO(_test_device->get_type);
+    CHECK_NOT_ZERO(_test_device->get_description);
+    CHECK_NOT_ZERO(_test_device->get_default_name);
+
+    // Fill data related to device type
+    _test_device->get_manufacturer(manufacture_id); // Get device manufacturer
+    _test_device->get_type(device_type);            // Get device type
+    _test_device->get_serial(serial);               // Get device serial
+    user_server_cb.get_data = _test_device->info_cb;
+    user_server_cb.pc_cmd = _test_device->command_cb;
 
     // Print title
     _print_title();
@@ -162,6 +189,7 @@ main(int argc, char *argv[]) {
                                 device_type,
                                 serial,
                                 VS_SNAP_DEV_THING,
+                                _test_device->get_default_name(),
                                 netifs_impl,   // Set Network interfaces
                                 cfg_server_cb, // Set protocol callbacks
                                 user_server_cb,
@@ -175,7 +203,7 @@ main(int argc, char *argv[]) {
     //
 
     // Inform about need of WiFi credentials
-    vs_snap_info_set_need_cred(true);
+    vs_snap_info_set_need_cred(false);
 
     // Sleep until CTRL_C
     vs_app_sleep_until_stop();
@@ -214,9 +242,8 @@ _print_title(void) {
     vs_device_type_t *dev_type = (vs_device_type_t *)&str_dev_type;
     uint32_t in_out_len = VS_DEVICE_SERIAL_SIZE * 2 + 1;
 
-    ks_devinfo_manufacturer(*manufacture);
-    ks_devinfo_device_type(*dev_type);
-    ks_devinfo_device_serial(serial);
+    _test_device->get_manufacturer(*manufacture);
+    _test_device->get_serial(serial);
     vs_app_data_to_hex(serial, VS_DEVICE_SERIAL_SIZE, (uint8_t *)str_dev_serial, &in_out_len);
 
     printf("\n\n");
@@ -239,9 +266,9 @@ _print_title(void) {
     printf("               Open-source Secure IoT platform             \n");
     printf(" ──────────────────────────────────────────────────────────\n");
     printf("  Manufacture ID = \"%s\"\n", str_manufacturer);
-    printf("  Device type    = \"%s\"\n", str_dev_type);
-    printf("  Device serial  = \"%s\"\n", str_dev_type);
+    printf("  Device type    = \"%s\"\n", _test_device->get_description());
     printf(" ──────────────────────────────────────────────────────────\n\n");
+    fflush(stdout);
 }
 
 //-----------------------------------------------------------------------------
@@ -292,6 +319,33 @@ _get_websock_url(int argc,
     delim_pos = strstr(path_to_str, "&");
     VS_IOT_MEMCPY(websock_url, path_to_str, delim_pos - path_to_str);
     VS_IOT_STRCPY(websock_id, delim_pos + 1);
+
+    return VS_CODE_OK;
+}
+
+//-----------------------------------------------------------------------------
+static vs_status_e
+_get_device_type(int argc, char *argv[], char **device_type_str) {
+    static const char *DEVICE_SHORT = "-d";
+    static const char *DEVICE_FULL = "--device";
+    char *path_to_str;
+
+    CHECK_NOT_ZERO_RET(device_type_str, VS_CODE_ERR_NULLPTR_ARGUMENT);
+
+    if (!argv || !argc) {
+        VS_LOG_ERROR("Wrong input parameters.");
+        return VS_CODE_ERR_INCORRECT_ARGUMENT;
+    }
+
+    path_to_str = vs_app_get_commandline_arg(argc, argv, DEVICE_SHORT, DEVICE_FULL);
+
+    // Check input parameters
+    if (!path_to_str) {
+        VS_LOG_ERROR("usage: %s/%s <device type string [lamp, lock]>", DEVICE_SHORT, DEVICE_FULL);
+        return VS_CODE_ERR_INCORRECT_ARGUMENT;
+    }
+
+    *device_type_str = path_to_str;
 
     return VS_CODE_OK;
 }

@@ -30,7 +30,8 @@
 #endif
 
 //-----------------------------------------------------------------------------
-KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, const QString &deviceDir) {
+KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, QSharedPointer<KSQOneExtension> device) {
+    QString deviceDir(device->basePath());
     // Create JS processor
     const QString js = deviceDir + "/src/js/main.qml";
     QQmlComponent component(&engine, QUrl(js));
@@ -54,10 +55,22 @@ KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, const QString &dev
                                   Q_RETURN_ARG(QVariant, res),
                                   Q_ARG(QVariant, QVariant::fromValue(controlPage)))) {
         object->setProperty("controlPageIdx", res);
+        device->setJs(object);
     } else {
         VS_LOG_ERROR("Cannot register device control page");
     }
 
+    // Get device ID
+    auto parts = deviceDir.split("/", Qt::SkipEmptyParts);
+    if (parts.size()) {
+        bool ok;
+        auto val = parts.last().toInt(&ok);
+        if (ok) {
+            m_deviceId = val;
+        } else {
+            VS_LOG_ERROR("Cannot detect device ID");
+        }
+    }
 
     // SNAP::INFO service
     connect(&VSQSnapInfoClient::instance(),
@@ -82,7 +95,7 @@ KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, const QString &dev
     connect(&KSQSnapUSERClient::instance(),
             &KSQSnapUSERClient::fireStateError,
             this,
-            &KSQDevicesType::onPCError,
+            &KSQDevicesType::onDeviceError,
             Qt::QueuedConnection);
 
     // SNAP:SCRT
@@ -177,6 +190,22 @@ KSQDevicesType::onDeviceStateUpdate(const vs_mac_addr_t mac, QString data) {
     auto res = findDevice(mac);
     auto device = res.second;
     if (!device) {
+        bool needAdd = false;
+        try {
+            QJsonDocument jsonState = QJsonDocument::fromJson(data.toUtf8());
+            QJsonObject jsonObject = jsonState.object();
+            int type = jsonObject["type"].toInt();
+
+            if (static_cast<uint64_t>(type) == m_deviceId) {
+                needAdd = true;
+            }
+        } catch (...) {
+        }
+
+        if (!needAdd) {
+            return;
+        }
+
         // Add Device
         beginInsertRows(QModelIndex(), m_devices.size(), m_devices.size());
 
@@ -194,20 +223,14 @@ KSQDevicesType::onDeviceStateUpdate(const vs_mac_addr_t mac, QString data) {
     res = findDevice(mac);
     device = res.second;
     if (device) {
-#if 0
-        if (deviceInfo.m_hasGeneralInfo) {
-                pc->setDeviceID(deviceInfo.m_deviceRoles);
-                pc->setManufacture(deviceInfo.m_manufactureId);
-                pc->setDeviceID(deviceInfo.m_deviceType);
-                pc->setFwVersion(deviceInfo.m_fwVer);
-                pc->setTlVersion(deviceInfo.m_tlVer);
-            }
 
-            if (deviceInfo.m_hasStatistics) {
-                pc->setSentBytes(QString("%1").arg(deviceInfo.m_sent));
-                pc->setReceivedBytes(QString("%1").arg(deviceInfo.m_received));
-            }
-#endif
+        // Send JSON to JS processing
+        QVariant varDevice;
+        varDevice.setValue(device.get());
+        if (!QMetaObject::invokeMethod(
+                    m_qmlProcessor.get(), "onCommand", Q_ARG(QVariant, varDevice), Q_ARG(QVariant, data))) {
+            VS_LOG_ERROR("Cannot process device command in JS");
+        }
 
         device->commandDone();
 
@@ -218,11 +241,11 @@ KSQDevicesType::onDeviceStateUpdate(const vs_mac_addr_t mac, QString data) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDevicesType::onPCError(const vs_mac_addr_t mac) {
+KSQDevicesType::onDeviceError(const vs_mac_addr_t mac) {
     auto res = findDevice(mac);
     auto device = res.second;
     if (device) {
-        qDebug() << "PC error: " << VSQMac(mac).description();
+        qDebug() << "Device error: " << VSQMac(mac).description();
         device->commandError();
     }
 }
@@ -320,6 +343,7 @@ KSQDevicesType::qmlProcessor() const {
 }
 
 //-----------------------------------------------------------------------------
+// TODO: remove from C++. Use in QML/JS only
 QString
 KSQDevicesType::name() const {
     static QString name;
@@ -337,6 +361,7 @@ KSQDevicesType::name() const {
 }
 
 //-----------------------------------------------------------------------------
+// TODO: remove from C++. Use in QML/JS only
 QString
 KSQDevicesType::type() const {
     static QString type;
@@ -354,6 +379,7 @@ KSQDevicesType::type() const {
 }
 
 //-----------------------------------------------------------------------------
+// TODO: remove from C++. Use in QML/JS only
 QString
 KSQDevicesType::image() const {
     static QString image;
