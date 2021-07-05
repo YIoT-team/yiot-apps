@@ -60,6 +60,8 @@ init_name_storage_id(void) {
         VS_IOT_MEMSET(_device_name_storage_id, 0, sizeof(_device_name_storage_id));
         VS_IOT_STRCPY(_device_name_storage_id, "dev_name");
     }
+
+    return VS_CODE_OK;
 }
 
 //-----------------------------------------------------------------------------
