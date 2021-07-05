@@ -93,7 +93,11 @@ static KSResendContainer *_resendContainer = nullptr;
 static std::atomic<bool> _ready = false;
 static std::atomic<bool> _connecting = false;
 
+#if __APPLE__
+static std::string _defaultNetif = "en0";
+#else
 static std::string _defaultNetif = "eth0";
+#endif
 
 #define UDP_BCAST_PORT (4100)
 
@@ -233,11 +237,10 @@ _prepare_dst_addr(void) {
     in_addr_t res;
     struct in_addr in;
 
-
     const char *_addr_str = getenv("VS_BCAST_SUBNET_ADDR");
     if (!_addr_str) {
 
-        res = _get_interface_bcast_addr("eth0");
+        res = _get_interface_bcast_addr(_defaultNetif);
         if (INADDR_ANY != res) {
             _dst_addr = res;
         } else {
