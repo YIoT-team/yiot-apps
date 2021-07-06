@@ -9,7 +9,7 @@
         <string>MyIcon.icns</string>
 
         <key>CFBundleIdentifier</key>
-        <string>io.yiot.kutashenko.yiot</string>
+        <string>io.yiot-dev.macos.yiot</string>
 
         <key>CFBundlePackageType</key>
         <string>APPL</string>

@@ -166,7 +166,7 @@ elseif(KS_PLATFORM STREQUAL "macos")
     set(MACOSX_DMG_ICON_FILE Installer.icns)
     set(MACOSX_BUNDLE_BACKGROUND_FILE "Background.png")
     set(MACOSX_DEPLOYMENT_TARGET 10.13)
-    set(VS_BUNDLE_PREFIX "io.yiot.kutashenko")
+    set(VS_BUNDLE_PREFIX "io.yiot-dev.macos")
     set(MACOSX_BUNDLE_GUI_IDENTIFIER "${VS_BUNDLE_PREFIX}.${PROJECT_NAME}")
     list(APPEND VS_TEMPLATES "${CMAKE_CURRENT_SOURCE_DIR}/platforms/macos/release-notes.html.in=${CMAKE_CURRENT_SOURCE_DIR}/platforms/macos/release-notes.html")
     list(APPEND VS_TEMPLATES "${CMAKE_CURRENT_SOURCE_DIR}/platforms/macos/dmg.json.in=${CMAKE_BINARY_DIR}/dmg.json")
@@ -327,9 +327,13 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/setup/KSQDeviceSetupData.cpp
 
         $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/os/macos/KSMacWiFi.mm>
+        $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/os/ios/KSiOSWiFi.mm>
         $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/src/os/linux/KSLinuxWiFi.cpp>
         $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/src/os/win/KSWinWiFi.cpp>
         $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/src/os/android/KSQAndroid.cpp>
+
+        $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/yiot_plugin_import.cpp>
+        $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/yiot_qml_plugin_import.cpp>
 
         # Qt Resources
         ${CMAKE_CURRENT_LIST_DIR}/src/resources.qrc
@@ -448,19 +452,46 @@ if (KS_PLATFORM STREQUAL "macos")
    set (PLIST_DST "${CMAKE_CURRENT_LIST_DIR}/platforms/macos/macos-info.plist")
    set (PLIST_TMPL "${PLIST_DST}.in")
    configure_file(${PLIST_TMPL} ${PLIST_DST})
-
-#   macdeployqt(${KS_TARGET_NAME} "${CMAKE_CURRENT_LIST_DIR}/src/qml")
 endif ()
 
 if (KS_PLATFORM STREQUAL "ios")
-    #
-    #   Configure plist file
-    #
-    set_target_properties(${KS_TARGET_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_LIST_DIR}/platforms/ios/ios-info.plist)
-    set (PLIST_DST "${CMAKE_CURRENT_LIST_DIR}/platforms/ios/ios-info.plist")
-    set (PLIST_TMPL "${PLIST_DST}.in")
-    configure_file(${PLIST_TMPL} ${PLIST_DST})
+    include(ios)
+    include(staticcmake)
 
-    #   macdeployqt(${KS_TARGET_NAME} "${CMAKE_CURRENT_LIST_DIR}/src/qml")
+    # Generate info about static plugins
+    qt_generate_plugin_import(${KS_TARGET_NAME}
+            OUTPUT "${KS_TARGET_NAME}_plugin_import.cpp"
+            OUTPUT_DIR "${CMAKE_CURRENT_LIST_DIR}/src"
+            VERBOSE)
+
+    # Generate info about static QML plugins
+    qt_generate_qml_plugin_import(${KS_TARGET_NAME}
+            QML_DIR "$ENV{QTDIR}/qml"
+            QML_SRC "${CMAKE_CURRENT_LIST_DIR}/src/qml"
+            OUTPUT "${KS_TARGET_NAME}_qml_plugin_import.cpp"
+            OUTPUT_DIR "${CMAKE_CURRENT_LIST_DIR}/src"
+            VERBOSE)
+
+    # Fix LD path for dylib
+    qt_ios_set_xcode_property(${KS_TARGET_NAME} LD_RUNPATH_SEARCH_PATHS "@executable_path" "All")
+
+    # Copy the framework into the bundle
+    add_custom_command(
+            TARGET
+            ${KS_TARGET_NAME}
+            POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_CURRENT_BINARY_DIR}/../common/iotkit/modules/crypto/converters/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/libconverters.dylib
+            ${CMAKE_CURRENT_BINARY_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/${KS_TARGET_NAME}.app
+    )
+
+    # Prepare iOS bundle creation
+    add_qt_ios_app(${KS_TARGET_NAME}
+            CUSTOM_PLIST        "${CMAKE_CURRENT_LIST_DIR}/platforms/ios/ios-info.plist.in"
+            BUNDLE_IDENTIFIER   "io.yiot-dev.ios.yiot"
+            ASSET_DIR           "${CMAKE_CURRENT_SOURCE_DIR}/platforms/ios/Assets.xcassets"
+            SHORT_VERSION       "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+            LONG_VERSION        "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+            VERBOSE             1)
+
 endif ()
 
