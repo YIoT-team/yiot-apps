@@ -84,6 +84,7 @@ Page {
             verticalAlignment: Text.AlignVCenter
             textFormat: TextEdit.MarkdownText
             text: plugin.description
+            color: Theme.primaryTextColor
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         }
 
