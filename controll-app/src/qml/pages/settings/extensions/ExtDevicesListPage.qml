@@ -68,12 +68,14 @@ Page {
 
                     Text {
                         text: info.name
+                        font.pointSize: 14
                         color: Theme.primaryTextColor
                         Layout.fillWidth: true
                     }
 
                     Text {
                         text: info.version
+                        font.pointSize: 14
                         color: Theme.primaryTextColor
                         horizontalAlignment: Text.AlignRight
                         Layout.rightMargin: 15
