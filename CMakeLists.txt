@@ -94,9 +94,10 @@ endif()
 
 
 # ---------------------------------------------------------------------------
-#	Common libraries
+#	YIoT-core
 # ---------------------------------------------------------------------------
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/common)
+set(VIRGIL_IOT_CONFIG_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/ext/yiot-core/iotkit/sdk/config/pc)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/ext/yiot-core)
 
 # ---------------------------------------------------------------------------
 #	Device Applications
