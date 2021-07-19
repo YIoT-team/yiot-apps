@@ -26,14 +26,9 @@
 #include <yiot-iotkit/setup/KSQDeviceSetupController.h>
 
 //-----------------------------------------------------------------------------
-KSQBlankDevicesController::KSQBlankDevicesController(QSharedPointer<VSQNetifBase> netif) {
-#if 1
-    m_netif = netif;
-#else
+KSQBlankDevicesController::KSQBlankDevicesController() {
     m_netif.clear();
-#endif
 
-#if 1
     // SNAP::INFO service
     connect(&VSQSnapInfoClient::instance(),
             &VSQSnapInfoClient::fireNewDevice,
@@ -51,7 +46,6 @@ KSQBlankDevicesController::KSQBlankDevicesController(QSharedPointer<VSQNetifBase
     connect(&m_cleanerTimer, &QTimer::timeout, this, &KSQBlankDevicesController::cleanOldDevices);
 
     m_cleanerTimer.start(kInactiveTimeoutMS / 5);
-#endif
 }
 
 //-----------------------------------------------------------------------------

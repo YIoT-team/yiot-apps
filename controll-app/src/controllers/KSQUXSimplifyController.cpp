@@ -46,7 +46,11 @@ KSQUXSimplifyController::onDeviceRequiresProvision(QString deviceName,
                                                    VSQMac deviceMac) {
     m_netif = netif;
     m_deviceMac = deviceMac;
-    requestProvisionUI(deviceMac.description(), deviceName, netif->requiresAdditionalActivation());
+    bool needActivation = false;
+    if (!netif.isNull()) {
+        needActivation = netif->requiresAdditionalActivation();
+    }
+    requestProvisionUI(deviceMac.description(), deviceName, needActivation);
 }
 
 //-----------------------------------------------------------------------------

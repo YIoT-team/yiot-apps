@@ -51,7 +51,7 @@ KSQApplication::run() {
     m_bleController = QSharedPointer<KSQBLEController>::create();
     m_netifUdp = QSharedPointer<KSQUdp>::create();
     m_netifWebsock = QSharedPointer<KSQNetifWebsocket>::create();
-    m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create(/*m_netifUdp*/ m_netifWebsock);
+    m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create();
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
     m_deviceControllers = QSharedPointer<KSQAllDevicesController>::create();
     m_integrations = QSharedPointer<KSQIntegrationsController>::create();

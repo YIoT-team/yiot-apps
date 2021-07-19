@@ -181,7 +181,7 @@ KSQSnapPRVSClient::signDevice(QSharedPointer<VSQNetifBase> netif,
                               QSharedPointer<KSQRoT> rootOfTrust) {
 
     // Check input parameters
-    if (!netif || !deviceMac || !deviceKey.isValid() || rootOfTrust->factory().first.isNull() ||
+    if (!deviceMac || !deviceKey.isValid() || rootOfTrust->factory().first.isNull() ||
         rootOfTrust->factory().second.isNull()) {
         emit fireProvisionError(tr("Wrong parameters to sign devices"));
         return false;
@@ -261,14 +261,6 @@ bool
 KSQSnapPRVSClient::provisionDevice(QSharedPointer<VSQNetifBase> netif,
                                    VSQMac deviceMac,
                                    QSharedPointer<KSQRoT> rootOfTrust) {
-
-    auto lowLevelNetif = netif->lowLevelNetif();
-
-    // Prevent broadcasting and routing for network interfaces
-    if (!lowLevelNetif || lowLevelNetif == vs_snap_netif_routing()) {
-        emit fireProvisionError(tr("Wrong network Interface"));
-        return false;
-    }
 
     // Check Root of trust is valid
     if (!rootOfTrust->isValid()) {
