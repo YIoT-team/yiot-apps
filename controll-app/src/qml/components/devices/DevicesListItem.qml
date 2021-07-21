@@ -29,6 +29,7 @@ Rectangle {
     property bool submodulePresent: true
     property bool showControlsPermanent: false
     property string controlElementUrl: ""
+    property var action: function() { }
 
     id: deviceItem
     color: "transparent"
@@ -123,6 +124,7 @@ Rectangle {
         hoverEnabled: true
         onClicked: {
             if (!submodulePresent) {
+                action()
                 return
             }
             if (topLevel) {

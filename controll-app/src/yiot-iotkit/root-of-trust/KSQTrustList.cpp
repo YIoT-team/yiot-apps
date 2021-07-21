@@ -179,6 +179,14 @@ KSQTrustList::load(const QString &id) {
 }
 
 //-----------------------------------------------------------------------------
+bool
+KSQTrustList::set(const QByteArray &val) {
+    m_tl = val;
+    m_valid = save();
+    return m_valid;
+}
+
+//-----------------------------------------------------------------------------
 QByteArray
 KSQTrustList::header() const {
     if (!m_valid || m_tl.size() <= minSz()) {

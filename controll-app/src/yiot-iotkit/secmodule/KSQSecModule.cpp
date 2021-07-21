@@ -175,3 +175,106 @@ KSQSecModule::sign(const QByteArray &data, const KSQKeyPair &signerKeyPair, vs_s
 }
 
 //-----------------------------------------------------------------------------
+QByteArray
+KSQSecModule::encryptWithPassword(const QByteArray &data, const QString &passwd) const {
+
+    //    uint8_t add_data = 0;
+    //    uint8_t encrypted_data[data_sz + VS_AES_256_GCM_AUTH_TAG_SIZE];
+    //
+    //    STATUS_CHECK_RET(secmodule_impl->aes_encrypt(VS_AES_GCM,
+    //                                                 shared_key,
+    //                                                 VS_AES_256_KEY_BITLEN,
+    //                                                 iv_data,
+    //                                                 VS_AES_256_GCM_IV_SIZE,
+    //                                                 &add_data,
+    //                                                 0,
+    //                                                 data_sz,
+    //                                                 data,
+    //                                                 encrypted_data,
+    //                                                 &encrypted_data[sizeof(encrypted_data) -
+    //                                                 VS_AES_256_GCM_AUTH_TAG_SIZE], VS_AES_256_GCM_AUTH_TAG_SIZE),
+    //                     "Unable to encrypt by using AES");
+
+    return data;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQSecModule::aesParamsFromPassword(const QString &pass, QByteArray &key, QByteArray &iv) const {
+    key.clear();
+    iv.clear();
+
+    int hashSzMax = vs_secmodule_get_hash_len(VS_HASH_SHA_256);
+    uint8_t hashFirst[hashSzMax];
+    uint8_t hashSecond[hashSzMax];
+    uint16_t hashResSz;
+    if (VS_CODE_OK == m_secmoduleImpl->hash(VS_HASH_SHA_256,
+                                            reinterpret_cast<const uint8_t *>(pass.toStdString().c_str()),
+                                            pass.length(),
+                                            hashFirst,
+                                            hashSzMax,
+                                            &hashResSz)) {
+
+        if (VS_CODE_OK ==
+            m_secmoduleImpl->hash(VS_HASH_SHA_256, hashFirst, hashResSz, hashSecond, hashSzMax, &hashResSz)) {
+            key = QByteArray(reinterpret_cast<char *>(hashFirst), hashResSz);
+            iv = QByteArray(reinterpret_cast<char *>(hashSecond), VS_AES_256_GCM_IV_SIZE);
+            return true;
+        }
+    }
+    return false;
+}
+
+//-----------------------------------------------------------------------------
+QByteArray
+KSQSecModule::decryptWithPassword(const QByteArray &data, const QString &passwd) const {
+
+    if (data.size() < (VS_AES_256_GCM_AUTH_TAG_SIZE + VS_AES_256_BLOCK_SIZE) ||
+        ((data.size() - VS_AES_256_GCM_AUTH_TAG_SIZE) % VS_AES_256_BLOCK_SIZE)) {
+        VS_LOG_ERROR("Wrong encrypted data");
+        return QByteArray();
+    }
+
+    QByteArray key;
+    QByteArray iv;
+    if (!aesParamsFromPassword(passwd, key, iv)) {
+        VS_LOG_ERROR("Cannot generate AES params from password");
+        return QByteArray();
+    }
+
+    qDebug() << "pass: " << passwd;
+    qDebug() << "key : " << key;
+    qDebug() << "iv  : " << iv;
+
+    QByteArray res(data.size() - VS_AES_256_GCM_AUTH_TAG_SIZE, Qt::Uninitialized);
+
+    if (VS_CODE_OK !=
+        m_secmoduleImpl->aes_auth_decrypt(
+                VS_AES_GCM,
+                reinterpret_cast<uint8_t *>(key.data()),
+                VS_AES_256_KEY_BITLEN,
+                reinterpret_cast<uint8_t *>(iv.data()),
+                VS_AES_256_GCM_IV_SIZE,
+                NULL,
+                0,
+                data.size() - VS_AES_256_GCM_AUTH_TAG_SIZE,
+                reinterpret_cast<const uint8_t *>(data.data()),
+                reinterpret_cast<uint8_t *>(res.data()),
+                reinterpret_cast<const uint8_t *>(&data.data()[data.size() - VS_AES_256_GCM_AUTH_TAG_SIZE]),
+                VS_AES_256_GCM_AUTH_TAG_SIZE)) {
+        VS_LOG_ERROR("Cannot decrypt data");
+        return QByteArray();
+    }
+
+    uint8_t lastByte = res.at(res.size() - 1);
+    if (!lastByte || lastByte > VS_AES_256_BLOCK_SIZE) {
+        VS_LOG_ERROR("Wrong decrypted data");
+        return QByteArray();
+    }
+
+    res.resize(res.size() - lastByte);
+
+    return res;
+}
+
+//-----------------------------------------------------------------------------

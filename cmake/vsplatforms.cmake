@@ -153,7 +153,7 @@ if(KS_PLATFORM)
         set(APPLE_PLATFORM "IOS")
         set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0")
         set(IOS_DEPLOYMENT_TARGET ${CMAKE_OSX_DEPLOYMENT_TARGET})
-        set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/ext/iotkit/sdk/cmake/toolchain/apple.cmake")
+        set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/ext/yiot-core/iotkit/sdk/cmake/toolchain/apple.cmake")
         prepare_qt_sdk(CMAKE_PREFIX_PATH CMAKE_FIND_ROOT_PATH QT_QMAKE_EXECUTABLE)
     
     # -- Windows

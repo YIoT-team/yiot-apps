@@ -21,31 +21,51 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "../../theme"
-import "../../components/devices"
+import "qrc:/qml/theme"
+import "qrc:/qml/components"
 
-Item {
-    property alias model: list.model
-    property int w: parent.width
+Popup {
+    property alias inform: informText.text
+    property var actionOk: function() {  }
 
-    Layout.topMargin: 1
-    Layout.leftMargin: 10
+    id: popup
 
-    ListView {
-        id: list
+    anchors.centerIn: parent
+    width: parent.width * 0.9
+    height: 200
+    modal: true
+    focus: true
+    closePolicy: Popup.CloseOnEscape
+
+    background: Rectangle {
+        border.color: Theme.primaryTextColor
+        border.width: 1
+        radius: 10
+        color: Theme.mainBackgroundColor
+    }
+
+    ColumnLayout {
         anchors.fill: parent
-        highlightFollowsCurrentItem: false
-        delegate: Column {
-            width: w
-            DevicesListItem {
-                property int commonWidth: w
-                submodulePresent: false
-                showControlsPermanent: true
-                controlElementUrl: "qrc:/qml/components/RoT/RoTControls.qml"
-                action: function() {
-                    showRoTControlPage(model)
-                }
+
+        InfoText { id: informText; wrapMode: Text.WordWrap }
+        
+        FormSecondaryButton {
+            Layout.topMargin: 20
+            Layout.bottomMargin: 10
+            Layout.fillWidth: true
+            text: qsTr("Ok")
+            onClicked: {
+                actionOk()
+                popup.close()
             }
         }
+    }
+
+    enter: Transition {
+        NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
+    }
+
+    exit: Transition {
+        NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
     }
 }

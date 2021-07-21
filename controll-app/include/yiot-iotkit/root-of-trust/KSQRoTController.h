@@ -47,6 +47,7 @@ class KSQRoTController : public QAbstractTableModel, public VSQSingleton<KSQRoTC
         TL2,
         Firmware1,
         Firmware2,
+        Obj,
         ElementMax
     };
 

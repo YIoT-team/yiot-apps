@@ -87,6 +87,11 @@ KSQRoTController::data(const QModelIndex &index, int role) const {
             return r->firmware1().description();
         case Element::Firmware2:
             return r->firmware2().description();
+        case Element::Obj: {
+            QVariant res;
+            res.setValue(r.get());
+            return res;
+        }
         default: {
         }
         }
@@ -112,6 +117,7 @@ KSQRoTController::roleNames() const {
     roles[TL2] = "tl2";
     roles[Firmware1] = "firmware1";
     roles[Firmware2] = "firmware2";
+    roles[Obj] = "object";
 
     return roles;
 }

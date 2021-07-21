@@ -480,7 +480,7 @@ if (KS_PLATFORM STREQUAL "ios")
             TARGET
             ${KS_TARGET_NAME}
             POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_BINARY_DIR}/../common/iotkit/modules/crypto/converters/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/libconverters.dylib
+            ${CMAKE_CURRENT_BINARY_DIR}/../ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/libconverters.dylib
             ${CMAKE_CURRENT_BINARY_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/${KS_TARGET_NAME}.app
     )
 

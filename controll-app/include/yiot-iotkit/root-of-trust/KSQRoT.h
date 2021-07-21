@@ -44,6 +44,12 @@ public:
 
     virtual ~KSQRoT() = default;
 
+    Q_INVOKABLE QString
+    importData(QString fileName, QString password);
+
+    Q_INVOKABLE QString
+    exportData(QString fileName, QString password) const;
+
     QString
     id() const;
 
@@ -188,6 +194,12 @@ private:
 
     bool
     loadKeyPair(const QString &name, KSQKeyPair &keyPair) const;
+
+    QByteArray
+    keyPair2Data(const KSQKeyPair &keypair) const;
+
+    KSQKeyPair
+    data2KeyPair(const QByteArray &data) const;
 
     bool
     prepareProvisionKeyPair(KSQKeyPair &dst,

@@ -50,6 +50,8 @@ ApplicationWindow {
     // Information popup
     Popup { id: inform }
 
+    InfoDialog{ id: informDialog }
+
     // Inform about requested action by device
     DeviceActionRequestDialog { id: deviceActionDialog }
 
@@ -294,8 +296,10 @@ ApplicationWindow {
         showPopup(message, Theme.buttonPrimaryColor, Theme.buttonPrimaryTextColor, true, true, action)
     }
 
-    function showPopupInform(message) {
-        // TODO: Add
+    function showPopupInform(message, action) {
+        informDialog.inform = message
+        informDialog.actionOk = action
+        informDialog.visible = true
     }
 
     // ------------------------------------------------------------------------

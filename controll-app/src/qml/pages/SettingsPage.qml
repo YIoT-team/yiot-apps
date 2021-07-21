@@ -22,6 +22,7 @@ import QtQuick.Controls 2.12
 
 import "qrc:/qml/pages/settings/extensions"
 import "qrc:/qml/pages/settings"
+import "qrc:/qml/pages/RoT"
 import "qrc:/qml/components"
 
 Page {
@@ -49,6 +50,9 @@ Page {
         readonly property int onePluginIdx: 9
         readonly property int oneIntegrationIdx: 10
         readonly property int oneDevicePageIdx: 11
+        readonly property int rotControlPageIdx: 12
+        readonly property int rotExportPageIdx: 13
+        readonly property int rotImportPageIdx: 14
 
         property int backPageIdx: menuIdx
 
@@ -103,6 +107,18 @@ Page {
 
         ExtDevicePage {
             id: extDevicePage
+        }
+
+        RoTControlPage {
+            id: rotControlPage
+        }
+
+        RoTExportPage {
+            id: rotExportPage
+        }
+
+        RoTImportPage {
+            id: rotImportPage
         }
     }
 
@@ -180,5 +196,20 @@ Page {
     }
     function setPassPageLocation(location) {
         wifiPassSettingsPage.prepareLocation(location)
+    }
+
+    function showRoTControlPage(model) {
+        rotControlPage.model = model
+        swipeSettingsShow(settingsSwipeView.rotControlPageIdx)
+    }
+
+    function showRoTExportPage(model) {
+        rotExportPage.model = model
+        swipeSettingsShow(settingsSwipeView.rotExportPageIdx)
+    }
+
+    function showRoTImportPage(model) {
+        swipeSettingsShow(settingsSwipeView.rotImportPageIdx)
+        rotImportPage.start(model)
     }
 }
