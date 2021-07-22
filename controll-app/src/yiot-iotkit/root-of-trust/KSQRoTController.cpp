@@ -145,9 +145,23 @@ KSQRoTController::prepare() {
         saveRoTList(idsList);
     }
 
+    for (auto rot : m_rots) {
+        connect(rot.get(), &KSQRoT::fireUpdated, this, &KSQRoTController::onRoTUpdated);
+    }
+
     m_valid = true;
 
     return m_valid;
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQRoTController::onRoTUpdated(KSQRoT &rot) {
+    for (auto r : m_rots) {
+        if (&rot == r.get()) {
+            emit fireRoTUpdated(r);
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------

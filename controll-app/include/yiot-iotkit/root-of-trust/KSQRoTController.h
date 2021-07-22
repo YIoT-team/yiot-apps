@@ -77,7 +77,13 @@ public:
 
 public slots:
 
+private slots:
+    void
+    onRoTUpdated(KSQRoT &rot);
+
 signals:
+    void
+    fireRoTUpdated(QSharedPointer<KSQRoT> rot);
 
 private:
     KSQRoTController();

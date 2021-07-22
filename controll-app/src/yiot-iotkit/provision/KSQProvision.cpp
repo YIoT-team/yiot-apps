@@ -165,3 +165,9 @@ KSQProvision::create(QSharedPointer<KSQRoT> rot) {
 }
 
 //-----------------------------------------------------------------------------
+void
+KSQProvision::onRoTUpdated(QSharedPointer<KSQRoT> rot) {
+    create(rot);
+}
+
+//-----------------------------------------------------------------------------

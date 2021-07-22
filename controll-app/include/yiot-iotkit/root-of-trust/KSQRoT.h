@@ -136,6 +136,8 @@ public:
     }
 
 signals:
+    void
+    fireUpdated(KSQRoT &rot);
 
 public slots:
 

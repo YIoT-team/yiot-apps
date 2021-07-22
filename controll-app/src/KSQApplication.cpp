@@ -26,6 +26,7 @@
 #include <yiot-iotkit/KSQIoTKitFacade.h>
 #include <yiot-iotkit/setup/KSQDeviceSetupController.h>
 #include <yiot-iotkit/snap/KSQSnapUSERClient.h>
+#include <yiot-iotkit/provision/KSQProvision.h>
 
 #include <virgil/iot/qt/protocols/snap/VSQSnapCFGClient.h>
 
@@ -119,6 +120,11 @@ KSQApplication::run() {
             this,
             &KSQApplication::onIntegrationDeactivate);
 
+    // Root of trust changes
+    connect(&KSQRoTController::instance(),
+            &KSQRoTController::fireRoTUpdated,
+            &KSQProvision::instance(),
+            &KSQProvision::onRoTUpdated);
 
     // Initialize IoTKit
     if (!KSQIoTKitFacade::instance().init(features, impl, appConfig)) {

@@ -344,6 +344,8 @@ KSQRoT::importData(QString fileName, QString password) {
         return tr("Cannot save imported data");
     }
 
+    emit fireUpdated(*this);
+
     return tr("Done successfully");
 }
 
