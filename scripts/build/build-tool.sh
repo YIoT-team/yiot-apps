@@ -124,7 +124,7 @@ build_dev_rpi() {
     cp -rf ${SOURCE_DIR}/device-app/main/linux/scripts/* ${SOURCE_DIR}/build/dist/scripts
     cp -rf ${SOURCE_DIR}/build/device-app/main/linux/yiot-device-app-linux ${SOURCE_DIR}/build/dist
     cp -rf ${SOURCE_DIR}/build/device-app/main/linux/bluez-dbus/libbluez-dbus-cpp.so* ${SOURCE_DIR}/build/dist
-    cp -rf ${SOURCE_DIR}/build/common/iotkit/modules/crypto/converters/libconverters.so ${SOURCE_DIR}/build/dist
+    cp -rf ${SOURCE_DIR}/build/ext/yiot-core/yiot/common/iotkit/modules/crypto/libconverters.so ${SOURCE_DIR}/build/dist
     if [ -f ${SOURCE_DIR}/build/depends/installed/lib/libsdbus-c++.so ]; then
         cp -rf ${SOURCE_DIR}/build/depends/installed/lib/libsdbus-c++.so* ${SOURCE_DIR}/build/dist
     else
@@ -162,7 +162,7 @@ build_app_linux() {
     make yiot
     make deploy
     popd
-    cp -f ${SOURCE_DIR}/build/common/iotkit/modules/crypto/converters/libconverters.so ${SOURCE_DIR}/build/yiot.dist/lib
+    cp -f ${SOURCE_DIR}/build/ext/yiot-core/yiot/common/iotkit/modules/crypto/libconverters.so ${SOURCE_DIR}/build/yiot.dist/lib
     if [ "${BUILD_PKG}" == "1" ]; then
 
       find_tool pbuilder
@@ -203,7 +203,7 @@ build_emulator_linux() {
     
     mkdir -p ${SOURCE_DIR}/build/yiot.dist
     cp -f ${SOURCE_DIR}/build/device-app/main/emulator/yiot-device-app-emulator ${SOURCE_DIR}/build/yiot.dist/
-    cp -f ${SOURCE_DIR}/build/common/iotkit/modules/crypto/converters/libconverters.so ${SOURCE_DIR}/build/yiot.dist/
+    cp -f ${SOURCE_DIR}/build/ext/yiot-core/yiot/common/iotkit/modules/crypto/libconverters.so ${SOURCE_DIR}/build/yiot.dist/
     if [ "${BUILD_PKG}" == "1" ]; then
       find_tool mock
       if [ "${FIND_RES}" == "1" ]; then
