@@ -29,7 +29,7 @@
 #include <common/protocols/snap/user/user-server.h>     // Specific command for RPi
 
 // Queue for packets to be processed
-#include "sdk-impl/netif/packets-queue.h"
+#include "common/iotkit-impl/packets-queue.h"
 
 // Platform-specific configurations
 #include <trust_list-config.h>
@@ -47,9 +47,9 @@
 #include "devices/test-lamp.h"
 
 // Platform-specific helpers
-#include "helpers/app-helpers.h" // Different helpers
-#include "helpers/app-storage.h" // Data Storage helpers
-#include "helpers/file-cache.h"  // File cache to speed-up file operations
+#include "common/helpers/app-helpers.h" // Different helpers
+#include "common/helpers/app-storage.h" // Data Storage helpers
+#include "common/helpers/file-cache.h"  // File cache to speed-up file operations
 
 // High-level wrapper to simplify initialization/deinitialization
 #include "init.h"
