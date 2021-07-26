@@ -47,13 +47,13 @@ Page {
         spacing: 1
 
         model: ListModel {
-            //ListElement {
-            //    name: qsTr("Root of trust")
-            //    image: "secure-enclave"
-            //    property var action: function() {
-            //        showRoTSettings()
-            //    }
-            //}
+            ListElement {
+                name: qsTr("Root of trust")
+                image: "secure-enclave"
+                property var action: function() {
+                    showRoTSettings()
+                }
+            }
 
             //ListElement {
             //    name: qsTr("IoT Networks")

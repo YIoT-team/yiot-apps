@@ -32,10 +32,10 @@ build_apk() {
     cp -rf ../x86/android-build/libs    ./android-build/
     cp -rf ../x86_64/android-build/libs ./android-build/
 
-	cp -rf ../armeabi-v7a/common/iotkit/modules/crypto/converters/*.so ./common/iotkit/modules/crypto/converters/
-    cp -rf ../arm64-v8a/common/iotkit/modules/crypto/converters/*.so ./common/iotkit/modules/crypto/converters/
-    cp -rf ../x86/common/iotkit/modules/crypto/converters/*.so ./common/iotkit/modules/crypto/converters/
-    cp -rf ../x86_64/common/iotkit/modules/crypto/converters/*.so ./common/iotkit/modules/crypto/converters/
+	cp -rf ../armeabi-v7a/ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/*.so ./ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/
+    cp -rf ../arm64-v8a/ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/*.so ./ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/
+    cp -rf ../x86/ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/*.so ./ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/
+    cp -rf ../x86_64/ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/*.so ./ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/
 
 	make apk_release
 	make aab_release	

@@ -47,6 +47,7 @@ class KSQRoTController : public QAbstractTableModel, public VSQSingleton<KSQRoTC
         TL2,
         Firmware1,
         Firmware2,
+        Obj,
         ElementMax
     };
 
@@ -76,7 +77,13 @@ public:
 
 public slots:
 
+private slots:
+    void
+    onRoTUpdated(KSQRoT &rot);
+
 signals:
+    void
+    fireRoTUpdated(QSharedPointer<KSQRoT> rot);
 
 private:
     KSQRoTController();

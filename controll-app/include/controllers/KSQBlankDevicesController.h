@@ -54,7 +54,7 @@ class KSQBlankDevicesController : public QAbstractTableModel {
 public:
     enum Element { Name = Qt::UserRole, Type, Mac, ElementMax };
 
-    KSQBlankDevicesController(QSharedPointer<VSQNetifBase> netif);
+    KSQBlankDevicesController();
 
     KSQBlankDevicesController(KSQBlankDevicesController const &) = delete;
 

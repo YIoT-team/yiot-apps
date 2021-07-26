@@ -8,6 +8,9 @@
     },
     {
       "dir": "qrc:/device/2"
+    },
+    {
+      "dir": "qrc:/device/3"
     }
   ]
 }

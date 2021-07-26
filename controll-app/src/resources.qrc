@@ -90,6 +90,7 @@
         <file>qml/components/FormInput.qml</file>
         <file>qml/components/TextScrollView.qml</file>
         <file>qml/components/Popups/Popup.qml</file>
+        <file>qml/components/Popups/InfoDialog.qml</file>
         <file>qml/components/Form.qml</file>
         <file>qml/components/FormSecondaryButton.qml</file>
         <file>qml/components/CommonHelpers/IconWithText.qml</file>
@@ -161,6 +162,11 @@
         <file>qml/pages/devices/CmdProcessingPage.qml</file>
         <file>qml/pages/devices/setup/SetupProcessingPage.qml</file>
         <file>qml/components/devices/setup/DeviceSetupWiFiListForm.qml</file>
+
+        <!-- QML RoT pages -->
+        <file>qml/pages/RoT/RoTControlPage.qml</file>
+        <file>qml/pages/RoT/RoTExportPage.qml</file>
+        <file>qml/pages/RoT/RoTImportPage.qml</file>
 
         <!-- QML Contributers and Sponsors -->
         <file>qml/doers/Contributors.qml</file>

@@ -171,31 +171,19 @@ KSQRoT::generate(const QString &name) {
 }
 
 //-----------------------------------------------------------------------------
-bool
-KSQRoT::saveKeyPair(const QString &name, const KSQKeyPair &keypair) const {
+QByteArray
+KSQRoT::keyPair2Data(const KSQKeyPair &keypair) const {
     QByteArray data;
     QDataStream dataStreamWrite(&data, QIODevice::WriteOnly);
     dataStreamWrite << keypair.second->ecType() << keypair.second->provisionType() << keypair.first->val()
                     << keypair.second->val() << keypair.second->startDate() << keypair.second->expireDate()
                     << keypair.second->signature();
-
-    vs_storage_element_id_t id;
-    CHECK_NOT_ZERO_RET(prepName(name, id), false);
-
-    CHECK_NOT_ZERO_RET(KSQSecBox::instance().save(VS_SECBOX_SIGNED_AND_ENCRYPTED, id, data), false);
-    return true;
+    return data;
 }
 
 //-----------------------------------------------------------------------------
-bool
-KSQRoT::loadKeyPair(const QString &name, KSQKeyPair &res) const {
-
-    vs_storage_element_id_t id;
-    CHECK_NOT_ZERO_RET(prepName(name, id), false);
-
-    QByteArray data;
-    CHECK_RET(KSQSecBox::instance().load(id, data), false, "Cannot load keypair %s", name.toStdString().c_str());
-
+KSQKeyPair
+KSQRoT::data2KeyPair(const QByteArray &data) const {
     QDataStream dataStreamRead(data);
 
     vs_secmodule_keypair_type_e ecType;
@@ -209,7 +197,29 @@ KSQRoT::loadKeyPair(const QString &name, KSQKeyPair &res) const {
 
     auto privkey = QSharedPointer<KSQPrivateKey>::create(ecType, privKey);
     auto pubkey = QSharedPointer<KSQPublicKey>::create(ecType, pubKey, provisionType, signature, startDate, expireDate);
-    res = std::make_pair(privkey, pubkey);
+    return std::make_pair(privkey, pubkey);
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQRoT::saveKeyPair(const QString &name, const KSQKeyPair &keypair) const {
+    vs_storage_element_id_t id;
+    CHECK_NOT_ZERO_RET(prepName(name, id), false);
+
+    CHECK_NOT_ZERO_RET(KSQSecBox::instance().save(VS_SECBOX_SIGNED_AND_ENCRYPTED, id, keyPair2Data(keypair)), false);
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQRoT::loadKeyPair(const QString &name, KSQKeyPair &res) const {
+    vs_storage_element_id_t id;
+    CHECK_NOT_ZERO_RET(prepName(name, id), false);
+
+    QByteArray data;
+    CHECK_RET(KSQSecBox::instance().load(id, data), false, "Cannot load keypair %s", name.toStdString().c_str());
+
+    res = data2KeyPair(data);
     return true;
 }
 
@@ -274,6 +284,110 @@ KSQRoT::load(const QString &id) {
     VS_LOG_DEBUG("Root of trust: loaded SUCCESSFULLY %s", m_id.toStdString().c_str());
 
     return m_trustList.load(id);
+}
+
+//-----------------------------------------------------------------------------
+QString
+KSQRoT::importData(QString fileName, QString password) {
+    // Load encrypted data from file
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly)) {
+        VS_LOG_WARNING("Cannot import RoT: file open");
+        return tr("Cannot open file");
+    }
+
+    auto encData = file.readAll();
+    if (encData.isEmpty()) {
+        VS_LOG_WARNING("Cannot import RoT: file is empty");
+        return tr("File is empty");
+    }
+
+    // Decrypt data array
+    auto data = KSQSecModule::instance().decryptWithPassword(encData, password);
+    if (data.isEmpty()) {
+        VS_LOG_WARNING("Cannot import RoT: decryption error");
+        return tr("File cannot be decrypted");
+    }
+
+    // Load elements
+    QByteArray r1, r2, a1, a2, tl1, tl2, fw1, fw2, f1, trustList;
+    QDataStream dataStreamRead(data);
+    dataStreamRead >> r1 >> r2 >> a1 >> a2 >> tl1 >> tl2 >> fw1 >> fw2 >> f1 >> trustList;
+
+    if (r1.isEmpty() || r2.isEmpty() || a1.isEmpty() || a2.isEmpty() || tl1.isEmpty() || tl2.isEmpty() ||
+        fw1.isEmpty() || fw2.isEmpty() || f1.isEmpty() || trustList.isEmpty()) {
+        VS_LOG_WARNING("Some data is empry");
+        return tr("Wrong file format");
+    }
+
+    m_recovery1 = data2KeyPair(r1);
+    m_recovery2 = data2KeyPair(r2);
+
+    m_auth1 = data2KeyPair(a1);
+    m_auth2 = data2KeyPair(a2);
+
+    m_tl1 = data2KeyPair(tl1);
+    m_tl2 = data2KeyPair(tl2);
+
+    m_firmware1 = data2KeyPair(fw1);
+    m_firmware2 = data2KeyPair(fw2);
+
+    m_factory = data2KeyPair(f1);
+
+    if (!m_trustList.set(trustList)) {
+        VS_LOG_WARNING("Cannot import RoT: TrustList save error");
+        return tr("Wrong file format");
+    }
+
+    if (!save()) {
+        VS_LOG_WARNING("Cannot import RoT: save error");
+        return tr("Cannot save imported data");
+    }
+
+    emit fireUpdated(*this);
+
+    return tr("Done successfully");
+}
+
+//-----------------------------------------------------------------------------
+QString
+KSQRoT::exportData(QString fileName, QString password) const {
+    // Collect all key pairs
+    auto r1 = keyPair2Data(m_recovery1);
+    auto r2 = keyPair2Data(m_recovery2);
+
+    auto a1 = keyPair2Data(m_auth1);
+    auto a2 = keyPair2Data(m_auth2);
+
+    auto tl1 = keyPair2Data(m_tl1);
+    auto tl2 = keyPair2Data(m_tl2);
+
+    auto fw1 = keyPair2Data(m_firmware1);
+    auto fw2 = keyPair2Data(m_firmware2);
+
+    auto f1 = keyPair2Data(m_factory);
+
+    // Create common data array
+    QByteArray data;
+    QDataStream dataStreamWrite(&data, QIODevice::WriteOnly);
+    dataStreamWrite << r1 << r2 << a1 << a2 << tl1 << tl2 << fw1 << fw2 << f1 << m_trustList.val();
+
+    // Encrypt data array
+    auto encData = KSQSecModule::instance().encryptWithPassword(data, password);
+
+    // Save encrypted data to file
+    QSaveFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly)) {
+        VS_LOG_WARNING("Cannot export RoT: file open");
+        return tr("Cannot create file");
+    }
+
+    if (encData.size() != file.write(encData) || !file.commit()) {
+        VS_LOG_WARNING("Cannot export RoT: file save");
+        return tr("Cannot write file");
+    }
+
+    return tr("Done successfully");
 }
 
 //-----------------------------------------------------------------------------

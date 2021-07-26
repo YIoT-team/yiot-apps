@@ -240,7 +240,7 @@ _prepare_dst_addr(void) {
     const char *_addr_str = getenv("VS_BCAST_SUBNET_ADDR");
     if (!_addr_str) {
 
-        res = _get_interface_bcast_addr(_defaultNetif);
+        res = _get_interface_bcast_addr(_defaultNetif.c_str());
         if (INADDR_ANY != res) {
             _dst_addr = res;
         } else {

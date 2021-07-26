@@ -24,7 +24,6 @@ project(yiot-device-app VERSION 0.1.0 LANGUAGES C)
 #   JSON
 if (BUILD_DEVICE_ENABLE OR BUILD_EMULATORS_ENABLE)
     set(JSON_BuildTests OFF CACHE INTERNAL "")
-    add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../../ext/json" json)
 endif()
 
 #

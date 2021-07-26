@@ -102,8 +102,8 @@ KSQDeviceSetupController::onProvisionDone() {
 
     if (m_needUser) {
         emit fireStateInfo(tr("Set device owner"));
-        if (!KSQSnapSCRTClient::instance().addUser(
-                    m_netif->lowLevelNetif(), m_deviceMac, VS_USER_OWNER, m_userName, *myCert)) {
+        auto lowLevelNetif = m_netif.isNull() ? vs_snap_netif_routing() : m_netif->lowLevelNetif();
+        if (!KSQSnapSCRTClient::instance().addUser(lowLevelNetif, m_deviceMac, VS_USER_OWNER, m_userName, *myCert)) {
             error(tr("Cannot set self as an owner"));
         }
     } else {

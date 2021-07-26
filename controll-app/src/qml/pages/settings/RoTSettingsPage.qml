@@ -53,14 +53,6 @@ Page {
             Layout.fillHeight: true
             model: rotModel
         }
-
-        //FormPrimaryButton {
-        //    Layout.bottomMargin: 10
-        //    text: qsTr("Add new Root of trust")
-        //    onClicked: {
-        //        console.log("Add root of trust")
-        //    }
-        //}
     }
 
     // Fill data and show device info.

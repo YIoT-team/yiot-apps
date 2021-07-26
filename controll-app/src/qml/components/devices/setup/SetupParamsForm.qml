@@ -95,11 +95,10 @@ Form {
                     setWiFiPassLocation("deviceSetup")
                     setCredLoadState("wifi-setup")
                 } else {
-                    var cred = settings.getWiFiCredDefault()
                     deviceSetup.configure(
                         !deviceSetup.data.hasProvision,
                         !deviceSetup.data.hasOwner, "Me",
-                        true, cred.ssid, cred.pass)
+                        false, "", "")
 
                     showCredLoad()
                 }
