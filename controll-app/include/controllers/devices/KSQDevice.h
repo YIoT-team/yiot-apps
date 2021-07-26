@@ -160,7 +160,7 @@ protected:
 
     QString
     _deviceType() const {
-        return "pc";
+        return "";
     }
 
     QObject *
