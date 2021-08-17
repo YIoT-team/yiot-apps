@@ -11,7 +11,7 @@ build_arch() {
     rm -rf ${PROJECT_DIR}/build/${PARAM_ABI}
     mkdir -p ${PROJECT_DIR}/build/${PARAM_ABI}
     pushd ${PROJECT_DIR}/build/${PARAM_ABI}
-	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="android" -DANDROID_PLATFORM=29 -DANDROID_QT=ON -DANDROID_ABI="${PARAM_ABI}" ../..
+	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="android" -DANDROID_PLATFORM=30 -DANDROID_QT=ON -DANDROID_ABI="${PARAM_ABI}" ../..
 	make yiot    
     popd
 }
