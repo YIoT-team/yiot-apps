@@ -154,7 +154,9 @@ elseif(KS_PLATFORM STREQUAL "linux")
     
 # Windows
 elseif(KS_PLATFORM STREQUAL "windows")
-    add_executable(${KS_TARGET_NAME})
+    add_executable(${KS_TARGET_NAME} WIN32)
+    set(GUI_TYPE WIN32)
+    set_target_properties(${KS_TARGET_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
     include(deployers)    
     configure_file( "${PROJECT_SOURCE_DIR}/controll-app/platforms/windows/yiot.nsi.in" "${CMAKE_BINARY_DIR}/yiot.nsi" "${VS_TEMPLATE_DST}" @ONLY)
 
