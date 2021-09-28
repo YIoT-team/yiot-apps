@@ -141,7 +141,7 @@ Page {
      }
 
     function showWiFiSettings() {
-        wifiPassSettingsPage.prepareLocation("credentials")
+        wifiPassSettingsPage.prepareLocation("credentials") //TODO: Remove string parameter
         swipeSettingsShow(settingsSwipeView.wifiNetworksIdx)
     }
 

@@ -182,7 +182,7 @@
         <file>qml/info/builtin-integrations.json</file>
 
 	<!-- Translations -->
-	<file>qml/../translations/yiot_ru.qm</file>
+	<file>qml/../translations/yiot_ua.qm</file>
 
     </qresource>
 </RCC>
