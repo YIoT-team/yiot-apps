@@ -1,5 +1,7 @@
 <!DOCTYPE TS><TS version="2.1" language="ua">
 
+<!-- CPP -->
+
 <context>
         <name>KSQApplication</name>
         <message>
@@ -16,6 +18,49 @@
         </message>
 </context>
 
+
+<context>
+        <name>KSQDeviceSetupController</name>
+        <message>
+                <source>Cannot get own certificate</source>
+                <translation>Неможливо отримати власний сертифікат</translation>
+        </message>
+        <message>
+                <source>Set device owner</source>
+                <translation>Встановлення власника пристрою</translation>
+        </message>
+        <message>
+                <source>Cannot set self as an owner</source>
+                <translation>Неможливо встановити себе як власника</translation>
+        </message>
+        <message>
+                <source>Set WiFi credentials</source>
+                <translation>Встановлення даних аутентифікації WiFi</translation>
+        </message>
+        <message>
+                <source>Cannot request device info</source>
+                <translation>Неможливо запитати інформацію про пристрій</translation>
+        </message>
+        <message>
+                <source>Cannot request security device info</source>
+                <translation>Неможливо запросити інформацію про безпеку</translation>
+        </message>
+        <message>
+                <source>Request device state</source>
+                <translation>Запит стану пристрою</translation>
+        </message>
+        <message>
+                <source>Empty WiFi parameters</source>
+                <translation>Порожні параметри WiFi</translation>
+        </message>
+        <message>
+                <source>Cannot configure WiFi</source>
+                <translation>Неможливо налаштувати WiFi</translation>
+        </message>
+</context>
+
+
+<!-- QML -->
 
 <context>
         <name>Main</name>
@@ -327,6 +372,97 @@
         <message>
                 <source>Select WiFi network</source>
                 <translation>Виберіть мережу WiFi</translation>
+        </message>
+</context>
+
+
+<context>
+        <name>ProcessingForm</name>
+        <message>
+                <source>Device configuration</source>
+                <translation>Конфігурація пристрою</translation>
+        </message>
+        <message>
+                <source>Connecting</source>
+                <translation>З’єднання</translation>
+        </message>
+        <message>
+                <source>Stop</source>
+                <translation>Стоп</translation>
+        </message>
+        <message>
+                <source>DONE</source>
+                <translation>ЗРОБЛЕНО</translation>
+        </message>
+        <message>
+                <source>Error occured :(</source>
+                <translation>Сталася помилка :(</translation>
+        </message>
+        <message>
+                <source>Ok</source>
+                <translation>Ок</translation>
+        </message>
+</context>
+
+
+<context>
+        <name>SetupParamsForm</name>
+        <message>
+                <source>Device name:</source>
+                <translation>Ім’‎я пристрою:</translation>
+        </message>
+        <message>
+                <source>Manufacturer:</source>
+                <translation>Виробник:</translation>
+        </message>
+        <message>
+                <source>Security is initialized:</source>
+                <translation>Безпека ініціалізована:</translation>
+        </message>
+        <message>
+                <source>Owner is set:</source>
+                <translation>Власник встановлен:</translation>
+        </message>
+        <message>
+                <source>yes</source>
+                <translation>так</translation>
+        </message>
+        <message>
+                <source>no</source>
+                <translation>ні</translation>
+        </message>
+        <message>
+                <source>This device will be provisioned using your Root Of Trust</source>
+                <translation>Цей пристрій буде забезпечено з використанням вашого кореня довіри</translation>
+        </message>
+        <message>
+                <source>WiFi credentials will be passed as an encrypted data.</source>
+                <translation>Дані аутентифікації WiFi будуть передані як зашифровані дані.</translation>
+        </message>
+        <message>
+                <source>This device requires WiFi credentials. Credentials will be passed as an encrypted data.</source>
+                <translation>Цей пристрій вимагає даних підключення WiFi. Дані аутентифікації будуть передані як зашифровані дані.</translation>
+        </message>
+        <message>
+                <source>Next</source>
+                <translation>Далі</translation>
+        </message>
+        <message>
+                <source>Setup Device</source>
+                <translation>Налаштувати пристрій</translation>
+        </message>
+</context>
+
+
+<context>
+        <name>DeviceSetupWiFiListForm</name>
+        <message>
+                <source>Next</source>
+                <translation>Далі</translation>
+        </message>
+        <message>
+                <source>Need to set WiFi credentials</source>
+                <translation>Потрібно встановити дані підключення WiFi</translation>
         </message>
 </context>
 
