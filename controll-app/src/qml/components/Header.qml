@@ -14,6 +14,7 @@ ToolBar {
     property alias showSeporator: seporator.visible
     property alias backgroundColor: background.color
     property alias textClickEnable: ma.enabled
+    property var textAlignment: Qt.AlignHCenter
     property var backAction: function() { back() }
     property var settingsAction: function() { showAbout() }
 
@@ -78,9 +79,11 @@ ToolBar {
             font.underline: ma.containsMouse
             font.family: Theme.mainFont
             font.pointSize: 15
-            horizontalAlignment: Qt.AlignHCenter
+            horizontalAlignment: textAlignment
             verticalAlignment: Qt.AlignVCenter
             color: ma.containsMouse ? Theme.linkTextColor : Theme.primaryTextColor
+
+            clip: true
 
             MouseArea {
                 id: ma

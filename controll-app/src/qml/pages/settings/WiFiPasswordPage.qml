@@ -25,7 +25,7 @@ import "../../theme"
 import "../../components"
 Page {
     property string ssid: ""
-    property string location: "credentials"
+    property string location: "credentials" //TODO: Remove string parameter
 
     id: wifiSettingsPage
 
@@ -37,6 +37,7 @@ Page {
     header: Header {
         id: header
         title: qsTr("Set WiFi password ") + ssid
+        textAlignment: Qt.AlignLeft
         backAction: function() {
             switch (location) {
             case "credentials":
@@ -47,7 +48,7 @@ Page {
                 setCredLoadState("wifi-setup")
                 break;
             default:
-                console.error("Error in the location of the call to the WiFi password page: '" + location + "' is not defined")
+                console.error("Error in the location of the call to the WiFi password page: '" + location + "' is not defined") //TODO: Remove string parameter
             }
         }
     }
