@@ -190,7 +190,7 @@
 <context>
         <name>RoTSettingsPage</name>
         <message>
-                <source>Корінь довіри</source>
+                <source>Root of trust</source>
                 <translation>Корінь довіри</translation>
         </message>
 </context>
@@ -210,7 +210,38 @@
                 <source>Default EC: </source>
                 <translation>EC за замовчуванням: </translation>
         </message>
-        <!-- TODO: Recovery, Auth, Tl -->
+        <message>
+                <source>Recovery main: </source>
+                <translation>Основний ключ відновлення: </translation>
+        </message>
+        <message>
+                <source>Recovery reserv: </source>
+                <translation>Резервний ключ відновлення: </translation>
+        </message>
+        <message>
+                <source>Auth main: </source>
+                <translation>Основний ключ аутентифікації: </translation>
+        </message>
+        <message>
+                <source>Auth reserv: </source>
+                <translation>Резервний ключ аутентифікації: </translation>
+        </message>
+        <message>
+                <source>Tl main: </source>
+                <translation>Основний TL ключ: </translation>
+        </message>
+        <message>
+                <source>Tl reserv: </source>
+                <translation>Резервний TL ключ: </translation>
+        </message>
+        <message>
+                <source>TrustList version: </source>
+                <translation>Версія TrustList: </translation>
+        </message>
+        <message>
+                <source>TrustList keys count: </source>
+                <translation>Кількість TrustList ключів: </translation>
+        </message>
 </context>
 
 
