@@ -37,7 +37,6 @@ Page {
     header: Header {
         id: header
         title: qsTr("Set WiFi password ") + ssid
-        textAlignment: Qt.AlignLeft
         backAction: function() {
             switch (location) {
             case "credentials":
