@@ -181,5 +181,8 @@
         <file>qml/info/builtin-plugins.json</file>
         <file>qml/info/builtin-integrations.json</file>
 
+	<!-- Translations -->
+	<file>qml/../translations/yiot_ua.qm</file>
+
     </qresource>
 </RCC>
