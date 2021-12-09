@@ -73,7 +73,6 @@ ToolBar {
 
             id: titleLabel
             elide: Label.ElideRight
-            textFormat: Text.MarkdownText
 
             font.underline: ma.containsMouse
             font.family: Theme.mainFont
