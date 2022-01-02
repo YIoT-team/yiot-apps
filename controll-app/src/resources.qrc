@@ -45,7 +45,7 @@
         <file>qml/resources/icons/dark/network.png</file>
 		<file>qml/resources/icons/dark/rename.png</file>
         <file>qml/resources/icons/dark/plugins.png</file>
-		<file>qml/resources/icons/dark/integrations.png</file>
+		<file>qml/resources/icons/dark/services.png</file>
 
         <!-- Icons light theme -->
         <file>qml/resources/icons/light/bt.png</file>
@@ -70,7 +70,7 @@
         <file>qml/resources/icons/light/network.png</file>
 		<file>qml/resources/icons/light/rename.png</file>
         <file>qml/resources/icons/light/plugins.png</file>
-		<file>qml/resources/icons/light/integrations.png</file>
+		<file>qml/resources/icons/light/services.png</file>
 
         <!-- Fonts -->
         <file>qml/resources/fonts/Roboto-Medium.ttf</file>
@@ -144,11 +144,11 @@
         <file>qml/pages/settings/RoTSettingsPage.qml</file>
         <file>qml/pages/settings/NetworksSettingsPage.qml</file>
         <file>qml/pages/settings/ThemeListPage.qml</file>
+		<file>qml/pages/settings/ServicesListPage.qml</file>
+		<file>qml/pages/settings/extensions/ExtServicePage.qml</file>
         <file>qml/pages/settings/extensions/ExtDevicesListPage.qml</file>
         <file>qml/pages/settings/extensions/ExtDevicePage.qml</file>
-		<file>qml/pages/settings/extensions/ExtIntegrationsListPage.qml</file>
         <file>qml/pages/settings/extensions/ExtPluginPage.qml</file>
-        <file>qml/pages/settings/extensions/ExtIntegrationPage.qml</file>
 
         <!-- QML Other pages -->
         <file>qml/pages/AboutPage.qml</file>

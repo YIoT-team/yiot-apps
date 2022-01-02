@@ -46,13 +46,13 @@ Page {
         readonly property int networksIdx: 5
         readonly property int themeIdx: 6
         readonly property int extDevicesIdx: 7
-        readonly property int integrationsIdx: 8
-        readonly property int onePluginIdx: 9
-        readonly property int oneIntegrationIdx: 10
-        readonly property int oneDevicePageIdx: 11
-        readonly property int rotControlPageIdx: 12
-        readonly property int rotExportPageIdx: 13
-        readonly property int rotImportPageIdx: 14
+        //readonly property int integrationsIdx: 8
+        readonly property int onePluginIdx: 8
+        readonly property int oneServiceIdx: 9
+        readonly property int oneDevicePageIdx: 10
+        readonly property int rotControlPageIdx: 11
+        readonly property int rotExportPageIdx: 12
+        readonly property int rotImportPageIdx: 13
 
         property int backPageIdx: menuIdx
 
@@ -93,16 +93,16 @@ Page {
             id: extDeviccesListPage
         }
 
-        ExtIntegrationsListPage {
-            id: extIntegrationsListPage
-        }
+//        ExtIntegrationsListPage {
+//            id: extIntegrationsListPage
+//        }
 
         ExtPluginPage {
             id: extPluginPage
         }
 
-        ExtIntegrationPage {
-            id: extIntegrationPage
+        ExtServicePage {
+            id: extServicePage
         }
 
         ExtDevicePage {
@@ -176,9 +176,9 @@ Page {
         swipeSettingsShow(settingsSwipeView.oneDevicePageIdx)
     }
 
-    function showIntegrationsList() {
-        swipeSettingsShow(settingsSwipeView.integrationsIdx)
-    }
+//    function showIntegrationsList() {
+//        swipeSettingsShow(settingsSwipeView.integrationsIdx)
+//    }
 
     function showPluginPage(plugin, backAction) {
         extPluginPage.plugin = plugin
@@ -186,9 +186,9 @@ Page {
         swipeSettingsShow(settingsSwipeView.onePluginIdx)
     }
 
-    function showIntegrationPage(integration, backAction) {
-        swipeSettingsShow(settingsSwipeView.oneIntegrationIdx)
-        extIntegrationPage.show(integration)
+    function showServicePage(service, backAction) {
+        swipeSettingsShow(settingsSwipeView.oneServiceIdx)
+        extServicePage.show(service)
     }
 
     function backInSettings() {

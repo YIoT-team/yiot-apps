@@ -32,8 +32,10 @@ Page {
     }
 
     header: Header {
-        title: qsTr("Integrations")
-        backAction: function() { showMenuSettings() }
+        title: qsTr("Services")
+        showBackButton: false
+        showMenuButton: true
+        showSettingsButton: true
     }
 
     ColumnLayout {
@@ -87,9 +89,8 @@ Page {
                     hoverEnabled: true
                     anchors.rightMargin: 0
                     onClicked: {
-                        showIntegrationPage(info, function() {
-                            showSettings()
-                            showIntegrationsList()
+                        showServicePage(info, function() {
+                            showServices()
                         })
                     }
 

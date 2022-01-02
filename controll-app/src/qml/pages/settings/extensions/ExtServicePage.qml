@@ -26,28 +26,28 @@ import "qrc:/qml/components"
 import "qrc:/qml/components/devices"
 
 SwipeView {
-    id: integrationsSwipeView
-    objectName: "integrationControlContainer"
+    id: servicesSwipeView
+    objectName: "serviceControlContainer"
     interactive: false
 
-    function show(integrationController) {
-        integrationsSwipeView.currentIndex = integrationController.js.controlPageIdx
-        for (var i = 0; i < integrationsSwipeView.count; ++i) {
-            var item = integrationsSwipeView.itemAt(i)
-            item.visible = i == integrationsSwipeView.currentIndex
+    function show(serviceController) {
+        servicesSwipeView.currentIndex = serviceController.js.controlPageIdx
+        for (var i = 0; i < servicesSwipeView.count; ++i) {
+            var item = servicesSwipeView.itemAt(i)
+            item.visible = i == servicesSwipeView.currentIndex
         }
     }
 
-    function addIntegrationControl(qmlFile, controller) {
+    function addServiceControl(qmlFile, controller) {
         var component = Qt.createComponent(qmlFile);
-        var controlPage = component.createObject(integrationsSwipeView);
+        var controlPage = component.createObject(servicesSwipeView);
 
         if (controlPage == null) {
             console.log("Error creating object")
         }
 
-        integrationsSwipeView.addItem(controlPage)
+        servicesSwipeView.addItem(controlPage)
         controlPage.controller = controller
-        return integrationsSwipeView.count - 1
+        return servicesSwipeView.count - 1
     }
 }

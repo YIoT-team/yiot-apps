@@ -42,11 +42,11 @@ KSQIntegrationsController::load(QSharedPointer<KSQOneExtension> extension) {
 
     // Add Device control page
     auto *rootObj = m_engine->rootObjects().first();
-    auto deviceControlContainer = rootObj->findChild<QObject *>("integrationControlContainer");
+    auto deviceControlContainer = rootObj->findChild<QObject *>("serviceControlContainer");
     const QString controlPage = integrationDir + "/src/qml/Control.qml";
     QVariant res;
     if (QMetaObject::invokeMethod(deviceControlContainer,
-                                  "addIntegrationControl",
+                                  "addServiceControl",
                                   Q_RETURN_ARG(QVariant, res),
                                   Q_ARG(QVariant, QVariant::fromValue(controlPage)),
                                   Q_ARG(QVariant, QVariant::fromValue(extension.get())))) {

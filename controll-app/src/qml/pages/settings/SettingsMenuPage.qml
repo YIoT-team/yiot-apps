@@ -95,13 +95,13 @@ Page {
                 }
             }
 
-            ListElement {
-                name: qsTr("Integrations")
-                image: "integrations"
-                property var action: function() {
-                    showIntegrationsList()
-                }
-            }
+            //ListElement {
+            //    name: qsTr("Integrations")
+            //    image: "integrations"
+            //    property var action: function() {
+            //        showIntegrationsList()
+            //    }
+            //}
         }
 
         delegate: Rectangle {
