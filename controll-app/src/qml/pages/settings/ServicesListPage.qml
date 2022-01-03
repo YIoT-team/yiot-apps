@@ -50,7 +50,7 @@ Page {
             delegate: Rectangle {
                 id: base
                 width: parent.width
-                height: 55
+                height: 85
                 color: "transparent"
 
                 RowLayout {
