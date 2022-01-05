@@ -149,6 +149,7 @@
         <file>qml/pages/settings/extensions/ExtDevicesListPage.qml</file>
         <file>qml/pages/settings/extensions/ExtDevicePage.qml</file>
         <file>qml/pages/settings/extensions/ExtPluginPage.qml</file>
+		<file>qml/pages/settings/extensions/ExtLoginPage.qml</file>
 
         <!-- QML Other pages -->
         <file>qml/pages/AboutPage.qml</file>

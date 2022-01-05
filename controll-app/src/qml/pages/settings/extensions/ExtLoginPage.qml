@@ -23,49 +23,57 @@ import QtQuick.Layouts 1.12
 
 import "qrc:/qml/theme"
 import "qrc:/qml/components"
-import "qrc:/qml/components/devices"
-import "qrc:/qml/pages/settings/extensions"
 
-SwipeView {
-    id: servicesSwipeView
-    objectName: "serviceControlContainer"
-    interactive: false
+Page {
+    id: loginPage
 
-    property int serviceIndex: 0
-
-    ExtLoginPage {
-        id: loginPage
+    background: Rectangle {
+        color: "transparent"
     }
 
-    function show(serviceController) {
-        servicesSwipeView.serviceIndex = serviceController.js.controlPageIdx
-        if(settings.getServicesLogin() != "") {
-            console.log(">>> Service login: " + settings.getServicesLogin())
-            showServicePage()
-        } else {
-            servicesSwipeView.currentIndex = 0
-            loginPage.visible = true
-        }
+    header: Header {
+        id: header
+        title: qsTr("Register")
+        backAction: function() { showServices() }
     }
 
-    function showServicePage() {
-        servicesSwipeView.currentIndex = servicesSwipeView.serviceIndex
-        for (var i = 0; i < servicesSwipeView.count; ++i) {
-            var item = servicesSwipeView.itemAt(i)
-            item.visible = i == servicesSwipeView.currentIndex
+    ColumnLayout {
+        width: parent.width
+        anchors.topMargin: 30
+        spacing: 20
+
+        TextField {
+            id: username
+            placeholderText: qsTr("Username")
+            Layout.preferredWidth: parent.width - 20
+            Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: 20
+            color: Theme.primaryTextColor
+            font.pointSize: 14
+            leftPadding: 30
+            background: Rectangle {
+                implicitWidth: 200
+                implicitHeight: 50
+                radius: implicitHeight / 2
+                color: "transparent"
+
+                Rectangle {
+                    width: parent.width - 10
+                    height: 1
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.bottom
+                    color: Theme.brandColor
+                }
+            }
         }
-    }
 
-    function addServiceControl(qmlFile, controller) {
-        var component = Qt.createComponent(qmlFile);
-        var controlPage = component.createObject(servicesSwipeView);
-
-        if (controlPage == null) {
-            console.log("Error creating object")
+        FormPrimaryButton {
+            Layout.bottomMargin: 10
+            text: qsTr("Create account")
+            onClicked: {
+                settings.setServicesLogin(username.text) //TODO: Validator
+                showServicePage()
+            }
         }
-
-        servicesSwipeView.addItem(controlPage)
-        controlPage.controller = controller
-        return servicesSwipeView.count - 1
     }
 }

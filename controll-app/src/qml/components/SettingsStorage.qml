@@ -37,6 +37,8 @@ Item {
 
         property bool websockEnabled: false
         property string websockLink: ""
+
+        property string servicesLogin: ""
     }
 
     // KeyChain Writer
@@ -133,6 +135,14 @@ Item {
 
     function getWebsocketLink() {
         return s.websockLink
+    }
+
+    function setServicesLogin(login) {
+        s.servicesLogin = login
+    }
+
+    function getServicesLogin() {
+        return s.servicesLogin
     }
 
     Component.onCompleted: {
