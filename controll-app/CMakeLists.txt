@@ -344,7 +344,7 @@ target_sources(${KS_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/emulator-lamp/lamp.qrc
         ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/emulator-doorlock/doorlock.qrc
         ${CMAKE_CURRENT_LIST_DIR}/extensions/integrations/websocket/integration.qrc
-		${CMAKE_CURRENT_LIST_DIR}/extensions/integrations/emulators/integration.qrc
+		${CMAKE_CURRENT_LIST_DIR}/extensions/integrations/emulators/emulators.qrc
         ${CMAKE_CURRENT_LIST_DIR}/extensions/plugins/rpi-vpn/plugin.qrc
         )
 
