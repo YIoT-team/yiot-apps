@@ -20,7 +20,7 @@ build_apk() {
     rm -rf ${PROJECT_DIR}/build/all
     mkdir -p ${PROJECT_DIR}/build/all
     pushd ${PROJECT_DIR}/build/all
-	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="android" -DANDROID_PLATFORM=29 -DANDROID_QT=ON \
+	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="android" -DANDROID_PLATFORM=30 -DANDROID_QT=ON \
 	    -DVS_KEYCHAIN="${VS_KEYCHAIN}" \
             -DVS_KEYCHAIN_PASSWORD="${VS_KEYCHAIN_PASSWORD}" \
             -DVS_KEY_ALIAS="${VS_KEY_ALIAS}" \

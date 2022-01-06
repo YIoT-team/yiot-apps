@@ -96,7 +96,7 @@ Page {
 
         Text {
             id: label
-            text: "Plugins:"
+            text: qsTr("Plugins:")
             color: Theme.brandColor
             font.weight: Font.Bold
             font.pointSize: 14
