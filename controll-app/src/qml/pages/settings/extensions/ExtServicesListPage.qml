@@ -33,9 +33,7 @@ Page {
 
     header: Header {
         title: qsTr("Services")
-        showBackButton: false
-        showMenuButton: true
-        showSettingsButton: true
+        backAction: function() { showMenuSettings() }
     }
 
     ColumnLayout {

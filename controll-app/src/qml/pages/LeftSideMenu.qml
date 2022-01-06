@@ -68,14 +68,6 @@ Drawer {
         }
 
         FormPrimaryButton {
-            text: qsTr("Services")
-            onClicked: {
-                drawer.close()
-                showServices()
-            }
-        }
-
-        FormPrimaryButton {
             text: qsTr("Settings")
             onClicked: {
                 drawer.close()

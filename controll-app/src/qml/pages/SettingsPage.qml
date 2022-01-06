@@ -46,13 +46,13 @@ Page {
         readonly property int networksIdx: 5
         readonly property int themeIdx: 6
         readonly property int extDevicesIdx: 7
-        //readonly property int integrationsIdx: 8
-        readonly property int onePluginIdx: 8
-        readonly property int oneServiceIdx: 9
-        readonly property int oneDevicePageIdx: 10
-        readonly property int rotControlPageIdx: 11
-        readonly property int rotExportPageIdx: 12
-        readonly property int rotImportPageIdx: 13
+        readonly property int servicesIdx: 8
+        readonly property int onePluginIdx: 9
+        readonly property int oneServiceIdx: 10
+        readonly property int oneDevicePageIdx: 11
+        readonly property int rotControlPageIdx: 12
+        readonly property int rotExportPageIdx: 13
+        readonly property int rotImportPageIdx: 14
 
         property int backPageIdx: menuIdx
 
@@ -93,9 +93,9 @@ Page {
             id: extDeviccesListPage
         }
 
-//        ExtIntegrationsListPage {
-//            id: extIntegrationsListPage
-//        }
+        ExtServicesListPage {
+            id: extServicesListPage
+        }
 
         ExtPluginPage {
             id: extPluginPage
@@ -176,9 +176,9 @@ Page {
         swipeSettingsShow(settingsSwipeView.oneDevicePageIdx)
     }
 
-//    function showIntegrationsList() {
-//        swipeSettingsShow(settingsSwipeView.integrationsIdx)
-//    }
+    function showServicesList() {
+        swipeSettingsShow(settingsSwipeView.servicesIdx)
+    }
 
     function showPluginPage(plugin, backAction) {
         extPluginPage.plugin = plugin

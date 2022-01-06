@@ -73,9 +73,8 @@ ApplicationWindow {
     SwipeView {
         readonly property int devicePageIdx: 0
         readonly property int setupDevicePageIdx: 1
-        readonly property int servicesListPageIdx: 2
         // readonly property int sharePageIdx: 2
-        readonly property int settingsPageIdx: 3
+        readonly property int settingsPageIdx: 2
 
         property int backPageIdx: devicePageIdx
 
@@ -86,7 +85,6 @@ ApplicationWindow {
 
         DevicesPage { id: devicesPage }
         DevicesSetupPage { id: devicesSetupPage }
-        ServicesListPage { id: servicesListPage }
         // SharePage { id: sharePage }
         SettingsPage { id: settingsPage }
     }
@@ -103,9 +101,8 @@ ApplicationWindow {
 
         MainTabButton { idx: 0; image: "control-devices" }
         MainTabButton { idx: 1; image: "setup-devices" }
-        MainTabButton { idx: 2; image: "services" }
         // MainTabButton { idx: 2; image: "share-access" }
-        MainTabButton { idx: 3; image: "settings" }
+        MainTabButton { idx: 2; image: "settings" }
     }
 
     // Settings container
@@ -261,10 +258,6 @@ ApplicationWindow {
         swipeShow(swipeView.sharePageIdx)
     }
 
-    function showServices() {
-        swipeShow(swipeView.servicesListPageIdx)
-    }
-
     function showSettings() {
         swipeShow(swipeView.settingsPageIdx)
     }
@@ -284,11 +277,6 @@ ApplicationWindow {
     function showWiFiPassPage(ssid) {
         settingsPage.showWiFiPassword(ssid)
         showSettingsElement(settingsPage.wifiPassIdx)
-    }
-
-    function showServicePage(service, backAction) {
-        swipeShow(swipeView.settingsPageIdx)
-        settingsPage.showServicePage(service, backAction)
     }
 
     // ------------------------------------------------------------------------

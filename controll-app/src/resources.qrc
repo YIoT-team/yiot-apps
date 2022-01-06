@@ -144,12 +144,12 @@
         <file>qml/pages/settings/RoTSettingsPage.qml</file>
         <file>qml/pages/settings/NetworksSettingsPage.qml</file>
         <file>qml/pages/settings/ThemeListPage.qml</file>
-		<file>qml/pages/settings/ServicesListPage.qml</file>
+		<file>qml/pages/settings/extensions/ExtServicesListPage.qml</file>
 		<file>qml/pages/settings/extensions/ExtServicePage.qml</file>
+		<file>qml/pages/settings/extensions/ExtLoginPage.qml</file>
         <file>qml/pages/settings/extensions/ExtDevicesListPage.qml</file>
         <file>qml/pages/settings/extensions/ExtDevicePage.qml</file>
         <file>qml/pages/settings/extensions/ExtPluginPage.qml</file>
-		<file>qml/pages/settings/extensions/ExtLoginPage.qml</file>
 
         <!-- QML Other pages -->
         <file>qml/pages/AboutPage.qml</file>
