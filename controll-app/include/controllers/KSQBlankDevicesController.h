@@ -89,7 +89,7 @@ signals:
 
 private slots:
     void
-    onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo);
+    onDeviceInfoUpdate(const struct VirgilIoTKit::vs_netif_t *src_netif, const VSQDeviceInfo &deviceInfo);
 
     void
     cleanOldDevices();

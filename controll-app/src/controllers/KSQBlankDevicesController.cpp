@@ -56,7 +56,8 @@ KSQBlankDevicesController::provisionDevice(const QString &mac) {
 
 //-----------------------------------------------------------------------------
 void
-KSQBlankDevicesController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
+KSQBlankDevicesController::onDeviceInfoUpdate(const struct VirgilIoTKit::vs_netif_t *src_netif,
+                                              const VSQDeviceInfo &deviceInfo) {
     if (deviceInfo.m_deviceName.isEmpty()) {
         return;
     }
@@ -79,6 +80,13 @@ KSQBlankDevicesController::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
     if (isNew) {
         endInsertRows();
         if (!deviceInfo.m_hasProvision) {
+            if (src_netif && src_netif->user_data) {
+                VSQNetifBase *instance = reinterpret_cast<VSQNetifBase *>(src_netif->user_data);
+                m_netif.reset(instance);
+            } else {
+                m_netif.clear();
+            }
+
             emit fireDeviceRequiresProvision(deviceInfo.m_deviceName, m_netif, deviceInfo.m_mac);
         }
     } else {

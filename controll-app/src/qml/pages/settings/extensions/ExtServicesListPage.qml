@@ -88,7 +88,7 @@ Page {
                     anchors.rightMargin: 0
                     onClicked: {
                         showServicePage(info, function() {
-                            showServices()
+                            showServicesList()
                         })
                     }
 

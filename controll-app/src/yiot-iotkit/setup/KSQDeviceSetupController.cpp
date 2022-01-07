@@ -276,7 +276,9 @@ KSQDeviceSetupController::onDeviceSecurityInfo(bool hasProvision,
 
 //-----------------------------------------------------------------------------
 void
-KSQDeviceSetupController::onDeviceInfo(const VSQDeviceInfo &deviceInfo) {
+KSQDeviceSetupController::onDeviceInfo(const struct VirgilIoTKit::vs_netif_t *src_netif,
+                                       const VSQDeviceInfo &deviceInfo) {
+    (void)src_netif;
     if (!m_valid || m_readyDeviceInfo) {
         return;
     }

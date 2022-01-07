@@ -34,7 +34,7 @@ Page {
     header: Header {
         id: header
         title: qsTr("Register")
-        backAction: function() { showServices() }
+        backAction: function() { showServicesList() }
     }
 
     ColumnLayout {

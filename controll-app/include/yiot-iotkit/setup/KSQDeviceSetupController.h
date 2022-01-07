@@ -88,7 +88,7 @@ private slots:
     onDeviceSecurityInfo(bool hasProvision, bool hasOwner, bool ownerIsYou, const KSQPublicKey &publicKey);
 
     void
-    onDeviceInfo(const VSQDeviceInfo &deviceInfo);
+    onDeviceInfo(const struct VirgilIoTKit::vs_netif_t *src_netif, const VSQDeviceInfo &deviceInfo);
 
     void
     onConfigurationDone();

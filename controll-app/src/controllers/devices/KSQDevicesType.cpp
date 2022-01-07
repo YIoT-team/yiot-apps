@@ -150,7 +150,8 @@ KSQDevicesType::onSessionKeyError(VSQMac mac) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDevicesType::onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo) {
+KSQDevicesType::onDeviceInfoUpdate(const struct VirgilIoTKit::vs_netif_t *src_netif, const VSQDeviceInfo &deviceInfo) {
+    (void)src_netif;
     auto res = findDevice(deviceInfo.m_mac);
     auto device = res.second;
     if (device) {
