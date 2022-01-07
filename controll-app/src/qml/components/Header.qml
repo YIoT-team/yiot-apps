@@ -10,11 +10,13 @@ ToolBar {
     property bool showBackButton: true
     property bool showMenuButton: false
     property bool showSettingsButton: false
+    property bool showPlusButton: false
     property bool hideButtons: false
     property alias showSeporator: seporator.visible
     property alias backgroundColor: background.color
     property alias textClickEnable: ma.enabled
     property var backAction: function() { back() }
+    property var plusAction: function() { add() }
     property var settingsAction: function() { showAbout() }
 
     signal textClick()
@@ -100,9 +102,22 @@ ToolBar {
              // TODO(fpohtmeh): try with visibility
             opacity: showSettingsButton ? 1 : 0
             enabled: showSettingsButton
-            visible: !hideButtons
+            visible: !hideButtons && !showPlusButton
             onClicked: {
                 settingsAction()
+            }
+        }
+
+        ImageButton {
+            Layout.rightMargin: 12
+
+            id: plusButton
+            image: "Plus"
+            opacity: showPlusButton ? 1 : 0
+            enabled: showPlusButton
+            visible: !hideButtons && !showSettingsButton
+            onClicked: {
+                plusAction()
             }
         }
     }

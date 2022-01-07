@@ -27,6 +27,11 @@ import "qrc:/qml/theme"
 Page {
     id: extensionDevicesListPage
 
+    property ListModel testModel: ListModel {}
+
+    // WIP
+    property bool showAvailable: false
+
     background: Rectangle {
         color: "transparent"
     }
@@ -34,6 +39,18 @@ Page {
     header: Header {
         title: qsTr("Services")
         backAction: function() { showMenuSettings() }
+        plusAction: function() {
+            // WIP
+            var showAvailable = extensionDevicesListPage.showAvailable
+            if(showAvailable) {
+                extensionList.model = extensionIntegrations
+            } else {
+                extensionList.model = extensionDevicesListPage.testModel
+            }
+            extensionDevicesListPage.showAvailable = !showAvailable
+        }
+
+        showPlusButton: true
     }
 
     ColumnLayout {
@@ -41,6 +58,7 @@ Page {
         spacing: 15
 
         ListView {
+            id: extensionList
             Layout.fillHeight: true
             Layout.fillWidth: true
             model: extensionIntegrations
