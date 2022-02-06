@@ -115,7 +115,7 @@ ToolBar {
             image: "Plus"
             opacity: showPlusButton ? 1 : 0
             enabled: showPlusButton
-            visible: !hideButtons && !showSettingsButton
+            visible: showSettingsButton ? false : showPlusButton
             onClicked: {
                 plusAction()
             }

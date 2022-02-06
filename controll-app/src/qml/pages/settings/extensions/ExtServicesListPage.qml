@@ -50,6 +50,7 @@ Page {
             extensionDevicesListPage.showAvailable = !showAvailable
         }
 
+        showBackButton: true
         showPlusButton: true
     }
 
