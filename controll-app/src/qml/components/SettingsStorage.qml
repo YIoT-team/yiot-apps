@@ -39,6 +39,7 @@ Item {
         property string websockLink: ""
 
         property string servicesLogin: ""
+        property string servicesPass: ""
     }
 
     // KeyChain Writer
@@ -143,6 +144,14 @@ Item {
 
     function getServicesLogin() {
         return s.servicesLogin
+    }
+
+    function setServicesPass(pass) {
+        s.servicesPass = pass
+    }
+
+    function getServicesPass() {
+        return s.servicesPass
     }
 
     Component.onCompleted: {

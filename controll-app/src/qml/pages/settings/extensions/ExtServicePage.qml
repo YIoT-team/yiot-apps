@@ -44,6 +44,7 @@ SwipeView {
             loginPage.visible = true
         } else {
             console.log(">>> Service login: " + settings.getServicesLogin())
+            console.log(">>> Service password: " + settings.getServicesPass())
             showServicePage()
         }
     }
