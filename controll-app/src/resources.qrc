@@ -46,6 +46,7 @@
 		<file>qml/resources/icons/dark/rename.png</file>
         <file>qml/resources/icons/dark/plugins.png</file>
 		<file>qml/resources/icons/dark/services.png</file>
+		<file>qml/resources/icons/dark/account.png</file>
 
         <!-- Icons light theme -->
         <file>qml/resources/icons/light/bt.png</file>
@@ -71,6 +72,7 @@
 		<file>qml/resources/icons/light/rename.png</file>
         <file>qml/resources/icons/light/plugins.png</file>
 		<file>qml/resources/icons/light/services.png</file>
+		<file>qml/resources/icons/light/account.png</file>
 
         <!-- Fonts -->
         <file>qml/resources/fonts/Roboto-Medium.ttf</file>
@@ -140,6 +142,7 @@
         <file>qml/pages/settings/SettingsMenuPage.qml</file>
         <file>qml/pages/settings/WiFiSettingsPage.qml</file>
         <file>qml/pages/settings/WiFiPasswordPage.qml</file>
+		<file>qml/pages/settings/AccountSettingsPage.qml</file>
         <file>qml/pages/settings/EventsSettingsPage.qml</file>
         <file>qml/pages/settings/RoTSettingsPage.qml</file>
         <file>qml/pages/settings/NetworksSettingsPage.qml</file>

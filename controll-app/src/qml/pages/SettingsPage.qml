@@ -39,20 +39,21 @@ Page {
 
     SwipeView {
         readonly property int menuIdx: 0
-        readonly property int wifiNetworksIdx: 1
-        readonly property int wifiPassIdx: 2
-        readonly property int eventsIdx: 3
-        readonly property int rotIdx: 4
-        readonly property int networksIdx: 5
-        readonly property int themeIdx: 6
-        readonly property int extDevicesIdx: 7
-        readonly property int servicesIdx: 8
-        readonly property int onePluginIdx: 9
-        readonly property int oneServiceIdx: 10
-        readonly property int oneDevicePageIdx: 11
-        readonly property int rotControlPageIdx: 12
-        readonly property int rotExportPageIdx: 13
-        readonly property int rotImportPageIdx: 14
+        readonly property int accountIdx: 1
+        readonly property int wifiNetworksIdx: 2
+        readonly property int wifiPassIdx: 3
+        readonly property int eventsIdx: 4
+        readonly property int rotIdx: 5
+        readonly property int networksIdx: 6
+        readonly property int themeIdx: 7
+        readonly property int extDevicesIdx: 8
+        readonly property int servicesIdx: 9
+        readonly property int onePluginIdx: 10
+        readonly property int oneServiceIdx: 11
+        readonly property int oneDevicePageIdx: 12
+        readonly property int rotControlPageIdx: 13
+        readonly property int rotExportPageIdx: 14
+        readonly property int rotImportPageIdx: 15
 
         property int backPageIdx: menuIdx
 
@@ -67,6 +68,10 @@ Page {
 
         WiFiSettingsPage {
             id: wifiSettingsPage
+        }
+
+        AccountSettingsPage {
+            id: accountSettingsPage
         }
 
         WiFiPasswordPage {
@@ -142,6 +147,10 @@ Page {
 
     function showWiFiSettings() {
         wifiPassSettingsPage.prepareLocation("credentials") //TODO: Remove string parameter
+        swipeSettingsShow(settingsSwipeView.wifiNetworksIdx)
+    }
+
+    function showAccountSettings() {
         swipeSettingsShow(settingsSwipeView.wifiNetworksIdx)
     }
 

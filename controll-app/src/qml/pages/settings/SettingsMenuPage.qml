@@ -71,6 +71,14 @@ Page {
                 }
             }
 
+            ListElement {
+                name: qsTr("Account")
+                image: "account"
+                property var action: function() {
+                    showAccountSettings()
+                }
+            }
+
             //ListElement {
             //    name: qsTr("Event settings")
             //    image: "events"
