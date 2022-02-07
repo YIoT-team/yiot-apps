@@ -25,7 +25,7 @@ import "../../theme"
 import "../../components"
 Page {
     property string ssid: ""
-    property string location: "credentials" //TODO: Remove string parameter
+    property int location: 0
 
     id: wifiSettingsPage
 
@@ -112,10 +112,12 @@ Page {
 
         // Switch back
         switch (location) {
-        case "credentials":
+        // Credentials
+        case (0):
             showDevicesSetup()
             break;
-        case "deviceSetup":
+        // Device setup
+        case (1):
             showCredLoad()
             setCredLoadState("wifi-setup")
             break;
