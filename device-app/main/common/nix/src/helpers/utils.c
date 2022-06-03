@@ -19,11 +19,15 @@
 
 #include "common/helpers/utils.h"
 #include <net/if.h>
+
+#if !defined(__APPLE__)
 #include <linux/wireless.h>
+#endif
 
 //-----------------------------------------------------------------------------
 static int
 _check_wireless(const char *ifname, char *protocol) {
+#if !defined(__APPLE__)
     int sock = -1;
     struct iwreq pwrq;
     memset(&pwrq, 0, sizeof(pwrq));
@@ -42,6 +46,7 @@ _check_wireless(const char *ifname, char *protocol) {
     }
 
     close(sock);
+#endif
     return 0;
 }
 
@@ -49,6 +54,7 @@ _check_wireless(const char *ifname, char *protocol) {
 bool
 is_wifi_connected(void) {
     bool res = false;
+#if !defined(__APPLE__)
     struct ifaddrs *ifaddr, *ifa;
 
     if (getifaddrs(&ifaddr) == -1) {
@@ -72,7 +78,7 @@ is_wifi_connected(void) {
     }
 
     freeifaddrs(ifaddr);
-
+#endif
     return res;
 }
 

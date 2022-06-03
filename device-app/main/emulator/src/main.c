@@ -105,7 +105,7 @@ main(int argc, char *argv[]) {
     vs_device_serial_t serial;
 
     // Initialize Logger module
-    vs_logger_init(VS_LOGLEV_DEBUG);
+    vs_logger_init(VS_LOGLEV_INFO);
 
     STATUS_CHECK(_get_device_type(argc, argv, &device_type_str), "");
     STATUS_CHECK(_get_websock_url(argc, argv, websock_url, websock_id), "");
