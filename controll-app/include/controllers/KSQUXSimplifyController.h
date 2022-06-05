@@ -51,7 +51,7 @@ public slots:
     onBLEDeviceIsClose(QString deviceMac, QString deviceName, bool requiresProvision);
 
     void
-    onDeviceRequiresProvision(QString deviceName, QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
+    onDeviceRequiresProvision(QString deviceName, VSQNetifBase *netif, VSQMac deviceMac);
 
     void
     onNewProvisionedDevice(QSharedPointer<KSQDevice> device);
@@ -71,7 +71,7 @@ private slots:
     onNewSetup(const VSQMac &mac);
 
 private:
-    QSharedPointer<VSQNetifBase> m_netif;
+    VSQNetifBase *m_netif;
     VSQMac m_deviceMac;
     QSet<QString> m_ignoredDevices;
     QSet<QString> m_provisionedDevices;

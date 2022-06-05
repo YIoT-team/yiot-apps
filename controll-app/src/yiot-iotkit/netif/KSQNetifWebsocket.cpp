@@ -126,8 +126,10 @@ KSQNetifWebsocket::onStateChanged(QAbstractSocket::SocketState state) {
 void
 KSQNetifWebsocket::onError(QAbstractSocket::SocketError error) {
     qDebug() << "KSQNetifWebsocket::onError : " << error;
-    m_webSocket.open(m_url);
-    emit fireStateChanged(m_webSocket.state());
+    QTimer::singleShot(0, [this]() {
+        m_webSocket.open(m_url);
+        emit fireStateChanged(m_webSocket.state());
+    });
 }
 
 //-----------------------------------------------------------------------------

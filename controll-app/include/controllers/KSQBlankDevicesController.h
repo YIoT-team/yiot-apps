@@ -84,7 +84,7 @@ signals:
     fireDeviceSelected(QBluetoothDeviceInfo dev);
 
     void
-    fireDeviceRequiresProvision(QString name, QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
+    fireDeviceRequiresProvision(QString name, VSQNetifBase *netif, VSQMac deviceMac);
 
 
 private slots:
@@ -99,7 +99,7 @@ private:
 
     QTimer m_cleanerTimer;
 
-    QSharedPointer<VSQNetifBase> m_netif;
+    VSQNetifBase *m_netif;
 
 
     KSQBlankDevices m_devices;

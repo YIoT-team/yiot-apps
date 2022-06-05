@@ -102,7 +102,7 @@ KSQDeviceSetupController::onProvisionDone() {
 
     if (m_needUser) {
         emit fireStateInfo(tr("Set device owner"));
-        auto lowLevelNetif = m_netif.isNull() ? vs_snap_netif_routing() : m_netif->lowLevelNetif();
+        auto lowLevelNetif = !m_netif ? vs_snap_netif_routing() : m_netif->lowLevelNetif();
         if (!KSQSnapSCRTClient::instance().addUser(lowLevelNetif, m_deviceMac, VS_USER_OWNER, m_userName, *myCert)) {
             error(tr("Cannot set self as an owner"));
         }
@@ -134,7 +134,7 @@ KSQDeviceSetupController::onAddUserDone() {
 
 //-----------------------------------------------------------------------------
 bool
-KSQDeviceSetupController::start(QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac) {
+KSQDeviceSetupController::start(VSQNetifBase *netif, VSQMac deviceMac) {
     m_netif = netif;
     m_deviceMac = deviceMac;
 
@@ -146,7 +146,7 @@ KSQDeviceSetupController::start(QSharedPointer<VSQNetifBase> netif, VSQMac devic
 
 
     auto lowLevelNetif = vs_snap_default_netif();
-    if (!m_netif.isNull()) {
+    if (m_netif) {
         lowLevelNetif = m_netif->lowLevelNetif();
     }
 

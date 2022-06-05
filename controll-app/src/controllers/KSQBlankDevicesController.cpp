@@ -27,7 +27,7 @@
 
 //-----------------------------------------------------------------------------
 KSQBlankDevicesController::KSQBlankDevicesController() {
-    m_netif.clear();
+    m_netif = nullptr;
 
     // SNAP::INFO service
     connect(&VSQSnapInfoClient::instance(),
@@ -82,9 +82,9 @@ KSQBlankDevicesController::onDeviceInfoUpdate(const struct VirgilIoTKit::vs_neti
         if (!deviceInfo.m_hasProvision) {
             if (src_netif && src_netif->user_data) {
                 VSQNetifBase *instance = reinterpret_cast<VSQNetifBase *>(src_netif->user_data);
-                m_netif.reset(instance);
+                m_netif = instance;
             } else {
-                m_netif.clear();
+                m_netif = nullptr;
             }
 
             emit fireDeviceRequiresProvision(deviceInfo.m_deviceName, m_netif, deviceInfo.m_mac);

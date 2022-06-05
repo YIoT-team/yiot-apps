@@ -113,11 +113,11 @@ KSQIoTKitFacade::needEncCb(vs_snap_service_id_t service_id, vs_snap_element_t el
 void
 KSQIoTKitFacade::initSnap() {
 
-    if (!m_impl.netifs().count() || !m_impl.netifs().first().get()) {
+    if (!m_impl.netifs().count() || !m_impl.netifs().first()) {
         throw QString("There is no default network implementation");
     }
 
-    if (vs_snap_init(m_impl.netifs().first().get()->lowLevelNetif(),
+    if (vs_snap_init(m_impl.netifs().first()->lowLevelNetif(),
                      netifProcessCb,
                      needEncCb,
                      NULL,
@@ -136,7 +136,7 @@ KSQIoTKitFacade::initSnap() {
             continue;
         }
 
-        if (VirgilIoTKit::VS_CODE_OK != vs_snap_netif_add(netif.get()->lowLevelNetif())) {
+        if (VirgilIoTKit::VS_CODE_OK != vs_snap_netif_add(netif->lowLevelNetif())) {
             throw QString("Unable to add SNAP network interface");
         }
     }
@@ -159,7 +159,7 @@ KSQIoTKitFacade::initSnap() {
     }
 
     if (m_features.hasFeature(KSQFeatures::SNAP_SNIFFER)) {
-        m_snapSniffer = decltype(m_snapSniffer)::create(m_appConfig.snifferConfig(), m_impl.netifs().first().get());
+        m_snapSniffer = decltype(m_snapSniffer)::create(m_appConfig.snifferConfig(), m_impl.netifs().first());
     }
 
     if (m_features.hasFeature(KSQFeatures::SNAP_CFG_CLIENT)) {

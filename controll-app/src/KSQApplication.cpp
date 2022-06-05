@@ -50,8 +50,8 @@ KSQApplication::run() {
     vs_logger_init(VirgilIoTKit::VS_LOGLEV_DEBUG);
 
     m_bleController = QSharedPointer<KSQBLEController>::create();
-    m_netifUdp = QSharedPointer<KSQUdp>::create();
-    m_netifWebsock = QSharedPointer<KSQNetifWebsocket>::create();
+    m_netifUdp = new KSQUdp();
+    m_netifWebsock = new KSQNetifWebsocket();
     m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create();
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
     m_deviceControllers = QSharedPointer<KSQAllDevicesController>::create();
@@ -108,7 +108,7 @@ KSQApplication::run() {
     connect(m_bleController.get(), &KSQBLEController::fireProvisionDone, this, &KSQApplication::onProvisionDone);
 
     // Connect signals from network interfaces
-    connect(m_netifWebsock.get(), &KSQNetifWebsocket::fireDeviceReady, this, &KSQApplication::updateDevices);
+    connect(m_netifWebsock, &KSQNetifWebsocket::fireDeviceReady, this, &KSQApplication::updateDevices);
 
     // Connect Integrations signals
     connect(m_integrations.get(),
