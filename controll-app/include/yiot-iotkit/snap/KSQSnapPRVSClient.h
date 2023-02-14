@@ -82,10 +82,7 @@ private:
     uploadKeys(VSQNetifBase *netif, VSQMac deviceMac, QSharedPointer<KSQRoT> rootOfTrust);
 
     bool
-    uploadData(VSQNetifBase *netif,
-               VSQMac deviceMac,
-               vs_snap_prvs_element_e prvsElement,
-               const QByteArray &data);
+    uploadData(VSQNetifBase *netif, VSQMac deviceMac, vs_snap_prvs_element_e prvsElement, const QByteArray &data);
 
     bool
     signDevice(VSQNetifBase *netif,

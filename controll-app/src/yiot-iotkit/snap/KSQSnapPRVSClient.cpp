@@ -117,9 +117,7 @@ KSQSnapPRVSClient::uploadData(VSQNetifBase *netif,
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapPRVSClient::uploadKeys(VSQNetifBase *netif,
-                              VSQMac deviceMac,
-                              QSharedPointer<KSQRoT> rootOfTrust) {
+KSQSnapPRVSClient::uploadKeys(VSQNetifBase *netif, VSQMac deviceMac, QSharedPointer<KSQRoT> rootOfTrust) {
     QString prefix(tr("Security provision "));
     int pos = 1;
     emit fireProvisionStateChanged(prefix + QString("%1/8").arg(pos++));
@@ -205,9 +203,7 @@ KSQSnapPRVSClient::signDevice(VSQNetifBase *netif,
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapPRVSClient::uploadTrustList(VSQNetifBase *netif,
-                                   VSQMac deviceMac,
-                                   QSharedPointer<KSQRoT> rootOfTrust) {
+KSQSnapPRVSClient::uploadTrustList(VSQNetifBase *netif, VSQMac deviceMac, QSharedPointer<KSQRoT> rootOfTrust) {
 
     // Check input parameters
     if (!rootOfTrust->trustList().isValid() || !rootOfTrust->trustList().keysCount()) {
@@ -258,9 +254,7 @@ KSQSnapPRVSClient::uploadTrustList(VSQNetifBase *netif,
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapPRVSClient::provisionDevice(VSQNetifBase *netif,
-                                   VSQMac deviceMac,
-                                   QSharedPointer<KSQRoT> rootOfTrust) {
+KSQSnapPRVSClient::provisionDevice(VSQNetifBase *netif, VSQMac deviceMac, QSharedPointer<KSQRoT> rootOfTrust) {
 
     // Check Root of trust is valid
     if (!rootOfTrust->isValid()) {

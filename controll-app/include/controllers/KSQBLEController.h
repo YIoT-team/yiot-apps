@@ -31,7 +31,7 @@ public:
     KSQBLEController();
     virtual ~KSQBLEController();
 
-    VSQNetifBLE*
+    VSQNetifBLE *
     netif();
 
     VSQNetifBLEEnumerator *

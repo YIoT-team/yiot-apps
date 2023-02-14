@@ -41,9 +41,7 @@ KSQUXSimplifyController::onBLEDeviceIsClose(QString deviceMac, QString deviceNam
 
 //-----------------------------------------------------------------------------
 void
-KSQUXSimplifyController::onDeviceRequiresProvision(QString deviceName,
-                                                   VSQNetifBase * netif,
-                                                   VSQMac deviceMac) {
+KSQUXSimplifyController::onDeviceRequiresProvision(QString deviceName, VSQNetifBase *netif, VSQMac deviceMac) {
     if (m_netif->lowLevelNetif() != netif->lowLevelNetif()) {
         m_netif = netif;
     }
