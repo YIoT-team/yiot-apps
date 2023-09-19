@@ -112,8 +112,8 @@ KSQTrustList::create(const QString &id, const KSQRoT &rot) {
     factoryKey->pubkey.ec_type = rot.factory().second->ecType();
     factoryKey->pubkey.key_type = VS_KEY_FACTORY;
     factoryKey->pubkey.meta_data_sz = 0;
-    auto datedKey = rot.factory().second->datedKey();
-    memcpy(factoryKey->pubkey.meta_and_pubkey, datedKey.data(), datedKey.size());
+    auto rawKey = rot.factory().second->val();
+    memcpy(factoryKey->pubkey.meta_and_pubkey, rawKey, rawKey.size());
 
     // -----------
     //  Footer
