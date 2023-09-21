@@ -84,6 +84,7 @@
 
         <!-- QML Components -->
         <file>qml/components/FormLabel.qml</file>
+        <file>qml/components/LinkText.qml</file>
         <file>qml/components/Container.qml</file>
         <file>qml/components/ImageButton.qml</file>
         <file>qml/components/WiFiNetworksList.qml</file>

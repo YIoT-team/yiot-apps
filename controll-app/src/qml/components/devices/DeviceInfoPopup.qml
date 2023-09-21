@@ -70,11 +70,11 @@ Popup {
         InfoText { text: qsTr("Manufacturer :"); horizontalAlignment: Text.AlignRight }
         InfoText { text: mManufacturer }
 
-        InfoText { text: qsTr("Type :"); horizontalAlignment: Text.AlignRight }
-        InfoText { text: mType }
-
-        InfoText { text: qsTr("Roles :"); horizontalAlignment: Text.AlignRight }
-        InfoText { text: mRoles }
+//        InfoText { text: qsTr("Type :"); horizontalAlignment: Text.AlignRight }
+//        InfoText { text: mType }
+//
+//        InfoText { text: qsTr("Roles :"); horizontalAlignment: Text.AlignRight }
+//        InfoText { text: mRoles }
 
         InfoText { text: qsTr("Firmware version :"); horizontalAlignment: Text.AlignRight }
         InfoText { text: mFwVer }

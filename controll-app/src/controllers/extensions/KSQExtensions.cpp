@@ -89,7 +89,9 @@ KSQExtensions::loadOneExtension(const QString &resourceDir) {
     QString version = jsonObject.value("version").toString();
     size_t size = jsonObject.value("size").toInt();
     QStringList languages;
-    foreach (QVariant v, jsonObject.value("languages").toArray().toVariantList()) { languages << v.value<QString>(); }
+    foreach (QVariant v, jsonObject.value("languages").toArray().toVariantList()) {
+        languages << v.value<QString>();
+    }
 
     const QString lang = "en";
     const QString basePath = resourceDir + "/info/texts/" + lang;
