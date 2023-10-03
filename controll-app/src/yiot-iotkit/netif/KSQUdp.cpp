@@ -97,8 +97,13 @@ KSQUdp::_internal_tx(const uint8_t *data, const uint16_t data_sz) {
         vs_snap_packet_dump("OUT", packet);
     }
 
-    auto sentBytes = m_socket.writeDatagram(
-            QByteArray::fromRawData(reinterpret_cast<const char *>(data), data_sz), QHostAddress::Broadcast, m_port);
+    //    auto sentBytes = m_socket.writeDatagram(
+    //            QByteArray::fromRawData(reinterpret_cast<const char *>(data), data_sz), QHostAddress::Broadcast,
+    //            m_port);
+
+    auto sentBytes = m_socket.writeDatagram(QByteArray::fromRawData(reinterpret_cast<const char *>(data), data_sz),
+                                            QHostAddress("10.221.17.10"),
+                                            m_port);
 
     if (sentBytes != data_sz) {
         VS_LOG_ERROR("Sent bytes : %d, data bytes to send : %d. Last error : %s",

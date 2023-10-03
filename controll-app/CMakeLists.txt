@@ -492,12 +492,12 @@ if (KS_PLATFORM STREQUAL "ios")
 
     # Prepare iOS bundle creation
     add_qt_ios_app(${KS_TARGET_NAME}
-            CUSTOM_PLIST        "${CMAKE_CURRENT_LIST_DIR}/platforms/ios/ios-info.plist.in"
-            BUNDLE_IDENTIFIER   "io.yiot-dev.ios.yiot"
-            ASSET_DIR           "${CMAKE_CURRENT_SOURCE_DIR}/platforms/ios/Assets.xcassets"
-            SHORT_VERSION       "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
-            LONG_VERSION        "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
-            VERBOSE             1)
+        CUSTOM_PLIST "${CMAKE_CURRENT_LIST_DIR}/platforms/ios/ios-info.plist.in"
+        BUNDLE_IDENTIFIER "dev.kutashenko.app.io"
+        ASSET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/platforms/ios/Assets.xcassets"
+        SHORT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+        LONG_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+        VERBOSE 1)
 
 endif ()
 
