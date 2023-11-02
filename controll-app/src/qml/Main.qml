@@ -110,9 +110,6 @@ ApplicationWindow {
 
     Component.onCompleted: {
         Platform.detect()
-        settings.loaded.connect(function() {
-            app.updateDevices()
-        })
         showDevices()
     }
 
@@ -248,6 +245,7 @@ ApplicationWindow {
 
     function showDevices() {
         swipeShow(swipeView.devicePageIdx)
+        app.updateDevices()
     }
 
     function showDevicesSetup() {

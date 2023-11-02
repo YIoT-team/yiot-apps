@@ -25,7 +25,7 @@ import "../../theme"
 import "../../components"
 
 RowLayout {
-    property bool containsMouse: btnInfo.containsMouse || btnCollapser.containsMouse
+    property bool containsMouse: /*btnInfo.containsMouse ||*/ btnCollapser.containsMouse
     property int wSz: 50
 
     signal showInfo()
