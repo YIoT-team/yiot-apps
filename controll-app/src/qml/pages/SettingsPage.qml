@@ -39,8 +39,8 @@ Page {
 
     SwipeView {
         readonly property int menuIdx: 0
-        readonly property int accountIdx: 1
-        readonly property int wifiNetworksIdx: 2
+        readonly property int wifiNetworksIdx: 1
+        readonly property int accountIdx: 2
         readonly property int wifiPassIdx: 3
         readonly property int eventsIdx: 4
         readonly property int rotIdx: 5
@@ -151,7 +151,7 @@ Page {
     }
 
     function showAccountSettings() {
-        swipeSettingsShow(settingsSwipeView.wifiNetworksIdx)
+        swipeSettingsShow(settingsSwipeView.accountIdx)
     }
 
     function showRoTSettings() {
