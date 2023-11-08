@@ -276,6 +276,8 @@ target_sources(${KS_TARGET_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/setup/KSQDeviceSetupController.h
     ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/setup/KSQDeviceSetupData.h
 
+    ${CMAKE_CURRENT_LIST_DIR}/include/utils/KSQFileLoader.h
+
     $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
     $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
     $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
@@ -327,6 +329,8 @@ target_sources(${KS_TARGET_NAME}
 
     ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/setup/KSQDeviceSetupController.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/setup/KSQDeviceSetupData.cpp
+
+    ${CMAKE_CURRENT_LIST_DIR}/src/utils/KSQFileLoader.cpp
 
     $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/os/macos/KSMacWiFi.mm>
     $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/os/ios/KSiOSWiFi.mm>
