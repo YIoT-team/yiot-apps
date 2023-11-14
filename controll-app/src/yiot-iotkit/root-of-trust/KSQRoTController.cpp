@@ -124,8 +124,22 @@ KSQRoTController::roleNames() const {
 
 //-----------------------------------------------------------------------------
 bool
-KSQRoTController::prepare() {
+KSQRoTController::drop() {
+    return prepare(true);
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQRoTController::prepare(bool drop) {
     auto idsList = loadRoTList();
+
+    if (drop) {
+        idsList.clear();
+        for (auto rot : m_rots) {
+            rot.get()->disconnect();
+        }
+        m_rots.clear();
+    }
 
     qDebug() << "RoT list: " << idsList;
 
@@ -137,6 +151,9 @@ KSQRoTController::prepare() {
     // Check if local is present
     if (!idsList.contains(KSQRoT::kLocalID)) {
         auto localRoT = QSharedPointer<KSQRoT>::create(KSQRoT::kLocalID, "qrc:/qml/resources/icons/%1/secure-enclave");
+        if (drop) {
+            localRoT->generate(KSQRoT::kLocalID);
+        }
         if (!localRoT->isValid()) {
             return false;
         }

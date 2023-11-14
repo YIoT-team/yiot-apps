@@ -319,6 +319,15 @@ KSQRoT::importData(QString fileName, QString password) {
     QByteArray r1, r2, a1, a2, tl1, tl2, fw1, fw2, f1, trustList;
     QDataStream dataStreamRead(data);
     dataStreamRead >> r1 >> r2 >> a1 >> a2 >> tl1 >> tl2 >> fw1 >> fw2 >> f1 >> trustList;
+    // Find the last ByteArray as a trust list
+    while (true) {
+        QByteArray tmp;
+        dataStreamRead >> tmp;
+        if (tmp.isEmpty()) {
+            break;
+        }
+        trustList = tmp;
+    }
 
     if (r1.isEmpty() || r2.isEmpty() || a1.isEmpty() || a2.isEmpty() || tl1.isEmpty() || tl2.isEmpty() ||
         fw1.isEmpty() || fw2.isEmpty() || f1.isEmpty() || trustList.isEmpty()) {

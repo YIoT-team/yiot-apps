@@ -75,8 +75,9 @@ KSQIoTKitFacade::init(const KSQFeatures &features, const VSQImplementations &imp
     auto &provision = KSQProvision::instance();
     auto &rotContloller = KSQRoTController::instance();
     if (!provision.isValid()) {
+        rotContloller.drop();
         if (!provision.create(rotContloller.localRootOfTrust())) {
-            VS_LOG_CRITICAL("Cannot create provision");
+            VS_LOG_WARNING("Cannot create provision");
             return false;
         }
     }

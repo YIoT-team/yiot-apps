@@ -76,6 +76,8 @@ public:
     roleNames() const override;
 
 public slots:
+    bool
+    drop();
 
 private slots:
     void
@@ -93,7 +95,7 @@ private:
     bool m_valid;
 
     bool
-    prepare();
+    prepare(bool drop = false);
 
     QStringList
     loadRoTList();
