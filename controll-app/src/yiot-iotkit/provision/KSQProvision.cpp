@@ -116,6 +116,7 @@ bool
 KSQProvision::create(QSharedPointer<KSQRoT> rot) {
     VS_LOG_DEBUG("Creation of self-signed provision");
 
+    CHECK_NOT_ZERO_RET(rot.get(), false);
     CHECK_NOT_ZERO_RET(rot->isValid(), false);
     CHECK_NOT_ZERO_RET(!rot->factory().first.isNull(), false);
 

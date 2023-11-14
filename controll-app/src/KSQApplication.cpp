@@ -120,17 +120,17 @@ KSQApplication::run() {
             this,
             &KSQApplication::onIntegrationDeactivate);
 
-    // Root of trust changes
-    connect(&KSQRoTController::instance(),
-            &KSQRoTController::fireRoTUpdated,
-            &KSQProvision::instance(),
-            &KSQProvision::onRoTUpdated);
-
     // Initialize IoTKit
     if (!KSQIoTKitFacade::instance().init(features, impl, appConfig)) {
         VS_LOG_CRITICAL("Unable to initialize IoTKIT");
         return -1;
     }
+
+    // Root of trust changes
+    connect(&KSQRoTController::instance(),
+            &KSQRoTController::fireRoTUpdated,
+            &KSQProvision::instance(),
+            &KSQProvision::onRoTUpdated);
 
     // Initialize QML
     QQmlContext *context = engine.rootContext();
@@ -218,7 +218,7 @@ KSQApplication::applicationVersion() const {
 //-----------------------------------------------------------------------------
 QString
 KSQApplication::applicationDisplayName() const {
-    return tr("YIoT");
+    return tr("EnGenius");
 }
 
 //-----------------------------------------------------------------------------

@@ -161,13 +161,19 @@ KSQRoT::generate(const QString &name) {
 
     CHECK_RET(prepareProvisionKeyPair(m_factory, keyPairs[8], VS_KEY_FACTORY), false, "Cannot prepare Factory Key");
 
-    // Generate TrustList
-    if (!m_trustList.create(m_id, *this)) {
+    // Store generated keys for SecBox
+    if (!save()) {
+        VS_LOG_ERROR("Cannot save Root Of Trust");
         return false;
     }
 
-    // Store generated keys for SecBox
-    return save();
+    // Generate TrustList
+    if (!m_trustList.create(m_id, *this)) {
+        VS_LOG_ERROR("Cannot generate Trust List");
+        return false;
+    }
+
+    return true;
 }
 
 //-----------------------------------------------------------------------------
