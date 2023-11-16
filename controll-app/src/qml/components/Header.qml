@@ -24,14 +24,12 @@ ToolBar {
     background: Rectangle {
         id: background
         implicitHeight: 60
-        color: Theme.mainBackgroundColor
+        color: Theme.contrastColor
 
         Rectangle {
             id: seporator
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
 
             height: 1
             color: Theme.contrastBackgroundColor
