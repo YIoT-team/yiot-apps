@@ -186,6 +186,12 @@
         <file>qml/info/builtin-plugins.json</file>
         <file>qml/info/builtin-integrations.json</file>
 
+        <!-- JS Helpers -->
+        <file>js/firmware/protocol.js</file>
+        <file>js/uci/protocol.js</file>
+        <file>js/uci/params-types.js</file>
+        <file>js/uci/params.js</file>
+
 	<!-- Translations -->
 	<file>qml/../translations/yiot_ua.qm</file>
 
