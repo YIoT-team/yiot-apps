@@ -36,7 +36,7 @@
 #include <yiot-iotkit/netif/KSQUdp.h>
 
 //-----------------------------------------------------------------------------
-KSQUdp::KSQUdp(quint16 port) : m_port(port) {
+KSQUdp::KSQUdp(QHostAddress subnet, quint16 port) : m_subnet(subnet), m_port(port) {
     using std::placeholders::_1;
     using std::placeholders::_2;
     std::function<vs_status_e(const uint8_t *, const uint16_t)> _resend =
@@ -97,13 +97,8 @@ KSQUdp::_internal_tx(const uint8_t *data, const uint16_t data_sz) {
         vs_snap_packet_dump("OUT", packet);
     }
 
-    //    auto sentBytes = m_socket.writeDatagram(
-    //            QByteArray::fromRawData(reinterpret_cast<const char *>(data), data_sz), QHostAddress::Broadcast,
-    //            m_port);
-
-    auto sentBytes = m_socket.writeDatagram(QByteArray::fromRawData(reinterpret_cast<const char *>(data), data_sz),
-                                            QHostAddress("10.221.17.10"),
-                                            m_port);
+    auto sentBytes = m_socket.writeDatagram(
+            QByteArray::fromRawData(reinterpret_cast<const char *>(data), data_sz), m_subnet, m_port);
 
     if (sentBytes != data_sz) {
         VS_LOG_ERROR("Sent bytes : %d, data bytes to send : %d. Last error : %s",
@@ -144,7 +139,6 @@ KSQUdp::tx(const QByteArray &data) {
 //-----------------------------------------------------------------------------
 QString
 KSQUdp::macAddr() const {
-
     return m_mac;
 }
 
@@ -228,6 +222,13 @@ void
 KSQUdp::restart() {
     deinit();
     init();
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQUdp::setSubnet(QHostAddress subnet) {
+    VS_LOG_INFO("FORCE SUBNET: %s", VSQCString(subnet.toString()));
+    m_subnet = subnet;
 }
 
 //-----------------------------------------------------------------------------

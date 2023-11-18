@@ -44,7 +44,7 @@
 class KSQUdp final : public VSQNetifBase {
     Q_OBJECT
 public:
-    KSQUdp(quint16 port = 4100);
+    KSQUdp(QHostAddress subnet, quint16 port = 4100);
 
     KSQUdp(KSQUdp const &) = delete;
 
@@ -65,6 +65,9 @@ public:
 
     void
     restart();
+
+    void
+    setSubnet(QHostAddress subnet);
 
 protected:
     bool
@@ -90,6 +93,7 @@ private slots:
     ifAckPacket(const QByteArray &data);
 
 private:
+    QHostAddress m_subnet;
     quint16 m_port;
     QUdpSocket m_socket;
     VSQMac m_mac;

@@ -74,6 +74,9 @@ public slots:
     Q_INVOKABLE void
     updateDevices();
 
+    Q_INVOKABLE void
+    setSubnet(QString subnet);
+
 private:
     KSQWiFiEnumerator m_wifiEnumerator;
     QSharedPointer<KSQBLEController> m_bleController;

@@ -55,13 +55,13 @@ Page {
                 }
             }
 
-            //ListElement {
-            //    name: qsTr("IoT Networks")
-            //    image: "network"
-            //    property var action: function() {
-            //        showIoTNetworkSettings()
-            //    }
-            //}
+            ListElement {
+                name: qsTr("IoT Networks")
+                image: "network"
+                property var action: function() {
+                    showIoTNetworkSettings()
+                }
+            }
 
             ListElement {
                 name: qsTr("WiFi credentials")

@@ -50,7 +50,7 @@ KSQApplication::run() {
     vs_logger_init(VirgilIoTKit::VS_LOGLEV_DEBUG);
 
     m_bleController = QSharedPointer<KSQBLEController>::create();
-    m_netifUdp = new KSQUdp();
+    m_netifUdp = new KSQUdp(QHostAddress::Broadcast);
     m_netifWebsock = new KSQNetifWebsocket();
     m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create();
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
@@ -201,6 +201,21 @@ KSQApplication::updateDevices() {
     KSQIoTKitFacade::instance().updateAll();
     QTimer::singleShot(3000, []() { KSQIoTKitFacade::instance().updateAll(); });
     QTimer::singleShot(5000, []() { KSQIoTKitFacade::instance().updateAll(); });
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQApplication::setSubnet(QString subnet) {
+    QHostAddress addr;
+    auto tmp = QHostAddress(subnet);
+
+    if (tmp.isBroadcast() || tmp.isGlobal()) {
+        addr = tmp;
+    } else {
+        addr = QHostAddress::Broadcast;
+    }
+
+    m_netifUdp->setSubnet(addr);
 }
 
 //-----------------------------------------------------------------------------

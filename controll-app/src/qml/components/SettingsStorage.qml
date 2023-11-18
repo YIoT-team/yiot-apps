@@ -40,6 +40,8 @@ Item {
 
         property string servicesLogin: ""
         property string servicesPass: ""
+
+        property string subnet: ""
     }
 
     // KeyChain Writer
@@ -152,6 +154,14 @@ Item {
 
     function getServicesPass() {
         return s.servicesPass
+    }
+
+    function setSubnet(subnet) {
+        s.subnet = subnet
+    }
+
+    function getSubnet() {
+        return s.subnet
     }
 
     Component.onCompleted: {
