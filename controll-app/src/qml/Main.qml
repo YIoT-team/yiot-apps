@@ -29,11 +29,11 @@ import "./pages/settings"
 import "./components"
 import "./components/devices"
 import "./components/Popups"
+import "./components/RoT"
 import "./theme"
 import "./base"
 
 ApplicationWindow {
-
     id: applicationWindow
     visible: true
     width: 400
@@ -54,6 +54,13 @@ ApplicationWindow {
 
     // Inform about requested action by device
     DeviceActionRequestDialog { id: deviceActionDialog }
+
+    // Ask to Import RoT or to use generated
+    RoTImportRequestDialog {
+        id: rotActionDialog
+
+        actionImport: showRoTImportPage
+    }
 
     // About application page
     AboutPage { id: aboutPage }
@@ -111,6 +118,10 @@ ApplicationWindow {
     Component.onCompleted: {
         Platform.detect()
         showDevices()
+
+        if (rotModel.generated) {
+            rotActionDialog.open()
+        }
     }
 
     Connections {
@@ -276,6 +287,16 @@ ApplicationWindow {
         settingsPage.showWiFiPassword(ssid)
         showSettingsElement(settingsPage.wifiPassIdx)
     }
+
+    function showRoTImportPage() {
+        swipeShow(swipeView.settingsPageIdx)
+        // TODO: Fix it. It's a hack.
+        var model = {
+            "object": rotModel.data(rotModel.index(0, 0), rotModel.objIdx)
+        }
+        settingsPage.showRoTImportPage(model)
+    }
+
 
     // ------------------------------------------------------------------------
     //      Popup messages

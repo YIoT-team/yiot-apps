@@ -160,6 +160,8 @@ KSQRoTController::prepare(bool drop) {
         m_rots.push_back(localRoT);
         idsList << KSQRoT::kLocalID;
         saveRoTList(idsList);
+
+        m_generated = true;
     }
 
     for (auto rot : m_rots) {
@@ -204,6 +206,18 @@ KSQRoTController::saveRoTList(const QStringList &list) {
     dataStreamWrite << list;
 
     return KSQSecBox::instance().save(VS_SECBOX_SIGNED, m_listStorageId, data);
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQRoTController::generated() const {
+    return m_generated;
+}
+
+//-----------------------------------------------------------------------------
+int
+KSQRoTController::objIdx() const {
+    return static_cast<int>(Element::Obj);
 }
 
 //-----------------------------------------------------------------------------

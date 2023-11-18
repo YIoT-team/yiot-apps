@@ -31,6 +31,8 @@
 
 class KSQRoTController : public QAbstractTableModel, public VSQSingleton<KSQRoTController> {
     Q_OBJECT
+    Q_PROPERTY(bool generated READ generated)
+    Q_PROPERTY(int objIdx READ objIdx)
 
     friend VSQSingleton<KSQRoTController>;
     enum Element {
@@ -75,6 +77,12 @@ public:
     QHash<int, QByteArray>
     roleNames() const override;
 
+    bool
+    generated() const;
+
+    int
+    objIdx() const;
+
 public slots:
     bool
     drop();
@@ -93,6 +101,7 @@ private:
 
     std::list<QSharedPointer<KSQRoT>> m_rots;
     bool m_valid;
+    bool m_generated;
 
     bool
     prepare(bool drop = false);
