@@ -61,8 +61,8 @@ SwipeView {
         var component = Qt.createComponent(qmlFile);
         var controlPage = component.createObject(servicesSwipeView);
 
-        if (controlPage == null) {
-            console.log("Error creating object")
+        if (controlPage === null) {
+            console.log("Error creating object: ", component.errorString())
         }
 
         servicesSwipeView.addItem(controlPage)
