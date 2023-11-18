@@ -178,6 +178,11 @@ KSQDevicesType::onDeviceInfoUpdate(const struct VirgilIoTKit::vs_netif_t *src_ne
             device->setReceivedBytes(QString("%1").arg(deviceInfo.m_received));
         }
 
+        if (!deviceInfo.m_isActive && device->isWaitingReboot()) {
+            VS_LOG_INFO("DROP SESSION DUE TO REBOOT: %s", VSQCString(deviceInfo.m_mac.description()));
+            device->dropSession();
+        }
+
         const auto _idx = createIndex(res.first, 0);
         emit dataChanged(_idx, _idx);
     }

@@ -69,6 +69,9 @@ public:
     Q_INVOKABLE void
     setNameToHardware(QString name);
 
+    Q_INVOKABLE void
+    waitReboot();
+
     void
     setRoles(QString val);
 
@@ -134,12 +137,17 @@ public:
     hasSessionKey() const;
     bool
     active() const;
+    bool
+    isWaitingReboot() const;
 
     bool
     operator<(const KSQDevice &rhs) const;
 
     bool
     isUpdatedName();
+
+    void
+    dropSession();
 
     static const QString kCmdStateConnect;
     static const QString kCmdStateSend;
@@ -213,6 +221,9 @@ signals:
     void
     fireStateImageChanged();
 
+    void
+    fireRebooted();
+
 private:
     bool m_active;
     QDateTime m_lastUpdate;
@@ -232,6 +243,8 @@ private:
 
     bool m_hasProvision;
     bool m_hasOwner;
+
+    bool m_waitReboot;
 
     QSharedPointer<QObject> m_js;
 

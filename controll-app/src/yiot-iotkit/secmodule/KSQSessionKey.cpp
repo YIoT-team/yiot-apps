@@ -70,6 +70,12 @@ KSQSessionKey::set(const vs_session_key_t &key) {
 
 //-----------------------------------------------------------------------------
 void
+KSQSessionKey::drop() {
+    m_valid = false;
+}
+
+//-----------------------------------------------------------------------------
+void
 KSQSessionKey::registerType() {
     static bool registered = false;
 

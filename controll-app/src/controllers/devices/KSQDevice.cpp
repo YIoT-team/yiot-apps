@@ -40,6 +40,7 @@ KSQDevice::KSQDevice(QSharedPointer<QObject> js, VSQMac mac, QString name, QStri
     m_active = true;
     m_hasProvision = false;
     m_hasOwner = false;
+    m_waitReboot = false;
     m_js = js;
 
     startSessionConnection();
@@ -65,6 +66,13 @@ KSQDevice::KSQDevice(const KSQDevice &d) {
 bool
 KSQDevice::isUpdatedName() {
     return m_nameUpdated;
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDevice::dropSession() {
+    m_sessionKey.drop();
+    startSessionConnection();
 }
 
 //-----------------------------------------------------------------------------
@@ -124,6 +132,12 @@ void
 KSQDevice::setNameToHardware(QString name) {
     setName(name);
     emit fireSetNameToHardware(qMacAddr(), name);
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDevice::waitReboot() {
+    m_waitReboot = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -213,6 +227,11 @@ KSQDevice::setSessionKey(const KSQSessionKey &key) {
     m_sessionKey = key;
     m_sessionTimer.stop();
     emit fireHasSessionKeyChanged();
+
+    if (m_waitReboot) {
+        m_waitReboot = false;
+        fireRebooted();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -309,6 +328,12 @@ KSQDevice::hasSessionKey() const {
 bool
 KSQDevice::active() const {
     return m_active;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQDevice::isWaitingReboot() const {
+    return m_waitReboot;
 }
 
 //-----------------------------------------------------------------------------
