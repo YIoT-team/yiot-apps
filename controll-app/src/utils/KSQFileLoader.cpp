@@ -52,15 +52,16 @@ FileLoader::download(const QString &url) {
 
 // ----------------------------------------------------------------------------
 int
-FileLoader::save(const QString &folder) {
-    auto dt = QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss");
-    auto file = folder + "/" + dt + "-conf.tar.gz";
+FileLoader::save(const QString &file) {
+    qDebug() << "FileLoader::save : " << file;
+
     auto f = QFile(file);
     if (!f.open(QFile::WriteOnly)) {
         return -1;
     }
 
-    return f.write(m_data) ? 0 : -1;
+    auto res = f.write(m_data);
+    return res ? 0 : -1;
 }
 
 // ----------------------------------------------------------------------------
