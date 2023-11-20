@@ -34,7 +34,10 @@ public:
     virtual ~FileLoader() = default;
 
     Q_INVOKABLE int
-    download(const QString &url, const QString &file);
+    download(const QString &url);
+
+    Q_INVOKABLE int
+    save(const QString &file);
 
     Q_INVOKABLE int
     upload(const QString &url, const QString &file);
@@ -50,6 +53,7 @@ private:
     QMutex m_guard;
     QSharedPointer<QNetworkAccessManager> m_networkAccessManager;
     QSharedPointer<QFile> m_file;
+    QByteArray m_data;
 };
 
 static void

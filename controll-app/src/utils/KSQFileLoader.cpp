@@ -25,9 +25,42 @@
 
 // ----------------------------------------------------------------------------
 int
-FileLoader::download(const QString &url, const QString &file) {
-    qDebug() << ">>>> FileLoader::download : " << url;
+FileLoader::download(const QString &url) {
+    qDebug() << "FileLoader::download : " << url;
+    QMutexLocker _lock(&m_guard);
+
+    QUrl fullUrl(url);
+    fullUrl.setUserName("anonymous");
+    fullUrl.setPassword("anonymous");
+
+    m_networkAccessManager.reset(new QNetworkAccessManager());
+    auto reply = m_networkAccessManager->get(QNetworkRequest(fullUrl));
+    connect(reply, SIGNAL(downloadProgress(qint64, qint64)), SIGNAL(progressUpdated(qint64, qint64)));
+    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)), SIGNAL(error()));
+
+    connect(reply, &QNetworkReply::finished, [this, reply]() {
+        if (reply->error() != QNetworkReply::NoError) {
+            emit error();
+        }
+
+        m_data = reply->readAll();
+        emit done();
+    });
+
     return 0;
+}
+
+// ----------------------------------------------------------------------------
+int
+FileLoader::save(const QString &folder) {
+    auto dt = QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss");
+    auto file = folder + "/" + dt + "-conf.tar.gz";
+    auto f = QFile(file);
+    if (!f.open(QFile::WriteOnly)) {
+        return -1;
+    }
+
+    return f.write(m_data) ? 0 : -1;
 }
 
 // ----------------------------------------------------------------------------
