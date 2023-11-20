@@ -189,6 +189,7 @@
 
         <!-- JS Helpers -->
         <file>js/firmware/protocol.js</file>
+        <file>js/configuration/protocol.js</file>
         <file>js/uci/protocol.js</file>
         <file>js/uci/params-types.js</file>
         <file>js/uci/params.js</file>
