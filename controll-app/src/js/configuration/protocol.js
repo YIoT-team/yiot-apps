@@ -20,6 +20,7 @@
 const kPrepareBackupCommand = "config-backup-prepare.sh"
 const kPrepareRestoreCommand = "config-restore-prepare.sh"
 const kRestoreCommand = "config-restore.sh"
+const kFactoryResetCommand = "factory-reset.sh"
 
 //-----------------------------------------------------------------------------
 function
@@ -56,6 +57,20 @@ restore(pc) {
 
     json.command = "script"
     json.script = kRestoreCommand
+
+    pc.invokeCommand(JSON.stringify(json))
+}
+
+//-----------------------------------------------------------------------------
+function
+factoryReset(pc, saveLevel0, saveLevel1, saveLevel2) {
+    console.log("Request: Factory reset ")
+
+    let json = {}
+
+    json.command = "script"
+    json.script = kFactoryResetCommand
+    json.params = [saveLevel0, saveLevel1, saveLevel2]
 
     pc.invokeCommand(JSON.stringify(json))
 }
