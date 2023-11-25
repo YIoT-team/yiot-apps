@@ -227,6 +227,7 @@ KSQDevice::setSessionKey(const KSQSessionKey &key) {
     m_sessionKey = key;
     m_sessionTimer.stop();
     emit fireHasSessionKeyChanged();
+    emit fireSessionKeyReceived(this);
 
     if (m_waitReboot) {
         m_waitReboot = false;

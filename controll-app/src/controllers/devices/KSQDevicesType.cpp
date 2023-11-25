@@ -187,6 +187,7 @@ KSQDevicesType::onDeviceInfoUpdate(const struct VirgilIoTKit::vs_netif_t *src_ne
         if (!deviceInfo.m_isActive && device->isWaitingReboot()) {
             VS_LOG_INFO("DROP SESSION DUE TO REBOOT: %s", VSQCString(deviceInfo.m_mac.description()));
             device->dropSession();
+            removeDevice(deviceInfo.m_mac);
         }
 
         const auto _idx = createIndex(res.first, 0);
@@ -226,6 +227,7 @@ KSQDevicesType::onDeviceStateUpdate(const vs_mac_addr_t mac, QString data) {
         connect(newDevice.get(), &KSQDevice::fireInvokeCommand, this, &KSQDevicesType::onInvokeCommand);
         connect(newDevice.get(), &KSQDevice::fireSetNameToHardware, this, &KSQDevicesType::onSetDeviceName);
         connect(newDevice.get(), &KSQDevice::fireRequestSessionKey, this, &KSQDevicesType::onRequestSessionKey);
+        connect(newDevice.get(), &KSQDevice::fireSessionKeyReceived, this, &KSQDevicesType::fireSessionKeyReceived);
 
         m_devices.push_back(newDevice);
 
@@ -280,6 +282,25 @@ KSQDevicesType::findDevice(const vs_mac_addr_t &mac) {
         ++pos;
     }
     return std::make_pair(-1, QSharedPointer<KSQDevice>(nullptr));
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQDevicesType::removeDevice(const vs_mac_addr_t &mac) {
+    auto res = findDevice(mac);
+    auto device = res.second;
+    if (!device) {
+        return true;
+    }
+
+    beginRemoveRows(QModelIndex(), res.first, res.first);
+
+    device->disconnect();
+    m_devices.remove(device);
+
+    endRemoveRows();
+
+    return true;
 }
 
 //-----------------------------------------------------------------------------

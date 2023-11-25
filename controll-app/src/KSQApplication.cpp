@@ -104,10 +104,10 @@ KSQApplication::run() {
             m_uxController.get(),
             &KSQUXSimplifyController::onNewProvisionedDevice);
 
-        connect(m_deviceControllers.get(),
-                &KSQAllDevicesController::fireNewUnknownDevice,
-                this,
-                &KSQApplication::updateDevices);
+    connect(m_deviceControllers.get(),
+            &KSQAllDevicesController::fireNewUnknownDevice,
+            this,
+            &KSQApplication::updateDevices);
 
     // Device re-scan on provision finish
     connect(m_bleController.get(), &KSQBLEController::fireProvisionDone, this, &KSQApplication::onProvisionDone);

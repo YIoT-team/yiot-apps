@@ -212,6 +212,7 @@ signals:
 
     void
     fireSetNameToHardware(VSQMac mac, QString name);
+
     void
     fireRequestSessionKey(VSQMac mac);
 
@@ -223,6 +224,9 @@ signals:
 
     void
     fireRebooted();
+
+    void
+    fireSessionKeyReceived(KSQDevice *);
 
 private:
     bool m_active;

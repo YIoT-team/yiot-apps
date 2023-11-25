@@ -63,6 +63,9 @@ signals:
     void
     fireNewUnknownDevice();
 
+    void
+    fireSessionKeyReceived(KSQDevice *);
+
 public slots:
 
 protected:
