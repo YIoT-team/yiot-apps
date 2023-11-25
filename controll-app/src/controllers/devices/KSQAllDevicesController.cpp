@@ -25,6 +25,7 @@ void
 KSQAllDevicesController::add(KSQDevicesType *devicesType) {
     connect(devicesType, &KSQDevicesType::fireActivated, this, &KSQAllDevicesController::onGroupActivated);
     connect(devicesType, &KSQDevicesType::fireRequiredSetup, this, &KSQAllDevicesController::fireNewProvisionedDevice);
+    connect(devicesType, &KSQDevicesType::fireNewUnknownDevice, this, &KSQAllDevicesController::fireNewUnknownDevice);
     QSharedPointer<KSQDevicesType> e(devicesType);
     m_elements.push_back(e);
 }

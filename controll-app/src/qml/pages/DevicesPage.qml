@@ -49,6 +49,34 @@ Page {
         model: deviceControllers
     }
 
+    footer: ColumnLayout {
+        width: parent.width
+        FormSecondaryButton {
+            Layout.topMargin: 20
+            Layout.bottomMargin: 10
+            text: qsTr("Refresh")
+
+            Timer {
+                id: timer
+            }
+
+            onClicked: {
+                enabled = false
+                app.updateDevices()
+                delayed(5000, function() {
+                    enabled = true
+                })
+            }
+
+            function delayed(delayTime, cb) {
+                timer.interval = delayTime;
+                timer.repeat = true;
+                timer.triggered.connect(cb);
+                timer.start();
+            }
+        }
+    }
+
     // Fill data and show device info.
     function showDeviceInfo(model) {
         deviceInfo.mName = model.name

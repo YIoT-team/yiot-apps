@@ -101,6 +101,9 @@ signals:
     void
     fireRequiredSetup(QSharedPointer<KSQDevice> device);
 
+    void
+    fireNewUnknownDevice();
+
 private slots:
     // SNAP::INFO
     void

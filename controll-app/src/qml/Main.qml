@@ -256,7 +256,6 @@ ApplicationWindow {
 
     function showDevices() {
         swipeShow(swipeView.devicePageIdx)
-        app.updateDevices()
     }
 
     function showDevicesSetup() {

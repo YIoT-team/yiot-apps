@@ -60,6 +60,9 @@ signals:
     void
     fireNewProvisionedDevice(QSharedPointer<KSQDevice> device);
 
+    void
+    fireNewUnknownDevice();
+
 public slots:
 
 protected:

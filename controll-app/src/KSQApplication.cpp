@@ -104,6 +104,11 @@ KSQApplication::run() {
             m_uxController.get(),
             &KSQUXSimplifyController::onNewProvisionedDevice);
 
+        connect(m_deviceControllers.get(),
+                &KSQAllDevicesController::fireNewUnknownDevice,
+                this,
+                &KSQApplication::updateDevices);
+
     // Device re-scan on provision finish
     connect(m_bleController.get(), &KSQBLEController::fireProvisionDone, this, &KSQApplication::onProvisionDone);
 
@@ -209,7 +214,7 @@ KSQApplication::setSubnet(QString subnet) {
     QHostAddress addr;
     auto tmp = QHostAddress(subnet);
 
-    if (tmp.isBroadcast() || tmp.isGlobal()) {
+    if (tmp.isBroadcast() || tmp.isGlobal() || tmp.isLinkLocal()) {
         addr = tmp;
     } else {
         addr = QHostAddress::Broadcast;

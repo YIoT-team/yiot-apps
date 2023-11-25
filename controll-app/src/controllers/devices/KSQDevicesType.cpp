@@ -80,6 +80,12 @@ KSQDevicesType::KSQDevicesType(QQmlApplicationEngine &engine, QSharedPointer<KSQ
             Qt::QueuedConnection);
 
     connect(&VSQSnapInfoClient::instance(),
+            &VSQSnapInfoClient::fireNewDevice,
+            this,
+            &KSQDevicesType::fireNewUnknownDevice,
+            Qt::QueuedConnection);
+
+    connect(&VSQSnapInfoClient::instance(),
             &VSQSnapInfoClient::fireDeviceInfo,
             this,
             &KSQDevicesType::onDeviceInfoUpdate,
