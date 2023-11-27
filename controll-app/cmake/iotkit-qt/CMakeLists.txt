@@ -32,7 +32,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # ---------------------------------------------------------------------------
 #   Qt
 # ---------------------------------------------------------------------------
-find_package(Qt5 COMPONENTS Core Network Concurrent Bluetooth Qml)
+find_package(Qt6 COMPONENTS Core5Compat Core Network Concurrent Bluetooth Qml)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -141,12 +141,13 @@ target_compile_options(iotkit-qt-lib
 target_link_libraries(iotkit-qt-lib
         PUBLIC
 
-        #   Qt5
-        Qt5::Core
-        Qt5::Network
-        Qt5::Concurrent
-        Qt5::Bluetooth
-        Qt5::Qml
+        #   Qt6
+        Qt6::Core
+        Qt6::Core5Compat
+        Qt6::Network
+        Qt6::Concurrent
+        Qt6::Bluetooth
+        Qt6::Qml
 
         #   IoTKit
         vs-module-logger
@@ -160,6 +161,6 @@ target_link_libraries(iotkit-qt-lib
         $<$<BOOL:${WIN32}>:ws2_32>
 
         # Compiler options
-        enable_pedantic_mode
+        # enable_pedantic_mode
         )
 

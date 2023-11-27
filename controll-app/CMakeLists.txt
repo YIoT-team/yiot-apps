@@ -122,7 +122,7 @@ endif()
 # ---------------------------------------------------------------------------
 #   Qt
 # ---------------------------------------------------------------------------
-find_package(Qt5 COMPONENTS Core Widgets Test Network Concurrent WebSockets Qml ${KS_QT_EXTRA} REQUIRED)
+find_package(Qt6 COMPONENTS Core Widgets Test Network Concurrent WebSockets Qml ${KS_QT_EXTRA} REQUIRED)
 
 # ---------------------------------------------------------------------------
 #   Prepare for build target
@@ -221,7 +221,7 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/cmake/iotkit-qt)
 # ---------------------------------------------------------------------------
 set(BUILD_TEST_APPLICATION CACHE BOOL OFF FORCE)
 set(BUILD_TRANSLATIONS CACHE BOOL OFF FORCE)
-set(QTANDROIDEXTRAS_LIBRARIES "Qt5::AndroidExtras")
+set(QTANDROIDEXTRAS_LIBRARIES "Qt6::AndroidExtras")
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../ext/qtkeychain qtkeychain)
 
 # ---------------------------------------------------------------------------
@@ -360,7 +360,8 @@ target_sources(${KS_TARGET_NAME}
 # ---------------------------------------------------------------------------
 target_compile_definitions(${KS_TARGET_NAME}
         PRIVATE
-        -DQKEYCHAIN_STATICLIB
+#        -DQKEYCHAIN_STATICLIB
+        -DBUILD_SHARED_LIBS=OFF
         -DKS_TARGET_VERSION=${KS_TARGET_VERSION}
         -DKS_BUILD_NUMBER=${KS_BUILD_NUMBER}
         )
@@ -390,15 +391,15 @@ target_compile_options(${KS_TARGET_NAME}
 target_link_libraries(${KS_TARGET_NAME}
         PUBLIC
 
-        # Qt5
-        Qt5::Core
-        $<$<STREQUAL:"${KS_PLATFORM}","android">:Qt5::AndroidExtras>
-        Qt5::Widgets
-        Qt5::Test
-        Qt5::Network
-        Qt5::WebSockets
-        Qt5::Concurrent
-        Qt5::Qml
+        # Qt6
+        Qt6::Core
+        $<$<STREQUAL:"${KS_PLATFORM}","android">:Qt6::AndroidExtras>
+        Qt6::Widgets
+        Qt6::Test
+        Qt6::Network
+        Qt6::WebSockets
+        Qt6::Concurrent
+        Qt6::Qml
 
         #   IoTKit Qt
         iotkit-qt-lib
@@ -416,7 +417,7 @@ target_link_libraries(${KS_TARGET_NAME}
         $<$<STREQUAL:"${KS_PLATFORM}","linux">:pthread>
 
         #   Android
-        $<$<STREQUAL:"${KS_PLATFORM}","android">:Qt5::AndroidExtras>
+        $<$<STREQUAL:"${KS_PLATFORM}","android">:Qt6::AndroidExtras>
 
         # Compiler options
         enable_pedantic_mode
