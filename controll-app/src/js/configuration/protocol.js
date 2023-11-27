@@ -63,15 +63,14 @@ restore(pc) {
 
 //-----------------------------------------------------------------------------
 function
-factoryReset(pc, saveLevel0, saveLevel1, saveLevel2) {
+factoryReset(pc, saveLevel) {
     console.log("Request: Factory reset ")
 
     let json = {}
 
     json.command = "script"
     json.script = kFactoryResetCommand
-    json.params = [saveLevel0, saveLevel1, saveLevel2]
-
+    json.params = saveLevel
     pc.invokeCommand(JSON.stringify(json))
 }
 
