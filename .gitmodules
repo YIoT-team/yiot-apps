@@ -3,7 +3,7 @@
 	url = https://github.com/kutashenko/bluez-dbus-cpp.git
 [submodule "ext/qtkeychain"]
 	path = ext/qtkeychain
-	url = https://github.com/kutashenko/qtkeychain.git
+	url = https://github.com/andr13/qtkeychain.git
 [submodule "controll-app/extensions"]
 	path = controll-app/extensions
 	url = https://github.com/YIoT-team/yiot-extensions.git
