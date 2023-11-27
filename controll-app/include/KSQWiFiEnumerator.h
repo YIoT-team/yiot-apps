@@ -22,6 +22,7 @@
 
 #include <QtCore>
 #include <QAbstractTableModel>
+#include <QNetworkInformation>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
 
@@ -58,8 +59,11 @@ private slots:
     void
     stop();
 
+//    void
+//    onFindWiFi();
+
     void
-    onFindWiFi();
+    onFindWiFi(QNetworkInformation::Reachability newReachability);
 
     void
     updateList(KSQWiFiNetworks &list);
@@ -75,6 +79,9 @@ private:
 #if defined(Q_OS_MACOS) || defined(Q_OS_ANDROID)
     static const int kScanPeriodMs = 5000;
     QTimer m_timer;
+
+    // Test
+    QNetworkInformation *m_ni = QNetworkInformation::instance();
 #else
 
 #if 1
@@ -82,7 +89,8 @@ private:
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
-    QNetworkConfigurationManager m_ncm;
+    //QNetworkConfigurationManager m_ncm;
+    QNetworkInformation *m_ni = QNetworkInformation::instance();
 #if 1
 #pragma GCC diagnostic pop
 #endif

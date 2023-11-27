@@ -37,12 +37,24 @@
 
 //-----------------------------------------------------------------------------
 KSQWiFiEnumerator::KSQWiFiEnumerator() {
-#if defined(Q_OS_MACOS) || defined(Q_OS_ANDROID)
+    bool backendFound = m_ni->loadDefaultBackend();
+
+    QStringList backends = QNetworkInformation::availableBackends();
+    qDebug() << ">>> Available backends:" << backends;
+
+    //bool loaded = QNetworkInformation::loadBackendByName(u"networklistmanager");
+
+#if 0//defined(Q_OS_MACOS) || defined(Q_OS_ANDROID)
     m_timer.setSingleShot(false);
     m_timer.setInterval(kScanPeriodMs);
     connect(&m_timer, &QTimer::timeout, this, &KSQWiFiEnumerator::onFindWiFi);
 #else
-    connect(&m_ncm, &QNetworkConfigurationManager::updateCompleted, this, &KSQWiFiEnumerator::onFindWiFi);
+    //connect(&m_ncm, &QNetworkConfigurationManager::updateCompleted, this, &KSQWiFiEnumerator::onFindWiFi);
+    connect(m_ni, &QNetworkInformation::reachabilityChanged, this, &KSQWiFiEnumerator::onFindWiFi);
+
+    //test
+    m_timer.setSingleShot(false);
+    m_timer.setInterval(kScanPeriodMs);
 #endif
 
     QTimer::singleShot(200, [this]() { start(); });
@@ -59,9 +71,11 @@ KSQWiFiEnumerator::start() {
 #if defined(Q_OS_MACOS) || defined(Q_OS_ANDROID)
     m_timer.start();
 #else
-    m_ncm.updateConfigurations();
+    m_ni->loadBackendByFeatures(QNetworkInformation::Feature::Reachability);
 #endif
-    onFindWiFi();
+    //onFindWiFi();
+    //onFindWiFi(m_ni->reachability());
+    onFindWiFi(QNetworkInformation::instance()->reachability());
 }
 
 //-----------------------------------------------------------------------------
@@ -81,14 +95,26 @@ KSQWiFiEnumerator::wifi_enum() {
 #endif
 
 //-----------------------------------------------------------------------------
-void
-KSQWiFiEnumerator::onFindWiFi() {
-    std::thread t([this]() {
-        auto list = wifi_enum();
-        QMetaObject::invokeMethod(this, "updateList", Qt::BlockingQueuedConnection, Q_ARG(KSQWiFiNetworks &, list));
-    });
+//void
+//KSQWiFiEnumerator::onFindWiFi() {
+//    std::thread t([this]() {
+//        auto list = wifi_enum();
+//        QMetaObject::invokeMethod(this, "updateList", Qt::BlockingQueuedConnection, Q_ARG(KSQWiFiNetworks &, list));
+//    });
 
-    t.detach();
+//    t.detach();
+//}
+
+void
+KSQWiFiEnumerator::onFindWiFi(QNetworkInformation::Reachability newReachability) {
+    if (newReachability == QNetworkInformation::Reachability::Online) {
+        std::thread t([this]() {
+            auto list = wifi_enum();
+            QMetaObject::invokeMethod(this, "updateList", Qt::BlockingQueuedConnection, Q_ARG(KSQWiFiNetworks &, list));
+        });
+
+        t.detach();
+    }
 }
 
 //-----------------------------------------------------------------------------
