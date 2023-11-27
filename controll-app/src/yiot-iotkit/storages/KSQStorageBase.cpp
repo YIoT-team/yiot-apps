@@ -42,7 +42,7 @@ KSQStorageBase::id2str(const vs_storage_element_id_t id) {
     QString res;
     for (int i = 0; i < VS_STORAGE_ELEMENT_ID_MAX; i++) {
         auto c = QChar(id[i]);
-        if (c.isLetterOrNumber() || c == "_" || c == "-") {
+        if (c.isLetterOrNumber() || c == '_' || c == '-') {
             res += c;
         } else {
             auto baHex = QByteArray(reinterpret_cast<const char *>(&id[i]), 1).toHex();
