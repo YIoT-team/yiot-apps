@@ -1,5 +1,5 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls.Basic 2.15
 
 Button {
 
@@ -13,7 +13,7 @@ Button {
     property bool disabled: false
 
     icon.color: "transparent"
-    icon.source: "../resources/icons/%1.png".arg(image)
+    icon.source: "qrc:/qml/resources/icons/%1.png".arg(image)
 
     padding: 0
 

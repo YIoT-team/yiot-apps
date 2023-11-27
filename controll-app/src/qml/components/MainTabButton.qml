@@ -1,6 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls.Basic 2.15
+import QtQuick.Layouts 1.15
 
 import "../theme"
 
@@ -11,7 +11,7 @@ TabButton {
     property int iconSz: 50
 
     icon.color: Theme.tabImages
-    icon.source: "../resources/icons/light/%1.png".arg(image)
+    icon.source: "qrc:/qml/resources/icons/light/%1.png".arg(image)
     icon.height: iconSz
     icon.width: iconSz
     background: Rectangle {

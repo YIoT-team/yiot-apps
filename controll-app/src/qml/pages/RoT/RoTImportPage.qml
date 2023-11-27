@@ -17,10 +17,10 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
-import QtQuick.Dialogs 1.3
+import QtQuick 2.15
+import QtQuick.Controls.Basic 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Dialogs
 
 import "qrc:/qml/theme"
 import "qrc:/qml/components"
@@ -46,7 +46,7 @@ Page {
     FileDialog {
         id: fileDialog
         title: "Please choose a file"
-        folder: shortcuts.home
+        //currentFolder: shortcuts.home
         nameFilters: [ "YIoT Root of trust (*.rot)" ]
         onAccepted: {
             var path = fileDialog.fileUrl.toString();

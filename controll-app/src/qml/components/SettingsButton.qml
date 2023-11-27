@@ -1,12 +1,12 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls.Basic 2.15
 
 import "../theme"
 
 ImageButton {
     id: control
 
-    imageSource: "../resources/icons/More.png"
+    imageSource: "qrc:/qml/resources/icons/More.png"
 
     property real menuWidth: 200
     property real menuItemHeight: 40

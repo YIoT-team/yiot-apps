@@ -19,7 +19,7 @@
 
 import QtQuick 2.5
 import QtQuick.Layouts 1.5
-import QtQuick.Controls 2.12
+import QtQuick.Controls.Basic 2.15
 
 import "../theme"
 

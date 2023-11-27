@@ -17,8 +17,8 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls.Basic 2.15
 
 import "qrc:/qml/pages/settings/extensions"
 import "qrc:/qml/pages/settings"
