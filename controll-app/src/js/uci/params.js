@@ -92,6 +92,31 @@ function init(descriptors, uiUpdateFn, uiChangesUpdate, uiReadyToCommit) {
 
 //-----------------------------------------------------------------------------
 //
+//  Get uci parameter in device
+//
+function getDeviceValue(device, param) {
+    // Get parameter descriptor
+    var descr = getDescriptor(param)
+    if (descr === null) {
+        console.log("Parameter descriptor isn't found : ", param)
+        return null
+    }
+
+    // Check if device already present
+    var devParams = getDevice(device)
+
+    // Check If device is resent
+    if (devParams !== null) {
+        if (devParams.values[param] !== undefined) {
+            return devParams.values[param]
+        }
+    }
+
+    return null
+}
+
+//-----------------------------------------------------------------------------
+//
 //  Get uci parameter
 //
 function getLocalValue(device, param) {
@@ -221,6 +246,37 @@ function clearSaveList(device) {
 
     devParams.inProcessing = {}
     cbReadyToCommitFn(device, false)
+}
+
+//-----------------------------------------------------------------------------
+//
+//  Decline single changed param
+//
+function declineSingleChange(device, param) {
+    // Check if device already present
+    var devParams = getDevice(device)
+
+    // If device is absent, need to add it
+    if (devParams === null) {
+        return
+    }
+
+    // Reset UI value
+    var newList = {}
+    var present = false
+    Object.entries(devParams.changed).forEach(([key, value]) => {
+                                                  if (key !== param) {
+                                                      newList[key] = newList
+                                                      present = true
+                                                  }
+                                              });
+
+
+    // Set a new list
+    devParams.changed = newList
+
+    // Activate callback
+    cbChangesUpdateFn(device, present)
 }
 
 //-----------------------------------------------------------------------------
@@ -367,7 +423,7 @@ function getValueIndex(name, value) {
     }
     for (var i = 0; i < d.values.length; i++) {
         var v = d.values[i]
-        if (v.value == value) {
+        if (v.value === value) {
             return i
 
         }
