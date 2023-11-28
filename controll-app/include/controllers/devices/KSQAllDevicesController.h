@@ -35,11 +35,15 @@
 
 class KSQAllDevicesController : public QAbstractTableModel, public KSQExtensionControllerBase {
     Q_OBJECT
+    Q_PROPERTY(bool empty READ isEmpty NOTIFY fireEmptyChanged)
 public:
     enum Element { Name = Qt::UserRole, Type, Image, SubModel, Js, ElementMax };
 
     KSQAllDevicesController() = default;
     virtual ~KSQAllDevicesController() = default;
+
+    bool
+    isEmpty() const;
 
     /**
      * QAbstractTableModel implementation
@@ -65,6 +69,9 @@ signals:
 
     void
     fireSessionKeyReceived(KSQDevice *);
+
+    void
+    fireEmptyChanged();
 
 public slots:
 

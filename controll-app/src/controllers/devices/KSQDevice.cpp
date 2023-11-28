@@ -27,7 +27,7 @@ const QString KSQDevice::kCmdStateDone = "done";
 const QString KSQDevice::kCmdStateError = "error";
 
 //-----------------------------------------------------------------------------
-KSQDevice::KSQDevice() : m_nameUpdated(false) {
+KSQDevice::KSQDevice() : m_active(true), m_nameUpdated(false) {
 }
 
 //-----------------------------------------------------------------------------
@@ -363,7 +363,7 @@ KSQDevice::_setRecivedName(QString name) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDevice::_setRecivedActivity(bool active) {
+KSQDevice::setRecivedActivity(bool active) {
     if (active != m_active) {
         m_active = active;
         emit fireActiveChanged();
@@ -381,6 +381,12 @@ void
 KSQDevice::invokeCommand(QString json) {
     commandStart();
     emit fireInvokeCommand(macAddr(), json);
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDevice::drop() {
+    emit fireDrop(macAddr());
 }
 
 //-----------------------------------------------------------------------------

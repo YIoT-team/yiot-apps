@@ -60,6 +60,9 @@ public:
     Q_INVOKABLE void
     invokeCommand(QString json);
 
+    Q_INVOKABLE void
+    drop();
+
     VSQMac
     qMacAddr() const;
 
@@ -101,6 +104,9 @@ public:
 
     void
     setSessionKey(const KSQSessionKey &key);
+
+    void
+    setRecivedActivity(bool active);
 
     void
     commandStart();
@@ -163,9 +169,6 @@ protected:
     void
     _setRecivedName(QString name);
 
-    void
-    _setRecivedActivity(bool active);
-
     QString
     _deviceType() const {
         return "";
@@ -227,6 +230,8 @@ signals:
 
     void
     fireSessionKeyReceived(KSQDevice *);
+
+    void fireDrop(QString);
 
 private:
     bool m_active;

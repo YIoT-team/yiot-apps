@@ -119,6 +119,7 @@
         <file>qml/components/SwitchableParam.qml</file>
         <file>qml/components/devices/DeviceInfoPopup.qml</file>
         <file>qml/components/devices/AllDevicesList.qml</file>
+        <file>qml/components/devices/DevicesDetectionProgress.qml</file>
         <file>qml/components/devices/DevicesListItem.qml</file>
         <file>qml/components/devices/GeneralCategoryControls.qml</file>
         <file>qml/components/devices/GeneralDeviceControls.qml</file>

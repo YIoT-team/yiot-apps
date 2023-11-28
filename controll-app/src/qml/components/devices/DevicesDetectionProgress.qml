@@ -21,62 +21,28 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-import "qrc:/qml/theme"
-import "qrc:/qml/components"
+import "../../theme"
+import "../../components/devices"
 
-Popup {
-    id: popup
+ColumnLayout {
+    id: detectionProgress
+    anchors.fill: parent
 
-    width: parent.width
-    height: parent.height
-    modal: true
-    focus: true
-    closePolicy: Popup.NoAutoClose
-
-    background: Rectangle {
-        border.color: Theme.primaryTextColor
-        border.width: 0
-        radius: 10
-        color: Theme.contrastColor
-        opacity: 0.5
+    ProgressBar {
+        Layout.alignment: Qt.AlignTop
+        Layout.fillWidth: true
+        indeterminate: true
     }
 
-    ColumnLayout {
-        anchors.fill: parent
-        BusyIndicator {
-            Layout.alignment: Qt.AlignCenter
-            width: parent.width / 4
-            height: width
-        }
+    // Name of element
+    Label {
+        id: categoryText
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        text: qsTr("Devices detection ...")
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        color: Theme.primaryTextColor
+        font.pointSize: 16
     }
-
-    Timer {
-        id: timer
-    }
-
-    onVisibleChanged: {
-        if (visible) {
-            delayed(15000, function() {
-                popup.close()
-            })
-        } else {
-            timer.stop()
-        }
-    }
-
-    enter: Transition {
-        NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
-    }
-
-    exit: Transition {
-        NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
-    }
-
-    function delayed(delayTime, cb) {
-        timer.interval = delayTime;
-        timer.repeat = false;
-        timer.triggered.connect(cb);
-        timer.start();
-    }
-
 }
