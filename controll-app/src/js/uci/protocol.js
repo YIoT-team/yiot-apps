@@ -89,3 +89,20 @@ parseGetter(jsObj, pc, jsonData) {
 }
 
 // ----------------------------------------------------------------------------
+function
+parseSetter(jsObj, pc, jsonData) {
+    var res = true
+    try {
+        // Check command
+        if (jsonData.command !== kUciSetterCommand) {
+            return false
+        }
+
+        jsObj.uciSaveResult(jsonData.success === "true")
+    } catch (e) {
+        res = false
+    }
+    return res
+}
+
+// ----------------------------------------------------------------------------
