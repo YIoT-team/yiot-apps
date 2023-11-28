@@ -200,9 +200,6 @@ function set(device, param, value) {
 
     // Set value for a future processing
     devParams.changed[param] = value
-
-    console.log(">>> SET PARAM : ", JSON.stringify(devParams.changed))
-
     cbChangesUpdateFn(device, true)
 }
 
@@ -430,6 +427,26 @@ function getValueIndex(name, value) {
     }
 
     return 0
+}
+
+//-----------------------------------------------------------------------------
+//
+//  Get Parameter Value Description by value
+//
+function getValueDescripion(name, value) {
+    var d = getDescriptor(name)
+
+    if (d === null || d.type !== ParamTypes.kUciParamSelectable) {
+        return value
+    }
+    for (var i = 0; i < d.values.length; i++) {
+        var v = d.values[i]
+        if (v.value === value) {
+            return v.title
+        }
+    }
+
+    return value
 }
 
 //-----------------------------------------------------------------------------
