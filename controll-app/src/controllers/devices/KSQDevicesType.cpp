@@ -300,6 +300,11 @@ KSQDevicesType::removeDevice(const vs_mac_addr_t &mac) {
 
     endRemoveRows();
 
+    if (m_devices.empty()) {
+        m_active = false;
+        emit fireActivated();
+    }
+
     return true;
 }
 
