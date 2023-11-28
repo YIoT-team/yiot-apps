@@ -94,6 +94,7 @@
         <file>qml/components/TextScrollView.qml</file>
         <file>qml/components/Popups/Popup.qml</file>
         <file>qml/components/Popups/InfoDialog.qml</file>
+        <file>qml/components/Popups/BusyDialog.qml</file>
         <file>qml/components/Form.qml</file>
         <file>qml/components/FormSecondaryButton.qml</file>
         <file>qml/components/CommonHelpers/IconWithText.qml</file>
