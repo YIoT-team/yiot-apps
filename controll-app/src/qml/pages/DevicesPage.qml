@@ -46,7 +46,12 @@ Page {
 
     AllDevicesList {
         id: list
+        visible: !deviceControllers.empty
         model: deviceControllers
+    }
+
+    DevicesDetectionProgress {
+        visible: deviceControllers.empty && !busyDialog.visible
     }
 
     footer: ColumnLayout {
@@ -62,15 +67,17 @@ Page {
 
             onClicked: {
                 enabled = false
+                applicationWindow.setAppBusy(true)
                 app.updateDevices()
                 delayed(5000, function() {
                     enabled = true
+                    applicationWindow.setAppBusy(false)
                 })
             }
 
             function delayed(delayTime, cb) {
                 timer.interval = delayTime;
-                timer.repeat = true;
+                timer.repeat = false;
                 timer.triggered.connect(cb);
                 timer.start();
             }
