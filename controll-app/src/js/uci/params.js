@@ -124,7 +124,7 @@ function getLocalValue(device, param) {
     var descr = getDescriptor(param)
     if (descr === null) {
         console.log("Parameter descriptor isn't found : ", param)
-        return
+        return null
     }
 
     // Check if device already present
@@ -138,7 +138,7 @@ function getLocalValue(device, param) {
         }
 
         console.log("Device isn't found : ", device)
-        return
+        return null
     }
 
     // Check in the local params
@@ -263,7 +263,7 @@ function declineSingleChange(device, param) {
     var present = false
     Object.entries(devParams.changed).forEach(([key, value]) => {
                                                   if (key !== param) {
-                                                      newList[key] = newList
+                                                      newList[key] = value
                                                       present = true
                                                   }
                                               });
