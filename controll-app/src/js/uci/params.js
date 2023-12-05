@@ -137,7 +137,7 @@ function getLocalValue(device, param) {
             return defaultVirtualVal(descr)
         }
 
-//        console.log("Device isn't found : ", device)
+        //        console.log("Device isn't found : ", device)
         return null
     }
 
@@ -217,11 +217,17 @@ function save(device) {
         return
     }
 
+    var virtParams = {}
     Object.entries(devParams.changed).forEach(([key, value]) => {
-                                                  devParams.inProcessing[key] = value
+                                                  var descr = getDescriptor(key)
+                                                  if (descr !== null && descr.uci === "") {
+                                                      virtParams[key] = value
+                                                  } else {
+                                                      devParams.inProcessing[key] = value
+                                                  }
                                               });
 
-    devParams.changed = {}
+    devParams.changed = virtParams
 
     console.log(">>> COMMIT PARAM : ", JSON.stringify(devParams.inProcessing))
 
@@ -291,15 +297,20 @@ function declineChanges(device) {
     }
 
     // Reset UI values
+    var virtParams = {}
     Object.entries(devParams.changed).forEach(([key, value]) => {
                                                   var descr = getDescriptor(key)
                                                   console.log(">>> REVERT: ", key, " : ", JSON.stringify(devParams.values))
-                                                  deviceValue(device, descr.uci, true, devParams.values[key])
+                                                  if (descr !== null && descr.uci === "") {
+                                                      virtParams[key] = value
+                                                  } else {
+                                                      deviceValue(device, descr.uci, true, devParams.values[key])
+                                                  }
                                               });
 
 
     // Clean list
-    devParams.changed = {}
+    devParams.changed = virtParams
 
     // Activate callback
     cbChangesUpdateFn(device, false)
