@@ -31,7 +31,7 @@ class KSQDevice : public QObject {
 
     Q_PROPERTY(QString deviceType READ deviceType)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY fireNameChanged)
-    Q_PROPERTY(QString macAddr READ macAddr)
+    Q_PROPERTY(QString macAddr READ macAddr NOTIFY fireMacAddrChanged)
     Q_PROPERTY(QString roles READ roles WRITE setRoles NOTIFY fireRolesChanged)
     Q_PROPERTY(QString manufacture READ manufacture WRITE setManufacture NOTIFY fireManufactureChanged)
     Q_PROPERTY(QString deviceID READ deviceID WRITE setDeviceID NOTIFY fireDeviceIDChanged)
@@ -180,6 +180,8 @@ protected:
 signals:
     void
     fireNameChanged();
+    void
+    fireMacAddrChanged();
     void
     fireSendNameUpdate();
     void

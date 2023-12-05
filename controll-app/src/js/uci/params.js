@@ -18,7 +18,7 @@
 //  ────────────────────────────────────────────────────────────
 
 //-----------------------------------------------------------------------------
-        
+
 .import "qrc:/js/uci/params-types.js" as ParamTypes
 
 //
@@ -137,7 +137,7 @@ function getLocalValue(device, param) {
             return defaultVirtualVal(descr)
         }
 
-        console.log("Device isn't found : ", device)
+//        console.log("Device isn't found : ", device)
         return null
     }
 
@@ -200,7 +200,8 @@ function set(device, param, value) {
 
     // Set value for a future processing
     devParams.changed[param] = value
-    cbChangesUpdateFn(device, true)
+
+    cbChangesUpdateFn(device, changesPresent(device))
 }
 
 //-----------------------------------------------------------------------------
@@ -273,7 +274,7 @@ function declineSingleChange(device, param) {
     devParams.changed = newList
 
     // Activate callback
-    cbChangesUpdateFn(device, present)
+    cbChangesUpdateFn(device, changesPresent(device))
 }
 
 //-----------------------------------------------------------------------------
@@ -481,6 +482,33 @@ function getDevice(device) {
                               return true
                           });
     return devParams
+}
+
+//
+//  Check if changes are present
+//
+function changesPresent(device) {
+    // Check if device already present
+    var devParams = getDevice(device)
+
+    // If device is absent, need to add it
+    if (devParams === null) {
+        return false
+    }
+
+    var present = false
+    Object.entries(devParams.changed).every(([key, value]) => {
+                                                var descr = getDescriptor(key)
+                                                if (descr !== null) {
+                                                    if (descr.uci !== "") {
+                                                        present = true
+                                                        return false // exit loop
+                                                    }
+                                                }
+
+                                                return true // keep iterating
+                                            });
+    return present
 }
 
 //-----------------------------------------------------------------------------
