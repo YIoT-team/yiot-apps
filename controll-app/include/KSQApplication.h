@@ -78,6 +78,7 @@ public slots:
     setSubnet(QString subnet);
 
 private:
+    QTimer m_updateTimer;
     KSQWiFiEnumerator m_wifiEnumerator;
     QSharedPointer<KSQBLEController> m_bleController;
     QSharedPointer<KSQBlankDevicesController> m_localBlankDevicesController;

@@ -175,12 +175,18 @@ KSQIoTKitFacade::initSnap() {
 //-----------------------------------------------------------------------------
 void
 KSQIoTKitFacade::updateAll() {
-    if (m_features.hasFeature(KSQFeatures::SNAP_PC_CLIENT)) {
-        KSQSnapUSERClient::instance().requestState(broadcastMac);
-    }
+    requestInfoPC();
 
     if (m_features.hasFeature(KSQFeatures::SNAP_INFO_CLIENT)) {
         VSQSnapInfoClient::instance().onStartFullPolling();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQIoTKitFacade::requestInfoPC() {
+    if (m_features.hasFeature(KSQFeatures::SNAP_PC_CLIENT)) {
+        KSQSnapUSERClient::instance().requestState(broadcastMac);
     }
 }
 

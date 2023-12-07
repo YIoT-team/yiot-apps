@@ -202,10 +202,17 @@ KSQApplication::onProvisionDone(QString mac) {
 //-----------------------------------------------------------------------------
 void
 KSQApplication::updateDevices() {
-    // Multiple broadcast requests due to UDP specific
+    if (m_updateTimer.isActive()) {
+        return;
+    }
+
+    m_updateTimer.setInterval(4000);
+    m_updateTimer.setSingleShot(false);
+
+    connect(&m_updateTimer, &QTimer::timeout, []() { KSQIoTKitFacade::instance().updateAll(); });
+
     KSQIoTKitFacade::instance().updateAll();
-    QTimer::singleShot(3000, []() { KSQIoTKitFacade::instance().updateAll(); });
-    QTimer::singleShot(5000, []() { KSQIoTKitFacade::instance().updateAll(); });
+    m_updateTimer.start();
 }
 
 //-----------------------------------------------------------------------------
