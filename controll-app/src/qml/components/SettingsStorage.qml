@@ -37,6 +37,11 @@ Item {
 
         property bool websockEnabled: false
         property string websockLink: ""
+
+        property string servicesLogin: ""
+        property string servicesPass: ""
+
+        property string subnet: ""
     }
 
     // KeyChain Writer
@@ -133,6 +138,30 @@ Item {
 
     function getWebsocketLink() {
         return s.websockLink
+    }
+
+    function setServicesLogin(login) {
+        s.servicesLogin = login
+    }
+
+    function getServicesLogin() {
+        return s.servicesLogin
+    }
+
+    function setServicesPass(pass) {
+        s.servicesPass = pass
+    }
+
+    function getServicesPass() {
+        return s.servicesPass
+    }
+
+    function setSubnet(subnet) {
+        s.subnet = subnet
+    }
+
+    function getSubnet() {
+        return s.subnet
     }
 
     Component.onCompleted: {

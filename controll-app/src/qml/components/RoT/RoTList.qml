@@ -42,6 +42,9 @@ Item {
                 submodulePresent: false
                 showControlsPermanent: true
                 controlElementUrl: "qrc:/qml/components/RoT/RoTControls.qml"
+                action: function() {
+                    showRoTControlPage(model)
+                }
             }
         }
     }

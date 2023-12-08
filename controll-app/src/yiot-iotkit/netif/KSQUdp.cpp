@@ -36,7 +36,7 @@
 #include <yiot-iotkit/netif/KSQUdp.h>
 
 //-----------------------------------------------------------------------------
-KSQUdp::KSQUdp(quint16 port) : m_port(port) {
+KSQUdp::KSQUdp(QHostAddress subnet, quint16 port) : m_subnet(subnet), m_port(port) {
     using std::placeholders::_1;
     using std::placeholders::_2;
     std::function<vs_status_e(const uint8_t *, const uint16_t)> _resend =
@@ -50,10 +50,11 @@ KSQUdp::KSQUdp(quint16 port) : m_port(port) {
 //-----------------------------------------------------------------------------
 bool
 KSQUdp::init() {
-
     if (!m_socket.bind(m_port, QUdpSocket::ReuseAddressHint)) {
         VS_LOG_ERROR("Unable to bind LocalHost:%d. Last error : %s", m_port, VSQCString(m_socket.errorString()));
+#if 0
         return false;
+#endif
     }
 
     for (auto &interface : QNetworkInterface::allInterfaces()) {
@@ -97,8 +98,21 @@ KSQUdp::_internal_tx(const uint8_t *data, const uint16_t data_sz) {
         vs_snap_packet_dump("OUT", packet);
     }
 
-    auto sentBytes = m_socket.writeDatagram(
-            QByteArray::fromRawData(reinterpret_cast<const char *>(data), data_sz), QHostAddress::Broadcast, m_port);
+    uint16_t sentBytes = 0;
+
+    if (!m_socket.isValid()) {
+        deinit();
+        init();
+    }
+
+    try {
+        if (m_socket.isValid()) {
+            sentBytes = m_socket.writeDatagram(
+                    QByteArray::fromRawData(reinterpret_cast<const char *>(data), data_sz), m_subnet, m_port);
+        }
+    } catch (...) {
+    }
+
 
     if (sentBytes != data_sz) {
         VS_LOG_ERROR("Sent bytes : %d, data bytes to send : %d. Last error : %s",
@@ -139,7 +153,6 @@ KSQUdp::tx(const QByteArray &data) {
 //-----------------------------------------------------------------------------
 QString
 KSQUdp::macAddr() const {
-
     return m_mac;
 }
 
@@ -223,6 +236,13 @@ void
 KSQUdp::restart() {
     deinit();
     init();
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQUdp::setSubnet(QHostAddress subnet) {
+    VS_LOG_INFO("FORCE SUBNET: %s", VSQCString(subnet.toString()));
+    m_subnet = subnet;
 }
 
 //-----------------------------------------------------------------------------

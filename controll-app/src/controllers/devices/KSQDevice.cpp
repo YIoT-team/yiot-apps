@@ -27,7 +27,7 @@ const QString KSQDevice::kCmdStateDone = "done";
 const QString KSQDevice::kCmdStateError = "error";
 
 //-----------------------------------------------------------------------------
-KSQDevice::KSQDevice() : m_nameUpdated(false) {
+KSQDevice::KSQDevice() : m_active(true), m_nameUpdated(false) {
 }
 
 //-----------------------------------------------------------------------------
@@ -40,6 +40,7 @@ KSQDevice::KSQDevice(QSharedPointer<QObject> js, VSQMac mac, QString name, QStri
     m_active = true;
     m_hasProvision = false;
     m_hasOwner = false;
+    m_waitReboot = false;
     m_js = js;
 
     startSessionConnection();
@@ -65,6 +66,13 @@ KSQDevice::KSQDevice(const KSQDevice &d) {
 bool
 KSQDevice::isUpdatedName() {
     return m_nameUpdated;
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDevice::dropSession() {
+    m_sessionKey.drop();
+    startSessionConnection();
 }
 
 //-----------------------------------------------------------------------------
@@ -124,6 +132,12 @@ void
 KSQDevice::setNameToHardware(QString name) {
     setName(name);
     emit fireSetNameToHardware(qMacAddr(), name);
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDevice::waitReboot() {
+    m_waitReboot = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -213,6 +227,12 @@ KSQDevice::setSessionKey(const KSQSessionKey &key) {
     m_sessionKey = key;
     m_sessionTimer.stop();
     emit fireHasSessionKeyChanged();
+    emit fireSessionKeyReceived(this);
+
+    if (m_waitReboot) {
+        m_waitReboot = false;
+        fireRebooted();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -313,6 +333,12 @@ KSQDevice::active() const {
 
 //-----------------------------------------------------------------------------
 bool
+KSQDevice::isWaitingReboot() const {
+    return m_waitReboot;
+}
+
+//-----------------------------------------------------------------------------
+bool
 KSQDevice::operator<(const KSQDevice &rhs) const {
     return m_name < rhs.m_name;
 }
@@ -337,7 +363,7 @@ KSQDevice::_setRecivedName(QString name) {
 
 //-----------------------------------------------------------------------------
 void
-KSQDevice::_setRecivedActivity(bool active) {
+KSQDevice::setRecivedActivity(bool active) {
     if (active != m_active) {
         m_active = active;
         emit fireActiveChanged();
@@ -355,6 +381,12 @@ void
 KSQDevice::invokeCommand(QString json) {
     commandStart();
     emit fireInvokeCommand(macAddr(), json);
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQDevice::drop() {
+    emit fireDrop(macAddr());
 }
 
 //-----------------------------------------------------------------------------

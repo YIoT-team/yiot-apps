@@ -2,6 +2,9 @@
   "integrations": [
     {
         "dir": "qrc:/integration/0"
+    },
+    {
+        "dir": "qrc:/integration/1"
     }
   ]
 }

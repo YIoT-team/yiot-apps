@@ -41,12 +41,16 @@ KSQUXSimplifyController::onBLEDeviceIsClose(QString deviceMac, QString deviceNam
 
 //-----------------------------------------------------------------------------
 void
-KSQUXSimplifyController::onDeviceRequiresProvision(QString deviceName,
-                                                   QSharedPointer<VSQNetifBase> netif,
-                                                   VSQMac deviceMac) {
-    m_netif = netif;
+KSQUXSimplifyController::onDeviceRequiresProvision(QString deviceName, VSQNetifBase *netif, VSQMac deviceMac) {
+    if (m_netif->lowLevelNetif() != netif->lowLevelNetif()) {
+        m_netif = netif;
+    }
     m_deviceMac = deviceMac;
-    requestProvisionUI(deviceMac.description(), deviceName, netif->requiresAdditionalActivation());
+    bool needActivation = false;
+    if (netif) {
+        needActivation = netif->requiresAdditionalActivation();
+    }
+    requestProvisionUI(deviceMac.description(), deviceName, needActivation);
 }
 
 //-----------------------------------------------------------------------------

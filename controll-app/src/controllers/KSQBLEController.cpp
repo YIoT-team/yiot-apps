@@ -26,13 +26,13 @@
 
 //-----------------------------------------------------------------------------
 KSQBLEController::KSQBLEController() {
-    m_netifBLE = QSharedPointer<VSQNetifBLE>::create();
+    m_netifBLE = new VSQNetifBLE();
     m_bleEnumerator.startDiscovery();
 
     // Connect signals and slots
-    connect(m_netifBLE.data(), &VSQNetifBLE::fireDeviceReady, this, &KSQBLEController::onConnected);
+    connect(m_netifBLE, &VSQNetifBLE::fireDeviceReady, this, &KSQBLEController::onConnected);
 
-    connect(m_netifBLE.data(), &VSQNetifBLE::fireDeviceDisconnected, this, &KSQBLEController::onDisconnected);
+    connect(m_netifBLE, &VSQNetifBLE::fireDeviceDisconnected, this, &KSQBLEController::onDisconnected);
 
     // connect(m_netifBLE.data(), &VSQNetifBLE::fireDeviceError, this, &KSQBLEController::onDeviceError);
 
@@ -48,7 +48,7 @@ KSQBLEController::~KSQBLEController() {
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<VSQNetifBLE>
+VSQNetifBLE *
 KSQBLEController::netif() {
     return m_netifBLE;
 }
@@ -92,7 +92,7 @@ KSQBLEController::onDeviceError() {
 
 //-----------------------------------------------------------------------------
 void
-KSQBLEController::onSetupFinished(QSharedPointer<VSQNetifBase> netif) {
+KSQBLEController::onSetupFinished(VSQNetifBase *netif) {
     if (netif == m_netifBLE) {
         m_netifBLE->close();
     }

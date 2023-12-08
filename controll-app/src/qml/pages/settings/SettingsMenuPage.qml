@@ -47,27 +47,35 @@ Page {
         spacing: 1
 
         model: ListModel {
-            //ListElement {
-            //    name: qsTr("Root of trust")
-            //    image: "secure-enclave"
-            //    property var action: function() {
-            //        showRoTSettings()
-            //    }
-            //}
+            ListElement {
+                name: qsTr("Root of trust")
+                image: "secure-enclave"
+                property var action: function() {
+                    showRoTSettings()
+                }
+            }
 
-            //ListElement {
-            //    name: qsTr("IoT Networks")
-            //    image: "network"
-            //    property var action: function() {
-            //        showIoTNetworkSettings()
-            //    }
-            //}
+            ListElement {
+                name: qsTr("IoT Networks")
+                image: "network"
+                property var action: function() {
+                    showIoTNetworkSettings()
+                }
+            }
 
             ListElement {
                 name: qsTr("WiFi credentials")
                 image: "creds"
                 property var action: function() {
                     showWiFiSettings()
+                }
+            }
+
+            ListElement {
+                name: qsTr("Account")
+                image: "account"
+                property var action: function() {
+                    showAccountSettings()
                 }
             }
 
@@ -96,10 +104,10 @@ Page {
             }
 
             ListElement {
-                name: qsTr("Integrations")
-                image: "integrations"
+                name: qsTr("Services")
+                image: "services"
                 property var action: function() {
-                    showIntegrationsList()
+                    showServicesList()
                 }
             }
         }

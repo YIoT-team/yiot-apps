@@ -181,7 +181,7 @@ KSQExtensions::data(const QModelIndex &index, int role) const {
 
         case Element::Js: {
             QVariant res;
-            res.setValue(m_processor->qmlProcessor().get());
+            res.setValue(m_processor->qmlProcessor(index.row()).get());
             return res;
         }
         }

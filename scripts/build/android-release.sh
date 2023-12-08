@@ -11,7 +11,7 @@ build_arch() {
     rm -rf ${PROJECT_DIR}/build/${PARAM_ABI}
     mkdir -p ${PROJECT_DIR}/build/${PARAM_ABI}
     pushd ${PROJECT_DIR}/build/${PARAM_ABI}
-	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="android" -DANDROID_PLATFORM=29 -DANDROID_QT=ON -DANDROID_ABI="${PARAM_ABI}" ../..
+	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="android" -DANDROID_PLATFORM=30 -DANDROID_QT=ON -DANDROID_ABI="${PARAM_ABI}" ../..
 	make yiot    
     popd
 }
@@ -20,7 +20,7 @@ build_apk() {
     rm -rf ${PROJECT_DIR}/build/all
     mkdir -p ${PROJECT_DIR}/build/all
     pushd ${PROJECT_DIR}/build/all
-	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="android" -DANDROID_PLATFORM=29 -DANDROID_QT=ON \
+	cmake -DCMAKE_BUILD_TYPE="MinSizeRel" -DKS_PLATFORM="android" -DANDROID_PLATFORM=30 -DANDROID_QT=ON \
 	    -DVS_KEYCHAIN="${VS_KEYCHAIN}" \
             -DVS_KEYCHAIN_PASSWORD="${VS_KEYCHAIN_PASSWORD}" \
             -DVS_KEY_ALIAS="${VS_KEY_ALIAS}" \
@@ -32,10 +32,10 @@ build_apk() {
     cp -rf ../x86/android-build/libs    ./android-build/
     cp -rf ../x86_64/android-build/libs ./android-build/
 
-	cp -rf ../armeabi-v7a/common/iotkit/modules/crypto/converters/*.so ./common/iotkit/modules/crypto/converters/
-    cp -rf ../arm64-v8a/common/iotkit/modules/crypto/converters/*.so ./common/iotkit/modules/crypto/converters/
-    cp -rf ../x86/common/iotkit/modules/crypto/converters/*.so ./common/iotkit/modules/crypto/converters/
-    cp -rf ../x86_64/common/iotkit/modules/crypto/converters/*.so ./common/iotkit/modules/crypto/converters/
+	cp -rf ../armeabi-v7a/ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/*.so ./ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/
+    cp -rf ../arm64-v8a/ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/*.so ./ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/
+    cp -rf ../x86/ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/*.so ./ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/
+    cp -rf ../x86_64/ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/*.so ./ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/
 
 	make apk_release
 	make aab_release	

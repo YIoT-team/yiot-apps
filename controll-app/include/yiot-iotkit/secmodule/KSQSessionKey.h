@@ -46,6 +46,9 @@ public:
     bool
     set(const vs_session_key_t &key);
 
+    void
+    drop();
+
 signals:
 
 public slots:

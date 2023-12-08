@@ -29,11 +29,11 @@ import "./pages/settings"
 import "./components"
 import "./components/devices"
 import "./components/Popups"
+import "./components/RoT"
 import "./theme"
 import "./base"
 
 ApplicationWindow {
-
     id: applicationWindow
     visible: true
     width: 400
@@ -50,8 +50,21 @@ ApplicationWindow {
     // Information popup
     Popup { id: inform }
 
+    InfoDialog{ id: informDialog }
+
+    BusyDialog {
+        id: busyDialog
+    }
+
     // Inform about requested action by device
     DeviceActionRequestDialog { id: deviceActionDialog }
+
+    // Ask to Import RoT or to use generated
+    RoTImportRequestDialog {
+        id: rotActionDialog
+
+        actionImport: showRoTImportPage
+    }
 
     // About application page
     AboutPage { id: aboutPage }
@@ -108,10 +121,11 @@ ApplicationWindow {
 
     Component.onCompleted: {
         Platform.detect()
-        settings.loaded.connect(function() {
-            app.updateDevices()
-        })
         showDevices()
+
+        if (rotModel.generated) {
+            rotActionDialog.open()
+        }
     }
 
     Connections {
@@ -277,6 +291,22 @@ ApplicationWindow {
         showSettingsElement(settingsPage.wifiPassIdx)
     }
 
+    function showRoTImportPage() {
+        swipeShow(swipeView.settingsPageIdx)
+        // TODO: Fix it. It's a hack.
+        var model = {
+            "object": rotModel.data(rotModel.index(0, 0), rotModel.objIdx)
+        }
+        settingsPage.showRoTImportPage(model)
+    }
+
+    // ------------------------------------------------------------------------
+    //      Busy state control
+    // ------------------------------------------------------------------------
+    function setAppBusy(busy) {
+        busyDialog.visible = busy
+    }
+
     // ------------------------------------------------------------------------
     //      Popup messages
     // ------------------------------------------------------------------------
@@ -294,8 +324,10 @@ ApplicationWindow {
         showPopup(message, Theme.buttonPrimaryColor, Theme.buttonPrimaryTextColor, true, true, action)
     }
 
-    function showPopupInform(message) {
-        // TODO: Add
+    function showPopupInform(message, action) {
+        informDialog.inform = message
+        informDialog.actionOk = action
+        informDialog.visible = true
     }
 
     // ------------------------------------------------------------------------

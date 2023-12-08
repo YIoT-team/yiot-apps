@@ -38,7 +38,7 @@ KSQPluginsController::load(QSharedPointer<KSQOneExtension> extension) {
         VS_LOG_ERROR("Cannot create QML processor for device type : %s", pluginDir.toStdString().c_str());
         return false;
     }
-    m_qmlProcessor.reset(object);
+    m_qmlProcessor[0].reset(object);
 
     // Set JS processor for extension
     extension->setJs(object);

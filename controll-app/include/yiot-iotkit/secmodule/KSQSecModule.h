@@ -54,6 +54,12 @@ public:
     sign(const QByteArray &data,
          const KSQKeyPair &signerKeyPair,
          vs_secmodule_hash_type_e hashType = VS_HASH_SHA_256) const;
+
+    QByteArray
+    encryptWithPassword(const QByteArray &data, const QString &passwd) const;
+
+    QByteArray
+    decryptWithPassword(const QByteArray &data, const QString &passwd) const;
 signals:
 
 public slots:
@@ -63,6 +69,9 @@ private:
 
     KSQSecModule();
     virtual ~KSQSecModule() = default;
+
+    bool
+    aesParamsFromPassword(const QString &pass, QByteArray &key, QByteArray &iv) const;
 };
 
 #endif // _YIOT_QT_SECURITY_MODULE_H_

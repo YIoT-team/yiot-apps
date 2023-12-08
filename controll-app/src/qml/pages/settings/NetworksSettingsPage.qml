@@ -23,7 +23,7 @@ import QtQuick.Layouts 1.12
 
 import "../../components"
 import "../../components/devices"
-//import "../../components/IoTNetworks"
+import "qrc:/qml/components/validators"
 
 Page {
     id: eventsSettingsPage
@@ -37,36 +37,37 @@ Page {
         backAction: function() { showMenuSettings() }
     }
 
-//    RoTInfoPopup {
-//        id: rotInfo
-//    }
-//
-//    Form {
-//        RoTList {}
-//    }
-//
-//    ColumnLayout {
-//        anchors.topMargin: 1
-//        anchors.fill: parent
-//        RoTList {
-//            id: rotList
-//            Layout.fillHeight: true
-//            model: rotModel
-//        }
-//
-//        FormPrimaryButton {
-//            Layout.bottomMargin: 10
-//            text: qsTr("Add new Root of trust")
-//            onClicked: {
-//                console.log("Add root of trust")
-//            }
-//        }
-//    }
+    ColumnLayout {
+        width: parent.width
+        spacing: 20
 
-//    // Fill data and show device info.
-//    function showNetworkInfo(model) {
-//        rotInfo.model = model
-//        rotInfo.enabled = true
-//        rotInfo.open()
-//    }
+        InputTextField {
+            id: subnetIp
+            Layout.topMargin: 20
+            label: qsTr("Subnet address")
+            placeholderText: qsTr("Enter subnet IP address")
+            validator: ValidatorIPv4 {}
+            inputMethodHints: Qt.ImhDigitsOnly
+        }
+
+        FormSecondaryButton {
+            Layout.topMargin: 20
+            Layout.bottomMargin: 10
+            text: qsTr("Apply")
+            onClicked: {
+                app.setSubnet(subnetIp.text)
+                settings.setSubnet(subnetIp.text)
+                showDevices()
+            }
+        }
+
+        Item {
+            Layout.fillHeight: true
+        }
+    }
+
+    Component.onCompleted: {
+        subnetIp.text = settings.getSubnet()
+        app.setSubnet(subnetIp.text)
+    }
 }

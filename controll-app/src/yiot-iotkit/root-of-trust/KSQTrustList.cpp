@@ -112,8 +112,8 @@ KSQTrustList::create(const QString &id, const KSQRoT &rot) {
     factoryKey->pubkey.ec_type = rot.factory().second->ecType();
     factoryKey->pubkey.key_type = VS_KEY_FACTORY;
     factoryKey->pubkey.meta_data_sz = 0;
-    auto datedKey = rot.factory().second->datedKey();
-    memcpy(factoryKey->pubkey.meta_and_pubkey, datedKey.data(), datedKey.size());
+    auto rawKey = rot.factory().second->val();
+    memcpy(factoryKey->pubkey.meta_and_pubkey, rawKey, rawKey.size());
 
     // -----------
     //  Footer
@@ -175,6 +175,14 @@ KSQTrustList::load(const QString &id) {
     CHECK_NOT_ZERO_RET(fillStorageId(storageId), false);
     CHECK_NOT_ZERO_RET(KSQSecBox::instance().load(storageId, m_tl), false);
     m_valid = true;
+    return m_valid;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQTrustList::set(const QByteArray &val) {
+    m_tl = val;
+    m_valid = save();
     return m_valid;
 }
 

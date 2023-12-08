@@ -30,8 +30,8 @@ class KSQRoT;
 class KSQTrustList : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(QString version READ version)
-    Q_PROPERTY(int keysCount READ keysCount)
+    Q_PROPERTY(QString version READ version NOTIFY fireVersionChanged)
+    Q_PROPERTY(int keysCount READ keysCount NOTIFY fireKeysCountChanged)
 public:
     KSQTrustList(const QString &id = "");
 
@@ -48,6 +48,9 @@ public:
     isValid() const {
         return m_valid;
     }
+
+    bool
+    set(const QByteArray &val);
 
     QString
     version() const;
@@ -74,6 +77,10 @@ public:
     footer() const;
 
 signals:
+    void
+    fireVersionChanged();
+    void
+    fireKeysCountChanged();
 
 public slots:
 

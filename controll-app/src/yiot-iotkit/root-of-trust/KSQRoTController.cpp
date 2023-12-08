@@ -87,6 +87,11 @@ KSQRoTController::data(const QModelIndex &index, int role) const {
             return r->firmware1().description();
         case Element::Firmware2:
             return r->firmware2().description();
+        case Element::Obj: {
+            QVariant res;
+            res.setValue(r.get());
+            return res;
+        }
         default: {
         }
         }
@@ -112,14 +117,29 @@ KSQRoTController::roleNames() const {
     roles[TL2] = "tl2";
     roles[Firmware1] = "firmware1";
     roles[Firmware2] = "firmware2";
+    roles[Obj] = "object";
 
     return roles;
 }
 
 //-----------------------------------------------------------------------------
 bool
-KSQRoTController::prepare() {
+KSQRoTController::drop() {
+    return prepare(true);
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQRoTController::prepare(bool drop) {
     auto idsList = loadRoTList();
+
+    if (drop) {
+        idsList.clear();
+        for (auto rot : m_rots) {
+            rot.get()->disconnect();
+        }
+        m_rots.clear();
+    }
 
     qDebug() << "RoT list: " << idsList;
 
@@ -131,17 +151,36 @@ KSQRoTController::prepare() {
     // Check if local is present
     if (!idsList.contains(KSQRoT::kLocalID)) {
         auto localRoT = QSharedPointer<KSQRoT>::create(KSQRoT::kLocalID, "qrc:/qml/resources/icons/%1/secure-enclave");
+        if (drop) {
+            localRoT->generate(KSQRoT::kLocalID);
+        }
         if (!localRoT->isValid()) {
             return false;
         }
         m_rots.push_back(localRoT);
         idsList << KSQRoT::kLocalID;
         saveRoTList(idsList);
+
+        m_generated = true;
+    }
+
+    for (auto rot : m_rots) {
+        connect(rot.get(), &KSQRoT::fireUpdated, this, &KSQRoTController::onRoTUpdated);
     }
 
     m_valid = true;
 
     return m_valid;
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQRoTController::onRoTUpdated(KSQRoT &rot) {
+    for (auto r : m_rots) {
+        if (&rot == r.get()) {
+            emit fireRoTUpdated(r);
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -167,6 +206,18 @@ KSQRoTController::saveRoTList(const QStringList &list) {
     dataStreamWrite << list;
 
     return KSQSecBox::instance().save(VS_SECBOX_SIGNED, m_listStorageId, data);
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQRoTController::generated() const {
+    return m_generated;
+}
+
+//-----------------------------------------------------------------------------
+int
+KSQRoTController::objIdx() const {
+    return static_cast<int>(Element::Obj);
 }
 
 //-----------------------------------------------------------------------------

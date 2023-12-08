@@ -29,6 +29,7 @@ Rectangle {
     property bool submodulePresent: true
     property bool showControlsPermanent: false
     property string controlElementUrl: ""
+    property var action: function() { }
 
     id: deviceItem
     color: "transparent"
@@ -123,6 +124,7 @@ Rectangle {
         hoverEnabled: true
         onClicked: {
             if (!submodulePresent) {
+                action()
                 return
             }
             if (topLevel) {
@@ -159,6 +161,10 @@ Rectangle {
     // Delayed check of view state to smooth moving between elements
     function checkActivity() {
         delay(5, function() {
+            if (loader === null || loader.item === null) {
+                return
+            }
+
             var v = loader.item.containsMouse || mainMouseArea.containsMouse
             loader.item.state = (v || showControlsPermanent) ? "visible" : "hidden"
             deviceItem.color = v ? Theme.contrastBackgroundColor : "transparent"

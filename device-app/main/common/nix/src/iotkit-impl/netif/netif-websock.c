@@ -51,8 +51,8 @@
 #include <virgil/iot/json/json_generator.h>
 #include "common/iotkit-impl/netif/curl-websock.h"
 
-#include <helpers/event-group-bits.h>
-#include <helpers/msg-queue.h>
+#include <common/helpers/event-group-bits.h>
+#include <common/helpers/msg-queue.h>
 
 static vs_status_e
 _websock_init(struct vs_netif_t *netif, const vs_netif_rx_cb_t rx_cb, const vs_netif_process_cb_t process_cb);
@@ -485,7 +485,7 @@ _websocket_curl_perform_loop_processor(void *param) {
 
         if (CURLM_OK == mc && still_running) {
             /* wait for activity, timeout or "nothing" */
-            mc = curl_multi_wait(_websocket_ctx.multi, NULL, 0, 1000, &numfds);
+            mc = curl_multi_wait(_websocket_ctx.multi, NULL, 0, 5000, &numfds);
 
             if (mc != CURLM_OK) {
                 VS_LOG_ERROR("curl_multi_wait() failed, code %d.", mc);

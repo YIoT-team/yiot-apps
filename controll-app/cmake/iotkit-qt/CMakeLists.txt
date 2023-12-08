@@ -41,7 +41,7 @@ set(CMAKE_AUTORCC ON)
 # ---------------------------------------------------------------------------
 #   Variables
 # ---------------------------------------------------------------------------
-set(IOTKIT_QT_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../ext/iotkit/integration/qt")
+set(IOTKIT_QT_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../ext/yiot-core/iotkit/integration/qt")
 
 set(FACADE_PATH "${IOTKIT_QT_PATH}/facade")
 set(DEFAULT_IMPL_PATH "${IOTKIT_QT_PATH}/default-impl")

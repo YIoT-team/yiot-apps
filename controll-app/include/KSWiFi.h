@@ -39,7 +39,7 @@ struct KSWiFiInfo {
 
 typedef QMap<QString, KSWiFiInfo> KSQWiFiNetworks;
 
-#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX) || defined(Q_OS_WIN32)
+#if defined(Q_OS_MACOS) || defined(Q_OS_IOS) || defined(Q_OS_LINUX) || defined(Q_OS_WIN32)
 KSQWiFiNetworks
 wifi_enum();
 #endif

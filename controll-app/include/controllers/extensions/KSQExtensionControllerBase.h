@@ -35,8 +35,11 @@ public:
     load(QSharedPointer<KSQOneExtension> extension) = 0;
 
     QSharedPointer<QObject>
-    qmlProcessor() {
-        return m_qmlProcessor;
+    qmlProcessor(size_t pos) {
+        if (m_qmlProcessor.keys().contains(pos)) {
+            return m_qmlProcessor[pos];
+        }
+        return QSharedPointer<QObject>();
     }
 
     void
@@ -45,7 +48,7 @@ public:
     }
 
 protected:
-    QSharedPointer<QObject> m_qmlProcessor;
+    QMap<size_t, QSharedPointer<QObject>> m_qmlProcessor;
 
     QQmlApplicationEngine *m_engine;
 };

@@ -88,6 +88,9 @@ public slots:
     void
     onRequestSessionKey(VSQMac mac);
 
+    void
+    onDropRequest(QString mac);
+
 signals:
     void
     fireCollapsedChanged(bool);
@@ -101,10 +104,16 @@ signals:
     void
     fireRequiredSetup(QSharedPointer<KSQDevice> device);
 
+    void
+    fireNewUnknownDevice();
+
+    void
+    fireSessionKeyReceived(KSQDevice *);
+
 private slots:
     // SNAP::INFO
     void
-    onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo);
+    onDeviceInfoUpdate(const struct VirgilIoTKit::vs_netif_t *src_netif, const VSQDeviceInfo &deviceInfo);
 
     //     SNAP::USER
     void
@@ -135,6 +144,9 @@ private:
 
     std::pair<int, QSharedPointer<KSQDevice>>
     findDevice(const vs_mac_addr_t &mac);
+
+    bool
+    removeDevice(const vs_mac_addr_t &mac);
 };
 
 #endif // YIOT_DEVICES_TYPE_H

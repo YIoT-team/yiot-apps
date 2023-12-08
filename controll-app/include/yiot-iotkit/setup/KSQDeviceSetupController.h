@@ -44,7 +44,7 @@ public:
     }
 
     bool
-    start(QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
+    start(VSQNetifBase *netif, VSQMac deviceMac);
 
     Q_INVOKABLE void
     stop();
@@ -63,7 +63,7 @@ signals:
     fireError(QString text);
 
     void
-    fireFinished(QSharedPointer<VSQNetifBase> m_netif);
+    fireFinished(VSQNetifBase *m_netif);
 
     void
     fireInitializationReady();
@@ -88,7 +88,7 @@ private slots:
     onDeviceSecurityInfo(bool hasProvision, bool hasOwner, bool ownerIsYou, const KSQPublicKey &publicKey);
 
     void
-    onDeviceInfo(const VSQDeviceInfo &deviceInfo);
+    onDeviceInfo(const struct VirgilIoTKit::vs_netif_t *src_netif, const VSQDeviceInfo &deviceInfo);
 
     void
     onConfigurationDone();
@@ -123,7 +123,7 @@ private:
 
     KSQDeviceSetupData m_deviceData;
 
-    QSharedPointer<VSQNetifBase> m_netif;
+    VSQNetifBase *m_netif;
     VSQMac m_deviceMac;
 
     bool

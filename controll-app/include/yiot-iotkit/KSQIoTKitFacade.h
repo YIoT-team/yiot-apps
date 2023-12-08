@@ -74,6 +74,9 @@ public:
     void
     updateAll();
 
+    void
+    requestInfoPC();
+
 private slots:
 
     void

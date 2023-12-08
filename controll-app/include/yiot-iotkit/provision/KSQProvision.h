@@ -44,6 +44,8 @@ public:
 signals:
 
 public slots:
+    void
+    onRoTUpdated(QSharedPointer<KSQRoT> rot);
 
 private:
     KSQProvision();

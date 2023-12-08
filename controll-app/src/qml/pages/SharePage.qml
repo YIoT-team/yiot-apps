@@ -31,7 +31,7 @@ Page {
     }
 
     header: Header {
-        title: qsTr("Share controll")
+        title: qsTr("Share control")
         showBackButton: false
         showMenuButton: true
         showSettingsButton: true

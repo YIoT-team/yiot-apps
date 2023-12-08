@@ -50,6 +50,7 @@ Item {
     property color buttonInvertedTextColor: "#ffffff"
 
     property color tabImages : "#ffffff"
+    property color contrastColor : "white"
     property string state: "dark"
 
 
@@ -86,6 +87,7 @@ Item {
             btImg = "qrc:/qml/resources/icons/dark/bt.png"
             wifiImg = "qrc:/qml/resources/icons/dark/wifi.png"
             tabImages = "#ffffff"
+            contrastColor = "black"
             state = "dark"
         }
         if(mode === 0 ) {
@@ -106,6 +108,7 @@ Item {
             btImg = "qrc:/qml/resources/icons/light/bt.png"
             wifiImg = "qrc:/qml/resources/icons/light/wifi.png"
             tabImages = "#000000"
+            contrastColor = "white"
             state = "light"
 
         }

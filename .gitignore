@@ -67,6 +67,7 @@ app/qt/platform/macos/macos-info.plist
 build/*
 artifacts/*
 transitive-args.cmake
+controll-app/platforms/android/.gradle
 
 #
 #   Do not ignore
