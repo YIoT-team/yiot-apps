@@ -36,7 +36,6 @@ Popup {
     background: Rectangle {
         border.color: Theme.primaryTextColor
         border.width: 0
-        radius: 10
         color: Theme.contrastColor
         opacity: 0.5
     }
@@ -56,7 +55,7 @@ Popup {
 
     onVisibleChanged: {
         if (visible) {
-            delayed(15000, function() {
+            delayed(25000, function() {
                 popup.close()
             })
         } else {
