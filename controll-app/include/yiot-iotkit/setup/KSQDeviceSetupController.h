@@ -1,0 +1,139 @@
+//  ────────────────────────────────────────────────────────────
+//                     ╔╗  ╔╗ ╔══╗      ╔════╗
+//                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
+//                     ╚╗╚╝╔╝  ║║  ╔══╗ ╚╝║║╚╝
+//                      ╚╗╔╝   ║║  ║╔╗║   ║║
+//                       ║║   ╔╣╠╗ ║╚╝║   ║║
+//                       ╚╝   ╚══╝ ╚══╝   ╚╝
+//    ╔╗╔═╗                    ╔╗                     ╔╗
+//    ║║║╔╝                   ╔╝╚╗                    ║║
+//    ║╚╝╝  ╔══╗ ╔══╗ ╔══╗  ╔╗╚╗╔╝  ╔══╗ ╔╗ ╔╗╔╗ ╔══╗ ║║  ╔══╗
+//    ║╔╗║  ║║═╣ ║║═╣ ║╔╗║  ╠╣ ║║   ║ ═╣ ╠╣ ║╚╝║ ║╔╗║ ║║  ║║═╣
+//    ║║║╚╗ ║║═╣ ║║═╣ ║╚╝║  ║║ ║╚╗  ╠═ ║ ║║ ║║║║ ║╚╝║ ║╚╗ ║║═╣
+//    ╚╝╚═╝ ╚══╝ ╚══╝ ║╔═╝  ╚╝ ╚═╝  ╚══╝ ╚╝ ╚╩╩╝ ║╔═╝ ╚═╝ ╚══╝
+//                    ║║                         ║║
+//                    ╚╝                         ╚╝
+//
+//    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
+//  ────────────────────────────────────────────────────────────
+
+#ifndef _YIOT_QT_DEVICE_SETUP_CONTROLLER_H_
+#define _YIOT_QT_DEVICE_SETUP_CONTROLLER_H_
+
+#include <QtCore>
+
+#include <virgil/iot/qt/helpers/VSQSingleton.h>
+#include <virgil/iot/qt/VSQIoTKit.h>
+#include <yiot-iotkit/setup/KSQDeviceSetupData.h>
+
+#include <yiot-iotkit/secmodule/KSQPublicKey.h>
+
+using namespace VirgilIoTKit;
+
+class KSQDeviceSetupController : public QObject, public VSQSingleton<KSQDeviceSetupController> {
+    Q_OBJECT
+
+    friend VSQSingleton<KSQDeviceSetupController>;
+
+    Q_PROPERTY(QObject *data READ deviceData NOTIFY fireDeviceDataChanged)
+
+public:
+    bool
+    isValid() const {
+        return m_valid;
+    }
+
+    bool
+    start(VSQNetifBase *netif, VSQMac deviceMac);
+
+    Q_INVOKABLE void
+    stop();
+
+    Q_INVOKABLE bool
+    configure(bool needProvision, bool needUser, QString userName, bool needWiFi, QString ssid, QString password);
+
+    void
+    error(const QString &error);
+
+signals:
+    void
+    fireStateInfo(QString state);
+
+    void
+    fireError(QString text);
+
+    void
+    fireFinished(VSQNetifBase *m_netif);
+
+    void
+    fireInitializationReady();
+
+    void
+    fireUploadStarted();
+
+    void
+    fireUploadDone();
+
+    void
+    fireUploadStopped();
+
+    void
+    fireDeviceDataChanged();
+
+    void
+    fireDeviceSetupStarted(const VSQMac &mac);
+
+private slots:
+    void
+    onDeviceSecurityInfo(bool hasProvision, bool hasOwner, bool ownerIsYou, const KSQPublicKey &publicKey);
+
+    void
+    onDeviceInfo(const struct VirgilIoTKit::vs_netif_t *src_netif, const VSQDeviceInfo &deviceInfo);
+
+    void
+    onConfigurationDone();
+
+    void
+    onConfigurationError();
+
+    void
+    onProvisionError(QString errorStr);
+
+    void
+    onProvisionDone();
+
+    void
+    onAddUserError(QString errorStr);
+
+    void
+    onAddUserDone();
+
+private:
+    KSQDeviceSetupController();
+    virtual ~KSQDeviceSetupController();
+
+    bool m_valid;
+    bool m_readyDeviceInfo;
+    bool m_readyDeviceSecurityInfo;
+
+    bool m_needProvision;
+    bool m_needUser;
+    bool m_needWiFi;
+    QString m_userName;
+
+    KSQDeviceSetupData m_deviceData;
+
+    VSQNetifBase *m_netif;
+    VSQMac m_deviceMac;
+
+    bool
+    checkInitalStep();
+
+    Q_INVOKABLE QObject *
+    deviceData();
+
+    void
+    done();
+};
+
+#endif // _YIOT_QT_DEVICE_SETUP_CONTROLLER_H_

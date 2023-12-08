@@ -1,3 +1,6 @@
+#Build
+build-pkgs
+
 # Prerequisites
 *.d
 
@@ -50,3 +53,23 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# IDE
+.idea
+cmake-build-*
+*.txt.user
+
+# Cache
+.depends_cache
+
+# Generated
+app/qt/platform/macos/macos-info.plist
+build/*
+artifacts/*
+transitive-args.cmake
+controll-app/platforms/android/.gradle
+
+#
+#   Do not ignore
+#
+!service/linux/include/config
