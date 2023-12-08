@@ -46,7 +46,42 @@ Page {
 
     AllDevicesList {
         id: list
+        visible: !deviceControllers.empty
         model: deviceControllers
+    }
+
+    DevicesDetectionProgress {
+        visible: deviceControllers.empty && !busyDialog.visible
+    }
+
+    footer: ColumnLayout {
+        width: parent.width
+        FormSecondaryButton {
+            Layout.topMargin: 20
+            Layout.bottomMargin: 10
+            text: qsTr("Refresh")
+
+            Timer {
+                id: timer
+            }
+
+            onClicked: {
+                enabled = false
+                applicationWindow.setAppBusy(true)
+                app.updateDevices()
+                delayed(5000, function() {
+                    enabled = true
+                    applicationWindow.setAppBusy(false)
+                })
+            }
+
+            function delayed(delayTime, cb) {
+                timer.interval = delayTime;
+                timer.repeat = false;
+                timer.triggered.connect(cb);
+                timer.start();
+            }
+        }
     }
 
     // Fill data and show device info.

@@ -8,6 +8,7 @@ Column {
     Layout.fillWidth: true
     Layout.maximumWidth: Theme.formMaximumWidth
     Layout.alignment: Qt.AlignHCenter
+    Layout.topMargin: 20
 
     spacing: 10
 

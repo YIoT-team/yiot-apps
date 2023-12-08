@@ -31,7 +31,7 @@ class KSQDevice : public QObject {
 
     Q_PROPERTY(QString deviceType READ deviceType)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY fireNameChanged)
-    Q_PROPERTY(QString macAddr READ macAddr)
+    Q_PROPERTY(QString macAddr READ macAddr NOTIFY fireMacAddrChanged)
     Q_PROPERTY(QString roles READ roles WRITE setRoles NOTIFY fireRolesChanged)
     Q_PROPERTY(QString manufacture READ manufacture WRITE setManufacture NOTIFY fireManufactureChanged)
     Q_PROPERTY(QString deviceID READ deviceID WRITE setDeviceID NOTIFY fireDeviceIDChanged)
@@ -60,6 +60,9 @@ public:
     Q_INVOKABLE void
     invokeCommand(QString json);
 
+    Q_INVOKABLE void
+    drop();
+
     VSQMac
     qMacAddr() const;
 
@@ -68,6 +71,9 @@ public:
 
     Q_INVOKABLE void
     setNameToHardware(QString name);
+
+    Q_INVOKABLE void
+    waitReboot();
 
     void
     setRoles(QString val);
@@ -98,6 +104,9 @@ public:
 
     void
     setSessionKey(const KSQSessionKey &key);
+
+    void
+    setRecivedActivity(bool active);
 
     void
     commandStart();
@@ -134,12 +143,17 @@ public:
     hasSessionKey() const;
     bool
     active() const;
+    bool
+    isWaitingReboot() const;
 
     bool
     operator<(const KSQDevice &rhs) const;
 
     bool
     isUpdatedName();
+
+    void
+    dropSession();
 
     static const QString kCmdStateConnect;
     static const QString kCmdStateSend;
@@ -155,9 +169,6 @@ protected:
     void
     _setRecivedName(QString name);
 
-    void
-    _setRecivedActivity(bool active);
-
     QString
     _deviceType() const {
         return "";
@@ -169,6 +180,8 @@ protected:
 signals:
     void
     fireNameChanged();
+    void
+    fireMacAddrChanged();
     void
     fireSendNameUpdate();
     void
@@ -204,6 +217,7 @@ signals:
 
     void
     fireSetNameToHardware(VSQMac mac, QString name);
+
     void
     fireRequestSessionKey(VSQMac mac);
 
@@ -212,6 +226,14 @@ signals:
 
     void
     fireStateImageChanged();
+
+    void
+    fireRebooted();
+
+    void
+    fireSessionKeyReceived(KSQDevice *);
+
+    void fireDrop(QString);
 
 private:
     bool m_active;
@@ -232,6 +254,8 @@ private:
 
     bool m_hasProvision;
     bool m_hasOwner;
+
+    bool m_waitReboot;
 
     QSharedPointer<QObject> m_js;
 

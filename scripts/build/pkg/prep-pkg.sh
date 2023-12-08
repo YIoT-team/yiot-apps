@@ -3,7 +3,7 @@ set -o errtrace
 
 SCRIPT_DIR="$(cd $(dirname "$0") && pwd)"
 SOURCE_DIR="${SCRIPT_DIR}/../../.."
-BUILD_OS_DISTR="centos-8-x86_64"
+BUILD_OS_DISTR="centos-stream-8-x86_64"
 
 set -e
 ######################################################################

@@ -31,7 +31,7 @@ public:
     KSQBLEController();
     virtual ~KSQBLEController();
 
-    QSharedPointer<VSQNetifBLE>
+    VSQNetifBLE *
     netif();
 
     VSQNetifBLEEnumerator *
@@ -63,12 +63,12 @@ private slots:
     onDeviceError();
 
     void
-    onSetupFinished(QSharedPointer<VSQNetifBase> netif);
+    onSetupFinished(VSQNetifBase *netif);
 
 private:
     VSQMac m_currentMac;
     VSQNetifBLEEnumerator m_bleEnumerator;
-    QSharedPointer<VSQNetifBLE> m_netifBLE;
+    VSQNetifBLE *m_netifBLE;
 
     bool m_needWiFiConfig;
 

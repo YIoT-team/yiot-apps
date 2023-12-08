@@ -225,127 +225,134 @@ set(QTANDROIDEXTRAS_LIBRARIES "Qt5::AndroidExtras")
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../ext/qtkeychain qtkeychain)
 
 # ---------------------------------------------------------------------------
-#	Header/Source files
+# Header/Source files
 # ---------------------------------------------------------------------------
 target_sources(${KS_TARGET_NAME}
-        PRIVATE
+    PRIVATE
 
-        # Headers
-        ${CMAKE_CURRENT_LIST_DIR}/include/KSQApplication.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/KSQWiFiEnumerator.h
+    # Headers
+    ${CMAKE_CURRENT_LIST_DIR}/include/KSQApplication.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/KSQWiFiEnumerator.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQDevice.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQDevicesType.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQAllDevicesController.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQBlankDevicesController.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQBLEController.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQUXSimplifyController.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQDevice.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQDevicesType.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/controllers/devices/KSQAllDevicesController.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQBlankDevicesController.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQBLEController.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/controllers/KSQUXSimplifyController.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/KSQOneExtension.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/KSQExtensions.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/KSQExtensionControllerBase.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/KSQOneExtension.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/KSQExtensions.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/controllers/extensions/KSQExtensionControllerBase.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/integrations/KSQIntegrationsController.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/controllers/plugins/KSQPluginsController.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/controllers/integrations/KSQIntegrationsController.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/controllers/plugins/KSQPluginsController.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/KSQIoTKitFacade.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQUdp.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQNetifWebsocket.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapUSERClient.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapPRVSClient.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapSCRTClient.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/KSQIoTKitFacade.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQUdp.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/netif/KSQNetifWebsocket.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapUSERClient.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapPRVSClient.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/snap/KSQSnapSCRTClient.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQRoT.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQRoTController.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQTrustList.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQRoT.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQRoTController.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/root-of-trust/KSQTrustList.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQSecModule.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQPublicKey.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQPrivateKey.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQSessionKey.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQSignature.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQSecModule.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQPublicKey.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQPrivateKey.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQSessionKey.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secmodule/KSQSignature.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/storages/KSQStorageBase.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/storages/KSQStorageKeychain.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/storages/KSQStorageFS.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/storages/KSQStorageBase.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/storages/KSQStorageKeychain.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/storages/KSQStorageFS.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secbox/KSQSecBox.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/secbox/KSQSecBox.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/provision/KSQProvision.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/provision/KSQProvision.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/setup/KSQDeviceSetupController.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/setup/KSQDeviceSetupData.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/setup/KSQDeviceSetupController.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/yiot-iotkit/setup/KSQDeviceSetupData.h
 
-        $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
-        $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
-        $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
-        $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/include/os/android/KSQAndroid.h>
+    ${CMAKE_CURRENT_LIST_DIR}/include/utils/KSQFileLoader.h
 
-        # Sources
-        ${CMAKE_CURRENT_LIST_DIR}/src/KSQApplication.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/KSQWiFiEnumerator.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-hal.cpp
+    $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
+    $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
+    $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
+    $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/include/os/android/KSQAndroid.h>
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQDevice.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQDevicesType.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQAllDevicesController.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQBlankDevicesController.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQBLEController.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQUXSimplifyController.cpp
+    # Sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/KSQApplication.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/KSQWiFiEnumerator.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/iotkit-hal.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/KSQOneExtension.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/KSQExtensions.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQDevice.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQDevicesType.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/controllers/devices/KSQAllDevicesController.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQBlankDevicesController.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQBLEController.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/controllers/KSQUXSimplifyController.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/integrations/KSQIntegrationsController.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/controllers/plugins/KSQPluginsController.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/KSQOneExtension.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/controllers/extensions/KSQExtensions.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/KSQIoTKitFacade.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQUdp.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQNetifWebsocket.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapUSERClient.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapPRVSClient.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapSCRTClient.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/controllers/integrations/KSQIntegrationsController.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/controllers/plugins/KSQPluginsController.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQRoT.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQRoTController.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQTrustList.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/KSQIoTKitFacade.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQUdp.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/netif/KSQNetifWebsocket.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapUSERClient.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapPRVSClient.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/snap/KSQSnapSCRTClient.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQSecModule.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQPublicKey.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQPrivateKey.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQSessionKey.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQSignature.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQRoT.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQRoTController.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/root-of-trust/KSQTrustList.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/storages/KSQStorageBase.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/storages/KSQStorageKeychain.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/storages/KSQStorageFS.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQSecModule.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQPublicKey.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQPrivateKey.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQSessionKey.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secmodule/KSQSignature.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secbox/KSQSecBox.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/storages/KSQStorageBase.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/storages/KSQStorageKeychain.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/storages/KSQStorageFS.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/provision/KSQProvision.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/secbox/KSQSecBox.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/setup/KSQDeviceSetupController.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/setup/KSQDeviceSetupData.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/provision/KSQProvision.cpp
 
-        $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/os/macos/KSMacWiFi.mm>
-        $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/os/ios/KSiOSWiFi.mm>
-        $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/src/os/linux/KSLinuxWiFi.cpp>
-        $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/src/os/win/KSWinWiFi.cpp>
-        $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/src/os/android/KSQAndroid.cpp>
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/setup/KSQDeviceSetupController.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/yiot-iotkit/setup/KSQDeviceSetupData.cpp
 
-        $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/yiot_plugin_import.cpp>
-        $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/yiot_qml_plugin_import.cpp>
+    ${CMAKE_CURRENT_LIST_DIR}/src/utils/KSQFileLoader.cpp
 
-        # Qt Resources
-        ${CMAKE_CURRENT_LIST_DIR}/src/resources.qrc
-        ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/rpi/device.qrc
-        ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/router/router.qrc
-        ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/emulator-lamp/lamp.qrc
-        ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/emulator-doorlock/doorlock.qrc
-        ${CMAKE_CURRENT_LIST_DIR}/extensions/integrations/websocket/integration.qrc
-        ${CMAKE_CURRENT_LIST_DIR}/extensions/plugins/rpi-vpn/plugin.qrc
-        )
+    $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/os/macos/KSMacWiFi.mm>
+    $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/os/ios/KSiOSWiFi.mm>
+    $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/src/os/linux/KSLinuxWiFi.cpp>
+    $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/src/os/win/KSWinWiFi.cpp>
+    $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/src/os/android/KSQAndroid.cpp>
+
+    $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/yiot_plugin_import.cpp>
+    $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/yiot_qml_plugin_import.cpp>
+
+    # Qt Resources
+    ${CMAKE_CURRENT_LIST_DIR}/src/resources.qrc
+    ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/rpi/device.qrc
+    ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/router/router.qrc
+    ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/emulator-lamp/lamp.qrc
+    ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/cv-2se/cv-2se.qrc
+    ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/EOCxxx/eocxxx.qrc
+    ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/emulator-doorlock/doorlock.qrc
+    ${CMAKE_CURRENT_LIST_DIR}/extensions/integrations/websocket/integration.qrc
+    ${CMAKE_CURRENT_LIST_DIR}/extensions/integrations/emulators/emulators.qrc
+    ${CMAKE_CURRENT_LIST_DIR}/extensions/plugins/rpi-vpn/plugin.qrc
+)
 
 
 # ---------------------------------------------------------------------------
@@ -489,12 +496,12 @@ if (KS_PLATFORM STREQUAL "ios")
 
     # Prepare iOS bundle creation
     add_qt_ios_app(${KS_TARGET_NAME}
-            CUSTOM_PLIST        "${CMAKE_CURRENT_LIST_DIR}/platforms/ios/ios-info.plist.in"
-            BUNDLE_IDENTIFIER   "io.yiot-dev.ios.yiot"
-            ASSET_DIR           "${CMAKE_CURRENT_SOURCE_DIR}/platforms/ios/Assets.xcassets"
-            SHORT_VERSION       "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
-            LONG_VERSION        "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
-            VERBOSE             1)
+        CUSTOM_PLIST "${CMAKE_CURRENT_LIST_DIR}/platforms/ios/ios-info.plist.in"
+        BUNDLE_IDENTIFIER "dev.kutashenko.app.io"
+        ASSET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/platforms/ios/Assets.xcassets"
+        SHORT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+        LONG_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+        VERBOSE 1)
 
 endif ()
 

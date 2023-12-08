@@ -161,6 +161,10 @@ Rectangle {
     // Delayed check of view state to smooth moving between elements
     function checkActivity() {
         delay(5, function() {
+            if (loader === null || loader.item === null) {
+                return
+            }
+
             var v = loader.item.containsMouse || mainMouseArea.containsMouse
             loader.item.state = (v || showControlsPermanent) ? "visible" : "hidden"
             deviceItem.color = v ? Theme.contrastBackgroundColor : "transparent"

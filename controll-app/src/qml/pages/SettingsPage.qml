@@ -40,19 +40,20 @@ Page {
     SwipeView {
         readonly property int menuIdx: 0
         readonly property int wifiNetworksIdx: 1
-        readonly property int wifiPassIdx: 2
-        readonly property int eventsIdx: 3
-        readonly property int rotIdx: 4
-        readonly property int networksIdx: 5
-        readonly property int themeIdx: 6
-        readonly property int extDevicesIdx: 7
-        readonly property int integrationsIdx: 8
-        readonly property int onePluginIdx: 9
-        readonly property int oneIntegrationIdx: 10
-        readonly property int oneDevicePageIdx: 11
-        readonly property int rotControlPageIdx: 12
-        readonly property int rotExportPageIdx: 13
-        readonly property int rotImportPageIdx: 14
+        readonly property int accountIdx: 2
+        readonly property int wifiPassIdx: 3
+        readonly property int eventsIdx: 4
+        readonly property int rotIdx: 5
+        readonly property int networksIdx: 6
+        readonly property int themeIdx: 7
+        readonly property int extDevicesIdx: 8
+        readonly property int servicesIdx: 9
+        readonly property int onePluginIdx: 10
+        readonly property int oneServiceIdx: 11
+        readonly property int oneDevicePageIdx: 12
+        readonly property int rotControlPageIdx: 13
+        readonly property int rotExportPageIdx: 14
+        readonly property int rotImportPageIdx: 15
 
         property int backPageIdx: menuIdx
 
@@ -67,6 +68,10 @@ Page {
 
         WiFiSettingsPage {
             id: wifiSettingsPage
+        }
+
+        AccountSettingsPage {
+            id: accountSettingsPage
         }
 
         WiFiPasswordPage {
@@ -93,16 +98,16 @@ Page {
             id: extDeviccesListPage
         }
 
-        ExtIntegrationsListPage {
-            id: extIntegrationsListPage
+        ExtServicesListPage {
+            id: extServicesListPage
         }
 
         ExtPluginPage {
             id: extPluginPage
         }
 
-        ExtIntegrationPage {
-            id: extIntegrationPage
+        ExtServicePage {
+            id: extServicePage
         }
 
         ExtDevicePage {
@@ -141,8 +146,12 @@ Page {
      }
 
     function showWiFiSettings() {
-        wifiPassSettingsPage.prepareLocation("credentials")
+        wifiPassSettingsPage.prepareLocation(0)
         swipeSettingsShow(settingsSwipeView.wifiNetworksIdx)
+    }
+
+    function showAccountSettings() {
+        swipeSettingsShow(settingsSwipeView.accountIdx)
     }
 
     function showRoTSettings() {
@@ -176,8 +185,8 @@ Page {
         swipeSettingsShow(settingsSwipeView.oneDevicePageIdx)
     }
 
-    function showIntegrationsList() {
-        swipeSettingsShow(settingsSwipeView.integrationsIdx)
+    function showServicesList() {
+        swipeSettingsShow(settingsSwipeView.servicesIdx)
     }
 
     function showPluginPage(plugin, backAction) {
@@ -186,9 +195,9 @@ Page {
         swipeSettingsShow(settingsSwipeView.onePluginIdx)
     }
 
-    function showIntegrationPage(integration, backAction) {
-        swipeSettingsShow(settingsSwipeView.oneIntegrationIdx)
-        extIntegrationPage.show(integration)
+    function showServicePage(service, backAction) {
+        swipeSettingsShow(settingsSwipeView.oneServiceIdx)
+        extServicePage.show(service)
     }
 
     function backInSettings() {

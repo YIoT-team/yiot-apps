@@ -50,8 +50,8 @@ KSQApplication::run() {
     vs_logger_init(VirgilIoTKit::VS_LOGLEV_DEBUG);
 
     m_bleController = QSharedPointer<KSQBLEController>::create();
-    m_netifUdp = QSharedPointer<KSQUdp>::create();
-    m_netifWebsock = QSharedPointer<KSQNetifWebsocket>::create();
+    m_netifUdp = new KSQUdp(QHostAddress::Broadcast);
+    m_netifWebsock = new KSQNetifWebsocket();
     m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create();
     m_uxController = QSharedPointer<KSQUXSimplifyController>::create();
     m_deviceControllers = QSharedPointer<KSQAllDevicesController>::create();
@@ -104,11 +104,16 @@ KSQApplication::run() {
             m_uxController.get(),
             &KSQUXSimplifyController::onNewProvisionedDevice);
 
+    connect(m_deviceControllers.get(),
+            &KSQAllDevicesController::fireNewUnknownDevice,
+            this,
+            &KSQApplication::updateDevices);
+
     // Device re-scan on provision finish
     connect(m_bleController.get(), &KSQBLEController::fireProvisionDone, this, &KSQApplication::onProvisionDone);
 
     // Connect signals from network interfaces
-    connect(m_netifWebsock.get(), &KSQNetifWebsocket::fireDeviceReady, this, &KSQApplication::updateDevices);
+    connect(m_netifWebsock, &KSQNetifWebsocket::fireDeviceReady, this, &KSQApplication::updateDevices);
 
     // Connect Integrations signals
     connect(m_integrations.get(),
@@ -120,17 +125,17 @@ KSQApplication::run() {
             this,
             &KSQApplication::onIntegrationDeactivate);
 
-    // Root of trust changes
-    connect(&KSQRoTController::instance(),
-            &KSQRoTController::fireRoTUpdated,
-            &KSQProvision::instance(),
-            &KSQProvision::onRoTUpdated);
-
     // Initialize IoTKit
     if (!KSQIoTKitFacade::instance().init(features, impl, appConfig)) {
         VS_LOG_CRITICAL("Unable to initialize IoTKIT");
         return -1;
     }
+
+    // Root of trust changes
+    connect(&KSQRoTController::instance(),
+            &KSQRoTController::fireRoTUpdated,
+            &KSQProvision::instance(),
+            &KSQProvision::onRoTUpdated);
 
     // Initialize QML
     QQmlContext *context = engine.rootContext();
@@ -197,10 +202,32 @@ KSQApplication::onProvisionDone(QString mac) {
 //-----------------------------------------------------------------------------
 void
 KSQApplication::updateDevices() {
-    // Multiple broadcast requests due to UDP specific
+    if (m_updateTimer.isActive()) {
+        return;
+    }
+
+    m_updateTimer.setInterval(4000);
+    m_updateTimer.setSingleShot(false);
+
+    connect(&m_updateTimer, &QTimer::timeout, []() { KSQIoTKitFacade::instance().updateAll(); });
+
     KSQIoTKitFacade::instance().updateAll();
-    QTimer::singleShot(3000, []() { KSQIoTKitFacade::instance().updateAll(); });
-    QTimer::singleShot(5000, []() { KSQIoTKitFacade::instance().updateAll(); });
+    m_updateTimer.start();
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQApplication::setSubnet(QString subnet) {
+    QHostAddress addr;
+    auto tmp = QHostAddress(subnet);
+
+    if (tmp.isBroadcast() || tmp.isGlobal() || tmp.isLinkLocal()) {
+        addr = tmp;
+    } else {
+        addr = QHostAddress::Broadcast;
+    }
+
+    m_netifUdp->setSubnet(addr);
 }
 
 //-----------------------------------------------------------------------------
@@ -218,7 +245,7 @@ KSQApplication::applicationVersion() const {
 //-----------------------------------------------------------------------------
 QString
 KSQApplication::applicationDisplayName() const {
-    return tr("YIoT");
+    return tr("EnGenius");
 }
 
 //-----------------------------------------------------------------------------

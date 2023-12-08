@@ -25,7 +25,7 @@ import "../../theme"
 import "../../components"
 Page {
     property string ssid: ""
-    property string location: "credentials"
+    property int location: 0
 
     id: wifiSettingsPage
 
@@ -47,7 +47,7 @@ Page {
                 setCredLoadState("wifi-setup")
                 break;
             default:
-                console.error("Error in the location of the call to the WiFi password page: '" + location + "' is not defined")
+                console.error("Error in the location of the call to the WiFi password page: '" + location + "' is not defined") //TODO: Remove string parameter
             }
         }
     }
@@ -112,10 +112,12 @@ Page {
 
         // Switch back
         switch (location) {
-        case "credentials":
+        // Credentials
+        case (0):
             showDevicesSetup()
             break;
-        case "deviceSetup":
+        // Device setup
+        case (1):
             showCredLoad()
             setCredLoadState("wifi-setup")
             break;

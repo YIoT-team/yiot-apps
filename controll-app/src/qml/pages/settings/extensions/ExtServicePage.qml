@@ -24,30 +24,49 @@ import QtQuick.Layouts 1.12
 import "qrc:/qml/theme"
 import "qrc:/qml/components"
 import "qrc:/qml/components/devices"
+import "qrc:/qml/pages/settings/extensions"
 
 SwipeView {
-    id: integrationsSwipeView
-    objectName: "integrationControlContainer"
+    id: servicesSwipeView
+    objectName: "serviceControlContainer"
     interactive: false
 
-    function show(integrationController) {
-        integrationsSwipeView.currentIndex = integrationController.js.controlPageIdx
-        for (var i = 0; i < integrationsSwipeView.count; ++i) {
-            var item = integrationsSwipeView.itemAt(i)
-            item.visible = i == integrationsSwipeView.currentIndex
+    property int serviceIndex: 0
+
+    ExtLoginPage {
+        id: loginPage
+    }
+
+    function show(serviceController) {
+        servicesSwipeView.serviceIndex = serviceController.js.controlPageIdx
+        if(serviceController.js.needLogin == true && settings.getServicesLogin() == "") {
+            servicesSwipeView.currentIndex = 0
+            loginPage.visible = true
+        } else {
+            console.log(">>> Service login: " + settings.getServicesLogin())
+            console.log(">>> Service password: " + settings.getServicesPass())
+            showServicePage()
         }
     }
 
-    function addIntegrationControl(qmlFile, controller) {
-        var component = Qt.createComponent(qmlFile);
-        var controlPage = component.createObject(integrationsSwipeView);
+    function showServicePage() {
+        servicesSwipeView.currentIndex = servicesSwipeView.serviceIndex
+        for (var i = 0; i < servicesSwipeView.count; ++i) {
+            var item = servicesSwipeView.itemAt(i)
+            item.visible = i == servicesSwipeView.currentIndex
+        }
+    }
 
-        if (controlPage == null) {
-            console.log("Error creating object")
+    function addServiceControl(qmlFile, controller) {
+        var component = Qt.createComponent(qmlFile);
+        var controlPage = component.createObject(servicesSwipeView);
+
+        if (controlPage === null) {
+            console.log("Error creating object: ", component.errorString())
         }
 
-        integrationsSwipeView.addItem(controlPage)
+        servicesSwipeView.addItem(controlPage)
         controlPage.controller = controller
-        return integrationsSwipeView.count - 1
+        return servicesSwipeView.count - 1
     }
 }

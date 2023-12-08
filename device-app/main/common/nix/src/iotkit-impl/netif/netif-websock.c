@@ -485,7 +485,7 @@ _websocket_curl_perform_loop_processor(void *param) {
 
         if (CURLM_OK == mc && still_running) {
             /* wait for activity, timeout or "nothing" */
-            mc = curl_multi_wait(_websocket_ctx.multi, NULL, 0, 1000, &numfds);
+            mc = curl_multi_wait(_websocket_ctx.multi, NULL, 0, 5000, &numfds);
 
             if (mc != CURLM_OK) {
                 VS_LOG_ERROR("curl_multi_wait() failed, code %d.", mc);

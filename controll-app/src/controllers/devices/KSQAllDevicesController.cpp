@@ -25,6 +25,11 @@ void
 KSQAllDevicesController::add(KSQDevicesType *devicesType) {
     connect(devicesType, &KSQDevicesType::fireActivated, this, &KSQAllDevicesController::onGroupActivated);
     connect(devicesType, &KSQDevicesType::fireRequiredSetup, this, &KSQAllDevicesController::fireNewProvisionedDevice);
+    connect(devicesType, &KSQDevicesType::fireNewUnknownDevice, this, &KSQAllDevicesController::fireNewUnknownDevice);
+    connect(devicesType,
+            &KSQDevicesType::fireSessionKeyReceived,
+            this,
+            &KSQAllDevicesController::fireSessionKeyReceived);
     QSharedPointer<KSQDevicesType> e(devicesType);
     m_elements.push_back(e);
 }
@@ -42,6 +47,8 @@ KSQAllDevicesController::onGroupActivated() {
     // TODO: Use correct insertion
     beginResetModel();
     endResetModel();
+
+    emit fireEmptyChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -54,6 +61,17 @@ KSQAllDevicesController::rowCount(const QModelIndex &parent) const {
         }
     }
     return cnt;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQAllDevicesController::isEmpty() const {
+    for (const auto &el : m_elements) {
+        if (el->rowCount()) {
+            return false;
+        }
+    }
+    return true;
 }
 
 //-----------------------------------------------------------------------------

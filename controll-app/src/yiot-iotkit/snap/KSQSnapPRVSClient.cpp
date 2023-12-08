@@ -78,12 +78,12 @@ KSQSnapPRVSClient::serviceName() const {
 
 //-----------------------------------------------------------------------------
 KSQPublicKey
-KSQSnapPRVSClient::getDevicePublicKey(QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac) {
+KSQSnapPRVSClient::getDevicePublicKey(VSQNetifBase *netif, VSQMac deviceMac) {
     QByteArray pubKey;
     pubKey.resize(sizeof(vs_pubkey_dated_t) + kPubKeyBufMax);
 
     vs_mac_addr_t mac = deviceMac;
-    if (VS_CODE_OK != vs_snap_prvs_save_provision(netif.isNull() ? vs_snap_netif_routing() : netif->lowLevelNetif(),
+    if (VS_CODE_OK != vs_snap_prvs_save_provision(!netif ? vs_snap_netif_routing() : netif->lowLevelNetif(),
                                                   &mac,
                                                   reinterpret_cast<uint8_t *>(pubKey.data()),
                                                   pubKey.size(),
@@ -98,12 +98,12 @@ KSQSnapPRVSClient::getDevicePublicKey(QSharedPointer<VSQNetifBase> netif, VSQMac
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapPRVSClient::uploadData(QSharedPointer<VSQNetifBase> netif,
+KSQSnapPRVSClient::uploadData(VSQNetifBase *netif,
                               VSQMac deviceMac,
                               vs_snap_prvs_element_e prvsElement,
                               const QByteArray &data) {
     vs_mac_addr_t mac = deviceMac;
-    if (VS_CODE_OK != vs_snap_prvs_set(netif.isNull() ? vs_snap_netif_routing() : netif->lowLevelNetif(),
+    if (VS_CODE_OK != vs_snap_prvs_set(!netif ? vs_snap_netif_routing() : netif->lowLevelNetif(),
                                        &mac,
                                        prvsElement,
                                        reinterpret_cast<const uint8_t *>(data.data()),
@@ -117,9 +117,7 @@ KSQSnapPRVSClient::uploadData(QSharedPointer<VSQNetifBase> netif,
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapPRVSClient::uploadKeys(QSharedPointer<VSQNetifBase> netif,
-                              VSQMac deviceMac,
-                              QSharedPointer<KSQRoT> rootOfTrust) {
+KSQSnapPRVSClient::uploadKeys(VSQNetifBase *netif, VSQMac deviceMac, QSharedPointer<KSQRoT> rootOfTrust) {
     QString prefix(tr("Security provision "));
     int pos = 1;
     emit fireProvisionStateChanged(prefix + QString("%1/8").arg(pos++));
@@ -175,7 +173,7 @@ KSQSnapPRVSClient::uploadKeys(QSharedPointer<VSQNetifBase> netif,
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapPRVSClient::signDevice(QSharedPointer<VSQNetifBase> netif,
+KSQSnapPRVSClient::signDevice(VSQNetifBase *netif,
                               VSQMac deviceMac,
                               const KSQPublicKey &deviceKey,
                               QSharedPointer<KSQRoT> rootOfTrust) {
@@ -205,9 +203,7 @@ KSQSnapPRVSClient::signDevice(QSharedPointer<VSQNetifBase> netif,
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapPRVSClient::uploadTrustList(QSharedPointer<VSQNetifBase> netif,
-                                   VSQMac deviceMac,
-                                   QSharedPointer<KSQRoT> rootOfTrust) {
+KSQSnapPRVSClient::uploadTrustList(VSQNetifBase *netif, VSQMac deviceMac, QSharedPointer<KSQRoT> rootOfTrust) {
 
     // Check input parameters
     if (!rootOfTrust->trustList().isValid() || !rootOfTrust->trustList().keysCount()) {
@@ -216,7 +212,7 @@ KSQSnapPRVSClient::uploadTrustList(QSharedPointer<VSQNetifBase> netif,
     }
 
     vs_mac_addr_t mac = deviceMac;
-    auto lowLevelNetif = netif.isNull() ? vs_snap_netif_routing() : netif->lowLevelNetif();
+    auto lowLevelNetif = !netif ? vs_snap_netif_routing() : netif->lowLevelNetif();
 
     QString prefix(tr("Upload TrustList  "));
     int pos = 1;
@@ -258,9 +254,7 @@ KSQSnapPRVSClient::uploadTrustList(QSharedPointer<VSQNetifBase> netif,
 
 //-----------------------------------------------------------------------------
 bool
-KSQSnapPRVSClient::provisionDevice(QSharedPointer<VSQNetifBase> netif,
-                                   VSQMac deviceMac,
-                                   QSharedPointer<KSQRoT> rootOfTrust) {
+KSQSnapPRVSClient::provisionDevice(VSQNetifBase *netif, VSQMac deviceMac, QSharedPointer<KSQRoT> rootOfTrust) {
 
     // Check Root of trust is valid
     if (!rootOfTrust->isValid()) {

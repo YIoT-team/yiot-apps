@@ -10,11 +10,13 @@ ToolBar {
     property bool showBackButton: true
     property bool showMenuButton: false
     property bool showSettingsButton: false
+    property bool showPlusButton: false
     property bool hideButtons: false
     property alias showSeporator: seporator.visible
     property alias backgroundColor: background.color
     property alias textClickEnable: ma.enabled
     property var backAction: function() { back() }
+    property var plusAction: function() { add() }
     property var settingsAction: function() { showAbout() }
 
     signal textClick()
@@ -22,14 +24,12 @@ ToolBar {
     background: Rectangle {
         id: background
         implicitHeight: 60
-        color: Theme.mainBackgroundColor
+        color: Theme.contrastColor
 
         Rectangle {
             id: seporator
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
 
             height: 1
             color: Theme.contrastBackgroundColor
@@ -73,7 +73,6 @@ ToolBar {
 
             id: titleLabel
             elide: Label.ElideRight
-            textFormat: Text.MarkdownText
 
             font.underline: ma.containsMouse
             font.family: Theme.mainFont
@@ -101,9 +100,22 @@ ToolBar {
              // TODO(fpohtmeh): try with visibility
             opacity: showSettingsButton ? 1 : 0
             enabled: showSettingsButton
-            visible: !hideButtons
+            visible: !hideButtons && !showPlusButton
             onClicked: {
                 settingsAction()
+            }
+        }
+
+        ImageButton {
+            Layout.rightMargin: 12
+
+            id: plusButton
+            image: "Plus"
+            opacity: showPlusButton ? 1 : 0
+            enabled: showPlusButton
+            visible: showSettingsButton ? false : showPlusButton
+            onClicked: {
+                plusAction()
             }
         }
     }

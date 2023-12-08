@@ -36,6 +36,7 @@ void
 KSQAndroid::requestPermissions() {
     const QVector<QString> permissions({"android.permission.BLUETOOTH",
                                         "android.permission.BLUETOOTH_ADMIN",
+                                        "android.permission.WRITE_EXTERNAL_STORAGE",
                                         "android.permission.ACCESS_FINE_LOCATION",
                                         "android.permission.ACCESS_WIFI_STATE",
                                         "android.permission.CHANGE_WIFI_STATE"});

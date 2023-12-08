@@ -45,7 +45,8 @@
         <file>qml/resources/icons/dark/network.png</file>
 		<file>qml/resources/icons/dark/rename.png</file>
         <file>qml/resources/icons/dark/plugins.png</file>
-		<file>qml/resources/icons/dark/integrations.png</file>
+		<file>qml/resources/icons/dark/services.png</file>
+		<file>qml/resources/icons/dark/account.png</file>
 
         <!-- Icons light theme -->
         <file>qml/resources/icons/light/bt.png</file>
@@ -70,7 +71,8 @@
         <file>qml/resources/icons/light/network.png</file>
 		<file>qml/resources/icons/light/rename.png</file>
         <file>qml/resources/icons/light/plugins.png</file>
-		<file>qml/resources/icons/light/integrations.png</file>
+		<file>qml/resources/icons/light/services.png</file>
+		<file>qml/resources/icons/light/account.png</file>
 
         <!-- Fonts -->
         <file>qml/resources/fonts/Roboto-Medium.ttf</file>
@@ -82,6 +84,7 @@
 
         <!-- QML Components -->
         <file>qml/components/FormLabel.qml</file>
+        <file>qml/components/LinkText.qml</file>
         <file>qml/components/Container.qml</file>
         <file>qml/components/ImageButton.qml</file>
         <file>qml/components/WiFiNetworksList.qml</file>
@@ -91,6 +94,7 @@
         <file>qml/components/TextScrollView.qml</file>
         <file>qml/components/Popups/Popup.qml</file>
         <file>qml/components/Popups/InfoDialog.qml</file>
+        <file>qml/components/Popups/BusyDialog.qml</file>
         <file>qml/components/Form.qml</file>
         <file>qml/components/FormSecondaryButton.qml</file>
         <file>qml/components/CommonHelpers/IconWithText.qml</file>
@@ -110,10 +114,12 @@
         <file>qml/components/RoT/RoTList.qml</file>
         <file>qml/components/RoT/RoTControls.qml</file>
         <file>qml/components/RoT/RoTInfoPopup.qml</file>
+        <file>qml/components/RoT/RoTImportRequestDialog.qml</file>
         <file>qml/components/FormThemeList.qml</file>
         <file>qml/components/SwitchableParam.qml</file>
         <file>qml/components/devices/DeviceInfoPopup.qml</file>
         <file>qml/components/devices/AllDevicesList.qml</file>
+        <file>qml/components/devices/DevicesDetectionProgress.qml</file>
         <file>qml/components/devices/DevicesListItem.qml</file>
         <file>qml/components/devices/GeneralCategoryControls.qml</file>
         <file>qml/components/devices/GeneralDeviceControls.qml</file>
@@ -140,15 +146,17 @@
         <file>qml/pages/settings/SettingsMenuPage.qml</file>
         <file>qml/pages/settings/WiFiSettingsPage.qml</file>
         <file>qml/pages/settings/WiFiPasswordPage.qml</file>
+		<file>qml/pages/settings/AccountSettingsPage.qml</file>
         <file>qml/pages/settings/EventsSettingsPage.qml</file>
         <file>qml/pages/settings/RoTSettingsPage.qml</file>
         <file>qml/pages/settings/NetworksSettingsPage.qml</file>
         <file>qml/pages/settings/ThemeListPage.qml</file>
+		<file>qml/pages/settings/extensions/ExtServicesListPage.qml</file>
+		<file>qml/pages/settings/extensions/ExtServicePage.qml</file>
+		<file>qml/pages/settings/extensions/ExtLoginPage.qml</file>
         <file>qml/pages/settings/extensions/ExtDevicesListPage.qml</file>
         <file>qml/pages/settings/extensions/ExtDevicePage.qml</file>
-		<file>qml/pages/settings/extensions/ExtIntegrationsListPage.qml</file>
         <file>qml/pages/settings/extensions/ExtPluginPage.qml</file>
-        <file>qml/pages/settings/extensions/ExtIntegrationPage.qml</file>
 
         <!-- QML Other pages -->
         <file>qml/pages/AboutPage.qml</file>
@@ -180,6 +188,16 @@
         <file>qml/info/builtin-devices.json</file>
         <file>qml/info/builtin-plugins.json</file>
         <file>qml/info/builtin-integrations.json</file>
+
+        <!-- JS Helpers -->
+        <file>js/firmware/protocol.js</file>
+        <file>js/configuration/protocol.js</file>
+        <file>js/uci/protocol.js</file>
+        <file>js/uci/params-types.js</file>
+        <file>js/uci/params.js</file>
+
+	<!-- Translations -->
+	<file>qml/../translations/yiot_ua.qm</file>
 
     </qresource>
 </RCC>

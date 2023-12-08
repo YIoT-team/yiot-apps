@@ -38,21 +38,22 @@ KSQIntegrationsController::load(QSharedPointer<KSQOneExtension> extension) {
         VS_LOG_ERROR("Cannot create QML processor for device type : %s", integrationDir.toStdString().c_str());
         return false;
     }
-    m_qmlProcessor.reset(object);
 
     // Add Device control page
     auto *rootObj = m_engine->rootObjects().first();
-    auto deviceControlContainer = rootObj->findChild<QObject *>("integrationControlContainer");
+    auto serviceControlContainer = rootObj->findChild<QObject *>("serviceControlContainer");
     const QString controlPage = integrationDir + "/src/qml/Control.qml";
     QVariant res;
-    if (QMetaObject::invokeMethod(deviceControlContainer,
-                                  "addIntegrationControl",
+    if (QMetaObject::invokeMethod(serviceControlContainer,
+                                  "addServiceControl",
                                   Q_RETURN_ARG(QVariant, res),
                                   Q_ARG(QVariant, QVariant::fromValue(controlPage)),
                                   Q_ARG(QVariant, QVariant::fromValue(extension.get())))) {
 
         // Let know to JS about view controller
         object->setProperty("controlPageIdx", res);
+
+        m_qmlProcessor[static_cast<size_t>(res.toULongLong())].reset(object);
 
         // Set JS processor for extension
         extension->setJs(object);

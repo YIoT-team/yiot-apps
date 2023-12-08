@@ -84,12 +84,12 @@ signals:
     fireDeviceSelected(QBluetoothDeviceInfo dev);
 
     void
-    fireDeviceRequiresProvision(QString name, QSharedPointer<VSQNetifBase> netif, VSQMac deviceMac);
+    fireDeviceRequiresProvision(QString name, VSQNetifBase *netif, VSQMac deviceMac);
 
 
 private slots:
     void
-    onDeviceInfoUpdate(const VSQDeviceInfo &deviceInfo);
+    onDeviceInfoUpdate(const struct VirgilIoTKit::vs_netif_t *src_netif, const VSQDeviceInfo &deviceInfo);
 
     void
     cleanOldDevices();
@@ -99,7 +99,7 @@ private:
 
     QTimer m_cleanerTimer;
 
-    QSharedPointer<VSQNetifBase> m_netif;
+    VSQNetifBase *m_netif;
 
 
     KSQBlankDevices m_devices;

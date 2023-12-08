@@ -124,8 +124,22 @@ KSQRoTController::roleNames() const {
 
 //-----------------------------------------------------------------------------
 bool
-KSQRoTController::prepare() {
+KSQRoTController::drop() {
+    return prepare(true);
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQRoTController::prepare(bool drop) {
     auto idsList = loadRoTList();
+
+    if (drop) {
+        idsList.clear();
+        for (auto rot : m_rots) {
+            rot.get()->disconnect();
+        }
+        m_rots.clear();
+    }
 
     qDebug() << "RoT list: " << idsList;
 
@@ -137,12 +151,17 @@ KSQRoTController::prepare() {
     // Check if local is present
     if (!idsList.contains(KSQRoT::kLocalID)) {
         auto localRoT = QSharedPointer<KSQRoT>::create(KSQRoT::kLocalID, "qrc:/qml/resources/icons/%1/secure-enclave");
+        if (drop) {
+            localRoT->generate(KSQRoT::kLocalID);
+        }
         if (!localRoT->isValid()) {
             return false;
         }
         m_rots.push_back(localRoT);
         idsList << KSQRoT::kLocalID;
         saveRoTList(idsList);
+
+        m_generated = true;
     }
 
     for (auto rot : m_rots) {
@@ -187,6 +206,18 @@ KSQRoTController::saveRoTList(const QStringList &list) {
     dataStreamWrite << list;
 
     return KSQSecBox::instance().save(VS_SECBOX_SIGNED, m_listStorageId, data);
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQRoTController::generated() const {
+    return m_generated;
+}
+
+//-----------------------------------------------------------------------------
+int
+KSQRoTController::objIdx() const {
+    return static_cast<int>(Element::Obj);
 }
 
 //-----------------------------------------------------------------------------
