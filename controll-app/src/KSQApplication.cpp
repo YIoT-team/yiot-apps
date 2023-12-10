@@ -231,21 +231,6 @@ KSQApplication::setSubnet(QString subnet) {
 }
 
 //-----------------------------------------------------------------------------
-void
-KSQApplication::setSubnet(QString subnet) {
-    QHostAddress addr;
-    auto tmp = QHostAddress(subnet);
-
-    if (tmp.isBroadcast() || tmp.isGlobal() || tmp.isLinkLocal()) {
-        addr = tmp;
-    } else {
-        addr = QHostAddress::Broadcast;
-    }
-
-    m_netifUdp->setSubnet(addr);
-}
-
-//-----------------------------------------------------------------------------
 QString
 KSQApplication::organizationDisplayName() const {
     return tr("Your IoT");
