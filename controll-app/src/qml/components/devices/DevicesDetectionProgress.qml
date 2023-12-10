@@ -17,77 +17,32 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_DEVICES_H
-#define YIOT_DEVICES_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#include <QtCore>
-#include <QHash>
-#include <QAbstractTableModel>
+import "../../theme"
+import "../../components/devices"
 
-#include <virgil/iot/qt/VSQIoTKit.h>
-#include <virgil/iot/qt/helpers/VSQMac.h>
+ColumnLayout {
+    id: detectionProgress
+    anchors.fill: parent
 
-#include <yiot-iotkit/secmodule/KSQSessionKey.h>
+    ProgressBar {
+        Layout.alignment: Qt.AlignTop
+        Layout.fillWidth: true
+        indeterminate: true
+    }
 
-#include <common/protocols/snap/user/user-structs.h>
-#include <controllers/devices/KSQDevicesType.h>
-#include <controllers/extensions/KSQExtensionControllerBase.h>
-
-class KSQAllDevicesController : public QAbstractTableModel, public KSQExtensionControllerBase {
-    Q_OBJECT
-    Q_PROPERTY(bool empty READ isEmpty NOTIFY fireEmptyChanged)
-public:
-    enum Element { Name = Qt::UserRole, Type, Image, SubModel, Js, ElementMax };
-
-    KSQAllDevicesController() = default;
-    virtual ~KSQAllDevicesController() = default;
-
-    bool
-    isEmpty() const;
-
-    /**
-     * QAbstractTableModel implementation
-     */
-    int
-    rowCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    int
-    columnCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    QVariant
-    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-
-    QHash<int, QByteArray>
-    roleNames() const override;
-
-signals:
-    void
-    fireNewProvisionedDevice(QSharedPointer<KSQDevice> device);
-
-    void
-    fireNewUnknownDevice();
-
-    void
-    fireSessionKeyReceived(KSQDevice *);
-
-    void
-    fireEmptyChanged();
-
-public slots:
-
-protected:
-    virtual bool
-    load(QSharedPointer<KSQOneExtension> extension) override final;
-
-private slots:
-    void
-    onGroupActivated();
-
-private:
-    QList<QSharedPointer<KSQDevicesType>> m_elements;
-
-    void
-    add(KSQDevicesType *devicesType);
-};
-
-#endif // YIOT_DEVICES_H
+    // Name of element
+    Label {
+        id: categoryText
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        text: qsTr("Devices detection ...")
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        color: Theme.primaryTextColor
+        font.pointSize: 16
+    }
+}

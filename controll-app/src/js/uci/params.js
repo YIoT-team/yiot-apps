@@ -92,6 +92,31 @@ function init(descriptors, uiUpdateFn, uiChangesUpdate, uiReadyToCommit) {
 
 //-----------------------------------------------------------------------------
 //
+//  Get uci parameter in device
+//
+function getDeviceValue(device, param) {
+    // Get parameter descriptor
+    var descr = getDescriptor(param)
+    if (descr === null) {
+        console.log("Parameter descriptor isn't found : ", param)
+        return null
+    }
+
+    // Check if device already present
+    var devParams = getDevice(device)
+
+    // Check If device is resent
+    if (devParams !== null) {
+        if (devParams.values[param] !== undefined) {
+            return devParams.values[param]
+        }
+    }
+
+    return null
+}
+
+//-----------------------------------------------------------------------------
+//
 //  Get uci parameter
 //
 function getLocalValue(device, param) {
@@ -99,7 +124,8 @@ function getLocalValue(device, param) {
     var descr = getDescriptor(param)
     if (descr === null) {
         console.log("Parameter descriptor isn't found : ", param)
-        return
+        
+        return null
     }
 
     // Check if device already present
@@ -112,8 +138,8 @@ function getLocalValue(device, param) {
             return defaultVirtualVal(descr)
         }
 
-        console.log("Device isn't found : ", device)
-        return
+        //console.log("Device isn't found : ", device)
+        return null
     }
 
     // Check in the local params
@@ -176,9 +202,7 @@ function set(device, param, value) {
     // Set value for a future processing
     devParams.changed[param] = value
 
-    console.log(">>> SET PARAM : ", JSON.stringify(devParams.changed))
-
-    cbChangesUpdateFn(device, true)
+    cbChangesUpdateFn(device, changesPresent(device))
 }
 
 //-----------------------------------------------------------------------------
@@ -194,11 +218,17 @@ function save(device) {
         return
     }
 
+    var virtParams = {}
     Object.entries(devParams.changed).forEach(([key, value]) => {
-                                                  devParams.inProcessing[key] = value
+                                                  var descr = getDescriptor(key)
+                                                  if (descr !== null && descr.uci === "") {
+                                                      virtParams[key] = value
+                                                  } else {
+                                                      devParams.inProcessing[key] = value
+                                                  }
                                               });
 
-    devParams.changed = {}
+    devParams.changed = virtParams
 
     console.log(">>> COMMIT PARAM : ", JSON.stringify(devParams.inProcessing))
 
@@ -225,6 +255,37 @@ function clearSaveList(device) {
 
 //-----------------------------------------------------------------------------
 //
+//  Decline single changed param
+//
+function declineSingleChange(device, param) {
+    // Check if device already present
+    var devParams = getDevice(device)
+
+    // If device is absent, need to add it
+    if (devParams === null) {
+        return
+    }
+
+    // Reset UI value
+    var newList = {}
+    var present = false
+    Object.entries(devParams.changed).forEach(([key, value]) => {
+                                                  if (key !== param) {
+                                                      newList[key] = value
+                                                      present = true
+                                                  }
+                                              });
+
+
+    // Set a new list
+    devParams.changed = newList
+
+    // Activate callback
+    cbChangesUpdateFn(device, changesPresent(device))
+}
+
+//-----------------------------------------------------------------------------
+//
 //  Decline changed
 //
 function declineChanges(device) {
@@ -237,15 +298,20 @@ function declineChanges(device) {
     }
 
     // Reset UI values
+    var virtParams = {}
     Object.entries(devParams.changed).forEach(([key, value]) => {
                                                   var descr = getDescriptor(key)
                                                   console.log(">>> REVERT: ", key, " : ", JSON.stringify(devParams.values))
-                                                  deviceValue(device, descr.uci, true, devParams.values[key])
+                                                  if (descr !== null && descr.uci === "") {
+                                                      virtParams[key] = value
+                                                  } else {
+                                                      deviceValue(device, descr.uci, true, devParams.values[key])
+                                                  }
                                               });
 
 
     // Clean list
-    devParams.changed = {}
+    devParams.changed = virtParams
 
     // Activate callback
     cbChangesUpdateFn(device, false)
@@ -367,13 +433,32 @@ function getValueIndex(name, value) {
     }
     for (var i = 0; i < d.values.length; i++) {
         var v = d.values[i]
-        if (v.value == value) {
+        if (v.value === value) {
             return i
-
         }
     }
 
     return 0
+}
+
+//-----------------------------------------------------------------------------
+//
+//  Get Parameter Value Description by value
+//
+function getValueDescripion(name, value) {
+    var d = getDescriptor(name)
+
+    if (d === null || d.type !== ParamTypes.kUciParamSelectable) {
+        return value
+    }
+    for (var i = 0; i < d.values.length; i++) {
+        var v = d.values[i]
+        if (v.value === value) {
+            return v.title
+        }
+    }
+
+    return value
 }
 
 //-----------------------------------------------------------------------------
@@ -408,6 +493,34 @@ function getDevice(device) {
                               return true
                           });
     return devParams
+}
+
+//-----------------------------------------------------------------------------
+//
+//  Check if changes are present
+//
+function changesPresent(device) {
+    // Check if device already present
+    var devParams = getDevice(device)
+
+    // If device is absent, need to add it
+    if (devParams === null) {
+        return false
+    }
+
+    var present = false
+    Object.entries(devParams.changed).every(([key, value]) => {
+                                                var descr = getDescriptor(key)
+                                                if (descr !== null) {
+                                                    if (descr.uci !== "") {
+                                                        present = true
+                                                        return false // exit loop
+                                                    }
+                                                }
+
+                                                return true // keep iterating
+                                            });
+    return present
 }
 
 //-----------------------------------------------------------------------------

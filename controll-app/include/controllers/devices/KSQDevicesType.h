@@ -88,6 +88,9 @@ public slots:
     void
     onRequestSessionKey(VSQMac mac);
 
+    void
+    onDropRequest(QString mac);
+
 signals:
     void
     fireCollapsedChanged(bool);

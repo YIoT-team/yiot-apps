@@ -47,6 +47,8 @@ KSQAllDevicesController::onGroupActivated() {
     // TODO: Use correct insertion
     beginResetModel();
     endResetModel();
+
+    emit fireEmptyChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -59,6 +61,17 @@ KSQAllDevicesController::rowCount(const QModelIndex &parent) const {
         }
     }
     return cnt;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQAllDevicesController::isEmpty() const {
+    for (const auto &el : m_elements) {
+        if (el->rowCount()) {
+            return false;
+        }
+    }
+    return true;
 }
 
 //-----------------------------------------------------------------------------

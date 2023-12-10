@@ -202,10 +202,32 @@ KSQApplication::onProvisionDone(QString mac) {
 //-----------------------------------------------------------------------------
 void
 KSQApplication::updateDevices() {
-    // Multiple broadcast requests due to UDP specific
+    if (m_updateTimer.isActive()) {
+        return;
+    }
+
+    m_updateTimer.setInterval(4000);
+    m_updateTimer.setSingleShot(false);
+
+    connect(&m_updateTimer, &QTimer::timeout, []() { KSQIoTKitFacade::instance().updateAll(); });
+
     KSQIoTKitFacade::instance().updateAll();
-    QTimer::singleShot(3000, []() { KSQIoTKitFacade::instance().updateAll(); });
-    QTimer::singleShot(5000, []() { KSQIoTKitFacade::instance().updateAll(); });
+    m_updateTimer.start();
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQApplication::setSubnet(QString subnet) {
+    QHostAddress addr;
+    auto tmp = QHostAddress(subnet);
+
+    if (tmp.isBroadcast() || tmp.isGlobal() || tmp.isLinkLocal()) {
+        addr = tmp;
+    } else {
+        addr = QHostAddress::Broadcast;
+    }
+
+    m_netifUdp->setSubnet(addr);
 }
 
 //-----------------------------------------------------------------------------

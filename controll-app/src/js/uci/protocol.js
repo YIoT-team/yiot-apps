@@ -65,6 +65,9 @@ commitChanges(pc) {
 // ----------------------------------------------------------------------------
 function
 parseGetter(jsObj, pc, jsonData) {
+    var res = true
+    var deviceMacAddr = ""
+    
     try {
         // Check command
         if (jsonData.command !== kUciGetterCommand) {
@@ -72,17 +75,35 @@ parseGetter(jsObj, pc, jsonData) {
         }
 
         // Get MAC address of current device
-        let deviceMacAddr = pc.macAddr
+        deviceMacAddr = pc.macAddr
 
         // Iterare over received parameters values
         Object.entries(jsonData.values).forEach(([key, value]) => {
            jsObj.params.deviceValue(deviceMacAddr, key, true, value)
         });
     } catch (e) {
-        return false
+        res = false
     }
 
-    return true
+    jsObj.paramsRequestDone(deviceMacAddr)
+    return res
+}
+
+// ----------------------------------------------------------------------------
+function
+parseSetter(jsObj, pc, jsonData) {
+    var res = true
+    try {
+        // Check command
+        if (jsonData.command !== kUciSetterCommand) {
+            return false
+        }
+
+        jsObj.uciSaveResult(jsonData.success === "true")
+    } catch (e) {
+        res = false
+    }
+    return res
 }
 
 // ----------------------------------------------------------------------------

@@ -52,6 +52,10 @@ ApplicationWindow {
 
     InfoDialog{ id: informDialog }
 
+    BusyDialog {
+        id: busyDialog
+    }
+
     // Inform about requested action by device
     DeviceActionRequestDialog { id: deviceActionDialog }
 
@@ -296,6 +300,12 @@ ApplicationWindow {
         settingsPage.showRoTImportPage(model)
     }
 
+    // ------------------------------------------------------------------------
+    //      Busy state control
+    // ------------------------------------------------------------------------
+    function setAppBusy(busy) {
+        busyDialog.visible = busy
+    }
 
     // ------------------------------------------------------------------------
     //      Popup messages

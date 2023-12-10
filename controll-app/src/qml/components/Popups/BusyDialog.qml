@@ -17,77 +17,65 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-#ifndef YIOT_DEVICES_H
-#define YIOT_DEVICES_H
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-#include <QtCore>
-#include <QHash>
-#include <QAbstractTableModel>
+import "qrc:/qml/theme"
+import "qrc:/qml/components"
 
-#include <virgil/iot/qt/VSQIoTKit.h>
-#include <virgil/iot/qt/helpers/VSQMac.h>
+Popup {
+    id: popup
 
-#include <yiot-iotkit/secmodule/KSQSessionKey.h>
+    width: parent.width
+    height: parent.height
+    modal: true
+    focus: true
+    closePolicy: Popup.NoAutoClose
 
-#include <common/protocols/snap/user/user-structs.h>
-#include <controllers/devices/KSQDevicesType.h>
-#include <controllers/extensions/KSQExtensionControllerBase.h>
+    background: Rectangle {
+        border.color: Theme.primaryTextColor
+        border.width: 0
+        color: Theme.contrastColor
+        opacity: 0.5
+    }
 
-class KSQAllDevicesController : public QAbstractTableModel, public KSQExtensionControllerBase {
-    Q_OBJECT
-    Q_PROPERTY(bool empty READ isEmpty NOTIFY fireEmptyChanged)
-public:
-    enum Element { Name = Qt::UserRole, Type, Image, SubModel, Js, ElementMax };
+    ColumnLayout {
+        anchors.fill: parent
+        BusyIndicator {
+            Layout.alignment: Qt.AlignCenter
+            width: parent.width / 4
+            height: width
+        }
+    }
 
-    KSQAllDevicesController() = default;
-    virtual ~KSQAllDevicesController() = default;
+    Timer {
+        id: timer
+    }
 
-    bool
-    isEmpty() const;
+    onVisibleChanged: {
+        if (visible) {
+            delayed(25000, function() {
+                popup.close()
+            })
+        } else {
+            timer.stop()
+        }
+    }
 
-    /**
-     * QAbstractTableModel implementation
-     */
-    int
-    rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    enter: Transition {
+        NumberAnimation { property: "opacity"; from: 0.0; to: 1.0 }
+    }
 
-    int
-    columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    exit: Transition {
+        NumberAnimation { property: "opacity"; from: 1.0; to: 0.0 }
+    }
 
-    QVariant
-    data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    function delayed(delayTime, cb) {
+        timer.interval = delayTime;
+        timer.repeat = false;
+        timer.triggered.connect(cb);
+        timer.start();
+    }
 
-    QHash<int, QByteArray>
-    roleNames() const override;
-
-signals:
-    void
-    fireNewProvisionedDevice(QSharedPointer<KSQDevice> device);
-
-    void
-    fireNewUnknownDevice();
-
-    void
-    fireSessionKeyReceived(KSQDevice *);
-
-    void
-    fireEmptyChanged();
-
-public slots:
-
-protected:
-    virtual bool
-    load(QSharedPointer<KSQOneExtension> extension) override final;
-
-private slots:
-    void
-    onGroupActivated();
-
-private:
-    QList<QSharedPointer<KSQDevicesType>> m_elements;
-
-    void
-    add(KSQDevicesType *devicesType);
-};
-
-#endif // YIOT_DEVICES_H
+}
