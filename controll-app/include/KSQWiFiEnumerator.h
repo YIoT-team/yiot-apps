@@ -59,17 +59,15 @@ private slots:
     void
     stop();
 
-//    void
-//    onFindWiFi();
-
     void
-    onFindWiFi(QNetworkInformation::Reachability newReachability);
+    onFindWiFi();
 
     void
     updateList(KSQWiFiNetworks &list);
 
 private:
     KSQWiFiNetworks m_wifiList;
+    QNetworkInformation *m_ni = QNetworkInformation::instance();
 
 #if defined(Q_OS_ANDROID)
     KSQWiFiNetworks
@@ -79,21 +77,7 @@ private:
 #if defined(Q_OS_MACOS) || defined(Q_OS_ANDROID)
     static const int kScanPeriodMs = 5000;
     QTimer m_timer;
-
-    // Test
-    QNetworkInformation *m_ni = QNetworkInformation::instance();
 #else
-
-#if 1
-    // TODO: Remove after fixing of deprecated functionality
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-    //QNetworkConfigurationManager m_ncm;
-    QNetworkInformation *m_ni = QNetworkInformation::instance();
-#if 1
-#pragma GCC diagnostic pop
-#endif
     QStringList
     _findWiFiGeneral();
 #endif
