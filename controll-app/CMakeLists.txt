@@ -347,7 +347,6 @@ target_sources(${KS_TARGET_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/router/router.qrc
     ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/emulator-lamp/lamp.qrc
     ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/cv-2se/cv-2se.qrc
-    ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/EOCxxx/eocxxx.qrc
     ${CMAKE_CURRENT_LIST_DIR}/extensions/devices/emulator-doorlock/doorlock.qrc
     ${CMAKE_CURRENT_LIST_DIR}/extensions/integrations/websocket/integration.qrc
     ${CMAKE_CURRENT_LIST_DIR}/extensions/integrations/emulators/emulators.qrc

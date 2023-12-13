@@ -19,6 +19,9 @@
 
 import QtQuick 2.15
 import QtQuick.Controls.Basic 2.15
+import QtKeychain 1.0
+
+// TODO: Remove deprecated
 import Qt.labs.settings 1.0
 
 Item {
@@ -44,40 +47,40 @@ Item {
     }
 
     // KeyChain Writer
-//    WritePasswordJob {
-//        id: storeJobObject
-//        service: "YIoT"
-//        autoDelete: false
-//        onFinished: {
-//            console.debug("Store password complete")
-//        }
-//    }
+    WritePasswordJob {
+        id: storeJobObject
+        service: "YIoT"
+        autoDelete: false
+        onFinished: {
+            console.debug("Store password complete")
+        }
+    }
 
     // KeyChain Reader
-//    ReadPasswordJob {
-//        property var callback: function() {}
+    ReadPasswordJob {
+        property var callback: function() {}
 
-//        id: readJobObject
-//        autoDelete: false
-//        service: "YIoT"
+        id: readJobObject
+        autoDelete: false
+        service: "YIoT"
 
-//        Component.onCompleted: {
-//            readJobObject.finished.connect(function (returnedPassword) {
-//                var pass = returnedPassword.textData()
+        Component.onCompleted: {
+            readJobObject.finished.connect(function (returnedPassword) {
+                var pass = returnedPassword.textData()
 
-//                // Add WiFi credentials to cache
-//                wifiCache[readJobObject.key] = pass
+                // Add WiFi credentials to cache
+                wifiCache[readJobObject.key] = pass
 
-//                // Invoke callback
-//                callback(readJobObject.key, pass)
-//            })
-//        }
-//    }
+                // Invoke callback
+                callback(readJobObject.key, pass)
+            })
+        }
+    }
 
     function loadWiFiCred(ssid, callback) {
-//        readJobObject.key = ssid
-//        readJobObject.callback = callback
-//        readJobObject.start();
+        readJobObject.key = ssid
+        readJobObject.callback = callback
+        readJobObject.start();
     }
 
     function getWiFiCred(ssid) {
@@ -112,9 +115,9 @@ Item {
 
     function setWiFiCredDefault(ssid, pass) {
         // Save password to KeyChain
-//        storeJobObject.key = ssid;
-//        storeJobObject.setTextData(pass);
-//        storeJobObject.start();
+        storeJobObject.key = ssid;
+        storeJobObject.setTextData(pass);
+        storeJobObject.start();
 
         // Add WiFi credentials to cache
         wifiCache[ssid] = pass

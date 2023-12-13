@@ -14,9 +14,6 @@
     },
     {
       "dir": "qrc:/device/4"
-    },
-    {
-      "dir": "qrc:/device/5"
     }
   ]
 }
