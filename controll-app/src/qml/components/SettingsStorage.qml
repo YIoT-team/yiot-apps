@@ -17,12 +17,10 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
+import QtCore
 import QtQuick 2.15
 import QtQuick.Controls.Basic 2.15
 import QtKeychain 1.0
-
-// TODO: Remove deprecated
-import Qt.labs.settings 1.0
 
 Item {
     signal loaded()

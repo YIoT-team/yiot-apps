@@ -167,6 +167,9 @@ KSQApplication::run() {
     // QML entrypoint
     const QUrl url(QStringLiteral("qrc:/qml/Main.qml"));
 
+    // Enable local file load using XMLHttpRequest
+    qputenv("QML_XHR_ALLOW_FILE_READ", QByteArray("1"));
+
     // Start QML
     engine.load(url);
 
