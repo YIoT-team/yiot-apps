@@ -28,8 +28,8 @@ import "qrc:/qml/components"
 Page {
     readonly property int menuIdx: 0
     readonly property int wifiNetworksIdx: 1
-    readonly property int wifiPassIdx: 2
-    readonly property int eventsIdx: 3
+    readonly property int wifiPassIdx: 3
+    readonly property int eventsIdx: 4
 
     id: settingsPage
 
