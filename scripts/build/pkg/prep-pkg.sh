@@ -159,7 +159,7 @@ build_deb() {
    pbuilder clean
    
    print_message "Initialization pbuilder root"
-   pbuilder create --debug --distribution bullseye
+   pbuilder create --debug --distribution buster
 
    print_message "Update pbuilder root"
    pbuilder update --debug
