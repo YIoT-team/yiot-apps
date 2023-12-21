@@ -296,6 +296,11 @@ KSQRoT::load(const QString &id) {
 QString
 KSQRoT::importData(QString fileName, QString password) {
     // Load encrypted data from file
+#ifdef Q_OS_WINDOWS
+    if (fileName.startsWith("/")) {
+        fileName.remove(0, 1);
+    }
+#endif
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly)) {
         VS_LOG_WARNING("Cannot import RoT: file open");
