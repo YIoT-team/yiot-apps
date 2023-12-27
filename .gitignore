@@ -1,5 +1,7 @@
 #Build
-build-pkgs
+build-*
+
+.gradle
 
 # Prerequisites
 *.d

@@ -18,16 +18,15 @@
 //  ────────────────────────────────────────────────────────────
 
 #include <QtCore>
-#include <QtAndroid>
-#include <QAndroidJniObject>
-#include <QtAndroidExtras>
+#include <QJniObject>
+#include <QtCore/private/qandroidextras_p.h>
 
 #include "os/android/KSQAndroid.h"
 
 //-----------------------------------------------------------------------------
 void
 KSQAndroid::hideSplashScreen() {
-    QtAndroid::hideSplashScreen();
+    QNativeInterface::QAndroidApplication::hideSplashScreen();
 }
 
 
@@ -42,11 +41,9 @@ KSQAndroid::requestPermissions() {
                                         "android.permission.CHANGE_WIFI_STATE"});
 
     for (const QString &permission : permissions) {
-        auto result = QtAndroid::checkPermission(permission);
-        if (result == QtAndroid::PermissionResult::Denied) {
-            auto resultHash = QtAndroid::requestPermissionsSync(QStringList({permission}));
-            if (resultHash[permission] == QtAndroid::PermissionResult::Denied) {
-            }
+        auto r = QtAndroidPrivate::checkPermission(permission).result();
+        if (r == QtAndroidPrivate::Denied) {
+            QtAndroidPrivate::requestPermission(permission).result();
         }
     }
 }
@@ -55,10 +52,10 @@ KSQAndroid::requestPermissions() {
 KSQWiFiNetworks
 KSQAndroid::enumWifi() {
     KSQWiFiNetworks res;
-    QAndroidJniObject js = QAndroidJniObject::callStaticObjectMethod("io/kutashenko/wifi/Wifi",
-                                                                     "enumWifi",
-                                                                     "(Landroid/content/Context;)Ljava/lang/String;",
-                                                                     QtAndroid::androidContext().object());
+    QJniObject js = QJniObject::callStaticObjectMethod("io/kutashenko/wifi/Wifi",
+                                                       "enumWifi",
+                                                       "(Landroid/content/Context;)Ljava/lang/String;",
+                                                       QNativeInterface::QAndroidApplication::context());
 
     QJsonDocument jsonResponse = QJsonDocument::fromJson(js.toString().toUtf8());
     QJsonObject jsonObject = jsonResponse.object();

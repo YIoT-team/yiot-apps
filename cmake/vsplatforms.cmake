@@ -94,7 +94,23 @@ if(KS_PLATFORM)
 
     # -- Android
     elseif(KS_PLATFORM STREQUAL "android")
-        set(QT_PREFIX_PATH "android")
+        if(ANDROID_ABI STREQUAL "x86")
+            set(QT_PREFIX_PATH "android_x86")
+        endif()
+
+        if(ANDROID_ABI STREQUAL "x86_64")
+            set(QT_PREFIX_PATH "android_x86_64")
+        endif()
+
+        if(ANDROID_ABI STREQUAL "arm64-v8a")
+            set(QT_PREFIX_PATH "android_arm64_v8a")
+        endif()
+
+        if(ANDROID_ABI STREQUAL "armeabi-v7a")
+            set(QT_PREFIX_PATH "android_armv7")
+        endif()
+
+
         #   Android NDK ABIs    
         set(ANDROID_ABI "x86" CACHE "STRING" "Android default ABI")
         set(ANDROID_BUILD_ABI_arm64-v8a ON CACHE "BOOL" "Build arm64-v8a architecture")

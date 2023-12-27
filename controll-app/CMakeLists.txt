@@ -37,7 +37,7 @@ include(FetchContent)
 # ---------------------------------------------------------------------------
 #   Poject Name
 # ---------------------------------------------------------------------------
-set (KS_TARGET_NAME yiot)
+set (KS_TARGET_NAME yiot_app)
 
 set(VS_ORGANIZATION_NAME "YIoT")
 set(VS_ORGANIZATION_DISPLAYNAME "YIoT")
@@ -95,9 +95,6 @@ elseif(KS_PLATFORM STREQUAL "android")
     message(STATUS "Android version name: [${ANDROID_VERSION_NAME}]")
     message(STATUS "Android version code: [${ANDROID_VERSION_CODE}]")
 
-    # Android QT Extra
-    string(APPEND KS_QT_EXTRA "AndroidExtras")
-
     # Android extra libraries
     if(ANDROID_BUILD_ABI_arm64-v8a)
         list(APPEND ANDROID_EXTRA_LIBS ${CMAKE_BINARY_DIR}/ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/libconverters-arm64-v8a.so)
@@ -120,116 +117,14 @@ elseif(KS_PLATFORM STREQUAL "android")
 endif()
 
 # ---------------------------------------------------------------------------
-#   Qt
+# Qt
 # ---------------------------------------------------------------------------
-find_package(Qt6 COMPONENTS Core Widgets Test Network Concurrent WebSockets Qml ${KS_QT_EXTRA} REQUIRED)
-
-# ---------------------------------------------------------------------------
-#   Prepare for build target
-# ---------------------------------------------------------------------------
-# Android
-if(KS_PLATFORM STREQUAL "android")
-    message("-- Prepare sources for Android ...")
-    add_library(${KS_TARGET_NAME} SHARED)
-    include(${ANDROID_SDK}/android_openssl/CMakeLists.txt)
-
-    if (ANDROID_ABI STREQUAL "armeabi-v7a")
-        set(KS_ANDROID_SSL_DIR "${SSL_ROOT_PATH}/latest/arm/")
-    elseif (ANDROID_ABI STREQUAL "arm64-v8a")
-        set(KS_ANDROID_SSL_DIR "${SSL_ROOT_PATH}/latest/arm64/")
-    elseif (ANDROID_ABI STREQUAL "x86")
-        set(KS_ANDROID_SSL_DIR "${SSL_ROOT_PATH}/latest/x86/")
-    elseif (ANDROID_ABI STREQUAL "x86_64")
-        set(KS_ANDROID_SSL_DIR "${SSL_ROOT_PATH}/latest/x86_64/")
-    endif()
-
-    message(STATUS "Android OpenSSL root path:    [${SSL_ROOT_PATH}]")
-    message(STATUS "Android OpenSSL library path: [${KS_ANDROID_SSL_DIR}]")
-
-# Linux
-elseif(KS_PLATFORM STREQUAL "linux")
-    add_executable(${KS_TARGET_NAME})
-    # Add deployers targets
-    include(deployers)
-    
-# Windows
-elseif(KS_PLATFORM STREQUAL "windows")
-    add_executable(${KS_TARGET_NAME} WIN32)
-    set(GUI_TYPE WIN32)
-    set_target_properties(${KS_TARGET_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
-    include(deployers)    
-    configure_file( "${PROJECT_SOURCE_DIR}/controll-app/platforms/windows/yiot.nsi.in" "${CMAKE_BINARY_DIR}/yiot.nsi" "${VS_TEMPLATE_DST}" @ONLY)
-
-# MacOS
-elseif(KS_PLATFORM STREQUAL "macos")
-    set(MACOSX_BUNDLE_LONG_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
-    set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
-    set(MACOSX_BUNDLE_ICON_FILE MyIcon.icns)
-    set(MACOSX_DMG_ICON_FILE Installer.icns)
-    set(MACOSX_BUNDLE_BACKGROUND_FILE "Background.png")
-    set(MACOSX_DEPLOYMENT_TARGET 10.13)
-    set(VS_BUNDLE_PREFIX "io.yiot-dev.macos")
-    set(MACOSX_BUNDLE_GUI_IDENTIFIER "${VS_BUNDLE_PREFIX}.${PROJECT_NAME}")
-    list(APPEND VS_TEMPLATES "${CMAKE_CURRENT_SOURCE_DIR}/platforms/macos/release-notes.html.in=${CMAKE_CURRENT_SOURCE_DIR}/platforms/macos/release-notes.html")
-    list(APPEND VS_TEMPLATES "${CMAKE_CURRENT_SOURCE_DIR}/platforms/macos/dmg.json.in=${CMAKE_BINARY_DIR}/dmg.json")
-    foreach(VS_TMP IN LISTS VS_TEMPLATES)
-        string(REPLACE "=" ";" VS_TMP_LIST ${VS_TMP})
-        list(GET VS_TMP_LIST 0 VS_TEMPLATE_SRC)
-        list(GET VS_TMP_LIST 1 VS_TEMPLATE_DST)
-        if(NOT EXISTS "${VS_TEMPLATE_SRC}")
-            message(FATAL_ERROR "Template [${VS_TEMPLATE_SRC}] not found !")
-        endif()
-        message(STATUS "Processing template file: [${VS_TEMPLATE_SRC}]")
-        configure_file("${VS_TEMPLATE_SRC}" "${VS_TEMPLATE_DST}" @ONLY)
-    endforeach()
-
-    include(deployers)
-
-    set(App_ICON "${CMAKE_CURRENT_SOURCE_DIR}/platforms/macos/pkg_resources/${MACOSX_BUNDLE_ICON_FILE}")
-    set_source_files_properties(${App_ICON}
-            PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-
-    # Sparkle
-    #message(STATUS "Copy Sparkle framework")
-    #execute_process(
-    #        COMMAND mkdir -p ${CMAKE_BINARY_DIR}/${KS_TARGET_NAME}.app/Contents/Frameworks
-    #        COMMAND cp -Rf ${PREBUILT_DIR}/${KS_PLATFORM}/sparkle/Sparkle.framework ${CMAKE_BINARY_DIR}/${KS_TARGET_NAME}.app/Contents/Frameworks
-    #)
-
-    add_executable(${KS_TARGET_NAME} MACOSX_BUNDLE ${App_ICON} )
-
-    set_target_properties(${KS_TARGET_NAME}
-            PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_LIST_DIR}/platforms/macos/Info.plist.in"
-            )
-    #set_target_properties(${KS_TARGET_NAME}
-    #        PROPERTIES LINK_FLAGS "-F${PREBUILT_DIR}/${KS_PLATFORM}/sparkle -framework Sparkle -framework CoreFoundation -framework Foundation"
-    #        )
-    #    macdeployqt(${KS_TARGET_NAME} "${CMAKE_CURRENT_LIST_DIR}/src/qml")
-
-# Other
-else()
-    add_executable(${KS_TARGET_NAME})
-endif()
-
-# ---------------------------------------------------------------------------
-#   IoTKit Qt Wrapper
-# ---------------------------------------------------------------------------
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/cmake/iotkit-qt)
-
-# ---------------------------------------------------------------------------
-#   Qt Keychain
-# ---------------------------------------------------------------------------
-set(BUILD_TEST_APPLICATION CACHE BOOL OFF FORCE)
-set(BUILD_TRANSLATIONS CACHE BOOL OFF FORCE)
-set(QTANDROIDEXTRAS_LIBRARIES "Qt6::AndroidExtras")
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../ext/qtkeychain qtkeychain)
+find_package(Qt6 COMPONENTS Core Widgets Test Network Concurrent WebSockets Qml Bluetooth ${KS_QT_EXTRA} REQUIRED)
 
 # ---------------------------------------------------------------------------
 # Header/Source files
 # ---------------------------------------------------------------------------
-target_sources(${KS_TARGET_NAME}
-    PRIVATE
-
+qt_add_executable(${KS_TARGET_NAME}
     # Headers
     ${CMAKE_CURRENT_LIST_DIR}/include/KSQApplication.h
     ${CMAKE_CURRENT_LIST_DIR}/include/KSQWiFiEnumerator.h
@@ -353,6 +248,107 @@ target_sources(${KS_TARGET_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/extensions/plugins/rpi-vpn/plugin.qrc
 )
 
+# ---------------------------------------------------------------------------
+#   Prepare for build target
+# ---------------------------------------------------------------------------
+# Android
+if(KS_PLATFORM STREQUAL "android")
+    message("-- Prepare sources for Android ...")
+
+    # add_library(${KS_TARGET_NAME} SHARED)
+    set_target_properties(${KS_TARGET_NAME} PROPERTIES QT_ANDROID_ABIS "armeabi-v7a")
+    
+    include(${ANDROID_SDK}/android_openssl/CMakeLists.txt)
+
+    if (ANDROID_ABI STREQUAL "armeabi-v7a")
+        set(KS_ANDROID_SSL_DIR "${SSL_ROOT_PATH}/latest/arm/")
+    elseif (ANDROID_ABI STREQUAL "arm64-v8a")
+        set(KS_ANDROID_SSL_DIR "${SSL_ROOT_PATH}/latest/arm64/")
+    elseif (ANDROID_ABI STREQUAL "x86")
+        set(KS_ANDROID_SSL_DIR "${SSL_ROOT_PATH}/latest/x86/")
+    elseif (ANDROID_ABI STREQUAL "x86_64")
+        set(KS_ANDROID_SSL_DIR "${SSL_ROOT_PATH}/latest/x86_64/")
+    endif()
+
+    message(STATUS "Android OpenSSL root path:    [${SSL_ROOT_PATH}]")
+    message(STATUS "Android OpenSSL library path: [${KS_ANDROID_SSL_DIR}]")
+
+# Linux
+elseif(KS_PLATFORM STREQUAL "linux")
+    # Add deployers targets
+    include(deployers)
+    
+# Windows
+elseif(KS_PLATFORM STREQUAL "windows")
+    set(GUI_TYPE WIN32)
+    set_target_properties(${KS_TARGET_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
+    include(deployers)    
+    configure_file( "${PROJECT_SOURCE_DIR}/controll-app/platforms/windows/yiot.nsi.in" "${CMAKE_BINARY_DIR}/yiot.nsi" "${VS_TEMPLATE_DST}" @ONLY)
+
+# MacOS
+elseif(KS_PLATFORM STREQUAL "macos")
+    set(MACOSX_BUNDLE_LONG_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+    set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
+    set(MACOSX_BUNDLE_ICON_FILE MyIcon.icns)
+    set(MACOSX_DMG_ICON_FILE Installer.icns)
+    set(MACOSX_BUNDLE_BACKGROUND_FILE "Background.png")
+    set(MACOSX_DEPLOYMENT_TARGET 10.13)
+    set(VS_BUNDLE_PREFIX "io.yiot-dev.macos")
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "${VS_BUNDLE_PREFIX}.${PROJECT_NAME}")
+    list(APPEND VS_TEMPLATES "${CMAKE_CURRENT_SOURCE_DIR}/platforms/macos/release-notes.html.in=${CMAKE_CURRENT_SOURCE_DIR}/platforms/macos/release-notes.html")
+    list(APPEND VS_TEMPLATES "${CMAKE_CURRENT_SOURCE_DIR}/platforms/macos/dmg.json.in=${CMAKE_BINARY_DIR}/dmg.json")
+    foreach(VS_TMP IN LISTS VS_TEMPLATES)
+        string(REPLACE "=" ";" VS_TMP_LIST ${VS_TMP})
+        list(GET VS_TMP_LIST 0 VS_TEMPLATE_SRC)
+        list(GET VS_TMP_LIST 1 VS_TEMPLATE_DST)
+        if(NOT EXISTS "${VS_TEMPLATE_SRC}")
+            message(FATAL_ERROR "Template [${VS_TEMPLATE_SRC}] not found !")
+        endif()
+        message(STATUS "Processing template file: [${VS_TEMPLATE_SRC}]")
+        configure_file("${VS_TEMPLATE_SRC}" "${VS_TEMPLATE_DST}" @ONLY)
+    endforeach()
+
+    include(deployers)
+
+    set(App_ICON "${CMAKE_CURRENT_SOURCE_DIR}/platforms/macos/pkg_resources/${MACOSX_BUNDLE_ICON_FILE}")
+    set_source_files_properties(${App_ICON}
+            PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+
+    # Sparkle
+    #message(STATUS "Copy Sparkle framework")
+    #execute_process(
+    #        COMMAND mkdir -p ${CMAKE_BINARY_DIR}/${KS_TARGET_NAME}.app/Contents/Frameworks
+    #        COMMAND cp -Rf ${PREBUILT_DIR}/${KS_PLATFORM}/sparkle/Sparkle.framework ${CMAKE_BINARY_DIR}/${KS_TARGET_NAME}.app/Contents/Frameworks
+    #)
+
+    # add_executable(${KS_TARGET_NAME} MACOSX_BUNDLE ${App_ICON} )
+
+    set_target_properties(${KS_TARGET_NAME}
+            PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_LIST_DIR}/platforms/macos/Info.plist.in"
+            )
+    #set_target_properties(${KS_TARGET_NAME}
+    #        PROPERTIES LINK_FLAGS "-F${PREBUILT_DIR}/${KS_PLATFORM}/sparkle -framework Sparkle -framework CoreFoundation -framework Foundation"
+    #        )
+    #    macdeployqt(${KS_TARGET_NAME} "${CMAKE_CURRENT_LIST_DIR}/src/qml")
+
+# Other
+else()
+    add_executable(${KS_TARGET_NAME})
+endif()
+
+# ---------------------------------------------------------------------------
+#   IoTKit Qt Wrapper
+# ---------------------------------------------------------------------------
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/cmake/iotkit-qt)
+
+# ---------------------------------------------------------------------------
+#   Qt Keychain
+# ---------------------------------------------------------------------------
+# set(BUILD_TEST_APPLICATION CACHE BOOL OFF FORCE)
+# set(BUILD_TRANSLATIONS CACHE BOOL OFF FORCE)
+# set(QTANDROIDEXTRAS_LIBRARIES "Qt6::CorePrivate")
+# add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../ext/qtkeychain qtkeychain)
+
 
 # ---------------------------------------------------------------------------
 #	Definitions
@@ -372,7 +368,7 @@ target_compile_definitions(${KS_TARGET_NAME}
 target_include_directories(${KS_TARGET_NAME}
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/../ext/qtkeychain>
+        # $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/../ext/qtkeychain>
         )
 
 
@@ -383,44 +379,41 @@ target_compile_options(${KS_TARGET_NAME}
         PRIVATE
         )
 
-
 # ---------------------------------------------------------------------------
-#	Link libraries
+# Link libraries
 # ---------------------------------------------------------------------------
 target_link_libraries(${KS_TARGET_NAME}
-        PUBLIC
+    PUBLIC
 
-        # Qt6
-        Qt6::Core
-        $<$<STREQUAL:"${KS_PLATFORM}","android">:Qt6::AndroidExtras>
-        Qt6::Widgets
-        Qt6::Test
-        Qt6::Network
-        Qt6::WebSockets
-        Qt6::Concurrent
-        Qt6::Qml
+    # Qt6
+    Qt6::Core
+    $<$<STREQUAL:"${KS_PLATFORM}","android">:Qt6::CorePrivate>
+    Qt6::Widgets
+    Qt6::Test
+    Qt6::Network
+    Qt6::WebSockets
+    Qt6::Concurrent
+    Qt6::Qml
+    Qt6::Bluetooth
 
-        #   IoTKit Qt
-        iotkit-qt-lib
-        yiot-qos1-helper
-        vs-default-soft-secmodule
-        vs-module-secbox
+    # IoTKit Qt
+    iotkit-qt-lib
+    yiot-qos1-helper
+    vs-default-soft-secmodule
+    vs-module-secbox
 
-        #   Qt keychain
-        qtkeychain
+    # Qt keychain
+    # qtkeychain
 
-        #   Windows
-        $<$<STREQUAL:"${KS_PLATFORM}","windows">:wlanapi>
+    # Windows
+    $<$<STREQUAL:"${KS_PLATFORM}","windows">:wlanapi>
 
-        #   Linux
-        $<$<STREQUAL:"${KS_PLATFORM}","linux">:pthread>
+    # Linux
+    $<$<STREQUAL:"${KS_PLATFORM}","linux">:pthread>
 
-        #   Android
-        $<$<STREQUAL:"${KS_PLATFORM}","android">:Qt6::AndroidExtras>
-
-        # Compiler options
-        enable_pedantic_mode
-        )
+    # Compiler options
+    enable_pedantic_mode
+)
 
 if (KS_PLATFORM STREQUAL "macos")
     #   macOS
@@ -435,9 +428,9 @@ endif()
 #------------------------------------------------------------------------------
 #   Format code
 # ---------------------------------------------------------------------------
-if (COMMAND add_clangformat)
-    add_clangformat(${KS_TARGET_NAME})
-endif ()
+# if (COMMAND add_clangformat)
+#     add_clangformat(${KS_TARGET_NAME})
+# endif ()
 
 
 #------------------------------------------------------------------------------
@@ -504,4 +497,3 @@ if (KS_PLATFORM STREQUAL "ios")
         VERBOSE 1)
 
 endif ()
-
