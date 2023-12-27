@@ -18,7 +18,7 @@
 //  ────────────────────────────────────────────────────────────
 
 //-----------------------------------------------------------------------------
-        
+
 .import "qrc:/js/uci/params-types.js" as ParamTypes
 
 //
@@ -138,7 +138,7 @@ function getLocalValue(device, param) {
             return defaultVirtualVal(descr)
         }
 
-        //console.log("Device isn't found : ", device)
+        //        console.log("Device isn't found : ", device)
         return null
     }
 
@@ -495,7 +495,6 @@ function getDevice(device) {
     return devParams
 }
 
-//-----------------------------------------------------------------------------
 //
 //  Check if changes are present
 //
@@ -520,6 +519,7 @@ function changesPresent(device) {
 
                                                 return true // keep iterating
                                             });
+    return present
     return present
 }
 
