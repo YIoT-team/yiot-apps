@@ -17,6 +17,8 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
+#if KS_ENABLE_BLE
+
 #include <controllers/KSQBLEController.h>
 
 #include <virgil/iot/qt/VSQIoTKit.h>
@@ -118,3 +120,5 @@ KSQBLEController::connectDevice(const QString &mac) {
 }
 
 //-----------------------------------------------------------------------------
+
+#endif

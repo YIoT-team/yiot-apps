@@ -20,6 +20,8 @@
 #ifndef PROVISION_QT_BLE_CONTROLLER_H
 #define PROVISION_QT_BLE_CONTROLLER_H
 
+#if KS_ENABLE_BLE
+
 #include <QtCore>
 
 #include <virgil/iot/qt/netif/VSQNetifBLEEnumerator.h>
@@ -75,5 +77,7 @@ private:
     void
     cleanConnections();
 };
+
+#endif
 
 #endif // PROVISION_QT_BLE_CONTROLLER_H

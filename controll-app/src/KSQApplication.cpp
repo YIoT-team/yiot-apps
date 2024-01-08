@@ -49,7 +49,9 @@ KSQApplication::run() {
     // Early initialization of logger
     vs_logger_init(VirgilIoTKit::VS_LOGLEV_DEBUG);
 
+#if KS_ENABLE_BLE
     m_bleController = QSharedPointer<KSQBLEController>::create();
+#endif
     m_netifUdp = new KSQUdp(QHostAddress::Broadcast);
     m_netifWebsock = new KSQNetifWebsocket();
     m_localBlankDevicesController = QSharedPointer<KSQBlankDevicesController>::create();
@@ -70,9 +72,12 @@ KSQApplication::run() {
                           << KSQFeatures::SNAP_PC_CLIENT;  // Possibility to control PSs, Raspberry Pi for example
 
     // TODO: Dynamic adding of supported network interfaces
-    auto impl = VSQImplementations() << m_netifUdp                // Enables UDP communication
-                                     << m_netifWebsock            // Enable WebSocket communication
-                                     << m_bleController->netif(); // Enables Bluetooth Low Energy communication
+    auto impl = VSQImplementations() << m_netifUdp     // Enables UDP communication
+                                     << m_netifWebsock // Enable WebSocket communication
+#if KS_ENABLE_BLE
+                                     << m_bleController->netif() // Enables Bluetooth Low Energy communication
+#endif
+            ;
 
     // This is a control device
     auto roles = VSQDeviceRoles() << VirgilIoTKit::VS_SNAP_DEV_CONTROL;
@@ -83,6 +88,7 @@ KSQApplication::run() {
 
     // Connect User Experience simplifier
     //      Get information about close BLE devices
+#if KS_ENABLE_BLE
     connect(m_bleController->model(),
             &VSQNetifBLEEnumerator::fireDeviceIsClose,
             m_uxController.get(),
@@ -91,6 +97,7 @@ KSQApplication::run() {
             &KSQBLEController::fireStartConnection,
             m_uxController.get(),
             &KSQUXSimplifyController::onBLEDeviceConnection);
+#endif
 
     //      Get information about devices those require provision
     connect(m_localBlankDevicesController.get(),
@@ -110,7 +117,9 @@ KSQApplication::run() {
             &KSQApplication::updateDevices);
 
     // Device re-scan on provision finish
+#if KS_ENABLE_BLE
     connect(m_bleController.get(), &KSQBLEController::fireProvisionDone, this, &KSQApplication::onProvisionDone);
+#endif
 
     // Connect signals from network interfaces
     connect(m_netifWebsock, &KSQNetifWebsocket::fireDeviceReady, this, &KSQApplication::updateDevices);
@@ -142,10 +151,12 @@ KSQApplication::run() {
 
     context->setContextProperty("app", this); // Get app name, version, etc.
     context->setContextProperty("localBlankDevicesController", m_localBlankDevicesController.get());
+#if KS_ENABLE_BLE
     context->setContextProperty("bleController",
                                 m_bleController.get()); // Connect/disconnect to BLE devices to communicate with
     context->setContextProperty("bleEnum",
                                 m_bleController->model()); // BLE device enumeration // TODO: Use from `bleController`
+#endif
     context->setContextProperty("wifiEnum", &m_wifiEnumerator); // WiFi networks enumeration
     context->setContextProperty("extensionDevices", m_extensionDevices.get());
     context->setContextProperty("extensionPlugins", m_extensionPlugins.get());

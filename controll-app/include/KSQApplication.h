@@ -80,7 +80,9 @@ public slots:
 private:
     QTimer m_updateTimer;
     KSQWiFiEnumerator m_wifiEnumerator;
+#if KS_ENABLE_BLE
     QSharedPointer<KSQBLEController> m_bleController;
+#endif
     QSharedPointer<KSQBlankDevicesController> m_localBlankDevicesController;
     QSharedPointer<KSQUXSimplifyController> m_uxController;
     KSQUdp *m_netifUdp;

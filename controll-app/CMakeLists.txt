@@ -359,11 +359,12 @@ target_sources(${KS_TARGET_NAME}
 #	Definitions
 # ---------------------------------------------------------------------------
 target_compile_definitions(${KS_TARGET_NAME}
-        PRIVATE
-        -DQKEYCHAIN_STATICLIB
-        -DKS_TARGET_VERSION=${KS_TARGET_VERSION}
-        -DKS_BUILD_NUMBER=${KS_BUILD_NUMBER}
-        )
+    PRIVATE
+    -DQKEYCHAIN_STATICLIB
+    -DKS_TARGET_VERSION=${KS_TARGET_VERSION}
+    -DKS_BUILD_NUMBER=${KS_BUILD_NUMBER}
+    -DKS_DISABLE_BLE=0
+)
 
 
 # ---------------------------------------------------------------------------

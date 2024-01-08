@@ -22,11 +22,15 @@
 
 #include <QtCore>
 #include <QtNetwork>
+
+#if KS_ENABLE_BLE
 #include <QtBluetooth>
+#endif
 
 #include <QAbstractTableModel>
 
 #include <virgil/iot/qt/protocols/snap/VSQSnapINFOClient.h>
+#include <virgil/iot/qt/protocols/snap/VSQNetifBase.h>
 
 class KSQBlankDevicesController : public QAbstractTableModel {
     Q_OBJECT
@@ -80,8 +84,10 @@ public:
 
 signals:
 
+#if KS_ENABLE_BLE
     void
     fireDeviceSelected(QBluetoothDeviceInfo dev);
+#endif
 
     void
     fireDeviceRequiresProvision(QString name, VSQNetifBase *netif, VSQMac deviceMac);
