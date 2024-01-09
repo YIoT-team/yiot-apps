@@ -253,7 +253,7 @@ KSQApplication::openWiFiSettings() {
 QString
 KSQApplication::wifiSSID() {
 #ifdef Q_OS_ANDROID
-    return KSQAndroid::currentSSID();
+    return KSQAndroid::currentSSID().replace("\"", "");
 #endif
     return "";
 }
