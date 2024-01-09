@@ -242,6 +242,23 @@ KSQApplication::setSubnet(QString subnet) {
 }
 
 //-----------------------------------------------------------------------------
+void
+KSQApplication::openWiFiSettings() {
+#ifdef Q_OS_ANDROID
+    KSQAndroid::openWifiSettings();
+#endif
+}
+
+//-----------------------------------------------------------------------------
+QString
+KSQApplication::wifiSSID() {
+#ifdef Q_OS_ANDROID
+    return KSQAndroid::currentSSID();
+#endif
+    return "";
+}
+
+//-----------------------------------------------------------------------------
 QString
 KSQApplication::organizationDisplayName() const {
     return tr("Your IoT");

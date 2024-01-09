@@ -36,10 +36,10 @@ void
 KSQAndroid::requestPermissions() {
     const QVector<QString> permissions({
 #if KS_ENABLE_BLE
-        "android.permission.BLUETOOTH", "android.permission.BLUETOOTH_ADMIN", "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.BLUETOOTH", "android.permission.BLUETOOTH_ADMIN",
 #endif
-                "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.ACCESS_WIFI_STATE",
-                "android.permission.CHANGE_WIFI_STATE"
+                "android.permission.ACCESS_FINE_LOCATION", "android.permission.WRITE_EXTERNAL_STORAGE",
+                "android.permission.ACCESS_WIFI_STATE", "android.permission.CHANGE_WIFI_STATE"
     });
 
     for (const QString &permission : permissions) {
@@ -73,6 +73,28 @@ KSQAndroid::enumWifi() {
     }
 
     return res;
+}
+
+//-----------------------------------------------------------------------------
+bool
+KSQAndroid::openWifiSettings() {
+    QAndroidJniObject::callStaticObjectMethod("io/kutashenko/wifi/Wifi",
+                                              "openSettings",
+                                              "(Landroid/content/Context;)Ljava/lang/Boolean;",
+                                              QtAndroid::androidContext().object());
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+QString
+KSQAndroid::currentSSID() {
+    QAndroidJniObject js = QAndroidJniObject::callStaticObjectMethod("io/kutashenko/wifi/Wifi",
+                                                                     "currentSSID",
+                                                                     "(Landroid/content/Context;)Ljava/lang/String;",
+                                                                     QtAndroid::androidContext().object());
+
+    return js.toString();
 }
 
 //-----------------------------------------------------------------------------

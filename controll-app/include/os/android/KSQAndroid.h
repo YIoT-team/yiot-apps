@@ -35,6 +35,12 @@ public:
 
     static KSQWiFiNetworks
     enumWifi();
+
+    static bool
+    openWifiSettings();
+
+    static QString
+    currentSSID();
 };
 
 

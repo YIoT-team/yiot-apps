@@ -77,6 +77,12 @@ public slots:
     Q_INVOKABLE void
     setSubnet(QString subnet);
 
+    Q_INVOKABLE void
+    openWiFiSettings();
+
+    Q_INVOKABLE QString
+    wifiSSID();
+
 private:
     QTimer m_updateTimer;
     KSQWiFiEnumerator m_wifiEnumerator;
