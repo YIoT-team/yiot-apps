@@ -39,7 +39,8 @@ KSQAndroid::requestPermissions() {
         "android.permission.BLUETOOTH", "android.permission.BLUETOOTH_ADMIN",
 #endif
                 "android.permission.ACCESS_FINE_LOCATION", "android.permission.WRITE_EXTERNAL_STORAGE",
-                "android.permission.ACCESS_WIFI_STATE", "android.permission.CHANGE_WIFI_STATE"
+                "android.permission.ACCESS_WIFI_STATE", "android.permission.CHANGE_WIFI_STATE",
+                "android.permission.NEARBY_WIFI_DEVICES"
     });
 
     for (const QString &permission : permissions) {

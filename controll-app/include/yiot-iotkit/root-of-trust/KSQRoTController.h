@@ -62,6 +62,9 @@ public:
     QSharedPointer<KSQRoT>
     localRootOfTrust() const;
 
+    Q_INVOKABLE QVariantMap
+    get(int row) const;
+
     /**
      * QAbstractTableModel implementation
      */

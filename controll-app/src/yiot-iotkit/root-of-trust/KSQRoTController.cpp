@@ -221,3 +221,19 @@ KSQRoTController::objIdx() const {
 }
 
 //-----------------------------------------------------------------------------
+QVariantMap
+KSQRoTController::get(int row) const {
+    QHash<int, QByteArray> names = roleNames();
+    QHashIterator<int, QByteArray> i(names);
+    QVariantMap res;
+    QModelIndex idx = index(row, 0);
+    while (i.hasNext()) {
+        i.next();
+        QVariant data = idx.data(i.key());
+        res[i.value()] = data;
+    }
+    qDebug() << res;
+    return res;
+}
+
+//-----------------------------------------------------------------------------
