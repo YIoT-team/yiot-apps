@@ -49,6 +49,15 @@ KSQProvision::KSQProvision() {
 
 //-----------------------------------------------------------------------------
 bool
+KSQProvision::update() {
+    if (VS_CODE_OK == vs_provision_update()) {
+        m_valid = true;
+    }
+    return m_valid;
+}
+
+//-----------------------------------------------------------------------------
+bool
 KSQProvision::prepareOwnKeyPair() {
 
     bool res = false;

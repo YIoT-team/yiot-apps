@@ -35,13 +35,13 @@ class KSQProvision : public QObject, public VSQSingleton<KSQProvision> {
 
 public:
     bool create(QSharedPointer<KSQRoT>);
+    bool
+    update();
 
     bool
     isValid() const {
         return m_valid;
     }
-
-signals:
 
 public slots:
     void
