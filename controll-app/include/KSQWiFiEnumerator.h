@@ -35,6 +35,9 @@ public:
     KSQWiFiEnumerator();
     virtual ~KSQWiFiEnumerator();
 
+    Q_INVOKABLE QString ssid();
+    Q_INVOKABLE void settings();
+
     /**
      * QAbstractTableModel implementation
      */

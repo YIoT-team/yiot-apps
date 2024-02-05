@@ -246,6 +246,8 @@ void
 KSQApplication::openWiFiSettings() {
 #ifdef Q_OS_ANDROID
     KSQAndroid::openWifiSettings();
+#elif defined(Q_OS_IOS)
+    m_wifiEnumerator.settings();
 #endif
 }
 
@@ -255,7 +257,7 @@ KSQApplication::wifiSSID() {
 #ifdef Q_OS_ANDROID
     return KSQAndroid::currentSSID().replace("\"", "");
 #endif
-    return "";
+    return m_wifiEnumerator.ssid();
 }
 
 //-----------------------------------------------------------------------------

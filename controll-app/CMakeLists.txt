@@ -334,6 +334,7 @@ target_sources(${KS_TARGET_NAME}
 
     $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/os/macos/KSMacWiFi.mm>
     $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/os/ios/KSiOSWiFi.mm>
+    $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/os/ios/KSiOSWiFiSSID.m>
     $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/src/os/linux/KSLinuxWiFi.cpp>
     $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/src/os/win/KSWinWiFi.cpp>
     $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/src/os/android/KSQAndroid.cpp>
@@ -433,6 +434,20 @@ if (KS_PLATFORM STREQUAL "macos")
 
 endif()
 
+if (KS_PLATFORM STREQUAL "ios")
+    #   iOS
+    target_link_libraries(${KS_TARGET_NAME}
+            PUBLIC
+            "-framework NetworkExtension"
+            "-framework CoreLocation"
+            )
+
+    set_target_properties(${KS_TARGET_NAME} PROPERTIES
+        XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS
+            "${CMAKE_CURRENT_LIST_DIR}/platforms/ios/yiot.entitlements")
+
+endif()
+
 #------------------------------------------------------------------------------
 #   Format code
 # ---------------------------------------------------------------------------
@@ -487,13 +502,13 @@ if (KS_PLATFORM STREQUAL "ios")
     qt_ios_set_xcode_property(${KS_TARGET_NAME} LD_RUNPATH_SEARCH_PATHS "@executable_path" "All")
 
     # Copy the framework into the bundle
-    add_custom_command(
-            TARGET
-            ${KS_TARGET_NAME}
-            POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_BINARY_DIR}/../ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/libconverters.dylib
-            ${CMAKE_CURRENT_BINARY_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/${KS_TARGET_NAME}.app
-    )
+    #add_custom_command(
+    #        TARGET
+    #        ${KS_TARGET_NAME}
+    #        POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
+    #        ${CMAKE_CURRENT_BINARY_DIR}/../ext/yiot-core/yiot/common/iotkit/modules/crypto/converters/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/libconverters.dylib
+    #        ${CMAKE_CURRENT_BINARY_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/${KS_TARGET_NAME}.app
+    #)
 
     # Prepare iOS bundle creation
     add_qt_ios_app(${KS_TARGET_NAME}

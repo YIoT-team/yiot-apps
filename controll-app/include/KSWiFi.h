@@ -44,4 +44,12 @@ KSQWiFiNetworks
 wifi_enum();
 #endif
 
+#if defined(Q_OS_IOS)
+QString
+wifi_ssid();
+
+void
+wifi_settings();
+#endif
+
 #endif // PROVISION_QT_WIFI_MACOS_H

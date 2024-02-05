@@ -366,7 +366,7 @@ KSQRoT::importData(QString fileName, QString password) {
 
     emit fireUpdated(*this);
 
-    return tr("Done successfully");
+    return tr("Done successfully, restart app to apply new Root of Trust");
 }
 
 //-----------------------------------------------------------------------------

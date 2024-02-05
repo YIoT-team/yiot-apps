@@ -154,6 +154,24 @@ KSQWiFiEnumerator::roleNames() const {
 }
 
 //-----------------------------------------------------------------------------
+QString
+KSQWiFiEnumerator::ssid() {
+#if defined(Q_OS_IOS)
+    return wifi_ssid();
+#else
+    return "---";
+#endif
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQWiFiEnumerator::settings() {
+#if defined(Q_OS_IOS)
+    wifi_settings();
+#endif
+}
+
+//-----------------------------------------------------------------------------
 
 #if 1
 #pragma GCC diagnostic pop
