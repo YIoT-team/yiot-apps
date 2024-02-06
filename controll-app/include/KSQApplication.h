@@ -45,6 +45,7 @@ class KSQApplication : public QObject {
     Q_PROPERTY(QString organizationDisplayName READ organizationDisplayName CONSTANT)
     Q_PROPERTY(QString applicationVersion READ applicationVersion CONSTANT)
     Q_PROPERTY(QString applicationDisplayName READ applicationDisplayName CONSTANT)
+    Q_PROPERTY(int osStatusBarHeight READ osStatusBarHeight CONSTANT)
 public:
     KSQApplication() = default;
     virtual ~KSQApplication() = default;
@@ -60,6 +61,9 @@ public:
 
     QString
     applicationDisplayName() const;
+
+    int
+    osStatusBarHeight() const;
 
 public slots:
     void

@@ -36,6 +36,10 @@
 #include "os/android/KSQAndroid.h"
 #endif // Q_OS_ANDROID
 
+#ifdef Q_OS_IOS
+#include "os/ios/KSiOSHelpers.h"
+#endif
+
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
@@ -198,6 +202,8 @@ KSQApplication::run() {
 #ifdef Q_OS_ANDROID
         KSQAndroid::hideSplashScreen();
         KSQAndroid::requestPermissions();
+#elif defined(Q_OS_IOS)
+        iosUiPrepare();
 #endif
     });
 
@@ -296,6 +302,16 @@ KSQApplication::onIntegrationDeactivate(QString integrationId) {
     if (kWebSocketIntegrationID == integrationId) {
         m_netifWebsock->disconnectWS();
     }
+}
+
+//-----------------------------------------------------------------------------
+int
+KSQApplication::osStatusBarHeight() const {
+#if defined(Q_OS_IOS)
+    return iosUiStatusBarHeight();
+#else
+    return 0;
+#endif
 }
 
 //-----------------------------------------------------------------------------

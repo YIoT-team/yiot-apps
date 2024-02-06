@@ -282,6 +282,7 @@ target_sources(${KS_TARGET_NAME}
     $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
     $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/include/KSWiFi.h>
     $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/include/os/android/KSQAndroid.h>
+    $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/os/ios/KSiOSHelpers.h>
 
     # Sources
     ${CMAKE_CURRENT_LIST_DIR}/src/KSQApplication.cpp
@@ -335,6 +336,7 @@ target_sources(${KS_TARGET_NAME}
     $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/os/macos/KSMacWiFi.mm>
     $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/os/ios/KSiOSWiFi.mm>
     $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/os/ios/KSiOSWiFiObjC.m>
+    $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/os/ios/KSiOSHelpers.mm>
     $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/src/os/linux/KSLinuxWiFi.cpp>
     $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/src/os/win/KSWinWiFi.cpp>
     $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/src/os/android/KSQAndroid.cpp>
