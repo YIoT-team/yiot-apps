@@ -21,7 +21,9 @@
 
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/CaptiveNetwork.h>
-#import "KSiOSWiFiSSID.h"
+#import "KSiOSWiFiObjC.h"
+
+static KSiOSWiFiObjC* _objc = NULL;
 
 //-----------------------------------------------------------------------------
 KSQWiFiNetworks
@@ -32,19 +34,30 @@ wifi_enum() {
 }
 
 //-----------------------------------------------------------------------------
+void
+wifi_prepare() {
+    if (!_objc) {
+        _objc = [KSiOSWiFiObjC new];
+    }
+}
+
+//-----------------------------------------------------------------------------
 QString
 wifi_ssid() {
-    static KSiOSWiFiSSID* ssidProvider = NULL;
-    if (!ssidProvider) {
-        ssidProvider = [KSiOSWiFiSSID new];
-    }
-
-    return QString::fromNSString([ssidProvider ssid]);
+    wifi_prepare();
+    return QString::fromNSString([_objc ssid]);
 }
 
 //-----------------------------------------------------------------------------
 void
 wifi_settings() {
+}
+
+//-----------------------------------------------------------------------------
+QString
+wifi_route_ip() {
+    wifi_prepare();
+    return QString::fromNSString([_objc routeIp]);
 }
 
 //-----------------------------------------------------------------------------

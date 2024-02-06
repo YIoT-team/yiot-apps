@@ -334,7 +334,7 @@ target_sources(${KS_TARGET_NAME}
 
     $<$<STREQUAL:"${KS_PLATFORM}","macos">:${CMAKE_CURRENT_LIST_DIR}/src/os/macos/KSMacWiFi.mm>
     $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/os/ios/KSiOSWiFi.mm>
-    $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/os/ios/KSiOSWiFiSSID.m>
+    $<$<STREQUAL:"${KS_PLATFORM}","ios">:${CMAKE_CURRENT_LIST_DIR}/src/os/ios/KSiOSWiFiObjC.m>
     $<$<STREQUAL:"${KS_PLATFORM}","linux">:${CMAKE_CURRENT_LIST_DIR}/src/os/linux/KSLinuxWiFi.cpp>
     $<$<STREQUAL:"${KS_PLATFORM}","windows">:${CMAKE_CURRENT_LIST_DIR}/src/os/win/KSWinWiFi.cpp>
     $<$<STREQUAL:"${KS_PLATFORM}","android">:${CMAKE_CURRENT_LIST_DIR}/src/os/android/KSQAndroid.cpp>

@@ -50,6 +50,9 @@ wifi_ssid();
 
 void
 wifi_settings();
+
+QString
+wifi_route_ip();
 #endif
 
 #endif // PROVISION_QT_WIFI_MACOS_H

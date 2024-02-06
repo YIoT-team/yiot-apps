@@ -172,6 +172,16 @@ KSQWiFiEnumerator::settings() {
 }
 
 //-----------------------------------------------------------------------------
+QString
+KSQWiFiEnumerator::routeIp() {
+#if defined(Q_OS_IOS)
+    return wifi_route_ip();
+#else
+    return "255.255.255.255";
+#endif
+}
+
+//-----------------------------------------------------------------------------
 
 #if 1
 #pragma GCC diagnostic pop

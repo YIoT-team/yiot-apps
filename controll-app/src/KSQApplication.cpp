@@ -235,7 +235,7 @@ KSQApplication::setSubnet(QString subnet) {
     if (tmp.isBroadcast() || tmp.isGlobal() || tmp.isLinkLocal()) {
         addr = tmp;
     } else {
-        addr = QHostAddress::Broadcast;
+        addr = QHostAddress(m_wifiEnumerator.routeIp());
     }
 
     m_netifUdp->setSubnet(addr);
