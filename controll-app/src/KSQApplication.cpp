@@ -317,7 +317,9 @@ KSQApplication::osStatusBarHeight() const {
 //-----------------------------------------------------------------------------
 void
 KSQApplication::share(QString url) {
+#if defined(Q_OS_IOS)
     iosUiShareDialog(url);
+#endif
 }
 
 //-----------------------------------------------------------------------------
