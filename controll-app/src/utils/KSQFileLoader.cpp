@@ -90,3 +90,11 @@ FileLoader::upload(const QString &url, const QString &file) {
 }
 
 // ----------------------------------------------------------------------------
+QString
+FileLoader::localConfigUrl() {
+    auto base = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
+    auto name = QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-ss-mm") + "-conf.tar.gz";
+    return base + QDir::separator() + name;
+}
+
+// ----------------------------------------------------------------------------

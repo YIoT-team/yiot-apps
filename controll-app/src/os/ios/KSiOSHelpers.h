@@ -28,6 +28,9 @@ iosUiPrepare();
 int
 iosUiStatusBarHeight();
 
+void
+iosUiShareDialog(QString url);
+
 // ----------------------------------------------------------------------------
 
 #endif // KS_IOS_HELPERS_H

@@ -42,6 +42,9 @@ public:
     Q_INVOKABLE int
     upload(const QString &url, const QString &file);
 
+    Q_INVOKABLE QString
+    localConfigUrl();
+
 signals:
     void progressUpdated(qint64, qint64);
     void
