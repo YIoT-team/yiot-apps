@@ -339,6 +339,30 @@ function toBeSavedList(device) {
 
 //-----------------------------------------------------------------------------
 //
+//  Check if reboot will be activated on parameter save
+//
+function saveRequiresReboot(device) {
+    // Find device
+    var devParams = getDevice(device)
+    if (devParams === null) {
+        return []
+    }
+
+
+    // Check all changed parameters
+    var requiresReboot = false
+    Object.entries(devParams.inProcessing).forEach(([key, value]) => {
+                                                       var descr = getDescriptor(key)
+                                                       if (descr.reboots) {
+                                                           requiresReboot = true
+                                                       }
+                                                   });
+
+    return requiresReboot
+}
+
+//-----------------------------------------------------------------------------
+//
 //  Get a list of parameters in processing with descriptor names
 //
 function toBeSavedParamsNames(device) {
