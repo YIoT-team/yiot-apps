@@ -43,7 +43,30 @@ iosUiPrepare() {
 //-----------------------------------------------------------------------------
 int
 iosUiStatusBarHeight() {
-    return 44;
+    static int h = -1;
+    static const int kDefaultH = 44;
+    
+    if (h >= 0) {
+        return h;
+    }
+    
+    auto window = QGuiApplication::focusWindow();
+    if (!window) {
+        return kDefaultH;
+    }
+    UIView *view = static_cast<UIView*>(QGuiApplication::platformNativeInterface()->nativeResourceForWindow("uiview", window));
+    if (!view) {
+        return kDefaultH;
+    }
+   	 
+    UIWindowScene *scene = [[view window] windowScene];
+    if (!scene) {
+        return kDefaultH;
+    }
+    
+    h = [scene statusBarManager].statusBarFrame.size.height;
+    
+    return h;
 }
 
 //-----------------------------------------------------------------------------
