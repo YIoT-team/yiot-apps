@@ -18,12 +18,13 @@
 //  ────────────────────────────────────────────────────────────>
 
 #include <KSWiFi.h>
-#include <QtDBus/QtDBus>
+// #include <QtDBus/QtDBus>
 
 //-----------------------------------------------------------------------------
 KSQWiFiNetworks
 wifi_enum() {
     KSQWiFiNetworks res;
+#if 0
     QDBusInterface nm("org.freedesktop.NetworkManager",
                       "/org/freedesktop/NetworkManager",
                       "org.freedesktop.NetworkManager",
@@ -66,7 +67,7 @@ wifi_enum() {
             res[ap_interface.property("Ssid").toString()] = ap_interface.property("Strength").toInt();
         }
     }
-
+#endif
     return res;
 }
 
