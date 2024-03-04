@@ -451,6 +451,17 @@ function getDescriptor(name) {
 }
 
 //-----------------------------------------------------------------------------
+function _defaultIndex(d) {
+    try {
+        if (d.lastDefault && d.values.length > 0) {
+            return d.values.length - 1
+        }
+    } catch (e) {}
+
+    return 0
+}
+
+//-----------------------------------------------------------------------------
 //
 //  Get Parameter Index by value
 //
@@ -458,7 +469,7 @@ function getValueIndex(name, value) {
     var d = getDescriptor(name)
 
     if (d === null || d.type !== ParamTypes.kUciParamSelectable) {
-        return 0
+        return _defaultIndex(d)
     }
     for (var i = 0; i < d.values.length; i++) {
         var v = d.values[i]
@@ -468,7 +479,7 @@ function getValueIndex(name, value) {
         }
     }
 
-    return 0
+    return _defaultIndex(d)
 }
 
 //-----------------------------------------------------------------------------
