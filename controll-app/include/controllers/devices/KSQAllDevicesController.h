@@ -45,6 +45,9 @@ public:
     bool
     isEmpty() const;
 
+    Q_INVOKABLE void
+    clean();
+
     /**
      * QAbstractTableModel implementation
      */
@@ -72,6 +75,9 @@ signals:
 
     void
     fireEmptyChanged();
+
+    void
+    fireClean();
 
 public slots:
 

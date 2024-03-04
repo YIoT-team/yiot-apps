@@ -26,6 +26,9 @@ KSQAllDevicesController::add(KSQDevicesType *devicesType) {
     connect(devicesType, &KSQDevicesType::fireActivated, this, &KSQAllDevicesController::onGroupActivated);
     connect(devicesType, &KSQDevicesType::fireRequiredSetup, this, &KSQAllDevicesController::fireNewProvisionedDevice);
     connect(devicesType, &KSQDevicesType::fireNewUnknownDevice, this, &KSQAllDevicesController::fireNewUnknownDevice);
+
+    connect(this, &KSQAllDevicesController::fireClean, devicesType, &KSQDevicesType::onClean);
+
     connect(devicesType,
             &KSQDevicesType::fireSessionKeyReceived,
             this,
@@ -61,6 +64,12 @@ KSQAllDevicesController::rowCount(const QModelIndex &parent) const {
         }
     }
     return cnt;
+}
+
+//-----------------------------------------------------------------------------
+void
+KSQAllDevicesController::clean() {
+    emit fireClean();
 }
 
 //-----------------------------------------------------------------------------

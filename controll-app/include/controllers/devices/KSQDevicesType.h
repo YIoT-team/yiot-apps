@@ -91,6 +91,9 @@ public slots:
     void
     onDropRequest(QString mac);
 
+    void
+    onClean();
+
 signals:
     void
     fireCollapsedChanged(bool);

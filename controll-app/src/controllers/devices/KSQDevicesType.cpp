@@ -138,6 +138,22 @@ KSQDevicesType::onDropRequest(QString mac) {
 
 //-----------------------------------------------------------------------------
 void
+KSQDevicesType::onClean() {
+    // Disconnect and remove all the components
+    beginResetModel();
+    for (auto el : m_devices) {
+        el->disconnect();
+    }
+    m_devices.clear();
+    endResetModel();
+
+    // Inform about empty model
+    m_active = false;
+    emit fireActivated();
+}
+
+//-----------------------------------------------------------------------------
+void
 KSQDevicesType::onSessionKeyReady(VSQMac mac, KSQSessionKey sessionKey) {
     qDebug() << "onSessionKeyReady: " << mac.description();
 

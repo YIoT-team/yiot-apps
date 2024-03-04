@@ -71,6 +71,12 @@ var uciParameters = []
 //    inProcessing: {}      // Parameters set, but isn't synchronised with a device yet
 //}
 
+
+//
+//  Params config holder
+//
+var configHolder = {}
+
 //
 //  Callbacks
 //
@@ -544,6 +550,20 @@ function changesPresent(device) {
                                                 return true // keep iterating
                                             });
     return present
+}
+
+//
+//  Add configurations set
+//
+function addConfigSet(name, data) {
+    configHolder[name] = data
+}
+
+//
+//  Get configurations set
+//
+function getConfigSet(name) {
+    return configHolder[name]
 }
 
 //-----------------------------------------------------------------------------

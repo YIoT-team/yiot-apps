@@ -86,7 +86,7 @@ public slots:
 
     Q_INVOKABLE QString
     wifiSSID();
-    
+
     Q_INVOKABLE void
     share(QString url);
 
