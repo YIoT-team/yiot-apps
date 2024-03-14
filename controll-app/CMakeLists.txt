@@ -63,7 +63,7 @@ set(KS_QT_EXTRA "")
 if (DEFINED ENV{BUILD_NUMBER})
     set(KS_BUILD_NUMBER "$ENV{BUILD_NUMBER}")
 else()
-    set(KS_BUILD_NUMBER "1000")
+    string(TIMESTAMP KS_BUILD_NUMBER "%y%m%d0")
 endif()
 
 # IOS, IOS_SIM
