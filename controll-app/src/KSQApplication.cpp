@@ -275,7 +275,7 @@ KSQApplication::organizationDisplayName() const {
 //-----------------------------------------------------------------------------
 QString
 KSQApplication::applicationVersion() const {
-    return tr("version: ") + QString(TOSTRING(KS_TARGET_VERSION)) + "." + QString(TOSTRING(KS_BUILD_NUMBER));
+    return QString(TOSTRING(KS_TARGET_VERSION)) + "." + QString(TOSTRING(KS_BUILD_NUMBER));
 }
 
 //-----------------------------------------------------------------------------
